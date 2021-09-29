@@ -1,0 +1,31 @@
+import QuillType from 'quill';
+import { QuillModules } from './quill-editor.interfaces';
+import { AfterViewInit, ElementRef, OnChanges, Renderer2, SimpleChanges, NgZone } from '@angular/core';
+import { CustomOption, CustomModule } from './quill-editor.interfaces';
+import { QuillService } from './quill.service';
+import { DomSanitizer } from '@angular/platform-browser';
+export declare class QuillViewComponent implements AfterViewInit, OnChanges {
+    elementRef: ElementRef;
+    protected renderer: Renderer2;
+    protected zone: NgZone;
+    protected service: QuillService;
+    protected domSanitizer: DomSanitizer;
+    protected platformId: any;
+    quillEditor: QuillType;
+    editorElem: HTMLElement;
+    format?: 'object' | 'html' | 'text' | 'json';
+    theme?: string;
+    modules?: QuillModules;
+    debug?: 'warn' | 'log' | 'error' | false;
+    formats?: string[] | null;
+    sanitize: boolean;
+    strict: boolean;
+    content: any;
+    customModules: CustomModule[];
+    customOptions: CustomOption[];
+    preserveWhitespace: boolean;
+    constructor(elementRef: ElementRef, renderer: Renderer2, zone: NgZone, service: QuillService, domSanitizer: DomSanitizer, platformId: any);
+    valueSetter: (quillEditor: QuillType, value: any) => any;
+    ngOnChanges(changes: SimpleChanges): void;
+    ngAfterViewInit(): Promise<void>;
+}

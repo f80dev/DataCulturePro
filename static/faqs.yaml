@@ -1,0 +1,91 @@
+#date et version simplifie la gestion éventuelle de plusieurs versions de FAQ
+version: 1
+date: 04/09/2020
+test: http://localhost:8000/api/faqs
+
+#content va contenir le corpus des FAQ
+#chaque faq contient différent champs, pas forcément obligatoire:
+#- index (obligatoire) doit être unique, il peut être utilisé au sein de l'interface client pour directement renvoyer vers une FAQ
+#- tags va permettre de mettre en place un filtrage éventuel
+#- title contient la question de la FAQ
+#- content peut être du texte simple, de l'HTML ou directement désigner une page HTML
+#- format est optionnel et par défaut à txt, il peut être à HTML si 'content\" contient des balises
+
+content:
+  - index: setup
+    title: Comment installer DCP sur son téléphone ?
+    order: 0
+    format: html
+    content: "
+      <p>
+      Il est possible d'installer {{appname}} sur son téléphone comme pour n'importe quelle application.<br>
+      Il suffit d'ouvrir le menu du navigateur de votre téléphone et de sélectionner 'Installer ...'
+      L'icone de {{appname}} devrait se retrouver parmi vos applications déjà installées
+      </p>
+      "
+
+
+
+  - index: query
+    title: Quelle syntaxe pour le moteur de recherche ?
+    order: 0
+    format: html
+    content:
+      "
+        <p>
+          Data Culture Pro permet de faire des recherches particulièrement précises parmi les profils:
+          <table style='width:100%;padding-left:15px;'>
+            <tr style='text-align:middle;'>
+              <th>Principe</th><th>Exemple</th>
+            </tr>
+            <tr>
+              <td>un champs particulier</td><td>nom:dudule</td>
+            </tr>
+            <tr>
+              <td>plusieurs mots obligatoires</td><td>chiens&chats</td>
+            </tr>
+            <tr>
+              <td>plusieurs mots possibles</td><td>chiens chats</td>
+            </tr>
+          </table>
+        </p>
+        "
+
+  - index: data_culture_pro
+    title: Qu'est ce que "data culture pro" ?
+    order: 0
+    format: html
+    content:
+      "
+        <p>
+          Data Culture Pro est l'annuaire intéractif des anciens de la FEMIS
+        </p>
+      "
+
+  - index: fiche_film
+    title: Quelles sont les infos diposnibles pour chaque film ?
+    order: 0
+    format: html
+    content:
+      "
+      <p>
+      Chaque fiche de film contient les informations essentielles pour le film : titre, synopsis, années de sortie<br>
+      mais également la liste des étudiants FEMIS ayant contribué à la réalisation ainsi que des liens complémentaires
+      pour avoir plus d'information sur le film
+      </p>
+      "
+
+  - index: obsolescence
+    title: comment se font les rappels de mise a jour de profil ?
+    format: html
+    content:
+      "
+      {{appname}} gére pour chaque profil un score d'obscolescence. Ce score est calculé en fonction de <br>
+      <li>
+      <ul>La date de dernière mise à jour</ul>
+      <ul>L'apparition de nouvelle sur la toile impliquant votre profil</ul>
+      <ul>Le référencement de contribution par la FEMIS</ul>
+      </li><br>
+      Lorsque ce score dépasse un certain seuil et si la dernière relance pour mise a jour n'est pas trop récente
+      {{appname}} envoie automatiquement un mail de rappel permettant une édition rapide du profil
+      "

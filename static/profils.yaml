@@ -1,0 +1,90 @@
+#Listes des profils
+version: 1.0
+profils:
+  - id: anonyme
+    title: Anonyme
+    description: Profil par défaut affecté au personne non connecté
+    perm: r_promo r_lastname r_firstname share r_department r_works r_photo
+    price: 0
+    subscription: offline
+
+  - id: standard
+    title: Connecté
+    level: 0
+    presentation: Consultation des profils en mode authentifié (par email / compte google).
+    description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
+    perm: r_photo r_lastname r_firstname r_linkedin prof r_works r_promo write_email r_address r_department
+    price: 0
+    subscription: offline
+
+  - id: employeur
+    title: Employeur
+    level: 1
+    presentation: Vous chercher des profils pour un projet
+    description: Profil destiné aux employeur
+    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works write_email r_promo advanced_search publish
+    price: 0
+    subscription: online
+
+  - id: femis_cdi
+    level: 1
+    title: Responsable catalogue
+    presentation: Vous avez la charge d'entretenir le catalogue des films
+    description: Profil destiné aux personnes en charge du catalogue des films
+    perm: r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
+    price: 0
+    subscription: email
+
+  - id: admin
+    title: Administrateur
+    level: 5
+    description: Profil destiné aux administrateurs
+    perm:
+        r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo
+        w_linkedin write_email r_address r_lastname
+        publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
+    price: 0
+    subscription: secure
+
+  - id: statistique
+    title: Statisticien
+    level: 0
+    presentation: vous avez besoin de données anonymisées pour produire des analyses statistiques sur les élèves de l'école
+    description: profil destiné aux organisme en charge de statistique
+    perm: r_cp r_firstname r_works stats r_promo r_department share
+    price: 0
+    subscription: email
+
+  - id: school
+    title: Personnel de l'école
+    level: 1
+    presentation: Vous faites partie de la FEMIS
+    description: profil destiné aux organisme en charge de statistique
+    perm:
+      stats r_cp r_firstname r_promo r_lastname r_works ask_friend add_movies publish validate
+      r_photo r_linkedin w_firstname w_linkedin edit_profil
+      write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
+    price: 0
+    subscription: secure
+
+  - id: student
+    title: Eleve / ancien
+    level: 0
+    presentation: vous êtes un ancien élève et souhaitez retrouver des anciens de votre école
+    description: Profil destiné aux anciens élève
+    perm:
+      r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email
+      r_department advanced_search ask_friend ask_tutor publish
+    price: 0
+    subscription: email
+
+
+  - id: dev
+    title: Developpeur
+    level: 0
+    presentation: Vous souhaitez vous interfacer avec DataCulturePro via les API
+    description: Profil destiné aux anciens élève
+    perm: r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email r_department advanced_search dev
+    price: 0
+    subscription: hidden
+

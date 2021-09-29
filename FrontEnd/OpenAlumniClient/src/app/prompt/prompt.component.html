@@ -1,0 +1,39 @@
+<div class="app-prompt">
+  <h1 mat-dialog-title>{{data.title}}</h1>
+  <div mat-dialog-content>
+    <p *ngIf="data.question?.length>0 && !data.question?.startsWith('http') && !data.question?.startsWith('./')">{{data.question}}</p>
+    <div *ngIf="data.question?.length>0 && (data.question?.startsWith('http') || data.question?.startsWith('./'))">
+      <iframe  scrolling="auto" frameborder="0" style="background: none;"
+               [src]="data.question | safe" width="100%">
+      </iframe>
+    </div>
+
+    <mat-form-field *ngIf="!data.onlyConfirm && !data.options" style="width: 95%;">
+      <input id="txtPrompt" [type]="_type" [max]="_max" [min]="_min" matInput [(ngModel)]="data.result" cdkFocusInitial (keypress)="onEnter($event)">
+      <mat-icon *ngIf="data.emojis" matSuffix (click)="showEmoji=!showEmoji">emoji_emotions</mat-icon>
+    </mat-form-field>
+
+
+  </div>
+
+  <div *ngIf="data.options?.length>0" style="width:100%;text-align: center;">
+    <div *ngFor="let option of data.options" style="margin:5px;">
+      <button
+            class="app-button"
+            [ngStyle]="{width:option.width,verticalAlign:'middle'}"
+            [title]="option.title"
+            (click)="select_option(option.value)"
+            [innerHTML]="option.label"
+            mat-button mat-raised-button>
+      </button>
+    </div>
+    <hr>
+  </div>
+
+  <div mat-dialog-actions style="text-align: right;">
+    <button class="app-button" id="cmdNo" *ngIf="data.lbl_cancel" mat-button mat-raised-button [mat-dialog-close]="null">{{data.lbl_cancel}}</button>
+    <button class="app-button" id="cmdYes" *ngIf="data.lbl_ok" mat-button mat-raised-button [mat-dialog-close]="data.result">{{data.lbl_ok}}</button>
+    <button class="app-button" id="cmdSup" *ngIf="data.lbl_sup" mat-button mat-raised-button [mat-dialog-close]="'lbl_sup'">{{data.lbl_sup}}</button>
+  </div>
+
+</div>

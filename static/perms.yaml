@@ -1,0 +1,94 @@
+#Description des permissions particulieres
+version: 1.0
+perms:
+  - tag: share
+    description: au partage du profil
+
+  - tag: works
+    description: aux réalisations
+
+  - tag: admin
+    description: à la console d'administration
+
+  - tag: firstname
+    description: au prénom
+
+  - tag: edit_profil
+    description: l'édition de l'ensemble des profils
+
+  - tag: nft_write
+    description: la création du diplôme sous forme de NFT dans la blockchain
+
+  - tag: delete_pow
+    description: la suppression des oeuvres
+
+  - tag: ask_friend
+    description: à la demande d'ami
+
+  - tag: ask_tutor
+    description: à la demande de tutorat
+
+  - tag: publish
+    description: rédiger / publiez des annonces, articles, job
+
+  - tag: validate
+    description: gérer les annonces, articles
+
+  - tag: delete_profil
+    description: la suppression d'un profil
+
+  - tag: lastname
+    description: au nom
+
+  - tag: write_email
+    description: à l'écriture de messages textuels
+
+  - tag: blog
+    description: au blog
+
+  - tag: promo
+    description: à l'année de sortie de l'école
+
+  - tag: annonce
+    description: aux annonces
+
+  - tag: advanced_search
+    description: à la recherche avancée
+
+  - tag: r_photo
+    description: à voir la photo du profil
+
+  - tag: r_cp
+    description: à voir le code postal de l'adresse
+
+  - tag: mobile
+    description: au numéro de mobile du candidat
+
+  - tag: linkedin
+    description: au profil linkedin
+
+  - tag: add_movies
+    description: à l'ajout de nouvelles productions
+
+  - tag: dev
+    description: à la documentation des API et l'obtention d'une clé developpeur
+
+  - tag: stats
+    description: à la consultation des statistiques de l'école
+
+  - tag: r_department
+    description: à la formation du profil
+
+  - tag: admin
+    description: à la console d'administration
+
+  - tag: publish
+    description: à la publication d'article
+
+  - tag: r_address
+    description: à l'adresse postale du profil
+
+
+
+
+

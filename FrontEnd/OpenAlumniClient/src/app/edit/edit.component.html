@@ -1,0 +1,475 @@
+<div class="mainform" style="text-align: center;">
+  <h3>{{profil?.firstname}} {{profil?.lastname}}</h3>
+
+  <div *ngIf="showAddWork==0 && profil" style="display: inline-block;max-width: 800px;width: 90%">
+    <mat-accordion style="display: inline-block;width:98%;">
+      <!--      Civilité -->
+      <mat-expansion-panel class="app-panel" id="pnlAdmin">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Civilité
+          </mat-panel-title>
+
+        </mat-expansion-panel-header>
+
+        <img [src]="profil.photo"
+             mat-card-avatar
+             class="image-photo"
+             style="width:100px;height: 100px;margin:15px;"
+             (click)="change_photo()">
+        <br>
+
+        <mat-form-field appearance="fill" class="app-field" style="max-width: 150px;">
+          <mat-label>Prénom</mat-label>
+          <input matInput type="text" max="50" [(ngModel)]="profil.firstname">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="app-field" style="max-width: 150px;">
+          <mat-label>Nom</mat-label>
+          <input matInput type="text" max="50" [(ngModel)]="profil.lastname">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="fill" class="app-field">
+          <mat-label>Mobile</mat-label>
+          <input matInput type="text" max="50" [(ngModel)]="profil.mobile">
+        </mat-form-field>
+
+        <br>
+        <br>
+
+        <mat-form-field appearance="fill" class="app-field">
+          <mat-label>Adresse</mat-label>
+          <input matInput type="text"  [(ngModel)]="profil.address">
+        </mat-form-field>
+        <br>
+
+        <mat-form-field appearance="fill" class="app-field" style="max-width: 80px">
+          <mat-label>Code postal</mat-label>
+          <input matInput type="text" max="5" [(ngModel)]="profil.cp">
+        </mat-form-field>
+        &nbsp;
+        <mat-form-field appearance="fill" class="app-field" style="max-width: 220px">
+          <mat-label>Ville</mat-label>
+          <input matInput type="text" [(ngModel)]="profil.town">
+        </mat-form-field>
+
+
+        <mat-action-row>
+          <button color="primary" class="icon-button" mat-button mat-icon-button mat-raised-button (click)="quit()">
+            <mat-icon>save</mat-icon>
+          </button>
+        </mat-action-row>
+
+      </mat-expansion-panel>
+
+      <!--      Réseau sociaux -->
+      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlSocial">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Réseaux sociaux
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <table style="width: 100%;vertical-align: text-top;">
+          <tr *ngFor="let social of socials">
+            <td style="width:60%">
+              <mat-form-field appearance="fill" class="app-field">
+                <mat-label>{{social.name}}</mat-label>
+                <input matInput type="text"
+                       [placeholder]="social.input"
+                       max="50" [(ngModel)]="profil[social.name]"
+                       (focusout)="check_format(social)"
+                       (keypress)="mustSave=true">
+                <mat-hint>Visible de {{social.profils}}</mat-hint>
+
+              </mat-form-field><br>
+            </td>
+            <td style="font-size: small;vertical-align: text-top;text-align: center;line-height: 90%;">
+              <br>
+              {{social.message}}
+            </td>
+          </tr>
+        </table>
+
+
+
+        <mat-action-row>
+          <button color="primary" class="icon-button"
+                  [disabled]="!mustSave"
+                  mat-button mat-icon-button mat-raised-button (click)="quit(true)">
+            <mat-icon>save</mat-icon>
+          </button>
+        </mat-action-row>
+
+      </mat-expansion-panel>
+
+
+      <!--      Mentorat-->
+      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlTutorat">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Tutorat
+          </mat-panel-title>
+
+        </mat-expansion-panel-header>
+
+        <table *ngIf="profil.sponsorBy"><tr style="width: 100%;">
+          <td style="width: 100%;">Mon Tuteur:<br>
+            <strong><small>{{profil.sponsorBy.fullname}}</small></strong>
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Voir le profil de son tuteur"
+                    (click)="open_profil(profil.sponsorBy)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Contacter votre tuteur"
+                    (click)="contact_profil(profil.sponsorBy)">
+              <mat-icon>email</mat-icon>
+            </button>
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Ne plus avoir comme tuteur"
+                    (click)="remove_tuteur()">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </tr></table>
+
+        <br>
+
+        <mat-checkbox
+          (change)="save_profil(null,$event,'acceptSponsor');"
+          [checked]="profil.acceptSponsor">
+          Accepte d'être tuteur
+        </mat-checkbox>
+        &nbsp;
+         <button class="app-button" mat-button
+                 *ngIf="students.length>0"
+                    mat-raised-button
+                    title="Ecrire à tous"
+                    (click)="write_all()">
+              Ecrire à tous
+            </button>
+
+         <div *ngIf="students.length>0" style="margin-top: 10px;">
+           <strong>Mes tutorés</strong>
+          <table>
+            <tr *ngFor="let st of students" style="width: 100%;">
+          <td style="width: 100%;">
+            {{st.lastname}}
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Voir le profil"
+                    (click)="open_profil(st.id)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Le/la contacter"
+                    (click)="contact_profil(st.id)">
+              <mat-icon>email</mat-icon>
+            </button>
+          </td>
+          <td style="width: 30px;text-align: right;">
+            <button class="icon-button" mat-icon-button
+                    mat-raised-button
+                    title="Ne plus avoir comme tuteur"
+                    (click)="remove_student(st.id)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </tr></table>
+         </div>
+
+
+
+
+
+
+
+      </mat-expansion-panel>
+
+      <!--      Job-->
+      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlJob">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Jobs
+          </mat-panel-title>
+
+        </mat-expansion-panel-header>
+
+        <mat-form-field appearance="fill" class="app-field" style="width: 70%;max-width: 250px;">
+          <mat-label>Critère de recherche</mat-label>
+          <input matInput type="text" max="50" [(ngModel)]="query">
+        </mat-form-field>
+
+<!--        <button class="icon-button" mat-icon-button-->
+<!--                mat-raised-button-->
+<!--                title="Ouvrir tous les sites simultanément"-->
+<!--                (click)="open_all_site('search')">-->
+<!--          <mat-icon>search</mat-icon>-->
+<!--        </button>-->
+        <br>
+
+
+        <table style="width:100%;">
+          <tr style="width:100%;font-size: small;padding-bottom: 3px;" *ngFor="let site of jobsites">
+            <td>
+              <strong>{{site.name}}</strong><br>
+              <div style="line-height: 90%;font-size: small;">{{site.description}}</div>
+            </td>
+            <td style="width:90px">
+              <button class="icon-button" title="Rechercher" mat-icon-button mat-raised-button (click)="opensite(site,'search')">
+                <mat-icon>search</mat-icon>
+              </button>
+              &nbsp;
+              <button class="icon-button" title="Se connecter" mat-icon-button mat-raised-button (click)="opensite(site,'login')">
+                <mat-icon>person</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+
+
+      </mat-expansion-panel>
+
+      <!--      Expérience -->
+      <mat-expansion-panel class="app-panel" [expanded]="true" id="pnlExperience">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Vos expériences
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <table style="width: 100%;font-size: small;">
+          <tr *ngFor="let work of works" style="width:100%;text-align: left;">
+            <td>-</td>
+            <td style="line-height: 100%;width: fit-content;">
+              {{work.job}} sur
+              <a [title]="work.source" href="./pows?filter={{work.pow?.title}}">"{{work.pow?.title}}"</a>
+              <br>
+              <div *ngIf="work.dtEnd">
+                en {{work.dtEnd | date:'yyyy'}}
+                <br>
+              </div>
+
+            </td>
+            <td style="text-align: right;width:70px;" name="experience_panel">
+
+              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                        name="cmdEdit"
+                        (click)="edit_work(work)" *ngIf="work.state!='E'">
+                edit
+              </mat-icon>
+
+              <mat-icon *ngIf="work.public"
+                        name="cmdVisibilityOn"
+                        title="Cette expérience est visible de tous (public)"
+                        style="cursor: pointer;font-size: medium;display: inline;" (click)="_private(work)">
+                visibility
+              </mat-icon>
+
+              <mat-icon *ngIf="!work.public" style="cursor: pointer;font-size: medium"
+                        name="cmdVisibilityOff"
+                        title="Cette expérience est privée (seule vous pouvez la connaitre)"
+                        (click)="_private(work)">
+                visibility_off
+              </mat-icon>
+
+              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                        name="cmdDeleteExperience"
+                        (click)="del_work(work)">
+                cancel
+              </mat-icon>
+
+            </td>
+
+          </tr>
+        </table>
+
+        <mat-action-row id="pnlActionExperience">
+          <button class="app-button" mat-button mat-raised-button
+                  id="cmdClear"
+                  *ngIf="works?.length>0"
+                  (click)="reset_works()">
+            <div class="bloc-bouton">Effacer les<br>expériences</div>
+          </button>
+
+          <button class="app-button" mat-button mat-raised-button
+                  title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
+                  id="cmdAnalyse"
+                  (click)="analyse()">
+            <div class="bloc-bouton">Recherche<br>automatique</div>
+          </button>
+
+          <button class="app-button" mat-button mat-raised-button
+                  color="primary"
+                  id="cmdAdd"
+                  (click)="add_pow()">
+            <div class="bloc-bouton">Ajouter une<br>expérience</div>
+          </button>
+        </mat-action-row>
+
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <br><br>
+    <p style="font-size: small">
+      Dernière mise a jour le {{profil.dtLastUpdate | date:"dd/MM/yy"}}
+    </p>
+  </div>
+
+
+  <!--  -->
+  <!--  <div *ngIf="showAddWork==1" style="text-align: left;">-->
+  <!--    <hr>-->
+  <!--    <h3>Sélectionner le film à ajouter</h3>-->
+  <!--    <div  style="width: 92%;margin-left: 4%;">-->
+  <!--      <mat-form-field>-->
+  <!--        <mat-label>Filter</mat-label>-->
+  <!--        <input matInput (keyup)="applyFilter($event)" -->
+  <!--               placeholder="titre" #input>-->
+  <!--      </mat-form-field>-->
+
+  <!--      <table mat-table-->
+  <!--             [dataSource]="dataSource"-->
+  <!--             class="mat-elevation-z2"-->
+  <!--             style="width: 100%;text-align: left;">-->
+
+  <!--        &lt;!&ndash; Position Column &ndash;&gt;-->
+  <!--        <ng-container matColumnDef="title">-->
+  <!--          <th mat-header-cell *matHeaderCellDef>Titre</th>-->
+  <!--          <td mat-cell *matCellDef="let element"> {{element?.title}} </td>-->
+  <!--        </ng-container>-->
+
+  <!--        <ng-container matColumnDef="dtStart">-->
+  <!--          <th mat-header-cell *matHeaderCellDef>Réalisé le</th>-->
+  <!--          <td mat-cell *matCellDef="let element"> {{element?.dtStart | date:"YYYY"}} </td>-->
+  <!--        </ng-container>-->
+
+  <!--        <ng-container matColumnDef="sel">-->
+  <!--          <th mat-header-cell *matHeaderCellDef>Sélectionner</th>-->
+  <!--          <td mat-cell *matCellDef="let element">-->
+  <!--            <button class="icon-button"-->
+  <!--                    mat-button mat-raised-button mat-icon-button-->
+  <!--                    (click)="select(element)">-->
+  <!--              <mat-icon>checkmark</mat-icon>-->
+  <!--            </button>-->
+  <!--          </td>-->
+  <!--        </ng-container>-->
+
+  <!--        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+  <!--        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
+
+  <!--        &lt;!&ndash; Row shown when there is no matching data. &ndash;&gt;-->
+  <!--        <tr class="mat-row" *matNoDataRow>-->
+  <!--          <td class="mat-cell" colspan="4">Aucune donnée ne répond au filtre "{{input.value}}"</td>-->
+  <!--        </tr>-->
+  <!--      </table>-->
+
+  <!--      <br>-->
+  <!--      <button class="app-button" mat-button mat-raised-button-->
+  <!--              (click)="add_pow()">-->
+  <!--        Nouveau film-->
+  <!--      </button>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+  <div *ngIf="showAddWork==2" style="width:100%;text-align: center;">
+    <h3>Ajouter le Projet "{{add_work.movie}}"</h3>
+    <br>
+    <br>
+
+    <mat-form-field class="app-field" style="font-size: large;">
+      <mat-label>Poste occupé</mat-label>
+      <mat-select  [(ngModel)]="job">
+        <mat-option *ngFor="let job of config.jobs" [value]="job.value">{{job.label}}</mat-option>
+      </mat-select>
+      <mat-hint style="font-size: x-small;">Sélectionner le poste que vous aviez sur le projet</mat-hint>
+    </mat-form-field>
+    <br>
+
+    <br>
+
+    <!--    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">-->
+    <!--      <mat-label>Du</mat-label>-->
+    <!--      <input matInput [matDatepicker]="picker" [(ngModel)]="dtStart">-->
+    <!--      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+    <!--      <mat-datepicker #picker></mat-datepicker>-->
+    <!--      <mat-hint>Premier jour de travail</mat-hint>-->
+    <!--    </mat-form-field>-->
+
+    <!--    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">-->
+    <!--      <mat-label>... Au</mat-label>-->
+    <!--      <input matInput [matDatepicker]="picker2" [(ngModel)]="dtEnd">-->
+    <!--      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>-->
+    <!--      <mat-datepicker #picker2></mat-datepicker>-->
+    <!--      <mat-hint>Dernier jour de travail</mat-hint>-->
+    <!--    </mat-form-field>-->
+
+
+    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">
+      <mat-label>Heures travaillées</mat-label>
+      <input matInput type="number" value="8" [(value)]="duration">
+      <span matSuffix>Hrs</span>
+      <mat-hint>Nombre d'heures de travail réalisé sur le projet <mat-icon>help</mat-icon></mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">
+      <mat-label>Revenu total</mat-label>
+      <input matInput type="number" value="" [(value)]="earning">
+      <span matSuffix>€</span>
+      <mat-hint>
+        Revenu brut pour toute la durée
+        <mat-icon title="Donnée anonymisée uniquement utilisée sous forme de moyenne pour les statistiques">help</mat-icon>
+      </mat-hint>
+    </mat-form-field>
+    <br><br><br>
+
+
+    <mat-form-field appearance="fill" class="app-field" style="width:100%;">
+      <mat-label>Commentaires</mat-label>
+      <input matInput max="200" type="text"
+             value="Décrire l'expérience" [(ngModel)]="comment">
+      <mat-hint>Détailler l'expérience, difficultés rencontrées, bénéfices</mat-hint>
+    </mat-form-field>
+
+    <br>
+    <hr>
+    <br>
+
+    <button class="app-button"
+            mat-button mat-raised-button
+            (click)="_location.back()">
+      Anuler
+    </button>
+
+
+    <button class="app-button" color="primary"
+            mat-button mat-raised-button
+            id="cmdAddExperience"
+            title="Ajouter ce projet à votre expérience"
+            (click)="save_newwork()">
+      <div class="bloc-bouton">Ajouter cette<br>expérience</div>
+    </button>
+
+  </div>
+
+  <br>
+  <app-hourglass [message]="message"></app-hourglass>
+
+</div>

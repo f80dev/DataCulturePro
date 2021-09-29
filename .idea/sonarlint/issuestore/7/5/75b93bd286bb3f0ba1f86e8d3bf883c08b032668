@@ -1,0 +1,14 @@
+
+?javascript:S1481Ê""Remove unused function 'addEvent'.(ø½í
+Vjavascript:S1854Ø"9Remove this useless assignment to variable "contentType".(û†ë
+Bjavascript:S2814›" 'fileReader' is already defined.(¼ì¯‚ûÿÿÿÿ
+Sjavascript:S930Á"7This function expects 2 arguments, but 3 were provided.(‚Ø¥ô
+Ojavascript:S1117Ú"2'dataView' is already declared in the upper scope.(±È·Á
+Mjavascript:S1117Ú"0'offset' is already declared in the upper scope.(±È·Á
+Ujavascript:S1854˜"9Remove this useless assignment to variable "segmentSize".(Œø—M
+Ejavascript:S1533÷"(Remove this use of "Number" constructor.(§·¬å
+Jjavascript:S1533€"(Remove this use of "Number" constructor.(ì€Ğÿÿÿÿÿ
+jjavascript:S1871¶"MThis branch's code block is the same as the block for the branch on line 690.(§Ÿ½Á
+Vjavascript:S1301¸"9"switch" statements should have at least 3 "case" clauses(¹ŠÒÓ
+yjavascript:S2703å"WAdd the "let", "const" or "var" keyword to this declaration of "n" to make it explicit.(ĞÓÛùÿÿÿÿ
+Kjavascript:S1736÷".Remove this code after the "return" statement.(›ûä·

@@ -1,0 +1,62 @@
+<div class="mainform" style="font-weight: lighter;">
+  <br>
+  <h2>Choisir un nouveau profil</h2>
+
+  <button mat-button mat-raised-button
+          class="app-button" id="cmdShowPerms"
+          (click)="showPerm=true">
+    <div class="bloc-bouton">Vos permissions<br>actuelles</div>
+  </button>
+  <br>
+
+  <div *ngIf="showPerm" style="width: 96%;margin:2%;">
+    <br>
+    Actuellement vous avez accès :
+    <br><small>{{detailPerm(config.user.perm)}}</small>
+    <br><br>
+  </div>
+
+  <app-tuto label="%appname% propose différents profils d'utilisateur pour s'adapter a vos besoins et ne présentez que les informations dont vous avez réelement besoin"></app-tuto>
+
+  <mat-accordion [multi]="false" style="text-align: center;display: inline-block;">
+    <mat-expansion-panel name="tabProfils" *ngFor="let profil of config.profils | filter:['email','online']" class="app-panel" style="margin:10px;">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="app-mat-panel-title">{{profil.title}}</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <p>{{profil.presentation}}</p>
+
+      <div *ngIf="this.perms" style="font-size: small;text-align: left;">
+        Ce profil vous donnes accès:<br>
+        <div [innerHTML]="detailPerm(profil.perm,'html')"></div>
+        <br>
+      </div>
+
+      <div *ngIf="profil.price>0">
+        <br><br>
+        Prix:{{profil.price}}€/mois
+      </div>
+
+
+      <mat-action-row>
+        <button mat-button mat-raised-button
+                name="cmdAskProfil"
+                class="app-button"
+                (click)="sel_profil(profil)">
+
+          <span *ngIf="profil.subscription=='online' || profil.subscription=='secure'">Souscrire</span>
+          <span *ngIf="profil.subscription=='email'">Demander</span>
+
+        </button>
+
+      </mat-action-row>
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+  <br><br>
+
+</div>
+
+
+

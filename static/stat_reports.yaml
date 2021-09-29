@@ -1,0 +1,99 @@
+Version: 1.0
+#Liste des champs disponibles
+#"profil_id", "profil_genre","profil_nom", "profil_prenom", "profil_formation", "profil_cursus","profil_promotion","profil_code_postal", "profil_ville",
+#        "film_id","film_titre", "film_catégorie", "film_genre","film_annee","film_budget","film_production",
+#        "work_id", "work_job","work_comment","work_validate","work_source","work_state"
+Reports:
+  - title: Répartition des étudiants par formation
+    url: https://datastudio.google.com/s/rcrmbRNDsq8
+    desc:
+
+  - title: Répartition des étudiants par zone géographique
+    url: building
+    desc: en chantier
+
+Instant_reports:
+
+  - title: Etudiants par departement/promotion (formation standard)
+    id: student_by_depyear
+    chart: bar
+    x: profil_promotion
+    y: etudiants
+    color: profil_formation
+    cols: profil_formation,profil_promotion,profil_id,profil_cursus
+    sql: SELECT profil_formation, profil_promotion,count(profil_id) as etudiants FROM df WHERE profil_cursus='S' GROUP BY profil_formation,profil_promotion
+
+
+  - title: Etudiants par departement / promotion formation pro
+    id: student_by_depyear
+    chart: bar
+    x: profil_promotion
+    y: etudiants
+    color: profil_formation
+    cols: profil_formation,profil_promotion,profil_id,profil_cursus
+    sql: SELECT profil_formation, profil_promotion,count(profil_id) as etudiants FROM df WHERE profil_cursus='P' GROUP BY profil_formation,profil_promotion
+
+
+  - title: Films par categorie par departement
+    id: student_by_category
+    chart: bar
+    x: film_catégorie
+    y: films
+    color: profil_formation
+    sql: SELECT profil_formation,film_catégorie,count(film_id) AS films FROM df WHERE profil_cursus='S' GROUP BY profil_formation,film_catégorie
+    cols: profil_formation,film_catégorie,film_id,profil_cursus
+
+
+  - title: Profils par ville de naissance
+    id: student_by_depyear
+    chart: pie
+    y: etudiants
+    x: profil_ville
+    color: profil_ville
+    sql: SELECT * FROM (SELECT profil_ville,count(profil_id) AS etudiants FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_ville) ORDER BY etudiants DESC LIMIT 20
+    cols: profil_ville,profil_promotion,profil_id,profil_cursus
+
+
+  - title: Répartition du genre par département depuis 2000
+    id: student_genre
+    chart: pie
+    x: profil_formation
+    y: etudiants
+    color: profil_genre
+    sql: SELECT profil_formation,profil_genre,count(profil_id) AS etudiants FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,profil_genre
+    cols: profil_formation,profil_genre,profil_id,profil_cursus,profil_promotion
+
+  - title: Type de réalisation par département
+    id: film_category_by_department
+    chart: pie
+    x: profil_formation
+    y: réalisations
+    color: film_catégorie
+    sql: SELECT profil_formation,film_catégorie,count(work_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,film_catégorie
+    cols: profil_formation,film_catégorie,work_id,profil_cursus,profil_promotion
+
+
+  - title: Nombre de production par promotion depuis 2000
+    id: student_prod_by_promo
+    chart: bar
+    x: profil_promotion
+    y: réalisations
+    color: film_catégorie
+    sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
+    cols: profil_promotion,film_catégorie,film_id,profil_cursus,profil_promotion
+
+
+  - title: Films par années et par département
+    id: film_by_year_dep
+    chart: bar
+    cols: film_annee,profil_formation,film_id
+    group_by: film_annee,profil_formation
+    row: profil_formation
+    filter: film_annee>2000
+    col: film_annee
+    color: profil_formation
+    val: film_id
+    fun: count
+
+
+

@@ -1,0 +1,63 @@
+<div class="mainform" style="padding:10px;">
+  <br>
+
+
+    <table style="text-align: left;">
+      <tr *ngIf="config.hasPerm('r_address r_cp') && profil?.address?.length>0">
+        <td>
+          <strong>Adresse postale:</strong>
+        </td>
+        <td>{{profil?.address}} {{profil?.cp}}</td>
+      </tr>
+      <tr *ngIf="config.hasPerm('r_mobile') && profil?.mobile?.length>4">
+        <td><strong>Mobile:</strong></td>
+        <td>{{profil?.mobile}}</td>
+      </tr>
+    </table>
+
+
+    <br>
+    <mat-form-field appearance="fill"
+                    *ngIf="config.hasPerm('write_email')"
+                    style="width:100%;">
+      <mat-label>Votre message pour {{profil?.firstname}}</mat-label>
+      <textarea matInput
+                [rows]="10"
+                [(ngModel)]="text">
+    </textarea>
+    </mat-form-field>
+
+    <div *ngIf="social_networks?.length>0" style="display: inline-block;">
+       <mat-form-field class="app-field" style="min-width: 200px;">
+        <mat-label>Joindre un lien réseau pour la réponse</mat-label>
+        <mat-select  [(ngModel)]="social_network">
+          <mat-option *ngFor="let sn of social_networks" [value]="sn.value">{{sn.label}}</mat-option>
+        </mat-select>
+        <mat-hint style="font-size: x-small;">Le lien sera ajouté a votre message</mat-hint>
+      </mat-form-field>
+    </div>
+    &nbsp; &nbsp; &nbsp;
+    <mat-checkbox [(ngModel)]="send_copy">Recevoir une copie</mat-checkbox>
+
+    <div>
+      <button mat-button mat-raised-button
+              class="app-button"
+              [disabled]="!text || text?.length==0"
+              *ngIf="config.hasPerm('write_email')"
+              (click)="send()">
+        Envoyer
+      </button>
+
+      <button mat-button mat-raised-button
+              *ngFor="let button of buttons"
+              class="app-button"
+              (click)="open_social(button.url)">
+        {{button.caption}}
+      </button>
+
+
+
+    </div>
+
+
+</div>

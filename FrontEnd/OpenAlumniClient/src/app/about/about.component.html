@@ -1,0 +1,69 @@
+<div class="mainform" *ngIf="config.values">
+
+  <br>
+  <h2>{{config.values.appname}}</h2>
+  <div style="width: 100%;text-align: center;font-size: small;margin-top:5px;">
+    <div *ngIf="config.values.logo?.length>0">
+      <img
+        [src]="config.values.logo"
+        [ngStyle]="{'width':200,'margin':'15px'}">
+      <br>
+    </div>
+    <small>Version:</small>
+    <br>{{appVersion}}<br><br><br>
+    <table style="display: inline-block;">
+      <tr>
+        <td style="width: 50%;text-align: right;">Réalisation</td>
+        <td style="width: 50%;text-align: left;">
+          <a style="color:lightgray;font-variant: normal;font-weight: normal;" [href]="config.values.editor?.link_author" target="_blank">
+            {{config.values.editor?.author}}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50%;text-align: right;">Edition</td>
+        <td style="width: 50%;text-align: left;">
+          <a style="color:lightgray;font-variant: normal;font-style: normal;font-weight: normal;" [href]="config.values.editor?.website" target="_blank">
+            <strong>{{config.values.editor?.name}}</strong>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 50%;text-align: right;">Conditions générales</td>
+        <td style="width: 50%;text-align: left;">
+          <a style="color:lightgray;font-variant: normal;font-style: normal;font-weight: normal;" title="Conditions d'utilisation" mat-list-item routerLink="cgu" id="cmdCGU">
+            CGU
+          </a>
+        </td>
+      </tr>
+      <tr><td><br></td></tr>
+
+    </table>
+    <br><br>
+    <div style="width: 100%;text-align: center;font-size: medium;">
+
+    <button class="icon-button" mat-icon-button mat-raised-button
+            (click)="openMail(config.values.support?.email)">
+        <mat-icon>mail</mat-icon>
+    </button>
+
+    &nbsp;
+    <button class="icon-button" mat-icon-button mat-raised-button
+            (click)="openFrame(config.values.support?.forum)">
+      <mat-icon class="big-icon">persons</mat-icon>
+    </button>
+    &nbsp;
+    <button class="icon-button"
+            mat-icon-button mat-raised-button
+            (click)="openFrame(config.values.support?.faq)">
+      <mat-icon >help</mat-icon>
+    </button>
+&nbsp;
+    <button class="icon-button" mat-icon-button mat-raised-button
+            (click)="openFrame(config.values.support?.website)"
+           >
+      <mat-icon >home</mat-icon>
+    </button>
+    </div>
+  </div>
+</div>

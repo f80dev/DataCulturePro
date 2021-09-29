@@ -1,0 +1,12 @@
+<table mat-table [dataSource]="data"
+       class="app-table"
+       matSort matSortActive="created"
+       matSortDisableClear matSortDirection="desc">
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>#</th>
+        <td mat-cell *matCellDef="let row">{{row.number}}</td>
+      </ng-container>
+
+</table>
+

@@ -1,0 +1,158 @@
+{
+  "configVersion": 1,
+  "timestamp": 1615405514950,
+  "index": "https://dcp.f80.fr/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "https://dcp.f80.fr/4.js",
+        "https://dcp.f80.fr/favicon.ico",
+        "https://dcp.f80.fr/index.html",
+        "https://dcp.f80.fr/main.js",
+        "https://dcp.f80.fr/manifest.webmanifest",
+        "https://dcp.f80.fr/polyfills.js",
+        "https://dcp.f80.fr/runtime.js",
+        "https://dcp.f80.fr/styles.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "https://dcp.f80.fr/assets/default_jobs.json",
+        "https://dcp.f80.fr/assets/icons/LinkedIn.png",
+        "https://dcp.f80.fr/assets/icons/icon-128x128.png",
+        "https://dcp.f80.fr/assets/icons/icon-144x144.png",
+        "https://dcp.f80.fr/assets/icons/icon-152x152.png",
+        "https://dcp.f80.fr/assets/icons/icon-192x192.png",
+        "https://dcp.f80.fr/assets/icons/icon-384x384.png",
+        "https://dcp.f80.fr/assets/icons/icon-512x512.png",
+        "https://dcp.f80.fr/assets/icons/icon-72x72.png",
+        "https://dcp.f80.fr/assets/icons/icon-96x96.png",
+        "https://dcp.f80.fr/assets/img/anciens.jpg",
+        "https://dcp.f80.fr/assets/img/anonymous.png",
+        "https://dcp.f80.fr/assets/img/boy.png",
+        "https://dcp.f80.fr/assets/img/cercle_blanc.png",
+        "https://dcp.f80.fr/assets/img/charts.jpeg",
+        "https://dcp.f80.fr/assets/img/girl.png",
+        "https://dcp.f80.fr/assets/img/hammer_1f528.png",
+        "https://dcp.f80.fr/assets/img/lafemis.jpg",
+        "https://dcp.f80.fr/assets/img/movie.png",
+        "https://dcp.f80.fr/assets/img/movies.jpeg",
+        "https://dcp.f80.fr/assets/img/tips.png",
+        "https://dcp.f80.fr/assets/jobs.json",
+        "https://dcp.f80.fr/assets/jobs_old.json",
+        "https://dcp.f80.fr/assets/reporting.pbix",
+        "https://dcp.f80.fr/assets/reporting.xlsx"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "static",
+      "patterns": [
+        "\\/assets\\/i18n\\/.*"
+      ],
+      "strategy": "performance",
+      "maxSize": 500,
+      "maxAge": 259200000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    },
+    {
+      "name": "api-perf",
+      "patterns": [
+        "\\/api\\/profilsdoc\\/.*"
+      ],
+      "strategy": "performance",
+      "maxSize": 5000,
+      "maxAge": 3600000,
+      "timeoutMs": 50000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    },
+    {
+      "name": "api-freshness",
+      "patterns": [
+        "\\/api-token-auth\\/"
+      ],
+      "strategy": "freshness",
+      "maxSize": 100,
+      "maxAge": 259200000,
+      "timeoutMs": 10000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "https://dcp.f80.fr/4.js": "d193ebdb11607479c9d2ba878c3d30b94597a83c",
+    "https://dcp.f80.fr/assets/default_jobs.json": "2c564458c2e15d101fadf154cbb3171407ed39c2",
+    "https://dcp.f80.fr/assets/icons/LinkedIn.png": "dec770e0a226b15021d0b80154aa18841097a46e",
+    "https://dcp.f80.fr/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "https://dcp.f80.fr/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "https://dcp.f80.fr/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "https://dcp.f80.fr/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "https://dcp.f80.fr/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "https://dcp.f80.fr/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "https://dcp.f80.fr/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "https://dcp.f80.fr/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "https://dcp.f80.fr/assets/img/anciens.jpg": "fd10c1fa0c85a0800a0f040ce57baeadaf0d551e",
+    "https://dcp.f80.fr/assets/img/anonymous.png": "c015f4d0bf7c81184706a840cfabef65c3f4e0c4",
+    "https://dcp.f80.fr/assets/img/boy.png": "7f24ab96f20f7326adfaa5a7bcbd14ee2fcd547d",
+    "https://dcp.f80.fr/assets/img/cercle_blanc.png": "9a6303385a785ed3fe3071aa06e5c7f66f14e074",
+    "https://dcp.f80.fr/assets/img/charts.jpeg": "f005d708eba10115db8b242eab30950f880db6ce",
+    "https://dcp.f80.fr/assets/img/girl.png": "957852db07cb128b2a0907b53a329596481f9848",
+    "https://dcp.f80.fr/assets/img/hammer_1f528.png": "4df35a3abee020df341a816929f5d7b807ec8352",
+    "https://dcp.f80.fr/assets/img/lafemis.jpg": "0116e246057b5ffa42c637cf4016f6ad610474ab",
+    "https://dcp.f80.fr/assets/img/movie.png": "a09876c97c4f4abd0e31c455207818e7f758ba49",
+    "https://dcp.f80.fr/assets/img/movies.jpeg": "705d4c6567dd0455c51cc9318dabdd68a247aebd",
+    "https://dcp.f80.fr/assets/img/tips.png": "b7832ac8a831f94cd9b656f48bc0d75a5cd587ca",
+    "https://dcp.f80.fr/assets/jobs.json": "e6e9d50780d2f6381fddf00f26635b5c9d285bbe",
+    "https://dcp.f80.fr/assets/jobs_old.json": "e6e9d50780d2f6381fddf00f26635b5c9d285bbe",
+    "https://dcp.f80.fr/assets/reporting.pbix": "2b95ac35c6fee4fa408666be84d70943d4604ae8",
+    "https://dcp.f80.fr/assets/reporting.xlsx": "fc2a8295b08f3c940cf53fd7f2fe7cf06fed299d",
+    "https://dcp.f80.fr/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "https://dcp.f80.fr/index.html": "57e54a7ce8810f4d6ff623ae5c0db52fd6be12cf",
+    "https://dcp.f80.fr/main.js": "d02d16acac82c001c8eaff09e84054dad5b0baed",
+    "https://dcp.f80.fr/manifest.webmanifest": "826bdc7b88d3b15d1361d23d4eca5e4a9eddbcc3",
+    "https://dcp.f80.fr/polyfills.js": "b47435a9ef2a4829f2f9dfd35599bde3614981b1",
+    "https://dcp.f80.fr/runtime.js": "3a44ec68845eb7b4326544fba9d118c39ae8ca50",
+    "https://dcp.f80.fr/styles.css": "6f8e1c0729d5dbb982b544037e7265d429cc89cc"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}

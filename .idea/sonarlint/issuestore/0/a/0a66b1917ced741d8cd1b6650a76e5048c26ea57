@@ -1,0 +1,12 @@
+
+Ppython:S1481¦"+Remove the unused local variable "profils".(Œõ¤ıÿÿÿÿ8Ãºô”Ò.
+Ppython:S5806£"+Rename this variable; it shadows a builtin.(Áèìøÿÿÿÿ8Èƒá²Ò.
+Fpython:S1481æ"&Remove the unused local variable "rc".(Ï¹²8Èƒá²Ò.
+Lpython:S1481Ä",Remove the unused local variable "sections".(±ı«Š8Ãºô”Ò.
+Fpython:S1481³"&Remove the unused local variable "rc".(Ú­Œò8Èƒá²Ò.
+mpython:S1192“"HDefine a constant instead of duplicating this literal "base64," 3 times.(¬şÎ²ùÿÿÿÿ8Èƒá²Ò.
+Tpython:S1066Ê"/Merge this if statement with the enclosing one.(¼ˆ¤ÿÿÿÿÿ8Èƒá²Ò.
+Cpython:S125…"Remove this commented out code.(¾ÕÌƒüÿÿÿÿ8Ãºô”Ò.
+Cpython:S125"Remove this commented out code.(Õ½ñùÿÿÿÿ8Èƒá²Ò.
+Opython:S1481„"*Remove the unused local variable "profil".(åñ•…ıÿÿÿÿ8Èƒá²Ò.
+tpython:S3776Â"TRefactor this function to reduce its Cognitive Complexity from 25 to the 15 allowed.(àşë 8Èƒá²Ò.

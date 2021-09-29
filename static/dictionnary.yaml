@@ -1,0 +1,274 @@
+#La syntaxe du dictionnaire est A:B, signifiant qu'il remplace systématique A par B
+
+#Normalisation des categories
+categories:
+  documentary: documentaire
+  movie: film
+  short: court-métrage
+  tv: télévision
+  long: film
+  comedy: comédie
+  biography: biopic
+  drama: drame
+  sci-fi: science-fiction
+  history: historique
+  musical: comédie musicale
+  romance: comédie dramatique
+  war: guerre
+  mystery: thriller
+  family: comédie familliale
+  fantasy: héroïque fantaisie
+  writer: scénariste
+  serie: série
+  Fiction, expérimental: fiction
+  Expérimental, animation: expérimental
+  Crime: policier
+  Documentaire, fiction: documentaire
+  Expérimental, documentaire: documentaire
+
+
+#Normalisation des métiers
+jobs:
+  Camera_department: Caméra
+  Production_manager: Producteur
+  Music_department: Musique
+  Assistant_director: Assistant réalisateur
+  Script_department: Scénariste
+  Soundtrack: Compositeur
+  Sound department: Montage son
+  Scénario: Scénariste
+  Second unit director or assistant director: Assistant réalisateur
+  Editor: Montage
+  Monteur: Montage
+  Scénaristes: Scénariste
+  Director: Réalisation
+  Réalisateur: Réalisation
+  Réalisatrice: Réalisation
+  Writer: Scénariste
+  Monitor technician: Technicien
+  Set_decorator: Décors
+  Production_designer: Production
+  Head writer: Scénariste
+  Visual_effects: Effets spéciaux
+  Craft service: Effets spéciaux
+  Title designer: Designer
+  Titles design: Designer
+  Technical consultant: Consultant technique
+  Art_director: Directeur artistique
+  Art_department: Département artistique
+  Casting_department: Casting
+  Casting_director: Casting
+  Storyboardeur: Storyboard
+  production assistant: Assistant de production
+  second assistant director: Second assistant réalisateur
+  Composer: Compositeur
+  Auteur de la musique: Compositeur
+  Assistante à la réalisation: Assistant Réalisation
+  Assistant à la réalisation: Assistant Réalisation
+  Auteurs de la musique: Compositeur
+  Attaché de presse (film): Relations presse
+  Assistant réalisateur: Assistant réalisation
+  Directeur de production: Direction de production
+  Actress: Acteur(trice)
+  Attachée de presse (film): Relations presse
+  Producer: Production
+  Directeur de la photo: Direction Photo
+  Directrice de la photo: Direction Photo
+  Directeurs de la photo: Direction Photo
+  Cinematographer: Direction Photo
+  Ingénieur du son  monteur son  sound designer  mixeur: Montage son
+  Ingénieur du son monteur son mixeur: Montage son
+  Ingénieurs du son: Montage son
+  Monteur son: Montage son
+  Art department: Département artistique
+  Décorateur: Décorateur/trice
+  Décoratrice: Décorateur/trice
+  Décoratrices: Décorateur/trice
+  Additional crew: Equipe Supplémentaire
+  Scénariste: Scénariste
+  Mixeur monteur son: Mixeur
+  Attachées de presse (film): Relations presse
+  Attachés de presse (film): Relations presse
+  Chef opérateur du son et monteur son: Montage son
+  Directrice de production: Direction de production
+  Production designer: Production
+  Responsable de la post-production: Post-production
+  Monteur son - ingénieur du son: Ingénieur son
+  Producteurs délégués: Production déléguée
+  Assistants opérateurs: Assistant opérateur
+  Producteurs: Production
+  Producteurs exécutifs: Production
+  Producteur exécutif: Production
+  Monteur son et mixeur: Mixeur
+  Distributrice france: Distribution
+  Scriptes: Scripte
+  Production manager: Production
+  Producteur étranger: Production
+  Script and continuity department: Scripte
+  Agents (presse france): Relations presse
+  Chef monteuse: Montage
+  Assistante opérateur: Assistant(e) opérateur
+  Productrice déléguée: Production déléguée
+  Animation department: Département animation
+  Directeurs de production: Production
+  Monteuse: Montage
+  Art director: Décorateur(trice)
+  Décorateur / ensemblier: Décorateur(trice)
+  Chef operateur son monteur son: Chef(fe) op
+  Scénariste réalisateur: Réalsateur(trice) / Scénariste
+  Producteur associé: Production
+  Editorial department: Montage
+  Assistante monteuse: Assistant(e) montage
+  Actor: Acteur(trice)
+  Chef opérateur et réalisateur: Chef(fe) op
+  Directrices de la photo: Direction Photo
+  Monteuse son et assistante mixage: Montage
+  Chef opératrice: Chef(fe) op
+  Cadre: cadrage
+  Self: Acteur(trice)
+  Assistants son: Assistant son
+  Second sound assistant: Assistant son
+  Assistant monteur: Assistant montage
+  Directrices de production: Direction de production
+  Coproducteur: CoProduction
+  Camera and electrical department: Materiel
+  Premier assistant opv / directeur photo: Photo
+  Costume designer: Costumes
+  Location management: Materiel
+  Productrices: Production
+  Département animation: Animation
+  Directrice artistique: Direction artistique
+  Opératrice du son: Montage son
+  Photographes de plateau: Photo
+  Effets visuels: Effets spéciaux
+  Assistant de production: Production
+  Producteurs étrangers: Production
+  Pre-production sound: pré-prod Son
+  Sound_department: Montage son
+  Auteur de l'œuvre originale: Auteur
+  Scénariste et réalisatrice: Auteur/Réalisateur
+  Assistante opératrice:
+  Régisseuse générale: Régisseur
+  Réalisateur chef-op auteur compositeur: Auteur/Réalisateur
+  Narration: Scénariste
+  Interprètes de la musique: Musique
+  Chef décoratrice: Décorateur/trice
+  Interprète de la musique: Musique
+  Intern: Diver
+  Segment team: Divers
+  Assistante décoratrice: Décorateur/trice
+  Auteur réalisateur: Auteur/Réalisateur
+  Post: Postprod
+  Assistant set manager: Diver
+  Adaptation: Scénariste
+  Productrice étrangère: Production
+  Visual consultant: Effets spéciaux
+  Participantes: Autre
+  Post-audio supervisor: Postprod
+  Assistant set manager - uncredited: Autre
+  Cast: Casting
+  Directed: Réalisation
+  Series directed: Réalisation
+  Music: Montage son
+  Casting by: Casting
+  Production management: Production
+  Writing credits: Scénariste
+  Series additional crew: Acteur(trice)
+  Series script and continuity department: Scénariste
+  Series art department: Décorateur/trice
+  Series produced: Production
+  Set decoration: Décorateur/trice
+  Series production management: Production
+  Visual effects: Effets spéciaux
+  Production design: Production
+  Assistants de production: Production
+  Series production desig: Production
+  Series sound department: Montage son
+  Series editorial department: Scénariste
+  Costume design: Costumes
+  Attachée de presse film: Relations presse
+  Idées originales: Scénariste
+  Coproductrices: Production
+  Productrices déléguées: Production
+  Production coordinator: Production
+  Production staff: Production
+  Screenplay assistant: Montage
+  Costume_designer: Costumes
+  Assistant to jean labadie: Autres
+  Lui-même: Acteur(trice)
+  Series second unit director or assistant director: Assistant réalisation
+  Directrice/responsable des ventes: Production
+  Series cinematography: Photographie
+  Dialogue coach: Scripte
+  Head of legal and business affairs: Production
+  Compositeur réalisateur: Réalisateur
+  Dialoguistes: Scripte
+  Dialoguiste: Scripte
+  Monteuse-  réalisatrice: Montage
+  Production secretary: france
+  Series writing credits: Scénariste
+  Film editing: Montage
+  Cinematography: Direction photo
+  Assistant montage: Assitant(e) montage
+  Produced: Production
+  Series       cast: Casting
+  Series production design: Production
+  Autre: Autres
+  Assistanat réalisation: Assistant réalisation
+  Postprod: Post-production
+  Art direction: Direction artistique
+  Series art direction: Direction artistique
+  Series camera and electrical department: Materiel
+  Acteurtrice: Acteur(trice)
+  Story consultant: Scénariste
+  Responsables de la post-production: Post-production
+  Productrices associées: Production
+  Office production assistant: Autres
+  France: Autres
+  Cheffe op: Chef(fe) op
+  Photographe: Photographie
+  Series casting department: Casting
+  Legal counsel: Droits
+  Series casting by: Casting
+  Series film editing:
+  Series thanks: Autres
+  Translation assistant: Scripte
+  Ingénieures du son: Ingé son
+  Assistant to producer: Assistant de production
+  Thanks: Autres
+  Casting department: Casting
+  Editorial_department: Scénariste
+  Caméra: Caméra
+  Location_management: Décors
+  Writing credits in alphabetical order: Autres
+  Assitant(e) montage: Assistant montage
+  Photographie: Photo
+  Décors: Décorateur/trice
+  Direction artistique: Directeur artistique
+  Assistante montage: Assistant montage
+  Assistantes à la réalisation: Assistant réalisation
+  Réalisatrice et cadreuse: Réalisation
+  Assistantse monteuses: Assistant montage
+  Auteure/réalisatrice/ scripte: Réalisation
+  Productrices exécutives: Production
+  Assistants monteurs: Assistant montage
+  Auteur/réalisateur: Réalisation
+  Producteurs associés: Producteur associé
+  Secrétaire de production: Production
+  Series cast: Casting
+  Ingénieure du son: Ingé son
+  Ingénieur du son: Ingé son
+  Monteur son / chef opérateur son auditorium: Ingé son
+  Réalisateur scénariste et directeur de la photographie: Réalisation
+  Superviseur sonore: Ingé son
+  Réalisateur scénariste enseignant en cinéma: Réalisation
+  Assistantes opérateur: Assistant op
+  Assistante son: Assistant son
+  Monteuse / assistante monteuse: Montage
+  Chef opérateur: Chef(fe) op
+  Colorisation: Image
+  Scénariste réalisateur producteur: Réalisation
+  Chef monteur son et chef opérateur du son: Montage son
+  Chefs électriciens: Chef électricien
+
+

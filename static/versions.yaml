@@ -1,0 +1,6 @@
+title: Notes de version
+description: Description des évolutions des différentes version
+versions:
+  - version: 0.0.72
+    modifications:
+      ajout d'un score d'obscolescence des profils pour gérer les relances

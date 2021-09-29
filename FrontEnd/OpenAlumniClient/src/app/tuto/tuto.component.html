@@ -1,0 +1,72 @@
+<div *ngIf="_if && text?.length>0" (click)="hideTuto(true)" style="margin:0;z-index: 100000;" id="zone_tuto">
+  <div *ngIf="_type=='tips'" style="max-width:800px;text-align:left;display:inline-block;margin-top:6px;margin-bottom:8px;">
+    <table>
+      <tr>
+        <td>
+          <img *ngIf="image?.length>0"
+               [src]="image"
+               style="width:30px;height:30px;padding:3px;">
+
+          <span *ngIf="icon?.length>0">
+            <mat-icon style="margin:10px;">{{icon}}</mat-icon>
+          </span>
+
+          <span *ngIf="_button?.length>0">
+            <button class="icon-button"
+                    mat-button mat-flat-button
+                    mat-icon-button
+                    (click)="onclick.emit()">
+              <mat-icon style="margin:10px;">{{_button}}</mat-icon>
+            </button>
+          </span>
+        </td>
+        <td>
+          <span [ngStyle]="{'color':color,'font-size':'small','font-weight':'normal'}">
+            {{text}}
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="_type=='title'" [ngStyle]="{
+    display:'block',
+    opacity: 1,
+    color:color,
+    'background-color':bkColor,
+    position: 'fixed',
+    top:'0px',left:'0px',
+    width:'100vw',height:'100vh',
+    'z-index':1000}">
+
+      <img [src]="background" *ngIf="background?.length>0 && (background?.startsWith('http') || background?.startsWith('./'))"
+           style="width: 100vw;height:100vh;object-fit:cover;">
+
+
+      <div style="z-index:10000;display:block;position:fixed;top:0;left:0;width:100vw;height:100vh;text-align:center;">
+
+        <div style="width:80%;text-align:center;font-size: 2em;margin-top:5vh;margin-bottom:5vh;margin-left:10%;"
+             [innerHTML]="text">
+        </div>
+
+        <img *ngIf="image?.length>0"
+             [src]="image"
+             style="max-width:300px;max-height:300px;width:40vmin;height:40vmin;margin-bottom:2vh;display: inline-block;">
+
+        <div *ngIf="image?.length==0" style="height:10vh"></div>
+
+        <div [ngStyle]='{width:"90%","margin-left":"5%","margin-top":"4vh","text-align":text_align,"font-size": "large","margin-bottom": "5vh"}'
+             [innerHTML]="subtitle"></div>
+
+        <button class="app-button"
+                (click)="onclick.emit()"
+                mat-button mat-raised-button id="btnStart">
+          {{labelButton}}
+        </button>
+
+      </div>
+
+  </div>
+
+</div>
+

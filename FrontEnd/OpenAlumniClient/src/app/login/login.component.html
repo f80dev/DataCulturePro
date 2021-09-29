@@ -1,0 +1,118 @@
+<div class="mainform" style="text-align: center;">
+  <br>
+  <span *ngIf="message && messageCode.length==0">
+    {{message}}
+    <app-faq-link faq="authent"></app-faq-link>
+  </span>
+
+  <br><br>
+  <app-hourglass maxwidth="300px" [message]="wait_message" faq="authent"></app-hourglass>
+
+  <div *ngIf="config.user?.email?.length==0 && wait_message.length==0">
+    <div style="width: 100%;text-align: center;">
+      <div *ngIf="messageCode.length==0">
+        <button class="app-button login-button"
+                id="cmdGoogle"
+                mat-button mat-raised-button
+                (click)="socialSignIn('google')">
+          Google
+        </button>
+        <br><br>
+        <button class="app-button login-button"
+                mat-button mat-raised-button
+                id="cmdFacebook"
+                (click)="socialSignIn('facebook')">
+          Facebook
+        </button>
+        <br>
+      </div>
+      <br><br>
+      <button class="app-button login-button"
+              *ngIf="messageCode.length==0"
+              mat-button mat-raised-button
+              id="cmdEmail"
+              (click)="email_login()">
+        Email
+      </button>
+      <br>
+
+      <div *ngIf="messageCode.length>0">
+        <br>
+        {{messageCode}}<br>
+        <br><br>
+
+        <mat-form-field class="form-field-style" style="width: 150px !important;text-align: center;font-size: large;" >
+          <mat-label>Code d'accès</mat-label>
+          <input type="number"
+                 matInput
+                 autofocus
+                 id="txtCode"
+                 min="10000"
+                 max="999999"
+                 title="Saisissez votre code d'accès à 6 chiffres"
+                 placeholder="Votre code"
+                 [(ngModel)]="code"
+                 (change)="updateCode($event)">
+        </mat-form-field>
+
+        <br>
+        <app-tuto label="Le code à 6 chiffres vous a été envoyé sur votre adresse mail à votre première authentification. Si vous ne retrouvez pas le mail vous pouvez vous le faire renvoyer par KERBERUS"></app-tuto>
+
+        <br>
+        <button class="app-button login-button"
+                mat-button mat-raised-button
+                *ngIf="code>10000"
+                id="cmdValider"
+                (click)="updateCode(code)">
+          Valider
+        </button>
+        <br><br><br>
+        <div *ngIf="code.length<4">
+          <button class="app-button login-button"
+                  mat-button mat-raised-button
+                  id="cmdResend"
+                  (click)="resend_code()">
+            Renvoyer le code
+          </button>
+          &nbsp;
+          <button class="app-button login-button"
+                  mat-button mat-raised-button
+                  id="cmdReset"
+                  (click)="next()">
+            Rester anonyme
+          </button>
+        </div>
+
+        <br>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!--Zone d'acceuil-->
+  <div *ngIf="config.user?.email?.length>0">
+    <h1>Bonjour {{config.user?.pseudo}}</h1>
+    <br>
+    <img *ngIf="config.user?.photo?.length>0"
+         [src]="config.user?.photo" width="150px"
+         height="150px"
+         class="image-photo">
+    <br>
+
+    <button class="app-button"
+            id="cmdGoStore"
+            mat-button mat-raised-button
+            (click)="next()">
+      Continuer
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+

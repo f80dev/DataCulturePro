@@ -1,0 +1,20 @@
+<div *ngIf="message?.length>0" [ngStyle]="{maxwidth:maxwidth,display:'inline-block'}">
+  <table style="width:100%;">
+    <tr>
+      <td>
+        <mat-spinner [diameter]="diameter"></mat-spinner>
+      </td>
+      <td [ngStyle]="{'text-align': 'left','font-size':fontsize}">
+        {{message}}
+      </td>
+
+      <td *ngIf="canCancel" style="text-align: right;cursor: pointer;">
+        <mat-icon (click)="oncancel.emit()">cancel</mat-icon>
+      </td>
+      <td *ngIf="faq?.length>0" style="text-align: right;cursor: pointer;">
+        <app-faq-link [faq]="faq"></app-faq-link>
+      </td>
+    </tr>
+  </table>
+  <br>
+</div>

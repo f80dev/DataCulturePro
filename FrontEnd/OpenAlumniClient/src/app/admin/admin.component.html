@@ -1,0 +1,123 @@
+<div class="mainform" style="padding:5px">
+
+
+
+  <h2>Commandes disponibles</h2>
+
+
+
+
+  <mat-accordion [multi]="false" style="text-align: left;">
+
+
+    <mat-expansion-panel class="app-panel" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Général
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button mat-raised-button mat-button class="app-button" (click)="router.navigate(['search'])">Recherche</button>
+
+      <button mat-raised-button mat-button class="app-button" (click)="openQuery()">Extraction</button>
+      <button mat-raised-button mat-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
+      <button mat-raised-button mat-button class="app-button" (click)="initdb()">Initialisation</button>
+
+      <button mat-raised-button mat-button class="app-button" (click)="apply_dict()"
+              title="Uniformiser la terminologie en réappliquant le dictionnaire">Terminologie</button>
+
+
+
+      <hr>
+      <button mat-raised-button mat-button class="app-button" (click)="send_update()" color="secondary">Demande de mise a jour</button>
+
+
+    </mat-expansion-panel>
+
+
+
+
+    <mat-expansion-panel class="app-panel" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Gestion des profils
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button mat-raised-button mat-button class="app-button" (click)="export_profils('S')">Export FI</button>
+      <button mat-raised-button mat-button class="app-button" (click)="export_profils('P')">Export FPro</button>
+      <button mat-raised-button mat-button class="app-button" (click)="raz('profils')">Effacer les profils</button>
+      <button mat-raised-button mat-button
+              class="app-button" (click)="router.navigate(['import'])">Importation
+      </button>
+      <br>
+      <button mat-raised-button mat-button
+              class="app-button" (click)="profil_filter()">Traitement Qualite
+      </button>
+
+    </mat-expansion-panel>
+
+
+
+
+    <mat-expansion-panel class="app-panel" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          NFT
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button mat-raised-button mat-button class="app-button" (click)="init_nft()">Init NFT</button>
+    </mat-expansion-panel>
+
+
+
+
+
+
+
+
+    <mat-expansion-panel class="app-panel" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Gestion du catalogue de film
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-checkbox [value]="config.values.catalog.imdb">IMDB</mat-checkbox>&nbsp;&nbsp;
+      <mat-checkbox [value]="config.values.catalog.unifrance">UniFrance</mat-checkbox>&nbsp;&nbsp;
+      <mat-checkbox [value]="config.values.catalog.senscritique">Sens Critique</mat-checkbox>
+      <br><br>
+
+
+
+      <button mat-raised-button mat-button
+              class="app-button" (click)="batch()">Batch de traitement
+      </button>
+
+      <button mat-raised-button mat-button
+              class="app-button" (click)="batch_movies()">Batch Movies
+      </button>
+
+      <button mat-raised-button mat-button
+              title="Réindexation elasticsearch"
+              class="app-button" (click)="update_index()">Réindexer
+      </button>
+
+      &nbsp;
+
+      <button mat-raised-button mat-button class="app-button" (click)="raz('pows')">Effacer les Films</button>
+
+
+
+
+    </mat-expansion-panel>
+
+
+
+
+
+
+  </mat-accordion>
+
+
+  <app-hourglass [message]="message"></app-hourglass>
+  <br>
+</div>

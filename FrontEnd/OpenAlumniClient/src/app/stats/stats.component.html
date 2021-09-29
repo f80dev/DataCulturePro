@@ -1,0 +1,168 @@
+<app-tuto title="<br><br><br><br><br><strong>Les statistiques</strong>"
+          color="white"
+          image=""
+          subtitle="Analyser les parcours et personnaliser les nombreux rapports disponibles sur l'activité de l'école"
+          background="./assets/img/charts.jpeg">
+</app-tuto>
+
+<div class="mainform" style="height: 100%;">
+
+  <app-hourglass [message]="message"></app-hourglass>
+  <div *ngIf="sel_report=='building'">
+    <br>
+    Rapport en cours de construction
+  </div>
+
+  <mat-tab-group style="height: 85vh;text-align: center;"
+                 #tabGroup mat-align-tabs="start"
+                 *ngIf="message?.length==0">
+
+    <mat-tab label="Rapports pré-définis">
+
+      <br>
+      <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
+        <mat-label>Sélectionner un rapport</mat-label>
+        <mat-select [(value)]="sel_report" (selectionChange)="eval_stat()">
+          <mat-option *ngFor="let report of instant_reports" [value]="report">
+            {{report.title}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:60vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">
+        <app-hourglass message="En cours de calcul"></app-hourglass>
+      </iframe>
+
+      <div *ngIf="!sel_report.html_code">
+        <app-hourglass message="Graphique en cours d'élaboration" ></app-hourglass>
+      </div>
+
+       <div *ngIf="sel_report?.html_stat?.length>0" style="min-width:300px;display: inline-block;height: fit-content;margin:10px;">
+        <mat-expansion-panel class="app-panel" style="display: inline-block;"
+                           [expanded]="false" >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Données détaillées
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div style="width: 90%;height:300px;border:None" [innerHTML]="sel_report.html_stat | safe">
+        </div>
+      </mat-expansion-panel>
+      </div>
+
+
+    </mat-tab>
+
+    <mat-tab label="Exports">
+
+      <mat-form-field class="app-field" style="font-size: medium;max-width: 300px;" id="lstRapports">
+        <mat-label>Rapports statistiques disponibles</mat-label>
+        <mat-select [(ngModel)]="sel_report">
+          <mat-option *ngFor="let report of reports" [value]="report.url">{{report.title}}</mat-option>
+        </mat-select>
+        <mat-hint>Sélectionner le rapport que vous souhaitez consulter</mat-hint>
+      </mat-form-field>
+
+      <button mat-button mat-raised-button
+              class="app-button"
+              id="cmdOpenStat" color="primary"
+              *ngIf="sel_report?.length>0 && sel_report!='building'"
+              (click)="openStats()">
+        Ouvrir
+      </button>
+
+      <br>
+      <table class="mat-elevation-z8" *ngIf="!showGraphQL">
+        <tr>
+          <td>Données brutes</td>
+          <td style="text-align: left;">
+            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
+                    (click)="downloadReport('csv')">
+              <mat-icon>download</mat-icon>&nbsp;CSV
+            </button>
+            &nbsp;
+            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
+                    (click)="downloadReport('xml')">
+              <mat-icon>download</mat-icon>&nbsp;XML
+            </button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Modèle d'analyse</td>
+          <td style="text-align: left;">
+            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
+                    (click)="downloadReport('excel')">
+              <mat-icon>download</mat-icon>
+              Excel
+            </button>
+            &nbsp;
+            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
+                    (click)="downloadReport('powerbi')">
+              <mat-icon>download</mat-icon>
+              PowerBI
+            </button>
+          </td>
+        </tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
+
+  <br>
+  <br>
+
+
+  <div *ngIf="showGraphQL">
+    <app-tuto label="Grâce aux langages GraphQL vous pouvez interroger la base des anciens éleves"></app-tuto>
+
+    <textarea
+      [rows]="10"
+      style="margin:2%;width: 95%;background-color: lightgray;"
+      placeholder="Votre requête ici"  [(ngModel)]="query">
+    </textarea>
+  </div>
+
+
+
+</div>
+
+<div class="bottom-bar">
+  <hr>
+
+  <!--    <button mat-button mat-raised-button-->
+  <!--            *ngIf="config.query_cache?.length>0"-->
+  <!--            title="Exporter le résultat de votre dernière recherche"-->
+  <!--            class="app-button"-->
+  <!--            (click)="export_stats()">-->
+  <!--      Export-->
+  <!--    </button>-->
+
+  <button mat-button mat-raised-button
+          class="app-button"
+          id="cmdOpen"
+          (click)="open_stats()">
+    Ouvrir
+  </button>
+
+  <button mat-button mat-raised-button
+          class="app-button"
+          id="cmdRefresh"
+          (click)="refresh_stats()">
+    Refresh
+  </button>
+
+  <button mat-button mat-raised-button
+          class="app-button"
+          id="cmdOpenSocialGraph"
+          (click)="openSocialGraph()">
+    Graphe social
+  </button>
+
+  <button mat-button mat-raised-button
+          class="app-button"
+          (click)="showGraphQL=true">
+    GraphQL
+  </button>
+
+</div>

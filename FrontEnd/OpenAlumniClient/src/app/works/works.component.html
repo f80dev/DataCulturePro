@@ -1,0 +1,48 @@
+<div class="mainform">
+  <div class="h-zone">Expériences de {{name}}</div>
+  <app-hourglass [message]="message"></app-hourglass>
+
+  <div style="width:100%;text-align: center;" *ngIf="works?.length>6">
+    <div *ngIf="categories?.length>1" style="max-width: 250px;font-size: large;display: inline-block;">
+      <mat-form-field appearance="fill">
+        <mat-label>Catégorie</mat-label>
+        <mat-select  [(ngModel)]="cat_filter" placeholder="Catégorie" id="lstCategory">
+          <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    &nbsp;
+    <div style="max-width: 250px;font-size: large;display: inline-block;">
+      <mat-form-field appearance="fill">
+        <mat-label>Poste occupé</mat-label>
+        <mat-select [(ngModel)]="job_filter" placeholder="Job" id="lstJob">
+          <mat-option *ngFor="let job of jobs" [value]="job">{{job}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+
+<!-- Affichage de la liste -->
+  <div class="wrap-list" *ngIf="works?.length>0" style="align-items: stretch">
+    <div *ngFor="let wrk of works | filter:['filter',cat_filter] | filter:['job',job_filter]" style="max-width: 400px;margin:1%;">
+
+      <app-work [work]="wrk" height="120px" [showAction]="true">
+        <div style="display: flex;font-size: small;margin: 0px;">
+          <div *ngIf="wrk.pow?.visual?.length>0" style="flex: 15%">
+             <img [src]="wrk.pow?.visual"
+                   class="image-photo"
+                   style="height: 120px;margin-right:10px;padding: 0px;"
+              >
+          </div>
+          <div style="flex: 65%;height:80%;overflow: hidden;line-height: 95%;">
+            {{wrk.pow?.short_desc}}<br><br>
+            <span *ngIf="wrk.pow?.budget>0">Budget: {{wrk.pow?.budget}}</span>
+          </div>
+        </div>
+
+        <small>{{wrk.comment}}</small>
+      </app-work>
+    </div>
+  </div>
+</div>

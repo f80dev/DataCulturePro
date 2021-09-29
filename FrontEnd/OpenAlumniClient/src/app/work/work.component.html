@@ -1,0 +1,34 @@
+<mat-card [ngStyle]="{'backgroundColor':backgroundColor,'text-align':'left','min-width':'350px'}">
+  <mat-card-header>
+    <div mat-card-avatar>
+      <img src="/assets/img/movie.png" style="height:40px">
+    </div>
+    <mat-card-title>
+      {{work?.pow?.title}}
+      <span *ngIf="work?.pow?.year">({{work?.pow?.year}})</span>
+    </mat-card-title>
+    <mat-card-subtitle >
+        <small>{{work.job}}</small>
+    </mat-card-subtitle>
+
+  </mat-card-header>
+
+  <mat-card-content [ngStyle]="{margin: '0px',height:height}">
+
+    <ng-content></ng-content>
+
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="showAction"
+                    style="text-align: left;">
+
+    <button mat-button mat-icon-button
+            *ngIf="work?.pow?.links?.length>0 && work.pow.links[0].url.length>0"
+            (click)="openInfo(work.pow.links[0])"
+            [title]="work?.pow.links[0].text">
+      <mat-icon>info</mat-icon>
+    </button>
+
+  </mat-card-actions>
+</mat-card>
+

@@ -1,0 +1,42 @@
+<app-tuto   title="<br><br><br><br><br><strong>Data Culture Pro</strong>"
+            color="white"
+            image=""
+            subtitle="<strong>L'annuaire des anciens de la FEMIS</strong>"
+            background="./assets/img/anciens.jpg">
+</app-tuto>
+
+<mat-toolbar class="mat-elevation-z2 toolbar-app" (mousedown)="closeMenu()">
+  <mat-icon
+    id="cmdMenu"
+    (click)="drawer.toggle()"
+    style="cursor: pointer;">
+    menu
+  </mat-icon>
+
+  <span>
+    {{config.values?.appname}}
+    <div style="font-size: x-small;display: inline" routerLink="about">&nbsp;v{{appVersion}}</div>
+  </span>
+
+  <span class="fill-remaining-space"></span>
+
+  <mat-icon style="font-size: x-large;cursor: pointer;"
+            title="Revenir à l'écran précédent"
+            (click)="_location.back()">navigate_before</mat-icon>
+</mat-toolbar>
+
+
+<mat-drawer-container class="container" autosize>
+  <mat-drawer #drawer class="sidenav" [mode]="sidemenu_mode">
+    <app-loginbar (click)="closeMenu()" (logout)="logout()">
+    </app-loginbar>
+  </mat-drawer>
+
+  <mat-drawer-content style="overflow: scroll">
+    <div class="sidenav-content"
+         (mousedown)="closeMenu()">
+      <router-outlet style="width:100%;" *ngIf="message.length==0" ></router-outlet>
+    </div>
+  </mat-drawer-content>
+
+</mat-drawer-container>

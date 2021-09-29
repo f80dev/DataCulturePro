@@ -1,0 +1,11 @@
+/*
+ * Public API Surface of ngx-quill
+ */
+export * from './lib/quill.module';
+export * from './lib/quill.service';
+export * from './lib/quill-defaults';
+export * from './lib/quill-editor.component';
+export * from './lib/quill-view.component';
+export * from './lib/quill-view-html.component';
+export * from './lib/quill-editor.interfaces';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Byb2plY3RzL25neC1xdWlsbC9zcmMvcHVibGljLWFwaS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7R0FFRztBQUVILGNBQWMsb0JBQW9CLENBQUE7QUFDbEMsY0FBYyxxQkFBcUIsQ0FBQTtBQUNuQyxjQUFjLHNCQUFzQixDQUFBO0FBQ3BDLGNBQWMsOEJBQThCLENBQUE7QUFDNUMsY0FBYyw0QkFBNEIsQ0FBQTtBQUMxQyxjQUFjLGlDQUFpQyxDQUFBO0FBQy9DLGNBQWMsK0JBQStCLENBQUEiLCJzb3VyY2VzQ29udGVudCI6WyIvKlxuICogUHVibGljIEFQSSBTdXJmYWNlIG9mIG5neC1xdWlsbFxuICovXG5cbmV4cG9ydCAqIGZyb20gJy4vbGliL3F1aWxsLm1vZHVsZSdcbmV4cG9ydCAqIGZyb20gJy4vbGliL3F1aWxsLnNlcnZpY2UnXG5leHBvcnQgKiBmcm9tICcuL2xpYi9xdWlsbC1kZWZhdWx0cydcbmV4cG9ydCAqIGZyb20gJy4vbGliL3F1aWxsLWVkaXRvci5jb21wb25lbnQnXG5leHBvcnQgKiBmcm9tICcuL2xpYi9xdWlsbC12aWV3LmNvbXBvbmVudCdcbmV4cG9ydCAqIGZyb20gJy4vbGliL3F1aWxsLXZpZXctaHRtbC5jb21wb25lbnQnXG5leHBvcnQgKiBmcm9tICcuL2xpYi9xdWlsbC1lZGl0b3IuaW50ZXJmYWNlcydcbiJdfQ==

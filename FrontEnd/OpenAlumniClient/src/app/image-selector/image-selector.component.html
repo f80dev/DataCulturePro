@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+
+<mat-dialog-content style="overflow: hidden;">
+
+  <div style="width: 100%;text-align: center;margin-bottom: 5px;">
+    <button mat-flat-button mat-button
+            *ngIf="data.internet"
+            (click)="addUrl()">
+      Internet
+    </button>
+
+    <button mat-flat-button mat-button
+            id="cmdShowEmoji"
+            *ngIf="data.emoji"
+            (click)="showEmoji=!showEmoji">Emojis</button>
+
+
+    <button mat-flat-button mat-button
+            id="cmdFile"
+            style="width:70px;text-align: center;">
+      <label for="file">Photos</label>
+      <input type="file" id="file" style="opacity: 0;"
+             (change)="onSelectFile($event)"
+             accept="image/gif,image/jpeg,image/png" />
+    </button>
+
+  </div>
+
+
+  <emoji-mart
+    *ngIf="showEmoji"
+    set="google"
+    style="margin-top:5px;"
+    [showPreview]="false"
+    [emojiSize]="48"
+    (emojiSelect)="selectEmoji($event)"
+    [style]="{ display: 'inline-block', bottom: '20px', right: '20px',width:'95%'}"
+    [emojiTooltip]="true"
+    emoji="point_up">
+  </emoji-mart>
+
+
+  <mat-grid-list *ngIf="pictures?.length>0 && imageBase64==null" style="width:100%;" cols="3" rowHeight="16:9">
+    <mat-grid-tile *ngFor="let tile of pictures">
+      <img [src]="tile" style="width:25vmin;height:25vmin;" (click)="selPicture(tile)">
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div *ngIf="showIcons" style="width:100%;">
+    <img *ngFor="let icon of icons"
+         [src]="icon.photo"
+         style="width:30px;display: inline-block;"
+         (click)="selIcon(icon)">
+  </div>
+  <div style="width: 100%;min-height:300px;text-align: center;">
+    <div *ngIf="imageBase64 && !showEmoji"
+         style="display: inline-block;width:80%;max-width: 300px;">
+      <image-cropper
+        [imageBase64]="imageBase64"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="ratio"
+        [resizeToWidth]="200"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded()"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"
+      >
+      </image-cropper>
+    </div>
+  </div>
+
+</mat-dialog-content>
+<hr>
+<mat-dialog-actions style="text-align: center;width:100%;">
+
+  <button id="cmdTurn" mat-button mat-raised-button mat-icon-button
+          title="Permet de faire tourner la photo de 90 degrés"
+          *ngIf="data.square && data.result.startsWith('data')"
+          (click)="rotatePhoto()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+
+  <button id="cmdCancel" mat-button mat-raised-button (click)="onNoClick()">Annuler</button>
+  <button id="cmdValide" mat-button mat-raised-button [mat-dialog-close]="data.result" >Ok</button>
+</mat-dialog-actions>
+
+
+

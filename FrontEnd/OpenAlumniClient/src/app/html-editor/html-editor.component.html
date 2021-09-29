@@ -1,0 +1,71 @@
+<div class="mainform">
+  <h2>Rédigez un article, une annonce</h2>
+  <app-tuto label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction"></app-tuto>
+  <app-hourglass [message]="message"></app-hourglass>
+  <div class="mat-elevation-z12" style="min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
+    <quill-editor [(ngModel)]="editorContent"></quill-editor>
+  </div>
+  <br><br>
+
+  <mat-form-field class="app-field">
+    <mat-label>Tags</mat-label>
+    <mat-chip-list #chipList aria-label="Selection des tags">
+      <mat-chip
+        *ngFor="let tag of tags"
+        [selectable]="selectable"
+        [removable]="removable"
+        (removed)="remove(tag)">
+        {{tag}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        #fruitInput
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+      <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+        {{tag}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <br>
+</div>
+<div class="bottom-bar">
+  <input #csvInput hidden="true"
+       type="file" onclick="this.value=null"
+       (change)="_import($event)"
+       accept=".csv"/>
+
+   <button class="icon-button" mat-button mat-icon-button mat-raised-button
+          id="cmdImport"
+           title="Importer"
+          (click)="csvInput.click()">
+    <mat-icon>publish</mat-icon>
+  </button>
+
+   <button class="icon-button" mat-button mat-icon-button mat-raised-button
+          id="cmdReset"
+           title="Abandonner l'article"
+          (click)="editorContent=''">
+     <mat-icon>delete</mat-icon>
+  </button>
+
+  <button class="icon-button" mat-button mat-icon-button mat-raised-button
+          id="cmdSave"
+          [disabled]="!editorContent"
+          title="Enregistrer un brouillon"
+          (click)="save()">
+    <mat-icon>save</mat-icon>
+  </button>
+
+  <button class="app-button" mat-button mat-raised-button
+          id="cmdClear" color="primary"
+          (click)="publish()">
+    Publiez !
+  </button>
+</div>
+

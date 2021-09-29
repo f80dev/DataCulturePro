@@ -1,0 +1,40 @@
+<div class="mainform">
+
+
+  <mat-expansion-panel [expanded]="faq.visible"
+                       *ngFor="let faq of faqs"
+                       name="faq"
+                       style="width:96%;margin:3%;border:none;text-align: left;">
+
+    <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px">
+      <span *ngIf="!faq.visible">
+        {{faq.title}}
+      </span>
+      <span *ngIf="faq.visible" style="color:darkgrey">
+        {{faq.title}}
+      </span>
+    </mat-expansion-panel-header>
+
+    <div style="height:auto;">
+      <div style="font-size: small"
+           class="faq-content"
+           *ngIf="!faq.content.endsWith('html') && faq.format!='html'">
+        {{faq.content}}
+      </div>
+
+      <iframe style="border:none;width:100%;"
+              *ngIf="faq.content.endsWith('html')"
+              [src]="faq.content | safe">
+      </iframe>
+
+      <div [innerHTML]="faq.content"
+           class="faq-content"
+           *ngIf="faq.format=='html'">
+      </div>
+    </div>
+
+
+  </mat-expansion-panel>
+
+</div>
+
