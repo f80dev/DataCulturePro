@@ -59,6 +59,10 @@ RUN pip3 install docutils
 RUN pip3 install networkx
 RUN pip3 install py7zr
 RUN pip3 install erdpy
+RUN pip3 install pandasql
+RUN pip3 install plotly
+
+
 
 #Création des répertoires
 ENV APP_HOME=/home/app
