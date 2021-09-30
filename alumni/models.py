@@ -13,6 +13,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_elasticsearch_dsl.registries import registry
 
+from OpenAlumni.DataQuality import eval_field
 from OpenAlumni.Tools import now
 
 
@@ -261,7 +262,10 @@ class PieceOfWork(models.Model):
 
 
     def __str__(self):
-        return self.title
+        rc=self.id+":"+self.title
+        if not self.year is None:rc=rc+" ("+self.year+")"
+        if not self.category is None:rc=rc+" - "+self.category
+        return rc
 
     def delay_lastsearch(self):
         if self.dtLastSearch is None:return 1e12
@@ -280,6 +284,14 @@ class PieceOfWork(models.Model):
 
         self.links.append(obj)
         return self.links
+
+    def quality_score(self):
+        """
+        Défini un score de qualité de la donnée. Ce score est notamment utilisé pour les fusions
+        :return: le score
+        """
+        score=eval_field(self.title,5)+eval_field(self.budget,2)+eval_field(self.owner,3)+2*len(self.links)+eval_field(self.visual,2)+eval_field(self.year,3)
+        return score
 
 
 @receiver(post_save,sender=Work)

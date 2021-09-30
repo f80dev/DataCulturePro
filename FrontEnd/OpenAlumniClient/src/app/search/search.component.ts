@@ -76,8 +76,6 @@ export class SearchComponent implements OnInit {
     },5000);
 
 
-
-
   }
 
 
@@ -242,6 +240,22 @@ export class SearchComponent implements OnInit {
 
   inc_limit() {
     this.limit=this.limit+500;
+    this.refresh();
+  }
+
+  change_order() {
+    let rc=null;
+    for(let i=0;i<this.fields.length;i++){
+      if(this.order==this.fields[i].value){
+        if(i==this.fields.length-1){
+          rc=this.fields[i+1];
+        } else{
+          rc=this.fields[0];
+        }
+      }
+    }
+    this.order=rc.value;
+    showMessage(this,"Tri par "+rc.field);
     this.refresh();
   }
 }

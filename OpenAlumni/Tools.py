@@ -416,6 +416,7 @@ def translate(wrd:str,dictionnary=None):
         return rc
 
 
+
 def clear_directory(dir, ext):
     log("Netoyage du répertoire des films")
     for file in scandir(dir):

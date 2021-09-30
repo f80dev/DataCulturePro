@@ -29,7 +29,7 @@
         </mat-select>
       </mat-form-field>
 
-      <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:60vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">
+      <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:70vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">
         <app-hourglass message="En cours de calcul"></app-hourglass>
       </iframe>
 
@@ -138,11 +138,13 @@
   <!--      Export-->
   <!--    </button>-->
 
+  <div *ngIf="tabGroup?.selectedIndex==0" style="display: inline-block">
   <button mat-button mat-raised-button
           class="app-button"
           id="cmdOpen"
+          *ngIf="sel_report?.url?.length>0"
           (click)="open_stats()">
-    Ouvrir
+    <div class="bloc-bouton">Agrandir le<br>graphique</div>
   </button>
 
   <button mat-button mat-raised-button
@@ -152,6 +154,8 @@
     Refresh
   </button>
 
+  </div>
+
   <button mat-button mat-raised-button
           class="app-button"
           id="cmdOpenSocialGraph"
@@ -159,10 +163,10 @@
     Graphe social
   </button>
 
-  <button mat-button mat-raised-button
-          class="app-button"
-          (click)="showGraphQL=true">
-    GraphQL
-  </button>
+<!--  <button mat-button mat-raised-button-->
+<!--          class="app-button"-->
+<!--          (click)="showGraphQL=true">-->
+<!--    GraphQL-->
+<!--  </button>-->
 
 </div>

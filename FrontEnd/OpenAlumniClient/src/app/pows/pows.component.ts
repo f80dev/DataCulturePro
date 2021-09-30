@@ -1,12 +1,14 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {$$, showError, showMessage, translateQuery} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {environment} from "../../environments/environment";
 import {MatAccordion} from "@angular/material/expansion";
+import {Observable} from "rxjs";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pows',
@@ -19,13 +21,16 @@ export class PowsComponent implements OnInit {
   limit=50;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number;
+  filter$: Observable<string>;
 
   constructor(public api:ApiService,
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
               public router:Router,
               public routes:ActivatedRoute,
-              public config:ConfigService) { }
+              public config:ConfigService) {
+
+  }
 
   ngOnInit(): void {
     if(this.routes.snapshot.queryParamMap.has("filter"))this.query.value=this.routes.snapshot.queryParamMap.get("filter");
@@ -39,6 +44,7 @@ export class PowsComponent implements OnInit {
   }
 
   clearQuery() {
+    debugger
     this.query.value='';
     this.refresh();
   }

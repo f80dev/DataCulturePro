@@ -71,18 +71,18 @@
             Réseaux sociaux
           </mat-panel-title>
         </mat-expansion-panel-header>
-
+        Vos adresses sur les réseaux sociaux<br>
         <table style="width: 100%;vertical-align: text-top;">
           <tr *ngFor="let social of socials">
-            <td style="width:60%">
-              <mat-form-field appearance="fill" class="app-field">
+            <td style="width:90%">
+              <mat-form-field appearance="fill" class="app-field" style="width: 100%;">
                 <mat-label>{{social.name}}</mat-label>
                 <input matInput type="text"
                        [placeholder]="social.input"
                        max="50" [(ngModel)]="profil[social.name]"
                        (focusout)="check_format(social)"
                        (keypress)="mustSave=true">
-                <mat-hint>Visible de {{social.profils}}</mat-hint>
+                <mat-hint>Cette adresse est visible de {{social.profils}}</mat-hint>
 
               </mat-form-field><br>
             </td>
@@ -259,7 +259,7 @@
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
               {{work.job}} sur
-              <a [title]="work.source" href="./pows?filter={{work.pow?.title}}">"{{work.pow?.title}}"</a>
+              <a [title]="work.source" href="./pows?filter={{work.pow?.title}}">{{work.pow?.title}}</a>
               <br>
               <div *ngIf="work.dtEnd">
                 en {{work.dtEnd | date:'yyyy'}}
@@ -269,20 +269,21 @@
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
 
-              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
-                        name="cmdEdit"
-                        (click)="edit_work(work)" *ngIf="work.state!='E'">
-                edit
-              </mat-icon>
+<!--              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"-->
+<!--                        name="cmdEdit"-->
+<!--                        (click)="edit_work(work)" *ngIf="work.state!='E'">-->
+<!--                edit-->
+<!--              </mat-icon>-->
 
               <mat-icon *ngIf="work.public"
                         name="cmdVisibilityOn"
                         title="Cette expérience est visible de tous (public)"
-                        style="cursor: pointer;font-size: medium;display: inline;" (click)="_private(work)">
+                        style="cursor: pointer;font-size: medium;display: inline;width:20px;" (click)="_private(work)">
                 visibility
               </mat-icon>
 
-              <mat-icon *ngIf="!work.public" style="cursor: pointer;font-size: medium"
+              <mat-icon *ngIf="!work.public"
+                        style="cursor: pointer;font-size: medium;width: 20px;"
                         name="cmdVisibilityOff"
                         title="Cette expérience est privée (seule vous pouvez la connaitre)"
                         (click)="_private(work)">
@@ -301,6 +302,15 @@
         </table>
 
         <mat-action-row id="pnlActionExperience">
+          <button class="app-button" mat-button mat-raised-button
+                  id="cmdPreview"
+                  title="Permet de voir la page publique qui liste vos expériences"
+                  *ngIf="works?.length>0"
+                  (click)="router.navigate(['public'])">
+            <div class="bloc-bouton">Voir la page<br>publique</div>
+          </button>
+
+
           <button class="app-button" mat-button mat-raised-button
                   id="cmdClear"
                   *ngIf="works?.length>0"

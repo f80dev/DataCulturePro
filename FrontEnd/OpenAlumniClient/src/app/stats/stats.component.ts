@@ -18,7 +18,9 @@ export class StatsComponent implements OnInit {
   sel_report: any={}
   showGraphQL: boolean=false;
   domain_server="";
+
   @ViewChild('tabGroup') tabGroup: any;
+
   _data:any=[];
   instant_reports: any[]=[];
   message: any="";
@@ -73,7 +75,6 @@ export class StatsComponent implements OnInit {
   eval_stat() {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
-    debugger
     let param="cols="+this.sel_report.cols+"&color="+this.sel_report.color+"&chart="+this.sel_report.chart;
     if(this.sel_report.sql)param=param+"&sql="+this.sel_report.sql;
     if(this.sel_report.percent)param=param+"&percent=True";
@@ -81,10 +82,11 @@ export class StatsComponent implements OnInit {
     if(this.sel_report.group_by)param=param+"&group_by="+this.sel_report.group_by;
     if(this.sel_report.func)param=param+"&func="+this.sel_report.fun;
     if(this.sel_report.filter)param=param+"&filter="+this.sel_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
-    param=param+"&height="+(window.screen.availHeight-500);
+
 
     if(!this.sel_report.html_code){
-      this.sel_report.url=api("export_all",param+"&out=graph_html",false,"");
+      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9),false,"");
+      param=param+"&height="+(window.screen.availHeight*0.6);
       this.api._get("export_all/",param+"&out=graph",60,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code;
         this.sel_report.html_stat=html.values;

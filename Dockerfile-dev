@@ -61,6 +61,7 @@ RUN pip3 install py7zr
 RUN pip3 install erdpy
 RUN pip3 install pandasql
 RUN pip3 install plotly
+RUN pip3 install jellyfish
 
 
 

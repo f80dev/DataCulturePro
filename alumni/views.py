@@ -12,7 +12,7 @@ import pandasql
 import yaml
 import pandas as pd
 
-from OpenAlumni.DataQuality import ProfilFilter
+from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
 from OpenAlumni.analytics import StatGraph
 
 pd.options.plotting.backend = "plotly"
@@ -429,13 +429,19 @@ def batch(request):
 @permission_classes([AllowAny])
 def quality_filter(request):
     filter= request.GET.get("filter", "*")
+    ope = request.GET.get("ope", "profils,films")
     profils=Profil.objects.order_by("dtLastSearch").all()
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
-    profil_filter=ProfilFilter()
+    if "profils" in ope:
+        profil_filter = ProfilAnalyzer()
+        n_profils,log=profil_filter.analyse(profils)
 
-    n_profils,log=profil_filter.analyse(profils)
+    if "films" in ope:
+        pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
+        pow_analyzer.find_double()
+
     return Response({"message":"ok","profils modifies":n_profils,"anomalie":log})
 
 
@@ -1093,6 +1099,8 @@ class ProfilDocumentView(DocumentViewSet):
         SearchFilterBackend,
     ]
     search_fields = ('works__title','works__job','lastname','firstname','department','promo','school')
+    #multi_match_search_fields = ('works__title','works__job','lastname','firstname','department','promo','school')
+
     filter_fields = {
         'name': 'name',
         'lastname':'lastname',

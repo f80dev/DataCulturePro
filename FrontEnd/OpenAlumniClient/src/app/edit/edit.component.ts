@@ -398,5 +398,9 @@ export class EditComponent implements OnInit,OnDestroy  {
     });
     this.save_user();
   }
+
+  preview() {
+
+  }
 }
 

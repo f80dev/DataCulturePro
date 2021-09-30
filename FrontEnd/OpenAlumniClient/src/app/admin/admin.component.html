@@ -50,7 +50,7 @@
       </button>
       <br>
       <button mat-raised-button mat-button
-              class="app-button" (click)="profil_filter()">Traitement Qualite
+              class="app-button" (click)="analyzer('profils')">Traitement Qualite
       </button>
 
     </mat-expansion-panel>
@@ -101,7 +101,10 @@
               class="app-button" (click)="update_index()">Réindexer
       </button>
 
-      &nbsp;
+      <button mat-raised-button mat-button
+              class="app-button" (click)="analyzer('films')">Traitement Qualite
+      </button>
+
 
       <button mat-raised-button mat-button class="app-button" (click)="raz('pows')">Effacer les Films</button>
 

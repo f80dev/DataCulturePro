@@ -99,9 +99,9 @@ export class AdminComponent implements OnInit {
     })
   }
 
-  profil_filter() {
+  analyzer(ope="profils,films") {
     this.message="Traitement qualite sur les profils";
-    this.api._get("quality_filter").subscribe(()=>{
+    this.api._get("quality_analyzer","ope="+ope).subscribe(()=>{
       this.message="";
     })
   }

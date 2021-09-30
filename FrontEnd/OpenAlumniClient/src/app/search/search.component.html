@@ -9,7 +9,8 @@
   <app-tuto [delay]="10"
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
-  <mat-form-field *ngIf="advanced_search.length==0" appearance="legacy" style="max-width:250px;width:96%;font-size: large;" autofocus>
+  <mat-form-field *ngIf="advanced_search.length==0" appearance="legacy"
+                  style="max-width:200px;width:96%;font-size: medium;display: inline-block;margin:5px;" autofocus>
     <mat-label>Rechercher un profil</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
@@ -23,11 +24,11 @@
     <mat-icon *ngIf="query.value?.length==0"
               matSuffix style="cursor: pointer;font-size: medium;color:lightgray;"
               (click)="help()">help</mat-icon>
-  </mat-form-field>  &nbsp;&nbsp;&nbsp;
+  </mat-form-field>
 
   <div *ngIf="advanced_search.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
-      <mat-form-field [ngStyle]="{width:i.width}">
+      <mat-form-field [ngStyle]="{width:i.width}" style="margin: 3px;">
         <mat-label>{{i.label}}</mat-label>
         <input matInput matNativeControl
                [title]="i.title"
@@ -35,24 +36,30 @@
                placeholder=""
                [(ngModel)]="i.value">
       </mat-form-field>
-      &nbsp;
     </div>
-    &nbsp;  &nbsp;  &nbsp;
   </div>
 
-  <div *ngIf="profils?.length>3" style="display: inline-block" autofocus>
+  <div *ngIf="profils?.length>3"
+       style="display: inline-block;text-align: right;margin:5px;" autofocus>
+
     <mat-form-field appearance="legacy"
-                    style="max-width:150px;font-size: medium;">
+                    *ngIf="config.width_screen>400"
+                    style="max-width:120px;font-size: small;">
       <mat-label>Trier par</mat-label>
       <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
-        <mat-option *ngFor="let f of fields" [value]="f.value">
-          {{f.field}}
-        </mat-option>
+        <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
       </mat-select>
     </mat-form-field>
 
+    <mat-icon style="font-size: large;cursor: pointer;"
+              (click)="change_order()" *ngIf="config.width_screen<=400">
+      sort
+    </mat-icon>
+
   </div>
   <br>
+
+
 
 
 
@@ -62,23 +69,27 @@
   <!--        </mat-checkbox>-->
   <!--    </div>-->
 
-  <div *ngIf="profils.length>8" style="display: inline-block;margin:5px;">
-    <span *ngIf="profils.length==this.limit">+ de </span>
-    {{profils.length}} profils &nbsp;- &nbsp;
+  <div style="font-size: small">
+    <div *ngIf="profils.length>8" style="display: inline-block;margin:5px;">
+      <span *ngIf="profils.length==this.limit">+ de </span>
+      {{profils.length}} profils
+      <mat-icon style="cursor: pointer;font-size: medium;" (click)="inc_limit()">add_circle</mat-icon>
+    </div>
+
+
+    <mat-checkbox id="chkAdvanced" (change)="switch_motor()"
+
+                  title="Permet notamment des recherches sur une partie du nom, du prenom en utilisant des *"
+                  labelPosition="Before">
+      <div style="line-height: 85%;text-align: left;">Recherche<br>Avancée</div>
+    </mat-checkbox>
+    &nbsp;
+    <mat-checkbox id="chkPro" [(ngModel)]="filter_with_pro"
+                  title="Ajouter la formation professionnelle aux résultats"
+                  (change)="with_pro($event)" labelPosition="Before">
+      Profils Pro
+    </mat-checkbox>
   </div>
-
-  <mat-icon style="cursor: pointer;font-size: medium;" (click)="inc_limit()">add_circle</mat-icon>
-
-  &nbsp;
-
-
-  <mat-checkbox id="chkAdvanced" (change)="switch_motor()" labelPosition="Before">
-    Recherche Avancée
-  </mat-checkbox>
-  &nbsp;
-  <mat-checkbox id="chkPro" [(ngModel)]="filter_with_pro" (change)="with_pro($event)" labelPosition="Before">
-    Profils Pro
-  </mat-checkbox>
 
 </div>
 
@@ -95,19 +106,18 @@
 
 <!-- Affichage des profils-->
 <div class="wrap-list" *ngIf="message.length==0 && config.ready">
-<!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
-    <app-profil
-      name="profils"
-      *ngFor="let profil of profils"
-      (delete)="deleteProfil(profil)"
-      [backgroundColor]="profil.backgroundColor"
-      [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
-      (askfriend)="askfriend(profil)"
-      (onclick)="openQuery($event)"
-      class="app-card" [profil]="profil">
-
-    </app-profil>
-<!--  </cdk-virtual-scroll-viewport>-->
+  <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
+  <app-profil
+    name="profils"
+    *ngFor="let profil of profils"
+    (delete)="deleteProfil(profil)"
+    [backgroundColor]="profil.backgroundColor"
+    [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
+    (askfriend)="askfriend(profil)"
+    (onclick)="openQuery($event)"
+    class="app-card" [profil]="profil">
+  </app-profil>
+  <!--  </cdk-virtual-scroll-viewport>-->
 </div>
 
 
