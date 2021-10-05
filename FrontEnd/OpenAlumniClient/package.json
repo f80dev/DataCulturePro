@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "prod": "npm version patch && ng build --prod --configuration=production --output-hashing none --baseHref=https://dcp.f80.fr",
-    "dev": "ng build --prod --configuration=dev --output-hashing none --baseHref=https://testdcp.f80.fr",
+    "prod": "npm version patch && ng build --configuration production --configuration=production --output-hashing none --baseHref=https://dcp.f80.fr",
+    "dev": "ng build --configuration production --configuration=dev --output-hashing none --baseHref=https://testdcp.f80.fr",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -39,8 +39,8 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1102.6",
-    "@angular/cli": "^11.2.6",
+    "@angular-devkit/build-angular": "^12.2.8",
+    "@angular/cli": "^12.2.8",
     "@angular/compiler-cli": "^13.0.0-next.11",
     "@types/d3": "^6.7.5",
     "@types/jasmine": "^3.5.13",
@@ -49,7 +49,7 @@
     "codelyzer": "^6.0.0",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
-    "karma": "~5.0.0",
+    "karma": "~6.3.4",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~3.3.0",
