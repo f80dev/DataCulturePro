@@ -725,8 +725,8 @@ def export_profils(request):
     cursus:str=request.GET.get("cursus","S")
     profils=Profil.objects.filter(cursus__exact=cursus)
     df: pd.DataFrame = pd.DataFrame.from_records(list(profils.values(
-        "id", "photo","gender", "lastname", "firstname", "department", "cursus",
-        "degree_year", "address","cp", "town","birthdate","country","email","mobile","nationality","job"
+        "id", "photo","gender", "lastname", "firstname", "email","mobile","department","address","cp", "town","country",
+        "birthdate","nationality","degree_year" ,"job","cursus"
     )))
     df.columns = ProfilsCSVRenderer.header
 

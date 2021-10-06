@@ -8,7 +8,6 @@ from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework.validators import UniqueValidator
 from rest_framework_csv.renderers import CSVRenderer
 
-from OpenAlumni import settings
 from OpenAlumni.Tools import reset_password, log, sendmail
 from alumni.documents import ProfilDocument, PowDocument
 from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company
@@ -186,8 +185,8 @@ class WorksCSVRenderer (CSVRenderer):
 
 class ProfilsCSVRenderer (CSVRenderer):
     header = [
-        "id","photo","genre","lastname", "firstname", "departement",
-        "cursus","promotion","adresse","CP", "ville","birthdate","country","email","mobile","nationality","job"
+        "id","photo","genre","lastname", "firstname", "email","mobile","departement","adresse","CP", "ville","country",
+        "birthdate","nationality","promotion","job","cursus"
     ]
 
 

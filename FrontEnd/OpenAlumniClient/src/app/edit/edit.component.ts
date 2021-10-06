@@ -45,6 +45,8 @@ export class EditComponent implements OnInit,OnDestroy  {
   acceptSponsor:boolean;
   message:string="";
   query: string = "";
+  title: string="";
+  url:string="";
 
 
   constructor(public _location:Location,
@@ -71,6 +73,8 @@ export class EditComponent implements OnInit,OnDestroy  {
       if(checkLogin(this,null,null,"login")){
         this.message="Chargement de votre profil";
         this.loadProfil(()=>{
+          this.url=this.profil.public_url;
+          this.title=this.profil.firstname+" "+this.profil.lastname;
           this.showAddWork=0;
           this.message="";
           this.autoAddMovie();

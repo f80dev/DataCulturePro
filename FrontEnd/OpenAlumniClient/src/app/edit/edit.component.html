@@ -153,47 +153,47 @@
           Accepte d'être tuteur
         </mat-checkbox>
         &nbsp;
-         <button class="app-button" mat-button
-                 *ngIf="students.length>0"
-                    mat-raised-button
-                    title="Ecrire à tous"
-                    (click)="write_all()">
-              Ecrire à tous
-            </button>
+        <button class="app-button" mat-button
+                *ngIf="students.length>0"
+                mat-raised-button
+                title="Ecrire à tous"
+                (click)="write_all()">
+          Ecrire à tous
+        </button>
 
-         <div *ngIf="students.length>0" style="margin-top: 10px;">
-           <strong>Mes tutorés</strong>
+        <div *ngIf="students.length>0" style="margin-top: 10px;">
+          <strong>Mes tutorés</strong>
           <table>
             <tr *ngFor="let st of students" style="width: 100%;">
-          <td style="width: 100%;">
-            {{st.lastname}}
-          </td>
-          <td style="width: 30px;text-align: right;">
-            <button class="icon-button" mat-icon-button
-                    mat-raised-button
-                    title="Voir le profil"
-                    (click)="open_profil(st.id)">
-              <mat-icon>visibility</mat-icon>
-            </button>
-          </td>
-          <td style="width: 30px;text-align: right;">
-            <button class="icon-button" mat-icon-button
-                    mat-raised-button
-                    title="Le/la contacter"
-                    (click)="contact_profil(st.id)">
-              <mat-icon>email</mat-icon>
-            </button>
-          </td>
-          <td style="width: 30px;text-align: right;">
-            <button class="icon-button" mat-icon-button
-                    mat-raised-button
-                    title="Ne plus avoir comme tuteur"
-                    (click)="remove_student(st.id)">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </td>
-        </tr></table>
-         </div>
+              <td style="width: 100%;">
+                {{st.lastname}}
+              </td>
+              <td style="width: 30px;text-align: right;">
+                <button class="icon-button" mat-icon-button
+                        mat-raised-button
+                        title="Voir le profil"
+                        (click)="open_profil(st.id)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+              <td style="width: 30px;text-align: right;">
+                <button class="icon-button" mat-icon-button
+                        mat-raised-button
+                        title="Le/la contacter"
+                        (click)="contact_profil(st.id)">
+                  <mat-icon>email</mat-icon>
+                </button>
+              </td>
+              <td style="width: 30px;text-align: right;">
+                <button class="icon-button" mat-icon-button
+                        mat-raised-button
+                        title="Ne plus avoir comme tuteur"
+                        (click)="remove_student(st.id)">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </td>
+            </tr></table>
+        </div>
 
 
 
@@ -217,12 +217,12 @@
           <input matInput type="text" max="50" [(ngModel)]="query">
         </mat-form-field>
 
-<!--        <button class="icon-button" mat-icon-button-->
-<!--                mat-raised-button-->
-<!--                title="Ouvrir tous les sites simultanément"-->
-<!--                (click)="open_all_site('search')">-->
-<!--          <mat-icon>search</mat-icon>-->
-<!--        </button>-->
+        <!--        <button class="icon-button" mat-icon-button-->
+        <!--                mat-raised-button-->
+        <!--                title="Ouvrir tous les sites simultanément"-->
+        <!--                (click)="open_all_site('search')">-->
+        <!--          <mat-icon>search</mat-icon>-->
+        <!--        </button>-->
         <br>
 
 
@@ -269,11 +269,11 @@
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
 
-<!--              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"-->
-<!--                        name="cmdEdit"-->
-<!--                        (click)="edit_work(work)" *ngIf="work.state!='E'">-->
-<!--                edit-->
-<!--              </mat-icon>-->
+              <!--              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"-->
+              <!--                        name="cmdEdit"-->
+              <!--                        (click)="edit_work(work)" *ngIf="work.state!='E'">-->
+              <!--                edit-->
+              <!--              </mat-icon>-->
 
               <mat-icon *ngIf="work.public"
                         name="cmdVisibilityOn"
@@ -301,12 +301,24 @@
           </tr>
         </table>
 
+        <br>
+        <br>
+        <p>Partagez votre profil sur vos réseaux</p>
+        <!--      voir https://ngx-sharebuttons.netlify.app/ -->
+        <share-buttons [theme]="'circles-dark'"
+                       [include]="['facebook','twitter','linkedin','pinterest','telegram','messenger','whatsapp','email','copy']"
+                       [show]="8"
+                       [url]="url"
+                       [title]="title">
+        </share-buttons>
+        <br>
+
         <mat-action-row id="pnlActionExperience">
           <button class="app-button" mat-button mat-raised-button
                   id="cmdPreview"
                   title="Permet de voir la page publique qui liste vos expériences"
                   *ngIf="works?.length>0"
-                  (click)="router.navigate(['public'])">
+                  (click)="router.navigate(['works'],{queryParams:{id:profil.id,name:profil.firstname+' '+profil.lastname}})">
             <div class="bloc-bouton">Voir la page<br>publique</div>
           </button>
 
@@ -458,7 +470,9 @@
       <mat-hint>Détailler l'expérience, difficultés rencontrées, bénéfices</mat-hint>
     </mat-form-field>
 
+
     <br>
+
     <hr>
     <br>
 
@@ -467,7 +481,6 @@
             (click)="_location.back()">
       Anuler
     </button>
-
 
     <button class="app-button" color="primary"
             mat-button mat-raised-button

@@ -78,6 +78,8 @@ import { VisgraphComponent } from './visgraph/visgraph.component';
 import { NftsComponent } from './nfts/nfts.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import { GoogleChartsModule } from 'angular-google-charts';
+import {ShareButtonsModule} from "ngx-sharebuttons/buttons";
+import {ShareIconsModule} from "ngx-sharebuttons/icons";
 
 @NgModule({
   declarations: [
@@ -161,7 +163,9 @@ import { GoogleChartsModule } from 'angular-google-charts';
     MatAutocompleteModule,
     QuillModule,
     MatSliderModule,
-    GoogleChartsModule
+    GoogleChartsModule,
+    ShareButtonsModule,
+    ShareIconsModule
   ],
   providers: [
     ApiService,

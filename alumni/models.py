@@ -1,4 +1,11 @@
 import datetime
+
+import os
+if os.environ.get("DEBUG"):
+    from OpenAlumni.settings_dev import *
+else:
+    from OpenAlumni.settings import *
+
 from dataclasses import Field
 
 import django
@@ -15,9 +22,6 @@ from django_elasticsearch_dsl.registries import registry
 
 from OpenAlumni.DataQuality import eval_field
 from OpenAlumni.Tools import now
-
-
-from OpenAlumni.settings import DOMAIN_APPLI
 
 
 
@@ -107,7 +111,7 @@ class Profil(models.Model):
 
     @property
     def public_url(self):
-        return DOMAIN_APPLI+"/?id="+str(self.id)
+        return DOMAIN_APPLI+"/works/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname
 
     @property
     def promo(self):
