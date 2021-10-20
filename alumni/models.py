@@ -54,23 +54,23 @@ class Profil(models.Model):
     acceptSponsor = models.BooleanField(null=False, default=False)
     sponsorBy = models.ForeignKey('Profil', null=True,on_delete=CASCADE)
 
-    photo=models.TextField(blank=True,help_text="Photo du profil au format Base64")
+    photo=models.TextField(blank=True,default="/assets/img/anonymous.png",help_text="Photo du profil au format Base64")
     gender=models.CharField(max_length=1,blank=True,default="M",choices=(('M','Male'),('F','Female'),('A','Autre'),('','NSP')))
     cursus=models.CharField(max_length=1,blank=False,default="S",choices=(('S','Standard'),('P','Professionnel')),help_text="Type de formation")
     address=models.CharField(null=True,blank=True,max_length=200,help_text="Adresse postale au format numéro / rue / batiment")
     town = models.CharField(null=True,blank=True,max_length=50, help_text="Ville de l'adresse postale")
     cp=models.CharField(null=True,blank=True,max_length=5,help_text="code postal")
-    country=models.CharField(null=True,blank=True,max_length=50, help_text="Pays de naissance")
+    country=models.CharField(null=True,default="France",blank=True,max_length=50, help_text="Pays de naissance")
 
-    website=models.URLField(null=True)
+    website=models.URLField(null=True,blank=True,default="")
     dtLastUpdate=models.DateTimeField(null=False,auto_now=True,help_text="Date de la dernière modification du profil")
-    dtLastSearch=models.DateTimeField(null=False,default=0,help_text="Date de la dernière recherche d'expérience pour le profil")
-    dtLastNotif=models.DateTimeField(null=False,auto_now=True,help_text="Date de la dernière notification envoyé")
+    dtLastSearch=models.DateTimeField(null=False,default=datetime.datetime(2021,1,1,0,0,0,0),help_text="Date de la dernière recherche d'expérience pour le profil")
+    dtLastNotif=models.DateTimeField(null=False,default=datetime.datetime(2021,1,1,0,0,0,0),help_text="Date de la dernière notification envoyé")
     obsolescenceScore=models.IntegerField(default=0,help_text="Indique le degré d'obsolescence probable")
-    biography=models.TextField(null=True,max_length=2000,help_text="Biographie du profil")
+    biography=models.TextField(null=True,default="",max_length=2000,help_text="Biographie du profil")
     links = JSONField(null=True, help_text="Liens vers des références externes au profil")
     auto_updates=models.CharField(max_length=300,null=False, default="0,0,0,0,0,0",help_text="Date de mise a jour")
-    advices=JSONField(null=True,help_text="Liste de conseils alimenter par l'outil pour augmenter le rayonnement d'une personne")
+    advices=JSONField(null=True,default=None,help_text="Liste de conseils alimenter par l'outil pour augmenter le rayonnement d'une personne")
 
     blockchain=models.CharField(null=False,blank=True,default="",max_length=50,help_text="Adresse elrond du profil")
 
@@ -239,7 +239,7 @@ class PieceOfWork(models.Model):
     """
     id = models.AutoField(primary_key=True)
 
-    dtLastSearch = models.DateTimeField(null=False, default=0, help_text="Date de la derniere recherche automatique sur l'oeuvre")
+    dtLastSearch = models.DateTimeField(null=False, auto_now_add=True, help_text="Date de la derniere recherche automatique sur l'oeuvre")
     visual = models.TextField(blank=True,help_text="Visuel de l'oeuvre")
     dtStart=models.DateField(auto_now=True,null=False,help_text="Date de début de la réalisation de l'oeuvre")
     dtEnd=models.DateField(auto_now=True,null=False,help_text="Date de fin de la réalisation de l'oeuvre")
@@ -266,7 +266,8 @@ class PieceOfWork(models.Model):
 
 
     def __str__(self):
-        rc=self.id+":"+self.title
+        rc=self.title
+        if not self.id is None:rc=self.id+" : "+rc
         if not self.year is None:rc=rc+" ("+self.year+")"
         if not self.category is None:rc=rc+" - "+self.category
         return rc

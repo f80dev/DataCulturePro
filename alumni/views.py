@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 from io import StringIO, BytesIO
 from json import loads
 
-
 from urllib.request import urlopen
 
 import pandasql
 import yaml
 import pandas as pd
+from django.core.serializers import json
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
 from OpenAlumni.analytics import StatGraph
@@ -266,9 +266,22 @@ def init_nft(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def test(request):
-    nft=NFTservice()
-    rc=nft.init_token()
-    return JsonResponse({"result":rc})
+    profil = Profil(
+        firstname='paul',
+        school="FEMIS",
+        lastname="dudule",
+        gender="M",
+        mobile="0619750804",
+        birthdate=datetime(1971,2,4,13,0,0,0),
+        department="",
+        degree_year="2022",
+        address="12 rue martel",
+        town="paris",
+        cp="75010",
+        email="paul.dudule@gmail.com"
+    )
+    profil.save()
+    return JsonResponse({"result":profil})
 
 
 
@@ -412,6 +425,9 @@ def rebuild_index(request):
 @permission_classes([AllowAny])
 def batch(request):
     filter= request.GET.get("filter", "*")
+    limit= request.GET.get("limit", 2000)
+    limit_contrib=request.GET.get("contrib", 2000)
+
     profils=Profil.objects.order_by("dtLastSearch").all()
     refresh_delay=31
     if filter!="*":
@@ -419,8 +435,16 @@ def batch(request):
         profils.update(auto_updates="0,0,0,0,0,0")
         refresh_delay=0.1
 
-    n_films,n_works=exec_batch(profils.order_by("dtLastSearch"),refresh_delay)
-    return Response({"message":"ok","films":n_films,"works":n_works})
+    f=open(STATIC_ROOT+"/news_template.yaml", "r",encoding="utf-8")
+    templates=yaml.safe_load(f.read())
+    f.close()
+
+    profils=profils.order_by("dtLastSearch")
+
+    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"])
+    articles=[x for x in articles if x]
+
+    return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})
 
 
 #http://localhost:8000/api/quality_filter
@@ -860,6 +884,11 @@ def export_all(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def movie_importer(request):
+    """
+    Importation du catalogue des films
+    :param request:
+    :return:
+    """
     log("Importation de films")
     content = str(request.body).split("base64,")[1]
     b64_content = base64.b64decode(content)
@@ -958,22 +987,30 @@ def movie_importer(request):
 #http://localhost:8000/api/importer/
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def importer(request,format=None):
+def importer(request):
+    """
+    Importation des profils
+    :param request:
+    :param format:
+    :return:
+    """
 
     header=list()
-    def idx(col:str,row=None,default=None):
+    def idx(col:str,row=None,default=None,max_len=0,min_len=0):
         for c in col.lower().split(","):
             if c in header:
                 if row is not None:
-                    return row[header.index(c)]
+                    rc=row[header.index(c)]
+                    if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
+                    if min_len==0 or len(rc)>=min_len:
+                        return rc
                 else:
                     return header.index(c)
         return default
 
 
-
     log("Importation de profil")
-    data=base64.b64decode(str(request.body).split("base64,")[1])
+    data=base64.b64decode(str(request.data["file"]).split("base64,")[1])
 
     for _encoding in ["utf-8","ansi"]:
         try:
@@ -984,61 +1021,87 @@ def importer(request,format=None):
 
     txt=txt.replace("&#8217;","")
 
-    d=csv.reader(StringIO(txt), delimiter=";")
+    delimiter=";"
+    text_delimiter=False
+    if "\",\"" in txt:
+        delimiter=","
+        text_delimiter=True
+    d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
     i=0
     record=0
     for row in d:
         if i==0:
             header=[x.lower() for x in row]
         else:
-            firstname=row[idx("firstname,prenom")]
-            lastname=row[idx("lastname,nom")]
-            email=row[idx("email,mail")]
+            s=request.data["dictionnary"].replace("'","\"")
+            dictionnary=loads(s)
+
+            firstname=row[idx("fname,firstname,prenom")]
+            lastname=row[idx("lastname,nom,lname")]
+            email=idx("email,mail",row)
             idx_photo=idx("photo,picture,image")
             #Eligibilité
             if len(lastname)>2 and len(lastname)+len(firstname)>5 and len(email)>4 and "@" in email:
                 if idx_photo is None or len(row[idx_photo])==0:
                     photo=None
-                    gender=row[idx("genre,civilite")]
+                    idx_gender=idx("gender,genre,civilite")
+                    gender=row[idx_gender]
                     if gender=="":
                         photo="/assets/img/anonymous.png"
-                        row[idx("genre,civilite")] = ""
+                        row[idx_gender] = ""
 
                     if gender=="Monsieur" or gender=="M." or gender.startswith("Mr"):
                         photo="/assets/img/boy.png"
-                        row[idx("genre,civilite")] = "M"
+                        row[idx_gender] = "M"
 
                     if photo is None:
-                        row[idx("genre,civilite")]="F"
+                        row[idx_gender]="F"
                         photo = "/assets/img/girl.png"
                 else:
-                    photo=stringToUrl(row[idx("photo")])
+                    photo=stringToUrl(idx("photo",row,""))
 
                 #Calcul
-                ts=dateToTimestamp(row[idx("birthday,anniversaire,datenaissance")])
+                dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row)
+                if len(dt_birthdate)==8:
+                    tmp=dt_birthdate.split("/")
+                    if int(tmp[2])>50:
+                        dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
+                    else:
+                        dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
+                ts=dateToTimestamp(dt_birthdate)
+
                 dt = None
                 if not ts is None:dt=datetime.fromtimestamp(ts)
 
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie",row,dictionnary["promo"],0,4)
                 profil=Profil(
                     firstname=firstname,
                     school="FEMIS",
                     lastname=lastname,
-                    gender=row[idx("genre,civilite")],
-                    mobile=row[idx("mobile,telephone,tel")][:20],
+                    gender=idx("gender,genre,civilite",row,""),
+                    mobile=idx("mobile,telephone,tel",row,"",20),
                     nationality=idx("nationality",row,"Francaise"),
                     country=idx("country,pays",row,"France"),
                     birthdate=dt,
-                    department=idx("departement,department,formation",row,"")[:60],
-                    job=idx("job,metier,competences",row,"")[:60],
-                    degree_year=row[idx("promo,promotion,anneesortie")],
-                    address=row[idx("address,adresse")][:200],
+                    department=idx("departement,department,formation",row,"",60),
+                    job=idx("job,metier,competences",row,"",60),
+                    degree_year=promo,
+                    address=idx("address,adresse",row,"",200),
                     town=idx("town,ville",row,"")[:50],
-                    cp=idx("cp,codepostal,code_postal,postal_code,postalcode",row,"")[:5],
-                    website=stringToUrl(idx("website,siteweb,site,url",row)),
+                    cp=idx("cp,codepostal,code_postal,postal_code,postalcode",row,"",5),
+                    website=stringToUrl(idx("website,siteweb,site,url",row,"")),
+                    biography=idx("biographie",row,""),
+
+                    facebook=idx("facebook",row,""),
+                    instagram=idx("instagram",row,""),
+                    vimeo=idx("vimeo",row,""),
+                    tiktok=idx("tiktok",row,""),
+                    linkedin=idx("linkedin", row, ""),
+
                     email=email,
                     photo=photo,
-                    linkedin=idx("linkedin",row),
-                    cursus=idx("cursus",row,"S"),
+
+                    cursus=idx("cursus",row,dictionnary["cursus"]),
                 )
                 try:
                     rc=profil.save()

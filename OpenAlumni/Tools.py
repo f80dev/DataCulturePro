@@ -1,7 +1,8 @@
+import calendar
 import hashlib
 import html
 import os
-from time import sleep
+from time import sleep, strptime, struct_time, mktime
 from os import remove, scandir, stat
 from os.path import exists
 
@@ -53,6 +54,11 @@ def to_xml(df,row_separator="row"):
 
 
 def stringToUrl(txt:str):
+    """
+    S'assure de la conformité d'une adresse web
+    :param txt:
+    :return:
+    """
     if txt is None:return None
     if txt=="http://":return ""
     if not txt.startswith("http"):txt="http://"+txt
@@ -374,8 +380,8 @@ def dateToTimestamp(txt):
     ]
     for format in formats:
         try:
-            dt=datetime.strptime(txt,format)
-            return dt.timestamp()
+            dt:struct_time=strptime(txt,format)
+            return datetime.datetime.fromtimestamp(mktime(dt)).timestamp()
         except Exception as inst:
             pass
 

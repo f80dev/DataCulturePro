@@ -167,7 +167,7 @@
      <button class="app-button login-button"
             mat-button mat-raised-button
              *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
-            (click)="analyse()">
+            (click)="router.navigate(['profils_scanner'])">
       Analyse
     </button>
 

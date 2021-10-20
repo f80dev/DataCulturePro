@@ -410,8 +410,24 @@ def extract_actor_from_wikipedia(lastname,firstname):
     return None
 
 
+def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
+    rc=template["code"]
+    fields=rc.split("{{")[1:]
+    for field in fields:
+        model=field.split(".")[0]
+        field=field.split("}}")[0].replace(model+".","")
+        if model=="profil":value=getattr(profil,field)
+        if model=="pow" :value=getattr(pow,field)
+        if model=="work":value=getattr(work,field)
+        if not value is None:
+            if type(value)==int:value=str(value)
+            rc=rc.replace("{{"+model+"."+field+"}}",value)
 
-def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay):
+    return rc
+
+
+
+def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -421,6 +437,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay):
     """
     n_films=0
     n_works=0
+    articles=list()
 
     for l in links:
         source = "auto"
@@ -466,6 +483,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay):
                         pow.add_link(l["url"],source)
                     else:
                         n_films=n_films+1
+
                     pow.save()
 
                     # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
@@ -486,6 +504,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay):
                         log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
                         work = Work(pow=pow, profil=profil, job=t_job, source=source)
                         work.save()
+                        if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
                     else:
                         log("Pas d'enregistrement de la contribution")
 
@@ -508,10 +527,11 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay):
 
                         if not Work.objects.filter(pow_id=pow.id, profil_id=_p.id, job=p["job"]).exists():
                             work = Work(pow=pow, profil=_p, job=p["job"], source=source)
+
                             work.save()
                             n_works=n_works+1
 
-    return n_films,n_works
+    return n_films,n_works,articles
 
 
 
@@ -526,15 +546,25 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 #http://localhost:8000/api/batch
-def exec_batch(profils,refresh_delay=31):
+def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list()):
+    """
+    Scan des profils
+    :param profils:
+    :param refresh_delay:
+    :return:
+    """
     n_films = 0
     n_works=0
+    rc_articles=list()
     all_links=list()
     for pow in PieceOfWork.objects.all():
         for l in pow.links:
             all_links.append(l["url"])
 
     for profil in profils:
+        limit=limit-1
+        if limit<0 or len(rc_articles)>=limit_contrib:break
+
         links=[]
         job_for=None
 
@@ -569,10 +599,10 @@ def exec_batch(profils,refresh_delay=31):
                 job_for=infos["url"]
 
 
-            rc_films,rc_works=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay=refresh_delay)
+            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay=refresh_delay,templates=templates)
+            rc_articles.append(articles)
             n_films=n_films+rc_films
             n_works=n_works+rc_works
-
 
             # log("Extraction de wikipedia")
             # try:
@@ -593,7 +623,7 @@ def exec_batch(profils,refresh_delay=31):
 
     #clear_directory("./Temp","html")
 
-    return n_films,n_works
+    return n_films,n_works,rc_articles
 
 
 # def find_double():

@@ -3,6 +3,7 @@
   <h2>Importer des profils</h2>
   <br>
   <app-hourglass [message]="message"></app-hourglass>
+  <br>
 
 
   <input #csvInput hidden="true"
@@ -15,6 +16,19 @@
           (click)="csvInput.click()">
     Importer depuis Excel
   </button>
+
+  <br>
+  <br>
+  <mat-form-field appearance="fill"
+                  style="width:90%;max-width: 300px;">
+    <mat-label>Ajouter des colonnes</mat-label>
+    <textarea matInput
+              [rows]="10"
+              [(ngModel)]="dict">
+    </textarea>
+    <mat-icon matSuffix style="cursor: pointer"
+              (click)="init_dict()">cancel</mat-icon>
+  </mat-form-field>
 
   <br>
   <br>

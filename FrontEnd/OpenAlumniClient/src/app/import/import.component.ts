@@ -10,18 +10,23 @@ import {Router} from "@angular/router";
 })
 export class ImportComponent implements OnInit {
   message: string="";
+  dict="";
 
   constructor(public api:ApiService,public router:Router) { }
 
   ngOnInit(): void {
+    this.init_dict();
+    if(localStorage.getItem("dict"))
+      this.dict=localStorage.getItem("dict");
   }
 
    import(fileInputEvent: any) {
       var reader = new FileReader();
+      localStorage.setItem("dict",this.dict);
       this.message="Chargement du fichier";
       reader.onload = ()=>{
         this.message="Transfert du fichier";
-        this.api._post("importer/","",reader.result,200).subscribe((r:any)=>{
+        this.api._post("importer/","",{file:reader.result,dictionnary:this.dict},200).subscribe((r:any)=>{
           this.message="";
           showMessage(this,r);
           this.router.navigate(["search"])
@@ -32,4 +37,7 @@ export class ImportComponent implements OnInit {
       reader.readAsDataURL(fileInputEvent.target.files[0]);
   }
 
+  init_dict() {
+    this.dict="{'cursus':'S','promo':2022}"
+  }
 }

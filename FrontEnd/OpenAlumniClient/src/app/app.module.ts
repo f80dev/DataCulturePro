@@ -80,6 +80,7 @@ import {MatTabsModule} from "@angular/material/tabs";
 import { GoogleChartsModule } from 'angular-google-charts';
 import {ShareButtonsModule} from "ngx-sharebuttons/buttons";
 import {ShareIconsModule} from "ngx-sharebuttons/icons";
+import { ProfilsScannerComponent } from './profils-scanner/profils-scanner.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +116,8 @@ import {ShareIconsModule} from "ngx-sharebuttons/icons";
     BlogComponent,
     PlayerComponent,
     VisgraphComponent,
-    NftsComponent
+    NftsComponent,
+    ProfilsScannerComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,11 @@
+version: 0.1
+description: Liste des templates de modèle de document
+templates:
+  - id: basique
+    lang: fr
+    description: Modèle basique pour l'ajout des contributions
+    code: "
+    <li>
+     Nouvelle contribution de {{profil.firstname}} {{profil.lastname}} ({{profil.department}} - {{profil.degree_year}}) sur {{pow.title}} comme {{work.job}}
+     </li>
+    "
