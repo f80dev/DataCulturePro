@@ -95,9 +95,9 @@ export class ConfigService {
   }
 
 
-  init_user(func_success=null,func_anonyme=null) {
+  init_user(func_success=null,func_anonyme=null,email=null) {
     $$("Initialisation de l'utilisateur");
-    let email=localStorage.getItem("email");
+    if(!email)email=localStorage.getItem("email");
     if(email){
       this.api.getuser(email).subscribe((r:any)=>{
         if(r.count>0){

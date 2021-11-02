@@ -25,16 +25,19 @@
             {{text}}
           </span>
         </td>
+        <td *ngIf="faq?.length>0" (click)="router.navigate(['faqs'],{queryParams:{open:faq}})">
+          <mat-icon>help</mat-icon>
+        </td>
       </tr>
     </table>
   </div>
 
   <div *ngIf="_type=='title'" [ngStyle]="{
-    display:'block',
+    display: 'block',
     opacity: 1,
     color:color,
     'background-color':bkColor,
-    position: 'fixed',
+    position: _position,
     top:'0px',left:'0px',
     width:'100vw',height:'100vh',
     'z-index':1000}">
@@ -43,7 +46,7 @@
            style="width: 100vw;height:100vh;object-fit:cover;">
 
 
-      <div style="z-index:10000;display:block;position:fixed;top:0;left:0;width:100vw;height:100vh;text-align:center;">
+      <div style="z-index:10000;display:block;position:absolute;top:0;left:0;width:100vw;height:100vh;text-align:center;">
 
         <div style="width:80%;text-align:center;font-size: 2em;margin-top:5vh;margin-bottom:5vh;margin-left:10%;"
              [innerHTML]="text">
@@ -53,9 +56,9 @@
              [src]="image"
              style="max-width:300px;max-height:300px;width:40vmin;height:40vmin;margin-bottom:2vh;display: inline-block;">
 
-        <div *ngIf="image?.length==0" style="height:10vh"></div>
+        <div *ngIf="image?.length==0" style="height:5vh"></div>
 
-        <div [ngStyle]='{width:"90%","margin-left":"5%","margin-top":"4vh","text-align":text_align,"font-size": "large","margin-bottom": "5vh"}'
+        <div [ngStyle]='{width:"90%","margin-left":"5%","margin-top":"4vh","text-align":text_align,"font-size": "medium","margin-bottom": "5vh"}'
              [innerHTML]="subtitle"></div>
 
         <button class="app-button"

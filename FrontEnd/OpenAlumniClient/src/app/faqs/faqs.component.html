@@ -1,16 +1,15 @@
 <div class="mainform">
-
-
-  <mat-expansion-panel [expanded]="faq.visible"
+  <h3>Questions fréquentes</h3>
+  <mat-expansion-panel [expanded]="faq.visible" togglePosition="before"
+                       class="app-panel" style="margin:5px"
                        *ngFor="let faq of faqs"
-                       name="faq"
-                       style="width:96%;margin:3%;border:none;text-align: left;">
+                       name="faq">
 
     <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px">
-      <span *ngIf="!faq.visible">
+      <span *ngIf="!faq.visible" class="faq-title">
         {{faq.title}}
       </span>
-      <span *ngIf="faq.visible" style="color:darkgrey">
+      <span *ngIf="faq.visible">
         {{faq.title}}
       </span>
     </mat-expansion-panel-header>
@@ -24,7 +23,7 @@
 
       <iframe style="border:none;width:100%;"
               *ngIf="faq.content.endsWith('html')"
-              [src]="faq.content | safe">
+              [src]="faq.content">
       </iframe>
 
       <div [innerHTML]="faq.content"

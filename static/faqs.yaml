@@ -25,6 +25,19 @@ content:
       "
 
 
+  - index: authent
+    title: Pourquoi s'authentifier sur {{appname}} ?
+    order: 0
+    format: html
+    content: "
+      <p>
+      Les anciens étudiants présents sur {{appname}} peuvent être consultés en mode anonyme.
+      Cependant l'authentification permet de sélectionner des profils d'utilisateurs accédant à plus d'informations sur les étudiants, des statistiques sur les promotions
+      et parfois de contacter directement les anciens.
+      </p>
+      "
+
+
 
   - index: query
     title: Quelle syntaxe pour le moteur de recherche ?

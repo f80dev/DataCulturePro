@@ -1,16 +1,50 @@
 <div class="app-prompt">
-  <h1 mat-dialog-title>{{data.title}}</h1>
+  <div mat-dialog-title style="margin-bottom: 10px !important;width:100%;text-align: center;">{{data.title}}</div>
+<!--  <div style="font-size: small;margin-bottom: 5px;" *ngIf="data.subtitle?.length>0">{{data.subtitle}}</div>-->
   <div mat-dialog-content>
-    <p *ngIf="data.question?.length>0 && !data.question?.startsWith('http') && !data.question?.startsWith('./')">{{data.question}}</p>
+    <p *ngIf="data.question?.length>0 && !data.question?.startsWith('http') && !data.question?.startsWith('./') && !data.question?.startsWith('html:')" style="font-size: medium;width:100%;text-align: center;">
+      {{data.question}}
+    </p>
+
     <div *ngIf="data.question?.length>0 && (data.question?.startsWith('http') || data.question?.startsWith('./'))">
-      <iframe  scrolling="auto" frameborder="0" style="background: none;"
-               [src]="data.question | safe" width="100%">
+      <iframe scrolling="auto" frameborder="0"
+              style="background: none;"
+              [src]="data.question.replace('html:','') | safe" width="100%">
       </iframe>
+      <br>
     </div>
 
-    <mat-form-field *ngIf="!data.onlyConfirm && !data.options" style="width: 95%;">
-      <input id="txtPrompt" [type]="_type" [max]="_max" [min]="_min" matInput [(ngModel)]="data.result" cdkFocusInitial (keypress)="onEnter($event)">
-      <mat-icon *ngIf="data.emojis" matSuffix (click)="showEmoji=!showEmoji">emoji_emotions</mat-icon>
+    <div *ngIf="data.question?.length>0 && data.question.startsWith('html:')">
+      <div [innerHTML]="data.question.replace('html:','')"
+              style="background: none;height: fit-content;">
+      </div>
+    </div>
+
+
+
+    <mat-form-field *ngIf="!data.onlyConfirm && !data.options" style="width: 95%;color: white">
+
+      <div *ngIf="_type!='memo'">
+        <input id="txtPrompt" [type]="_type"
+               [max]="_max" [min]="_min"
+               matInput
+               [(ngModel)]="data.result"
+               [placeholder]="data.placeholder"
+               cdkFocusInitial autocomplete="false"
+               (keypress)="onEnter($event)">
+        <mat-icon *ngIf="data.emojis" matSuffix (click)="showEmoji=!showEmoji">emoji_emotions</mat-icon>
+
+      </div>
+
+      <div *ngIf="_type=='memo'">
+        <textarea matInput
+                  [rows]="data.n_rows"
+                  type="text"
+                  [maxlength]="_max" [(ngModel)]="data.result" cdkFocusInitial></textarea>
+      </div>
+
+      <mat-hint *ngIf="data.subtitle?.length>0">{{data.subtitle}}</mat-hint>
+
     </mat-form-field>
 
 
@@ -19,12 +53,12 @@
   <div *ngIf="data.options?.length>0" style="width:100%;text-align: center;">
     <div *ngFor="let option of data.options" style="margin:5px;">
       <button
-            class="app-button"
-            [ngStyle]="{width:option.width,verticalAlign:'middle'}"
-            [title]="option.title"
-            (click)="select_option(option.value)"
-            [innerHTML]="option.label"
-            mat-button mat-raised-button>
+        class="app-button"
+        [ngStyle]="{width:option.width,verticalAlign:'middle'}"
+        [title]="option.title"
+        (click)="select_option(option.value)"
+        [innerHTML]="option.label"
+        mat-button mat-raised-button>
       </button>
     </div>
     <hr>

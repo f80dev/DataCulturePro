@@ -30,7 +30,7 @@ categories:
 #Normalisation des métiers
 jobs:
   Camera_department: Caméra
-  Production_manager: Producteur
+  Production_manager: Production
   Music_department: Musique
   Assistant_director: Assistant réalisateur
   Script_department: Scénariste
@@ -130,7 +130,7 @@ jobs:
   Second sound assistant: Assistant son
   Assistant monteur: Assistant montage
   Directrices de production: Direction de production
-  Coproducteur: CoProduction
+  Coproducteur: Coproduction
   Camera and electrical department: Materiel
   Premier assistant opv / directeur photo: Photo
   Costume designer: Costumes
@@ -167,6 +167,7 @@ jobs:
   Post-audio supervisor: Postprod
   Assistant set manager - uncredited: Autre
   Cast: Casting
+  Production trainee: Production
   Directed: Réalisation
   Series directed: Réalisation
   Music: Montage son
@@ -253,7 +254,7 @@ jobs:
   Productrices exécutives: Production
   Assistants monteurs: Assistant montage
   Auteur/réalisateur: Réalisation
-  Producteurs associés: Producteur associé
+  Producteurs associés: Coproduction
   Secrétaire de production: Production
   Series cast: Casting
   Ingénieure du son: Ingé son

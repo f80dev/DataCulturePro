@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 
@@ -6,15 +6,18 @@ export interface DialogData {
   title: string;
   result: string;
   question:string;
+  placeholder:string;
   onlyConfirm:boolean;
   min:number,
+  n_rows:number,
   max:number,
   emojis:boolean;
   lbl_ok:string,
   type:string,
   lbl_cancel:string,
   lbl_sup:string,
-  options:any[]
+  options:any[],
+  subtitle:string
 }
 
 
@@ -24,15 +27,16 @@ export interface DialogData {
   styleUrls: ['./prompt.component.sass']
 })
 
-export class PromptComponent {
+export class PromptComponent implements OnInit {
 
   showEmoji=false;
   _type="text";
   _min: number;
   _max: number;
 
+
   constructor(
-    public dialogRef: MatDialogRef<PromptComponent>,
+    public dialogRef_prompt: MatDialogRef<PromptComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData)
   {
     if(data.hasOwnProperty("type"))this._type=data.type;
@@ -46,10 +50,11 @@ export class PromptComponent {
       this._type="number";
     }
     if(!data.result)data.result="";
+    if(!data.n_rows)data.n_rows=4;
   }
 
   onNoClick(): void {
-    this.dialogRef.close(null);
+    this.dialogRef_prompt.close(null);
   }
 
   selectEmoji(event){
@@ -60,10 +65,13 @@ export class PromptComponent {
 
   onEnter(evt:any) {
     if(evt.keyCode==13)
-      this.dialogRef.close(this.data.result);
+      this.dialogRef_prompt.close(this.data.result);
   }
 
   select_option(value: any) {
-    this.dialogRef.close(value);
+    this.dialogRef_prompt.close(value);
+  }
+
+  ngOnInit(): void {
   }
 }

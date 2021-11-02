@@ -17,16 +17,16 @@
                 (click)="socialSignIn('google')">
           Google
         </button>
-        <br><br>
-        <button class="app-button login-button"
-                mat-button mat-raised-button
-                id="cmdFacebook"
-                (click)="socialSignIn('facebook')">
-          Facebook
-        </button>
+        <br>
+<!--        <button class="app-button login-button"-->
+<!--                mat-button mat-raised-button-->
+<!--                id="cmdFacebook"-->
+<!--                (click)="socialSignIn('facebook')">-->
+<!--          Facebook-->
+<!--        </button>-->
         <br>
       </div>
-      <br><br>
+      <br>
       <button class="app-button login-button"
               *ngIf="messageCode.length==0"
               mat-button mat-raised-button
@@ -59,7 +59,7 @@
         <app-tuto label="Le code à 6 chiffres vous a été envoyé sur votre adresse mail à votre première authentification. Si vous ne retrouvez pas le mail vous pouvez vous le faire renvoyer par KERBERUS"></app-tuto>
 
         <br>
-        <button class="app-button login-button"
+        <button class="app-button"
                 mat-button mat-raised-button
                 *ngIf="code>10000"
                 id="cmdValider"
@@ -68,14 +68,14 @@
         </button>
         <br><br><br>
         <div *ngIf="code.length<4">
-          <button class="app-button login-button"
+          <button class="app-button"
                   mat-button mat-raised-button
                   id="cmdResend"
                   (click)="resend_code()">
             Renvoyer le code
           </button>
           &nbsp;
-          <button class="app-button login-button"
+          <button class="app-button"
                   mat-button mat-raised-button
                   id="cmdReset"
                   (click)="next()">
