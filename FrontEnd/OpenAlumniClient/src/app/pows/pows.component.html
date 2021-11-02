@@ -56,13 +56,14 @@
         <div style="text-align: center;">
           <table style="width: 100%;padding: 3px;">
             <tr>
-              <td *ngIf="pow.visual?.length>0" style="width: min-content;">
+              <td *ngIf="pow.visual?.length>0 && config.hasPerm('r_movie_picture')" style="width: min-content;">
                 <img [src]="pow.visual"
                      class="image-photo"
                      style="width: 100px;"
                 >
               </td>
-              <td style="font-size: small;line-height: 97%;text-align: left;padding:5px;width: 90%;display: inline-block;">
+              <td style="font-size: small;line-height: 97%;text-align: left;padding:5px;width: 90%;display: inline-block;"
+                  *ngIf="config.hasPerm('r_movie_synopsis')">
                 {{pow.description}}
                 <p *ngIf="pow.reference?.length>0">
                   Budget: {{pow.budget}} €<br>
@@ -74,7 +75,7 @@
 
         </div>
 
-        <div *ngIf="pow.links?.length>0" style="height:20px;vertical-align:middle;width: 100%;text-align: left;">
+        <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')" style="height:20px;vertical-align:middle;width: 100%;text-align: left;">
           <div *ngFor="let link of pow.links" style="font-size:small;font-weight: lighter;display: inline-block;">
             <div *ngIf="link.url?.length>0" style="display: inline-block;margin:2px;margin-left:5px;">
               <a href="{{link.url}}" target="_blank">{{link.text.replace("auto:","").toUpperCase()}}</a>
@@ -99,8 +100,7 @@
               <td>{{work.name}}</td>
               <td style="width: 10%;">
                 <mat-icon style="font-size: small;padding:0px;margin:0px;height: 17px;"
-                          title="Cliquer pour consulter le profil"
-                >account_circle</mat-icon>
+                          title="Cliquer pour consulter le profil">account_circle</mat-icon>
               </td>
             </tr>
           </table>
@@ -125,6 +125,15 @@
                   (click)="share(pow)">
             <mat-icon>share</mat-icon>
           </button>
+
+          <button mat-icon-button
+                  mat-raised-button
+                  class="icon-button"
+                  mat-button title="Rechercher avec Google"
+                  (click)="openGoogle(pow)">
+            <mat-icon>search</mat-icon>
+          </button>
+
 
           <button mat-icon-button
                   mat-raised-button

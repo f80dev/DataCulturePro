@@ -72,8 +72,12 @@ export class PowsComponent implements OnInit {
       this.message="";
       this.pows=[];
       for(let i of r.results){
-        if(!this.filter_id || this.filter_id==i.id)
-          this.pows.push(i);
+        if(!this.filter_id || this.filter_id==i.id){
+          let origin=i.links.length>0 ? i.links[0].text.split(":")[1].replace("-","") : "*";
+          if(origin=="*" || this.config.hasPerm("r_"+origin.toLowerCase()))
+            this.pows.push(i);
+        }
+
       }
       if(r.results.length<10){
         this.powAccordion.openAll();
@@ -138,5 +142,10 @@ export class PowsComponent implements OnInit {
       this.limit=50;
 
     this.refresh();
+  }
+
+  openGoogle(pow: any) {
+    let url=pow.title.replace(" ","+")+" "+pow.year;
+    open("https://www.google.com/search?q="+url,"_blank");
   }
 }

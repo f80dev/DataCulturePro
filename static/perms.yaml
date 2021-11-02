@@ -16,11 +16,29 @@ perms:
   - tag: edit_profil
     description: l'édition de l'ensemble des profils
 
+  - tag: r_imdb
+    description: au catalogue IMDB
+
+  - tag: r_unifrance
+    description: au catalogue UniFrance
+
+  - tag: r_senscritique
+    description: au catalogue UniFrance
+
+  - tag: r_movie_synopsis
+    description: au synopsis des film
+
+  - tag: r_movie_picture
+    description: a l'affiche des films
+
   - tag: nft_write
     description: la création du diplôme sous forme de NFT dans la blockchain
 
   - tag: delete_pow
     description: la suppression des oeuvres
+
+  - tag: r_movie_links
+    description: les liens vers les catalogues
 
   - tag: ask_friend
     description: à la demande d'ami

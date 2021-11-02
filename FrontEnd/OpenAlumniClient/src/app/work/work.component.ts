@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
 import {ActivatedRoute} from "@angular/router";
+import {ConfigService} from "../config.service";
 
 @Component({
   selector: 'app-work',
@@ -19,6 +20,7 @@ export class WorkComponent implements OnInit {
   @Input("backgroundColor") backgroundColor:string="grey";
 
   constructor(public _location:Location,
+              public config:ConfigService,
               public routes:ActivatedRoute,
               public api:ApiService) { }
 

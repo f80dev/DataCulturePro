@@ -23,7 +23,7 @@
                     style="text-align: left;">
 
     <button mat-button mat-icon-button
-            *ngIf="work?.pow?.links?.length>0 && work.pow.links[0].url.length>0"
+            *ngIf="work?.pow?.links?.length>0 && work.pow.links[0].url.length>0 && config.hasPerm('r_movie_links')"
             (click)="openInfo(work.pow.links[0])"
             [title]="work?.pow.links[0].text">
       <mat-icon>info</mat-icon>

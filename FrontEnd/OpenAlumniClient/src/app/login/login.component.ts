@@ -189,7 +189,7 @@ export class LoginComponent implements OnInit {
 
   updateCode(code: any){
     if (typeof(code) == 'object') {code = code.target.value; }
-    $$('Vérification du code'+code);
+    $$('Vérification du code: '+code);
     this.wait_message = 'Vérification du code';
     this.api.checkCode(this.email, code).subscribe((r: any) => {
       this.wait_message = '';
@@ -220,9 +220,10 @@ export class LoginComponent implements OnInit {
     $$('Recherche d\'un compte ayant ce mail', data);
     this.wait_message = 'Récupération de l\'utilisateur';
     this.api.existuser(data.email).subscribe((result: any) => {
+        this.email=data.email;
         localStorage.setItem('email', data.email);
-        localStorage.setItem('lastEmail', data.email);
         if (result.results.length > 0) {
+          $$("Le compte existe bien");
           this.updateCode(data.provider_id);
         } else {
           $$('Il n\'y a pas de compte à cet email');
@@ -243,6 +244,8 @@ export class LoginComponent implements OnInit {
       }
     );
   }
+
+
   public socialSignIn(socialPlatform: string) {
     let servicePlatform = GoogleLoginProvider.PROVIDER_ID;
     if (socialPlatform == 'facebook') {servicePlatform = FacebookLoginProvider.PROVIDER_ID; }

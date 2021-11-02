@@ -4,6 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {ApiService} from "../api.service";
 import {$$, showError, showMessage} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {ConfigService} from "../config.service";
 
 @Component({
   selector: 'app-works',
@@ -21,6 +22,7 @@ export class WorksComponent implements OnInit {
 
   constructor(public _location:Location,public toast:MatSnackBar,
               public routes:ActivatedRoute,
+              public config:ConfigService,
               public api:ApiService) { }
 
   ngOnInit(): void {
@@ -50,8 +52,12 @@ export class WorksComponent implements OnInit {
                 bAdd=false;
               }
             }
-            if(bAdd)this.works.push(w);
 
+            let origin=w.pow.links.length>0 ? w.pow.links[0].text.split(":")[1] : "*";
+            if(origin!="*" && !this.config.hasPerm("r_"+origin.toLowerCase()))bAdd=false;
+
+
+            if(bAdd)this.works.push(w);
           }
         }
 

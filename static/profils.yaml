@@ -4,7 +4,7 @@ profils:
   - id: anonyme
     title: Anonyme
     description: Profil par défaut affecté au personne non connecté
-    perm: r_promo r_lastname r_firstname share r_department r_works r_photo
+    perm: r_promo r_lastname r_firstname share r_department r_works r_photo r_unifrance r_imdb
     price: 0
     subscription: offline
 
@@ -13,9 +13,11 @@ profils:
     level: 0
     presentation: Consultation des profils en mode authentifié (par email / compte google).
     description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
-    perm: r_photo r_lastname r_firstname r_linkedin prof r_works r_promo write_email r_address r_department
+    perm:
+      r_photo r_lastname r_firstname r_linkedin prof r_works r_promo write_email r_address r_department
+      r_unifrance r_imdb
     price: 0
-    subscription: offline
+    subscription: online
 
   - id: employeur
     title: Employeur
@@ -31,7 +33,9 @@ profils:
     title: Responsable catalogue
     presentation: Vous avez la charge d'entretenir le catalogue des films
     description: Profil destiné aux personnes en charge du catalogue des films
-    perm: r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
+    perm:
+      r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
     price: 0
     subscription: email
 
@@ -41,6 +45,7 @@ profils:
     description: Profil destiné aux administrateurs
     perm:
         r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo
+        r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
         w_linkedin write_email r_address r_lastname
         publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
     price: 0
@@ -63,6 +68,7 @@ profils:
     perm:
       stats r_cp r_firstname r_promo r_lastname r_works ask_friend add_movies publish validate
       r_photo r_linkedin w_firstname w_linkedin edit_profil
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
       write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
     price: 0
     subscription: secure
@@ -75,6 +81,7 @@ profils:
     perm:
       r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email
       r_department advanced_search ask_friend ask_tutor publish
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
     price: 0
     subscription: email
 
@@ -84,7 +91,10 @@ profils:
     level: 0
     presentation: Vous souhaitez vous interfacer avec DataCulturePro via les API
     description: Profil destiné aux anciens élève
-    perm: r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email r_department advanced_search dev
+    perm:
+      r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin
+      prof r_works write_email r_department advanced_search dev
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
     price: 0
     subscription: hidden
 
