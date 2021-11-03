@@ -2,24 +2,26 @@
 
 #Normalisation des categories
 categories:
-  documentary: documentaire
-  movie: film
-  short: court-métrage
-  tv: télévision
-  long: film
-  comedy: comédie
-  biography: biopic
-  drama: drame
-  sci-fi: science-fiction
-  history: historique
-  musical: comédie musicale
-  romance: comédie dramatique
-  war: guerre
-  mystery: thriller
-  family: comédie familliale
-  fantasy: héroïque fantaisie
-  writer: scénariste
-  serie: série
+  Documentary: documentaire
+  Movie: film
+  Short: court-métrage
+  Tv: télévision
+  Tv series: série
+  Tv short: télévision
+  Long: film
+  Comedy: comédie
+  Biography: biopic
+  Drama: drame
+  Sci-fi: science-fiction
+  History: historique
+  Musical: comédie musicale
+  Romance: comédie dramatique
+  War: guerre
+  Mystery: thriller
+  Family: comédie familliale
+  Fantasy: héroïque fantaisie
+  Writer: scénariste
+  Serie: série
   Fiction, expérimental: fiction
   Expérimental, animation: expérimental
   Crime: policier
@@ -41,9 +43,15 @@ jobs:
   Editor: Montage
   Monteur: Montage
   Scénaristes: Scénariste
+  Assistant editor: Assitant(e) montage
+  Sound editor: Montage son
+  Assistante editor: Assitant(e) montage
   Director: Réalisation
   Réalisateur: Réalisation
   Réalisatrice: Réalisation
+  Dialogue editor: Montage
+  Assistant sound editor: Assitant(e) montage
+  Additional editor: Montage
   Writer: Scénariste
   Monitor technician: Technicien
   Set_decorator: Décors

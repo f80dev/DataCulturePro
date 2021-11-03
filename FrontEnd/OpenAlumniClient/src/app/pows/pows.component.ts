@@ -38,8 +38,9 @@ export class PowsComponent implements OnInit {
     this.refresh();
   }
 
-  open_search(name: string) {
-    if(name.indexOf(" ")>-1)name=name.split(' ')[1];
+  open_search(work: any) {
+    let name=work.name
+    if(name.indexOf(" ")>-1)name=name.substr(name.lastIndexOf(' ')).trim();
     this.router.navigate(["search"],{queryParams:{filter:name}});
   }
 
@@ -73,7 +74,8 @@ export class PowsComponent implements OnInit {
       this.pows=[];
       for(let i of r.results){
         if(!this.filter_id || this.filter_id==i.id){
-          let origin=i.links.length>0 ? i.links[0].text.split(":")[1].replace("-","") : "*";
+          let origin=i.links.length>0 ? i.links[0].text.split(":")[1] : "*";
+          origin=origin.replace("-","");
           if(origin=="*" || this.config.hasPerm("r_"+origin.toLowerCase()))
             this.pows.push(i);
         }

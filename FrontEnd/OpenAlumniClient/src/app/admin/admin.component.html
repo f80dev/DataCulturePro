@@ -49,9 +49,12 @@
               class="app-button" (click)="router.navigate(['import'])">Importation
       </button>
       <br>
-      <button mat-raised-button mat-button
-              class="app-button" (click)="analyzer('profils')">Traitement Qualite
-      </button>
+      <button mat-raised-button mat-button class="app-button" (click)="analyzer('profils')">Traitement Qualite</button>
+
+      <p>Gestion des contributions</p>
+      <button mat-raised-button mat-button class="app-button" (click)="raz('works imdb')">RAZ IMDB</button>
+      <button mat-raised-button mat-button class="app-button" (click)="raz('works unifrance')">RAZ Unifrance</button>
+      <button mat-raised-button mat-button class="app-button" (click)="raz('works')">RAZ total</button>
 
     </mat-expansion-panel>
 

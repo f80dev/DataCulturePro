@@ -639,6 +639,15 @@ def raz(request):
         log("Effacement des oeuvres")
         PieceOfWork.objects.all().delete()
 
+    if "work" in filter or filter=="all":
+        log("Effacement des contributions")
+        if "imdb" in filter:
+            Work.objects.filter(source="imdb").delete()
+        elif "unifrance" in filter:
+            Work.objects.filter(source="unifrance").delete()
+        else:
+            Work.objects.all().delete()
+
     log("Effacement de la base terminée")
     return Response({"message":"Compte effacé"})
 

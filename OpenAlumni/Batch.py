@@ -8,7 +8,7 @@ from django.utils.datetime_safe import datetime
 from imdb import IMDb
 from wikipedia import wikipedia, re
 
-from OpenAlumni.Tools import log, translate, load_page
+from OpenAlumni.Tools import log, translate, load_page, in_dict
 from OpenAlumni.settings import MOVIE_NATURE, DELAY_TO_AUTOSEARCH
 from alumni.models import Profil, Work, PieceOfWork
 
@@ -235,15 +235,25 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
 
                         if len(texts)>1:
                             nature = ""
-                            for nat in MOVIE_NATURE:
-                                if nat.lower() in texts[1].lower():
-                                    nature=nat
-                                    break
-                            if nature=="":
-                                log("Nature inconnue depuis "+texts[1]+" pour "+url)
+                            for tmp in texts[1:]:
+                                tmp=tmp.split(")")[0].lower()
+                                if in_dict(tmp,"jobs"):
+                                    job=translate(tmp)
+                                else:
+                                    log("Job absent du dictionnaire "+tmp)
 
-                            if len(texts)>2 and len(job)==0:
-                                job=texts[2].split(")")[0]
+                                if in_dict(tmp,"categories"):
+                                    nature=translate(tmp)
+                                else:
+                                    log("Nature absent du dictionnaire "+tmp)
+
+                            # for nat in MOVIE_NATURE:
+                            #     if nat.lower() in texts[1].lower():
+                            #         nature=nat
+                            #         break
+                            # if nature=="":
+                            #     log("Nature inconnue depuis "+texts[1]+" pour "+url)
+
 
                         infos["links"].append({"url":url,"text":l.getText(),"job":job,"nature":nature})
 

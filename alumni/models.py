@@ -222,7 +222,6 @@ class Work(models.Model):
         d:dict=dict({
             "name":self.profil.firstname+" "+self.profil.lastname,
             "job":self.job,
-            "dtStart":str(self.dtStart),
             "comment":self.comment,
         })
         if self.pow is not None:d["pow"]={"title":self.pow.title}

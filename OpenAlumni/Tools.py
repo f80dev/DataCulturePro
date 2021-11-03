@@ -389,6 +389,22 @@ def dateToTimestamp(txt):
     return None
 
 
+def init_dict():
+    global MYDICT
+    if MYDICT is None:
+        with open("./static/dictionnary.yaml", 'r', encoding='utf8') as f:
+            body = f.read()
+        MYDICT = yaml.load(body.lower())
+
+
+def in_dict(key:str,section="jobs"):
+    init_dict()
+    if key is None or len(key)<2:return False
+
+    key=key[0].upper() + key[1:].lower()
+    return key.lower() in MYDICT[section].keys()
+
+
 
 def translate(wrd:str,dictionnary=None):
     """
@@ -397,11 +413,7 @@ def translate(wrd:str,dictionnary=None):
     :param dictionnary:
     :return:
     """
-    global MYDICT
-    if MYDICT is None:
-        with open("./static/dictionnary.yaml", 'r', encoding='utf8') as f:
-            body = f.read()
-        MYDICT=yaml.load(body.lower())
+    init_dict()
 
     if wrd is None:
         return None

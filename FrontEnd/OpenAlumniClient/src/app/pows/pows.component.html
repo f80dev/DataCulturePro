@@ -94,7 +94,7 @@
           <table style="width: 80%;display: inline-block;text-align: left;">
             <tr *ngFor="let work of pow.works"
                 style="cursor: pointer;"
-                (click)="open_search(work.name)">
+                (click)="open_search(work)">
 
               <td><span style="color:lightgrey">{{work.job}}:</span></td>
               <td>{{work.name}}</td>
@@ -106,6 +106,8 @@
           </table>
         </div>
 
+
+<!--        Liste des commandes disponibles -->
         <mat-action-row>
           <button class="app-button"
                   *ngIf="config.user?.profil"
