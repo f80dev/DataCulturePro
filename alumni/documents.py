@@ -3,6 +3,7 @@
 
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
+from django_elasticsearch_dsl_drf.compat import StringField
 from elasticsearch_dsl import analyzer
 from alumni.models import Profil, Work, PieceOfWork
 
@@ -31,7 +32,7 @@ class ProfilDocument(Document):
 
     class Django(object):
         model=Profil
-        fields=["id","firstname","lastname",
+        fields=["id","firstname","lastname","gender",
                 "acceptSponsor","school",
                 "email","department",
                 "cp","cursus","blockchain",

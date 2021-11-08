@@ -1,4 +1,12 @@
-#La syntaxe du dictionnaire est A:B, signifiant qu'il remplace systématique A par B
+#Le dictionnaire permet de traduire les données extraites d'internet vers le referentiel unique utilisé par DCP
+#La syntaxe du dictionnaire est A:B, signifiant qu'il remplace systématiquement A par B
+
+#On distingue deux catégories de données:
+#categories: désigne la nature des oeuvres
+#jobs: désigne le référentiel des métiers du cinéma utilisé par DCP
+
+#Le dictionnaire est modifiable par les personnes autorisés sur https://github.com/f80dev/DataCulturePro/blob/master/static/dictionnary.yaml
+
 
 #Normalisation des categories
 categories:
@@ -26,6 +34,7 @@ categories:
   Expérimental, animation: expérimental
   Crime: policier
   Documentaire, fiction: documentaire
+  Documentary short: documentaire
   Expérimental, documentaire: documentaire
 
 

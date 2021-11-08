@@ -23,6 +23,7 @@ import {PlayerComponent} from "./player/player.component";
 import {VisgraphComponent} from "./visgraph/visgraph.component";
 import {NftsComponent} from "./nfts/nfts.component";
 import {ProfilsScannerComponent} from "./profils-scanner/profils-scanner.component";
+import {IssuesComponent} from "./issues/issues.component";
 
 const routes: Routes = [
   { path: 'public', component: PublicComponent},
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'profils_scanner', component: ProfilsScannerComponent},
   { path: 'pow', component: PowComponent},
   { path: 'pows', component: PowsComponent},
+  { path: 'issues', component: IssuesComponent},
   { path: 'htmledit', component: HtmlEditorComponent},
   { path: 'blog', component: BlogComponent},
   { path: 'addpow', component: AddpowComponent},

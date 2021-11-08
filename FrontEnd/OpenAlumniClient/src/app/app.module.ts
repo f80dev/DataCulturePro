@@ -82,6 +82,7 @@ import {ShareButtonsModule} from 'ngx-sharebuttons/buttons';
 import {ShareIconsModule} from 'ngx-sharebuttons/icons';
 import { ProfilsScannerComponent } from './profils-scanner/profils-scanner.component';
 import {FaqLinkComponent} from './faq-link/faq-link.component';
+import { IssuesComponent } from './issues/issues.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +120,8 @@ import {FaqLinkComponent} from './faq-link/faq-link.component';
     PlayerComponent,
     VisgraphComponent,
     NftsComponent,
-    ProfilsScannerComponent
+    ProfilsScannerComponent,
+    IssuesComponent
   ],
   imports: [
     BrowserModule,

@@ -26,8 +26,21 @@
       <div>
         <div *ngIf="!config.hasPerm('r_photo')"><br></div>
         <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">
-          <img [src]="profil?.photo" style="pointer-events: none;"
+          <img [src]="profil?.photo"
+               *ngIf="profil.public_photo"
+               style="pointer-events: none;"
                class="icon-profil avatar-photo">
+
+          <img src="./assets/img/boy.png"
+               *ngIf="!profil.public_photo && profil.gender=='M'"
+               style="pointer-events: none;"
+               class="icon-profil avatar-photo">
+
+          <img src="./assets/img/girl.png"
+               *ngIf="!profil.public_photo && profil.gender=='F'"
+               style="pointer-events: none;"
+               class="icon-profil avatar-photo">
+
         </div>
 
       </div>

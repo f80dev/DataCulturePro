@@ -54,7 +54,7 @@ export class WorksComponent implements OnInit {
             }
 
             let origin=w.pow.links.length>0 ? w.pow.links[0].text.split(":")[1] : "*";
-            if(origin!="*" && !this.config.hasPerm("r_"+origin.toLowerCase()))bAdd=false;
+            if(origin && origin!="*" && !this.config.hasPerm("r_"+origin.toLowerCase()))bAdd=false;
 
 
             if(bAdd)this.works.push(w);

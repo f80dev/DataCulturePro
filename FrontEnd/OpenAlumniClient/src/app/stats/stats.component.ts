@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
 import {$$, api, checkLogin, showMessage} from "../tools";
 import {ConfigService} from "../config.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {environment} from "../../environments/environment";
 import {MatTabChangeEvent} from "@angular/material/tabs";
@@ -29,6 +29,7 @@ export class StatsComponent implements OnInit {
   constructor(public _location:Location,
               public api:ApiService,
               public router:Router,
+              public routes:ActivatedRoute,
               public config:ConfigService) {
     this.domain_server=environment.domain_server;
   }
@@ -44,7 +45,10 @@ export class StatsComponent implements OnInit {
       this.message="";
       this.reports=r["Reports"];
       this.instant_reports=r["Instant_reports"];
-      this.sel_report=this.instant_reports[0];
+
+      let open=Number(this.routes.snapshot.queryParamMap.get("open")) || 0;
+      this.sel_report=this.instant_reports[open];
+
       if(func)func();
     });
   }

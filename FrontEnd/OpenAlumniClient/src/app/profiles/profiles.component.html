@@ -2,6 +2,8 @@
   <br>
   <h2>Choisir un nouveau profil</h2>
 
+  <app-tuto label="Les profils correspondent à des besoins particuliers, avoir le bon profil permet de simplifier l'usage de %APPNAME%"></app-tuto>
+
   <button mat-button mat-raised-button
           class="app-button" id="cmdShowPerms"
           (click)="showPerm=true">
@@ -18,41 +20,43 @@
 
   <app-tuto label="%appname% propose différents profils d'utilisateur pour s'adapter a vos besoins et ne présentez que les informations dont vous avez réelement besoin"></app-tuto>
 
-  <mat-accordion [multi]="false" style="text-align: center;display: inline-block;">
-    <mat-expansion-panel name="tabProfils" *ngFor="let profil of config.profils | filter:['email','online']" class="app-panel" style="margin:10px;">
-      <mat-expansion-panel-header>
-        <mat-panel-title class="app-mat-panel-title">{{profil.title}}</mat-panel-title>
-      </mat-expansion-panel-header>
+  <mat-accordion [multi]="false" >
+    <div *ngFor="let profil of config.profils" style="text-align: left;">
+      <mat-expansion-panel *ngIf="profil.subscription!='offline'" name="tabProfils" class="app-panel" style="margin:10px;;display: inline-block;">
 
-      <p>{{profil.presentation}}</p>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="app-mat-panel-title">{{profil.title}}</mat-panel-title>
+        </mat-expansion-panel-header>
 
-      <div *ngIf="this.perms" style="font-size: small;text-align: left;">
-        Ce profil vous donnes accès:<br>
-        <div [innerHTML]="detailPerm(profil.perm,'html')"></div>
-        <br>
-      </div>
+        <p>{{profil.presentation}}</p>
 
-      <div *ngIf="profil.price>0">
-        <br><br>
-        Prix:{{profil.price}}€/mois
-      </div>
+        <div *ngIf="this.perms" style="font-size: small;text-align: left;color:lightgrey;">
+          Ce profil vous donnes accès:
+          <div [innerHTML]="detailPerm(profil.perm,'html')"></div>
+          <br>
+        </div>
+
+        <div *ngIf="profil.price>0">
+          <br><br>
+          Prix:{{profil.price}}€/mois
+        </div>
 
 
-      <mat-action-row>
-        <button mat-button mat-raised-button
-                name="cmdAskProfil"
-                class="app-button"
-                (click)="sel_profil(profil)">
+        <mat-action-row>
+          <button mat-button mat-raised-button
+                  name="cmdAskProfil"
+                  class="app-button"
+                  (click)="sel_profil(profil)">
 
-          <span *ngIf="profil.subscription=='online' || profil.subscription=='secure'">Souscrire</span>
-          <span *ngIf="profil.subscription=='email'">Demander</span>
+            <span *ngIf="profil.subscription=='online' || profil.subscription=='secure'">Souscrire</span>
+            <span *ngIf="profil.subscription=='email'">Demander</span>
 
-        </button>
+          </button>
 
-      </mat-action-row>
+        </mat-action-row>
 
-    </mat-expansion-panel>
-
+      </mat-expansion-panel>
+    </div>
   </mat-accordion>
   <br><br>
 

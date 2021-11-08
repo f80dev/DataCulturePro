@@ -1,0 +1,50 @@
+<div class="mainform">
+  <mat-form-field  appearance="fill" class="app-field" style="max-width: 350px;">
+    <mat-label>Titre de l'anomalie</mat-label>
+    <input matInput required
+           id="txtYear"
+           type="text"
+           [(ngModel)]="title">
+     <mat-hint>Résumez en 3 ou 4 mots le problème</mat-hint>
+  </mat-form-field>
+  <br>
+
+  <mat-form-field appearance="fill"
+                  style="width:90%;max-width: 350px;">
+    <mat-label>Localisation du probléme</mat-label>
+    <textarea matInput
+              [rows]="3"
+              [(ngModel)]="localisation">
+    </textarea>
+    <mat-hint>Indiquer le nom de l'écran concerné ou l'adresse (url) de la page</mat-hint>
+    <mat-icon matSuffix style="cursor: pointer"
+              (click)="localisation=''">cancel</mat-icon>
+  </mat-form-field>
+  <br>
+
+
+  <mat-form-field appearance="fill"
+                  style="width:90%;max-width: 350px;">
+    <mat-label>Description du probleme</mat-label>
+    <textarea matInput
+              [rows]="3"
+              [(ngModel)]="description">
+    </textarea>
+    <mat-hint>Décrivez brievement le problème, ajouter le message d'erreur s'il y en a un</mat-hint>
+    <mat-icon matSuffix style="cursor: pointer"
+              (click)="description=''">cancel</mat-icon>
+  </mat-form-field>
+
+  <br><br>
+  <button mat-raised-button
+          mat-button class="app-button"
+          (click)="send()">
+    Envoyer
+  </button>
+  <button mat-raised-button
+          mat-button class="app-button"
+          (click)="quit()">
+    Annuler
+  </button>
+
+</div>

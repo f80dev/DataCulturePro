@@ -87,7 +87,7 @@
     <mat-checkbox id="chkPro" [(ngModel)]="filter_with_pro"
                   title="Ajouter la formation professionnelle aux résultats"
                   (change)="with_pro($event)" labelPosition="Before">
-      Profils Pro
+      <div style="line-height: 85%;text-align: left;">Formation<br>professionnelle</div>
     </mat-checkbox>
   </div>
 
@@ -108,14 +108,14 @@
 <div class="wrap-list" *ngIf="message.length==0 && config.ready">
   <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
   <app-profil
-    name="profils"
+    name="profils" class="app-card"
     *ngFor="let profil of profils"
     (delete)="deleteProfil(profil)"
     [backgroundColor]="profil.backgroundColor"
     [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
     (askfriend)="askfriend(profil)"
     (onclick)="openQuery($event)"
-    class="app-card" [profil]="profil">
+    [profil]="profil">
   </app-profil>
   <!--  </cdk-virtual-scroll-viewport>-->
 </div>

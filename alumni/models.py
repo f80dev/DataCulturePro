@@ -31,8 +31,12 @@ class Profil(models.Model):
     """
     id=models.AutoField(primary_key=True)
     #company=models.ForeignKey("Company",on_delete=models.DO_NOTHING,null=True)
+    gender = models.CharField(max_length=1, blank=True, default="M",
+                              choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')))
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
-    lastname=models.CharField(max_length=70, null=False, default='',help_text="Nom du profil")
+    lastname = models.CharField(max_length=70, null=False, default='', help_text="Nom du profil")
+
+    public_photo=models.BooleanField(default=False,null=False,help_text="Indique si la photo peut être ou pas présentée sur la page publique")
     birthdate=models.DateField(null=True,help_text="Date de naissance")
     mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="Numéro de mobile")
     nationality=models.CharField(blank=True,max_length=30,null=False,default="Française")
@@ -55,7 +59,7 @@ class Profil(models.Model):
     sponsorBy = models.ForeignKey('Profil', null=True,on_delete=CASCADE)
 
     photo=models.TextField(blank=True,default="/assets/img/anonymous.png",help_text="Photo du profil au format Base64")
-    gender=models.CharField(max_length=1,blank=True,default="M",choices=(('M','Male'),('F','Female'),('A','Autre'),('','NSP')))
+
     cursus=models.CharField(max_length=1,blank=False,default="S",choices=(('S','Standard'),('P','Professionnel')),help_text="Type de formation")
     address=models.CharField(null=True,blank=True,max_length=200,help_text="Adresse postale au format numéro / rue / batiment")
     town = models.CharField(null=True,blank=True,max_length=50, help_text="Ville de l'adresse postale")

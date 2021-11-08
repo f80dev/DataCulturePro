@@ -14,10 +14,14 @@
 
         <img [src]="profil.photo"
              mat-card-avatar
-             class="image-photo"
-             style="width:100px;height: 100px;margin:15px;"
-             (click)="change_photo()">
-        <br>
+             class="image-photo mat-elevation-z4"
+             style="width:150px;"
+             (click)="change_photo()"><br>
+
+        <mat-checkbox [value]="profil.public_photo">
+          Photo visible sur mon site
+        </mat-checkbox><br><br>
+
 
         <mat-form-field appearance="fill" class="app-field" style="max-width: 150px;">
           <mat-label>Prénom</mat-label>
@@ -207,7 +211,7 @@
       <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlJob">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Jobs
+            Offres d'emploi
           </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -255,6 +259,9 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
+          <div *ngIf="works.length==0">
+            <app-hourglass message="Récupération de votre travail"></app-hourglass>
+          </div>
           <tr *ngFor="let work of works" style="width:100%;text-align: left;">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
@@ -269,11 +276,11 @@
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
 
-              <!--              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"-->
-              <!--                        name="cmdEdit"-->
-              <!--                        (click)="edit_work(work)" *ngIf="work.state!='E'">-->
-              <!--                edit-->
-              <!--              </mat-icon>-->
+                            <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                                      name="cmdEdit"
+                                      (click)="edit_work(work)" *ngIf="work.state!='E'">
+                              edit
+                            </mat-icon>
 
               <mat-icon *ngIf="work.public"
                         name="cmdVisibilityOn"
@@ -303,13 +310,15 @@
 
         <br>
         <br>
-        <p>Partagez votre profil sur vos réseaux</p>
+        <p>Partagez votre profil public sur vos réseaux</p>
         <!--      voir https://ngx-sharebuttons.netlify.app/ -->
         <share-buttons [theme]="'circles-dark'"
                        style="text-align: center;"
-                       [include]="['facebook','twitter','linkedin','pinterest','telegram','messenger','whatsapp','email','copy']"
+                       [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                        [show]="8"
                        [url]="url"
+                       description="Découvrez mon profil et mes réalisations"
+                       tags="FEMIS"
                        [title]="title">
         </share-buttons>
         <br>

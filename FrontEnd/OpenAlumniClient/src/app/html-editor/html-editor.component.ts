@@ -11,6 +11,8 @@ import {ConfigService} from "../config.service";
 import {checkLogin, showError, showMessage} from "../tools";
 import {Location} from "@angular/common";
 import {Router} from "@angular/router";
+import {PromptComponent} from "../prompt/prompt.component";
+import {MatDialog} from "@angular/material/dialog";
 
 
 @Component({
@@ -31,13 +33,14 @@ export class HtmlEditorComponent implements OnInit {
 
   @ViewChild('fruitInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
-  editorContent: string="Votre article ici";
+  editorContent: string="";
   message: string="";
 
   constructor(
     public api:ApiService,
     public toast:MatSnackBar,
     public router:Router,
+    public dialog:MatDialog,
     public config:ConfigService,
     public _location:Location
   ) {
@@ -49,7 +52,7 @@ export class HtmlEditorComponent implements OnInit {
   ngOnInit(): void {
     checkLogin(this);
     this.editorContent=localStorage.getItem("article_content");
-    if(!this.editorContent || this.editorContent=="null")this.editorContent="Votre article ici";
+    if(!this.editorContent || this.editorContent=="null")this.editorContent="";
   }
 
 
@@ -142,5 +145,21 @@ export class HtmlEditorComponent implements OnInit {
         this.editorContent=String(reader.result);
       };
       reader.readAsText(fileInputEvent.target.files[0],"utf-8");
+  }
+
+  clear_article() {
+    this.dialog.open(PromptComponent, {
+          backdropClass:"removeBackground",
+          data: {
+            title: 'Effacer le contenu de votre article ?',
+            question: "",
+            onlyConfirm: true,
+            lbl_ok: 'Effacer',
+            lbl_cancel: 'Annuler'
+          }
+        }).afterClosed().subscribe((result_code) => {
+          if(result_code=="yes")this.editorContent="";
+    });
+
   }
 }

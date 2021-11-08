@@ -381,7 +381,7 @@ def dateToTimestamp(txt):
     for format in formats:
         try:
             dt:struct_time=strptime(txt,format)
-            return datetime.datetime.fromtimestamp(mktime(dt)).timestamp()
+            return datetime.datetime(*dt[:6])
         except Exception as inst:
             pass
 

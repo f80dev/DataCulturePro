@@ -74,10 +74,10 @@ perms:
     description: à la recherche avancée
 
   - tag: r_photo
-    description: à voir la photo du profil
+    description: à la photo du profil
 
   - tag: r_cp
-    description: à voir le code postal de l'adresse
+    description: au code postal de l'adresse
 
   - tag: mobile
     description: au numéro de mobile du candidat

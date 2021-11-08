@@ -54,6 +54,16 @@ Instant_reports:
     cols: profil_ville,profil_promotion,profil_id,profil_cursus
 
 
+  - title: Nombre d'étudiants par formation
+    id: student_by_cursus
+    chart: pie
+    x: profil_cursus
+    y: etudiants
+    color: profil_cursus
+    cols: profil_cursus,profil_id
+    sql: SELECT profil_cursus,count(profil_id) as etudiants FROM df GROUP BY profil_cursus
+
+
   - title: Répartition du genre par département depuis 2000
     id: student_genre
     chart: pie

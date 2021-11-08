@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/',include('alumni.urls')),
     path('api/users/register/', views.UserCreate.as_view()),
     path('api/resend/', views.resend),
+    path('api/add_issue/', views.add_issue),
     path('api/init_nft/', views.init_nft),
     path('api/update_dictionnary/', views.update_dictionnary),
     path('api/jobsites/', views.refresh_jobsites),

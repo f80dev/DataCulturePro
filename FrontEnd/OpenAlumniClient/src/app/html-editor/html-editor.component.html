@@ -8,7 +8,7 @@
   <br><br>
 
   <mat-form-field class="app-field">
-    <mat-label>Tags</mat-label>
+    <mat-label>Thème de votre contenu</mat-label>
     <mat-chip-list #chipList aria-label="Selection des tags">
       <mat-chip
         *ngFor="let tag of tags"
@@ -30,6 +30,7 @@
         {{tag}}
       </mat-option>
     </mat-autocomplete>
+    <mat-hint>Vos lecteur peuvent filtrer les articles par thématique</mat-hint>
   </mat-form-field>
 
 
@@ -52,20 +53,21 @@
 
    <button class="icon-button" mat-button mat-icon-button mat-raised-button
           id="cmdReset"
-           title="Abandonner l'article"
-          (click)="editorContent=''">
+           title="Effacer l'article en cours"
+          (click)="clear_article()">
      <mat-icon>delete</mat-icon>
   </button>
 
   <button class="icon-button" mat-button mat-icon-button mat-raised-button
           id="cmdSave"
-          [disabled]="!editorContent"
+          [disabled]="!editorContent || editorContent.length==0"
           title="Enregistrer un brouillon"
           (click)="save()">
     <mat-icon>save</mat-icon>
   </button>
 
   <button class="app-button" mat-button mat-raised-button
+          [disabled]="!editorContent || editorContent.length==0"
           id="cmdClear" color="primary"
           (click)="publish()">
     Publiez !

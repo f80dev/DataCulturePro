@@ -3,6 +3,8 @@ version: 1.0
 profils:
   - id: anonyme
     title: Anonyme
+    level: 0
+    presentation: Ce profil est attribué par défaut à tous les visiteurs anonymes de {{appname}}
     description: Profil par défaut affecté au personne non connecté
     perm: r_promo r_lastname r_firstname share r_department r_works r_photo r_unifrance r_imdb
     price: 0

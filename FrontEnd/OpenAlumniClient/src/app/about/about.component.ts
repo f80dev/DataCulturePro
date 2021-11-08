@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-about',
@@ -12,7 +13,7 @@ export class AboutComponent implements OnInit {
 
 
 
-  constructor(public config:ConfigService) {
+  constructor(public config:ConfigService,public router:Router) {
     this.config.init();
     this.appVersion=environment.appVersion;
   }

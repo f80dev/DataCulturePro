@@ -69,6 +69,7 @@ export class ProfilesComponent implements OnInit {
     } else {
       if(p.subscription=="secure") {
         this.dialog.open(PromptComponent, {
+          backdropClass:"removeBackground",
           data: {
             title: 'Ce profil nécessite un code d\'accès',
             question: "Code d'accès ?",

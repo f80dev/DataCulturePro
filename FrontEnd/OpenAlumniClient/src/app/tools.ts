@@ -53,7 +53,7 @@ export function translateQuery(text:string,all_term=false):string {
 
 export function brand_text(text:string,config:any){
   if(config.values){
-    text=text.replace("%appname%",config.values.appname);
+    text=text.replace("%appname%",config.values.appname).replace("%APPNAME%",config.values.appname);
   }
   //text=text.replace("%"+text+"%",config.values[text]);
   return text;

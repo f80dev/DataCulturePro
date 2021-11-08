@@ -58,22 +58,6 @@ class UserSerializer(HyperlinkedModelSerializer):
         )
         token = Token.objects.create(user=user)
 
-        log("Récupération des profils")
-        lp=list(Profil.objects.filter(email=data["email"]))
-        profils=yaml.safe_load(open(settings.STATIC_ROOT + "/profils.yaml", "r").read())
-        perm=profils["profils"][1]["perm"]
-
-        log("Création de l'extraUser")
-        if len(lp)>0:
-            eu=ExtraUser.objects.create(user=user,perm=perm,profil=lp[0],black_list="",level=profils["profils"][1]["level"])
-        else:
-            eu = ExtraUser.objects.create(user=user, perm=perm,black_list="",level=profils["profils"][1]["level"])
-        eu.save()
-
-        user.save()
-
-        log("Procédure de création terminée")
-        return user
 
 
 
@@ -117,17 +101,6 @@ class ExtraPOWSerializer(serializers.ModelSerializer):
 
 
 
-#http://localhost:8000/api/profils/?filter{firstname}=Adrien
-class ProfilSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Profil
-        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",
-                "mobile","email","photo","gender","job",
-                "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
-                "linkedin","degree_year","department",
-                "dtLastUpdate","links","str_links","blockchain",
-                "cp","public_url","fullname","cursus",
-                "address","town","promo","dtLastSearch"]
 
 
 
@@ -141,21 +114,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['owner'] = ProfilSerializer(read_only=True)
         return super(ArticleSerializer, self).to_representation(instance)
-
-
-#http://localhost:8000/api/profils/?filter{firstname}=Adrien
-class ExtraProfilSerializer(serializers.ModelSerializer):
-    works = serializers.StringRelatedField(many=True,read_only=True)
-    sponsor = ProfilSerializer(many=False,read_only=True)
-    class Meta:
-        model=Profil
-        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
-                "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
-                "mobile","email","photo","gender","job",
-                "linkedin","works","degree_year","department",
-                "dtLastUpdate","links","str_links",
-                "cp","public_url","fullname","cursus",
-                "address","town","promo"]
 
 
 
@@ -173,6 +131,35 @@ class WorkSerializer(serializers.ModelSerializer):
                 "source","year","nature","state"]
 
 
+
+#http://localhost:8000/api/profils/?filter{firstname}=Adrien
+class ProfilSerializer(serializers.ModelSerializer):
+    works=WorkSerializer(many=True,read_only=True)
+    class Meta:
+        model=Profil
+        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",
+                "mobile","email","photo","gender","job",
+                "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
+                "linkedin","degree_year","department","works",
+                "dtLastUpdate","links","str_links","blockchain",
+                "cp","public_url","fullname","cursus",
+                "address","town","promo","dtLastSearch"]
+
+
+
+#http://localhost:8000/api/profils/?filter{firstname}=Adrien
+class ExtraProfilSerializer(serializers.ModelSerializer):
+    works = serializers.StringRelatedField(many=True,read_only=True)
+    sponsor = ProfilSerializer(many=False,read_only=True)
+    class Meta:
+        model=Profil
+        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
+                "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
+                "mobile","email","photo","gender","job",
+                "linkedin","works","degree_year","department",
+                "dtLastUpdate","links","str_links",
+                "cp","public_url","fullname","cursus",
+                "address","town","promo"]
 
 
 class WorksCSVRenderer (CSVRenderer):
@@ -193,16 +180,32 @@ class ProfilsCSVRenderer (CSVRenderer):
 
 #ProfilDocument utilisé par elasticsearch
 class ProfilDocumentSerializer(DocumentSerializer):
-    works=serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         document=ProfilDocument
-        fields=("id","firstname","lastname","school",
-                "acceptSponsor","sponsorBy",
-                "name","cursus","job","links",
-                "degree_year","public_url","blockchain",
-                "photo","cp","department",
-                "address","town","promo",
-                "dtLastUpdate","dtLastSearch")
+        fields=("id",
+                "firstname",
+                "lastname",
+                "gender",
+                "school",
+                "gender",
+                "acceptSponsor",
+                "sponsorBy",
+                "name",
+                "cursus",
+                "job",
+                "links",
+                "degree_year",
+                "public_url",
+                "blockchain",
+                "photo",
+                "cp",
+                "department",
+                "address",
+                "town",
+                "promo",
+                "dtLastUpdate",
+                "dtLastSearch")
+
 
 
 class PowDocumentSerializer(DocumentSerializer):

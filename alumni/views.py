@@ -11,6 +11,7 @@ import pandasql
 import yaml
 import pandas as pd
 from django.core.serializers import json
+from github import Github
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
 from OpenAlumni.analytics import StatGraph
@@ -250,6 +251,18 @@ def resend(request):
         users[0].set_password(reset_password(users[0].email,users[0].username))
         users[0].save()
     return Response({"message":"Check your email"})
+
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def add_issue(request):
+    g=Github("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")
+    r=g.get_repo("f80dev/DataCulturePro")
+    body=loads(str(request.body,"utf8"))
+    r.create_issue(body["title"],body["body"])
+    return Response({"message":"problème loggé"})
+
 
 
 
@@ -1008,7 +1021,7 @@ def importer(request):
     def idx(col:str,row=None,default=None,max_len=0,min_len=0):
         for c in col.lower().split(","):
             if c in header:
-                if row is not None:
+                if row is not None and len(row)>header.index(c):
                     rc=row[header.index(c)]
                     if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
                     if min_len==0 or len(rc)>=min_len:
@@ -1036,9 +1049,13 @@ def importer(request):
         delimiter=","
         text_delimiter=True
     d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
+    total_record = sum(1 for line in d)
+
     i=0
     record=0
+    d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
     for row in d:
+        log(str(i) + "/" + str(total_record) + " en cours d'importation")
         if i==0:
             header=[x.lower() for x in row]
         else:
@@ -1077,10 +1094,7 @@ def importer(request):
                         dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
                     else:
                         dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
-                ts=dateToTimestamp(dt_birthdate)
-
-                dt = None
-                if not ts is None:dt=datetime.fromtimestamp(ts)
+                dt=dateToTimestamp(dt_birthdate)
 
                 promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie",row,dictionnary["promo"],0,4)
                 profil=Profil(
@@ -1114,6 +1128,7 @@ def importer(request):
                 )
                 try:
                     rc=profil.save()
+                    log(profil.lastname + " est enregistré")
                     record=record+1
                 except Exception as inst:
                     log("Probléme d'enregistrement de "+email+" :"+str(inst))
@@ -1170,15 +1185,14 @@ class ProfilDocumentView(DocumentViewSet):
         DefaultOrderingFilterBackend,
         SearchFilterBackend,
     ]
-    search_fields = ('works__title','works__job','lastname','firstname','department','promo','school')
-    #multi_match_search_fields = ('works__title','works__job','lastname','firstname','department','promo','school')
+    search_fields = ('lastname','firstname','department','promo','school','town',)
+    #search_nested_fields={"works":['title'],}
 
     filter_fields = {
         'name': 'name',
         'lastname':'lastname',
         'firstname': 'firstname',
         'cursus':'cursus',
-        'title':'works__title',
         'promo':'promo',
         'school':'school',
         'town':'town',

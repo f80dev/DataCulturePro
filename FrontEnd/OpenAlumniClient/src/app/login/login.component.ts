@@ -191,6 +191,7 @@ export class LoginComponent implements OnInit {
     if (typeof(code) == 'object') {code = code.target.value; }
     $$('Vérification du code: '+code);
     this.wait_message = 'Vérification du code';
+    debugger
     this.api.checkCode(this.email, code).subscribe((r: any) => {
       this.wait_message = '';
       if (r != null) {
