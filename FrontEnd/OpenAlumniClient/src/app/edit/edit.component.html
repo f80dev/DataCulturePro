@@ -266,7 +266,7 @@
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
               {{work.job}} sur
-              <a [title]="work.source" href="./pows?filter={{work.pow?.title}}">{{work.pow?.title}}</a>
+              <a [title]="work.source" href="./pows?filter={{work.title}}">{{work.title}}</a>
               <br>
               <div *ngIf="work.dtEnd">
                 en {{work.dtEnd | date:'yyyy'}}
@@ -278,7 +278,7 @@
 
                             <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
                                       name="cmdEdit"
-                                      (click)="edit_work(work)" *ngIf="work.state!='E'">
+                                      (click)="edit_work(work)">
                               edit
                             </mat-icon>
 
@@ -335,6 +335,7 @@
 
           <button class="app-button" mat-button mat-raised-button
                   id="cmdClear"
+                  title="Sont effacées uniquement les expériences issue du robot d'analyse"
                   *ngIf="works?.length>0"
                   (click)="reset_works()">
             <div class="bloc-bouton">Effacer les<br>expériences</div>
@@ -421,9 +422,11 @@
   <!--    </div>-->
   <!--  </div>-->
 
-  <div *ngIf="showAddWork==2" style="width:100%;text-align: center;">
-    <h3>Ajouter le Projet "{{add_work.movie}}"</h3>
-    <br>
+  <div *ngIf="showAddWork==2 || showAddWork==3" style="width:100%;text-align: center;">
+    <h3>
+      Précisez votre contribution sur "{{add_work.movie}}"
+      <span *ngIf="add_work.year"> ({{add_work.year}})</span>
+    </h3>
     <br>
 
     <mat-form-field class="app-field" style="font-size: large;">
@@ -497,7 +500,7 @@
             id="cmdAddExperience"
             title="Ajouter ce projet à votre expérience"
             (click)="save_newwork()">
-      <div class="bloc-bouton">Ajouter cette<br>expérience</div>
+      <div class="bloc-bouton">Enregistrer cette<br>expérience</div>
     </button>
 
   </div>

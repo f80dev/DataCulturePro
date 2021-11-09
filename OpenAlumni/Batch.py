@@ -236,7 +236,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                         if len(texts)>1:
                             nature = ""
                             for tmp in texts[1:]:
-                                tmp=tmp.split(")")[0].lower()
+                                tmp=tmp.split(")")[0].split(":")[0].split(" - ")[0].lower()
                                 if in_dict(tmp,"jobs"):
                                     job=translate(tmp)
                                 else:

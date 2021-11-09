@@ -19,7 +19,7 @@ export class ConfigService {
   ready=false;
 
   profils:any[]=[];
-  jobs: any[]=[];
+  jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
 
   constructor(private location: Location,
@@ -72,12 +72,16 @@ export class ConfigService {
 
     $$("Chargement des jobs");
     this.api.getyaml("","dictionnary").subscribe((yaml:any)=>{
-      if(this.jobs.length==0) {
+      if(!this.jobs) {
+        let rc=[]
+        this.jobs=[];
         for (let i of Object.values(yaml.jobs)) {
-          let new_job={value: i, label: i};
-          if(this.jobs.indexOf(new_job)==-1)
-            this.jobs.push(new_job);
+          if(rc.indexOf(i)===-1){
+            rc.push(i);
+            this.jobs.push({label:i,value:i});
+          }
         }
+
         this.api.getyaml("", "profils").subscribe((r: any) => {
           this.profils = r.profils;
           this.raz_user();

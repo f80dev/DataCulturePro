@@ -10,6 +10,7 @@
 
 #Normalisation des categories
 categories:
+  Tv mini series: série
   Documentary: documentaire
   Movie: film
   Short: court-métrage
@@ -43,9 +44,12 @@ jobs:
   Camera_department: Caméra
   Production_manager: Production
   Music_department: Musique
+  Artistic director: Directeur artistique
   Assistant_director: Assistant réalisateur
   Script_department: Scénariste
   Soundtrack: Compositeur
+  Executive in charge of production: Production
+  Artistic production manager: Production
   Sound department: Montage son
   Scénario: Scénariste
   Second unit director or assistant director: Assistant réalisateur

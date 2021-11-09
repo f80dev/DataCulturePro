@@ -169,10 +169,12 @@ export class SearchComponent implements OnInit {
   ]
 
   advanced_search=[];
+  show_toolbar: boolean=false;
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
     this.handle=setTimeout(()=>{
+      this._location.replaceState("search?query="+this.query.value);
       this.refresh();
     },1000);
   }

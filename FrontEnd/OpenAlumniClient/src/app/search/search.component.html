@@ -10,7 +10,7 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
   <mat-form-field *ngIf="advanced_search.length==0" appearance="legacy"
-                  style="max-width:200px;width:96%;font-size: medium;display: inline-block;margin:5px;" autofocus>
+                  style="max-width:300px;width:60%;font-size: medium;display: inline-block;margin:5px;" autofocus>
     <mat-label>Rechercher un profil</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
@@ -19,11 +19,15 @@
            placeholder="nom, métier, promotion ou titre d'une réalisation"
            [(ngModel)]="query.value">
     <mat-icon *ngIf="query.value?.length>0"
-              matSuffix style="cursor: pointer"
+              matSuffix style="cursor: pointer;color:lightgray;"
               (click)="clearQuery()">cancel</mat-icon>
     <mat-icon *ngIf="query.value?.length==0"
-              matSuffix style="cursor: pointer;font-size: medium;color:lightgray;"
+              matSuffix style="cursor: pointer;color:lightgray;"
               (click)="help()">help</mat-icon>
+    <mat-icon *ngIf="!show_toolbar"
+              matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
+              (click)="show_toolbar=true;">add_circle</mat-icon>
+
   </mat-form-field>
 
   <div *ngIf="advanced_search.length>0" style="display: inline-block">
@@ -44,7 +48,7 @@
 
     <mat-form-field appearance="legacy"
                     *ngIf="config.width_screen>400"
-                    style="max-width:120px;font-size: small;">
+                    style="max-width:150px;font-size: small;">
       <mat-label>Trier par</mat-label>
       <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
         <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
@@ -57,6 +61,9 @@
     </mat-icon>
 
   </div>
+
+
+
   <br>
 
 
@@ -68,8 +75,8 @@
   <!--          Chercher uniquement via les titres-->
   <!--        </mat-checkbox>-->
   <!--    </div>-->
-
-  <div style="font-size: small">
+<!--Toolbar de recherche avancée -->
+  <div style="font-size: small" *ngIf="profils?.length>3 && show_toolbar" >
     <div *ngIf="profils.length>8" style="display: inline-block;margin:5px;">
       <span *ngIf="profils.length==this.limit">+ de </span>
       {{profils.length}} profils

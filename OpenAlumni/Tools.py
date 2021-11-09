@@ -418,7 +418,7 @@ def translate(wrd:str,dictionnary=None):
     if wrd is None:
         return None
 
-    key=wrd.lower().replace(",","").replace("(","").replace(")","").replace(":","")
+    key=wrd.lower().replace(",","").replace("(","").replace(")","").replace(":","").strip()
     for i in range(10):
         key=key.replace("   "," ").replace("  "," ")
 

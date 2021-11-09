@@ -28,6 +28,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   add_work:any;
   mustSave=false;
   showAddWork=-1;
+  current_work:any=null;
   socials:any[]=[];
   projects: any[];
   jobsites: any[]=[];
@@ -108,14 +109,14 @@ export class EditComponent implements OnInit,OnDestroy  {
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.message="Récupération des expériences";
-    this.api._get("extraworks","profil__id="+id).subscribe((r:any)=>{
+    this.api._get("profils/"+id).subscribe((r:any)=>{
       $$("Travaux chargés");
       this.message="";
       this.works=[];
-      for(let w of r.results){
+      for(let w of r.works){
         let new_work=w;
         for(let tmp of this.works){
-          if(tmp.pow.title==w.pow.title){
+          if(tmp.title==w.title){
             let idx=this.works.indexOf(tmp);
             this.works[idx].job=this.works[idx].job +" & "+w.job
             new_work=null;
@@ -149,7 +150,6 @@ export class EditComponent implements OnInit,OnDestroy  {
           })
         }
 
-
         let d_min=1e9;
         for(let j of this.config.jobs){
           let d=stringDistance(p.department,j.value);
@@ -182,12 +182,19 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
 
-  select(element: any) {
+  select(element: any,next_step=2) {
     this.add_work={
       movie:element.title,
-      movie_id:element.id
+      year:element.year,
+      movie_id:element.pow
     };
-    this.showAddWork=2;
+    if(element.year && Number(element.year)>1900){
+      this.dtStart=new Date(Number(element.year),1,1);
+      this.dtEnd=new Date(Number(element.year),31,12);
+    }
+
+    $$("Selection du film ",element);
+    this.showAddWork=next_step;
   }
 
 
@@ -196,6 +203,7 @@ export class EditComponent implements OnInit,OnDestroy  {
       profil:this.profil.id,
       pow:this.add_work.movie_id,
       job:this.job,
+      state:"E",
       earning:this.earning,
       comment:this.comment,
       dtStart:this.dtStart.toISOString().split("T")[0],
@@ -203,6 +211,13 @@ export class EditComponent implements OnInit,OnDestroy  {
       duration:this.duration,
       source:"man_"+this.config.user.id,
     };
+
+    if(this.showAddWork==3){
+      this.api._delete("works/"+this.current_work.id,"").subscribe(()=>{
+        $$("Suppression de l'ancienne contribution");
+      })
+    }
+
     $$("Insertion de ",this.add_work);
     this.api._post("works/","",this.add_work).subscribe((rany)=>{
       this.showAddWork=0;
@@ -232,7 +247,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   del_work(wrk:any) {
     this.dialog.open(PromptComponent,{data: {
         title: 'Confirmation',
-        question: "Supprimer l'expérience sur '"+wrk.pow.title+"'",
+        question: "Supprimer l'expérience sur '"+wrk.title+"'",
         onlyConfirm: true,
         canEmoji: false,
         lbl_ok: 'Oui',
@@ -335,10 +350,8 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   edit_work(work: any) {
-    this.api._patch("works/"+work.id+"/","",{state:"E"}).subscribe(()=>{
-      showMessage(this,"Mode édition");
-      work.state="E";
-    });
+    this.current_work=work;
+    this.select(work,3);
   }
 
 
