@@ -96,6 +96,8 @@ export class EditComponent implements OnInit,OnDestroy  {
     });
   }
 
+
+
   autoAddMovie(){
     let add=this.routes.snapshot.queryParamMap.get("add");
     let title=this.routes.snapshot.queryParamMap.get("title");
@@ -105,7 +107,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
 
-
+  //Récupération des experiences;
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.message="Récupération des expériences";
@@ -125,10 +127,16 @@ export class EditComponent implements OnInit,OnDestroy  {
         }
 
         if(w.state!="D"){
-          if(new_work)
+          if(new_work){
             this.works.push(new_work);
+          }
+
         }
       }
+
+      $$("Tri de la liste");
+      this.works.sort((a, b) => (Number(a.year) > Number(b.year) ? -1 : 1));
+
     },(err)=>{
       showError(this,err);
       this.message="";

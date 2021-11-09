@@ -260,11 +260,12 @@
         </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
           <div *ngIf="works.length==0">
-            <app-hourglass message="Récupération de votre travail"></app-hourglass>
+            Aucune expérience identifiée.
           </div>
           <tr *ngFor="let work of works" style="width:100%;text-align: left;">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
+              {{work.year}} :
               {{work.job}} sur
               <a [title]="work.source" href="./pows?filter={{work.title}}">{{work.title}}</a>
               <br>
@@ -276,11 +277,11 @@
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
 
-                            <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
-                                      name="cmdEdit"
-                                      (click)="edit_work(work)">
-                              edit
-                            </mat-icon>
+              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                        name="cmdEdit"
+                        (click)="edit_work(work)">
+                edit
+              </mat-icon>
 
               <mat-icon *ngIf="work.public"
                         name="cmdVisibilityOn"
@@ -310,18 +311,21 @@
 
         <br>
         <br>
-        <p>Partagez votre profil public sur vos réseaux</p>
-        <!--      voir https://ngx-sharebuttons.netlify.app/ -->
-        <share-buttons [theme]="'circles-dark'"
-                       style="text-align: center;"
-                       [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
-                       [show]="8"
-                       [url]="url"
-                       description="Découvrez mon profil et mes réalisations"
-                       tags="FEMIS"
-                       [title]="title">
-        </share-buttons>
-        <br>
+        <div *ngIf="works.length>0">
+          <p>Partagez votre profil public sur vos réseaux</p>
+          <!--      voir https://ngx-sharebuttons.netlify.app/ -->
+          <share-buttons [theme]="'circles-dark'"
+                         style="text-align: center;"
+                         [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
+                         [show]="8"
+                         [url]="url"
+                         description="Découvrez mon profil et mes réalisations"
+                         tags="FEMIS"
+                         [title]="title">
+          </share-buttons>
+          <br>
+        </div>
+
 
         <mat-action-row id="pnlActionExperience">
           <button class="app-button" mat-button mat-raised-button
