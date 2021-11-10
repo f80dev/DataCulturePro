@@ -440,9 +440,8 @@ def batch(request):
     filter= request.GET.get("filter", "*")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
-
     profils=Profil.objects.order_by("dtLastSearch").all()
-    refresh_delay=31
+    refresh_delay=int(request.GET.get("refresh_delay", 31))
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
         profils.update(auto_updates="0,0,0,0,0,0")

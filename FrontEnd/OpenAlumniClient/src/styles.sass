@@ -7,6 +7,7 @@ $grayinput: #303030
 $mediumgray: #747474
 $button-color: #3a293c
 $primary-color: #ff059b
+$secondary-color: #c1c1c1
 
 
 .app-button
@@ -126,8 +127,8 @@ html, body, app-root
 .app-field
   width: 95%
   max-width: 500px
-  margin: 5px
-  margin-bottom: 10px
+  margin: 3px
+  height: min-content
 
 h3
   width: 100%
@@ -161,22 +162,7 @@ h3
   flex: 1 1 auto
 
 .app-panel
-  width: 98%
-  margin: 2%
-
-mat-panel-title
-  color: lightgray !important
-  font-weight: bold
-
-
-
-.app-mat-panel-description
-  font-weight: lighter
-  color: darkgray
-  text-align: left
-  font-size: small
-  vertical-align: center
-
+  width: 100% !important
 
 
 .faq-content
@@ -218,13 +204,31 @@ a
   text-decoration: none
 
 
+mat-panel-title
+  color: $secondary-color !important
+  font-weight: normal
+  font-size: small
+
+
+.app-mat-panel-description
+  font-weight: lighter
+  color: darkgray
+  text-align: left
+  font-size: small
+  vertical-align: center
+
+
 mat-expansion-panel
   max-width: 600px
 
 mat-expansion-panel-header
-  color: $primary-color
-  font-weight: bolder
-  font-size: large
+  height: 45px !important
+  padding-left: 10px !important
+  font-weight: lighter !important
+
+mat-expansion-panel-content
+  padding: 2px !important
+  margin: 0px !important
 
 
 mat-action-row

@@ -229,6 +229,8 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                             temp=l.parent.parent.text.split("(")
                             job=temp[len(temp)-1].split(")")[0]
                             pass
+                        else:
+                            if not in_dict(job,"jobs"):job=""
 
                         url = "https://www.imdb.com" + l.get("href")
                         url = url.split("?")[0]
@@ -237,15 +239,11 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                             nature = ""
                             for tmp in texts[1:]:
                                 tmp=tmp.split(")")[0].split(":")[0].split(" - ")[0].lower()
-                                if in_dict(tmp,"jobs"):
-                                    job=translate(tmp)
-                                else:
-                                    log("Job absent du dictionnaire "+tmp)
+                                if len(job)==0 and in_dict(tmp,"jobs"):job=translate(tmp)
+                                if in_dict(tmp,"categories"):nature=translate(tmp)
 
-                                if in_dict(tmp,"categories"):
-                                    nature=translate(tmp)
-                                else:
-                                    log("Nature absent du dictionnaire "+tmp)
+                            if len(job)==0:log("job introuvable dans "+texts[1:])
+                            if len(nature)==0:log("nature de l'oeuvre introuvable dans "+texts[1:])
 
                             # for nat in MOVIE_NATURE:
                             #     if nat.lower() in texts[1].lower():
@@ -256,7 +254,6 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
 
 
                         infos["links"].append({"url":url,"text":l.getText(),"job":job,"nature":nature})
-
 
     return infos
 
@@ -451,7 +448,9 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
 
     for l in links:
         source = "auto"
+        film = None
         pow = None
+        job = l["job"] if "job" in l else ""
         for p in PieceOfWork.objects.filter(title__iexact=l["text"]):
             for link in p.links:
                 if l["url"] == link["url"]:
@@ -459,7 +458,6 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                     break
 
         if not pow:
-            film=None
             if "unifrance" in l["url"]:
                 source = "auto:unifrance"
                 film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay)
@@ -504,22 +502,22 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                 except Exception as inst:
                     log("Impossible d'enregistrer le film: "+str(inst.args))
             else:
-                job = l["job"]
                 film = dict()
 
-            if not pow is None:
-                t_job = translate(job)
-                if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
-                    if job is not None and t_job is not None:
-                        log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
-                        work = Work(pow=pow, profil=profil, job=t_job, source=source)
-                        work.save()
-                        if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
-                    else:
-                        log("Pas d'enregistrement de la contribution")
+        if not pow is None:
+            t_job = translate(job)
+            if len(t_job)==0:t_job="Non identifié"
+            if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
+                if job is not None and t_job is not None:
+                    log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
+                    work = Work(pow=pow, profil=profil, job=t_job, source=source)
+                    work.save()
+                    if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
+                else:
+                    log("Pas d'enregistrement de la contribution")
 
-                # Enregistrement du casting
-                if "casting" in film:
+            # Enregistrement du casting
+            if not film is None and "casting" in film:
                     for p in film["casting"]:
                         _ps = list(Profil.objects.filter(lastname=p["lastname"], firstname=p["firstname"]))
                         if len(_ps) == 0:
@@ -549,7 +547,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
 #http://localhost:8000/api/batch_movies
 def exec_batch_movies(pows,refresh_delay=31):
     for pow in list(pows):
-        if pow.delay_lastsearch() / 24 > DELAY_TO_AUTOSEARCH:
+        if pow.delay_lastsearch() / 24 > refresh_delay:
             extract_movie_from_bdfci(pow)
         pass
     return 0,0
@@ -580,7 +578,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
 
         log("Traitement de " + profil.firstname+" "+profil.lastname+". Dernière recherche "+profil.dtLastSearch.isoformat(" "))
         transact = Profil.objects.filter(id=profil.id)
-        if profil.delay_lastsearch()/24 > DELAY_TO_AUTOSEARCH or len(profils)==1:
+        if profil.delay_lastsearch()/24 > refresh_delay or len(profils)==1:
             log("mise a jour de "+profil.lastname+" dont la dernière recherche est "+str(profil.delay_lastsearch()/24)+" jours")
             profil.dtLastSearch=datetime.now()
 

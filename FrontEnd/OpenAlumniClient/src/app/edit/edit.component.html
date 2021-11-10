@@ -200,24 +200,18 @@
         </div>
 
 
-
-
-
-
-
       </mat-expansion-panel>
 
       <!--      Job-->
       <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlJob">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Offres d'emploi
+            Offres d'emplois
           </mat-panel-title>
-
         </mat-expansion-panel-header>
 
-        <mat-form-field appearance="fill" class="app-field" style="width: 70%;max-width: 250px;">
-          <mat-label>Critère de recherche</mat-label>
+        <mat-form-field appearance="legacy" class="app-field" style="width: 70%;max-width: 250px;font-size: small;">
+          <mat-label>Critères de recherche</mat-label>
           <input matInput type="text" max="50" [(ngModel)]="query">
         </mat-form-field>
 
@@ -232,12 +226,12 @@
 
         <table style="width:100%;">
           <tr style="width:100%;font-size: small;padding-bottom: 3px;" *ngFor="let site of jobsites">
-            <td>
+            <td style="width: fit-content;">
               <strong>{{site.name}}</strong><br>
               <div style="line-height: 90%;font-size: small;">{{site.description}}</div>
             </td>
-            <td style="width:90px">
-              <button class="icon-button" title="Rechercher" mat-icon-button mat-raised-button (click)="opensite(site,'search')">
+            <td style="width:110px;text-align: right;">
+              <button class="icon-button" style="margin:0px;" title="Rechercher" mat-icon-button mat-raised-button (click)="opensite(site,'search')">
                 <mat-icon>search</mat-icon>
               </button>
               &nbsp;

@@ -33,9 +33,9 @@ export class PowsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.routes.snapshot.queryParamMap.has("filter"))this.query.value=this.routes.snapshot.queryParamMap.get("filter");
+    if(this.routes.snapshot.queryParamMap.has("filter"))this.query.value=this.routes.snapshot.queryParamMap.get("filter").replace(":","");
     if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
-    this.refresh();
+    setTimeout(()=>{this.refresh();},500);
   }
 
   open_search(work: any) {
@@ -45,7 +45,6 @@ export class PowsComponent implements OnInit {
   }
 
   clearQuery() {
-    debugger
     this.query.value='';
     this.refresh();
   }

@@ -61,8 +61,8 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  batch() {
-    this.api._get("batch/").subscribe(()=>{
+  batch(refresh_delay=31) {
+    this.api._get("batch/","refresh_delay="+refresh_delay).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }
