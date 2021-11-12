@@ -270,7 +270,7 @@ class PieceOfWork(models.Model):
 
     def __str__(self):
         rc=self.title
-        if not self.id is None:rc=self.id+" : "+rc
+        if not self.id is None:rc=str(self.id)+" : "+rc
         if not self.year is None:rc=rc+" ("+self.year+")"
         if not self.category is None:rc=rc+" - "+self.category
         return rc

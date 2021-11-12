@@ -74,9 +74,14 @@ export class PowsComponent implements OnInit {
       for(let i of r.results){
         if(!this.filter_id || this.filter_id==i.id){
           let origin=i.links.length>0 ? i.links[0].text.split(":")[1] : "*";
+          if(origin){
           origin=origin.replace("-","");
           if(origin=="*" || this.config.hasPerm("r_"+origin.toLowerCase()))
             this.pows.push(i);
+          } else {
+            $$(i.links[0].url+" est en anomalie");
+          }
+
         }
 
       }
@@ -110,7 +115,7 @@ export class PowsComponent implements OnInit {
   }
 
   get_pow(pow: any) {
-      this.api._get("extraworks/","pow__id="+pow.id).subscribe((r:any)=>{
+    this.api._get("extraworks/","pow__id="+pow.id).subscribe((r:any)=>{
         let rc=[];
         if(r.results.length>0){
           pow.visual=r.results[0].pow.visual;
