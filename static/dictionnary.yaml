@@ -50,7 +50,7 @@ jobs:
   Soundtrack: Compositeur
   Executive in charge of production: Production
   Artistic production manager: Production
-  Sound department: Montage son
+  Sound department: Ingé son
   Scénario: Scénariste
   Second unit director or assistant director: Assistant réalisateur
   Editor: Montage
@@ -62,7 +62,7 @@ jobs:
   Director: Réalisation
   Réalisateur: Réalisation
   Réalisatrice: Réalisation
-  Dialogue editor: Montage
+  Dialogue editor: Montage son
   Assistant sound editor: Assitant(e) montage
   Additional editor: Montage
   Writer: Scénariste
@@ -291,5 +291,3 @@ jobs:
   Scénariste réalisateur producteur: Réalisation
   Chef monteur son et chef opérateur du son: Montage son
   Chefs électriciens: Chef électricien
-
-
