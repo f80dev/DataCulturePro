@@ -3,19 +3,21 @@ from urllib import parse
 from urllib.parse import urlparse
 
 #import numpy as np
+from django.contrib.sites import requests
+from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from imdb import IMDb
 from wikipedia import wikipedia, re
 
-from OpenAlumni.Tools import log, translate, load_page, in_dict
-from OpenAlumni.settings import MOVIE_NATURE, DELAY_TO_AUTOSEARCH
+from OpenAlumni.Bot import Bot
+from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json,remove_html
+from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork
 
 #from scipy import pdist
 
 ia=IMDb()
-
 
 def extract_movie_from_cnca(title:str):
     #title=title.replace(" ","+")
@@ -51,6 +53,27 @@ def extract_movie_from_bdfci(pow:PieceOfWork):
     return title
 
 
+def extract_profil_from_lefimlfrancais(firstname,lastname):
+    rc=dict()
+    url="http://www.lefilmfrancais.com/index.php?option=com_papyrus&view=recherche&task=json&tmpl=rss&term="+firstname+"+"+lastname
+    data=load_json(url)
+    if len(data)>1:
+        rc["url"]=data[0]["link"]
+        page=load_page(rc["url"])
+        rc["links"]=[]
+        for l in page.find_all("a"):
+            if l.attrs["href"].startswith("http://www.lefilmfrancais.com/film/"):
+                rc["links"].append({
+                    "text" :l.text,
+                    "url"  :l.attrs["href"],
+                    "source":"LeFilmFrancais"
+                })
+    return rc
+
+
+
+
+
 
 def extract_profil_from_cnca(title):
     """
@@ -62,6 +85,57 @@ def extract_profil_from_cnca(title):
     page = wikipedia.BeautifulSoup(wikipedia.requests.get("http://www.cnc-rca.fr/Pages/Page.aspx?view=RecOeuvre",
                                                           headers={'User-Agent': 'Mozilla/5.0'}).text, "html5lib")
     return title
+
+
+from requests.auth import HTTPBasicAuth
+def connect_to_lefilmfrancais(user:str,password:str):
+    bot=Bot("http://www.lefilmfrancais.com/")
+    bot.login(user,password)
+    return bot
+
+def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refresh_delay=30,bot=None):
+    rc=dict({"nature":"","title":""})
+    page=load_page(url,bot=bot)
+    if page.find("div",{"id":"synopsis"}):rc["synopsis"]=remove_html(page.find("div",{"id":"synopsis"}).text)
+
+    elts=page.find_all("h1")
+    if len(elts)>0:
+        rc["title"]=elts[0].text.split("(")[0]
+
+    elt=page.find("div",{"id":"detail"})
+    if elt:
+        for item in elt:
+            if item.name is None:
+                if "sortie" in item.lower():
+                    pass
+
+
+    for span in page.find_all("span"):
+        if "class" in span.attrs and len(span.attrs["class"])>0 and span.attrs["class"][0]=="realisation":
+            if not "Réalisation" in span.text.split(",")[0]:
+                rc["nature"]=span.text.split(",")[0].split("(")[0]
+        else:
+            if ":" in span.text:
+                val=span.text.split(":")[1].strip()
+                if "Visa" in span.text:rc["visa"]=val
+                if "Titre original" in span.text:rc["original_title"]=val
+                if "Réalisation" in span.text: rc["real"] = val
+                if "Sortie" in span.text:rc["sortie"]=val
+                if "copies" in span.text:rc["copies"]=int(val)
+                if "Nationalité" in span.text: rc["Nationality"]=val
+                if "Distribution France" in span.text:rc["distribution"]=val
+
+    for item in page.find_all("li"):
+        lab=item.text.split(":")[0]
+        if ":" in item.text:
+            val=item.text.split(":")[1].split("|")[0].strip()
+            if "production :" in lab:rc["production"]=val
+            if "Partenaires" in lab:rc["financial"]=val
+            if "Récompense" in lab:rc["prix"]=val
+            if "Presse" in lab: rc["presse"] = val
+
+    if "title" in rc:log("Extraction de "+rc["title"]+" : "+str(rc))
+    return rc
 
 
 
@@ -153,7 +227,6 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
 
 
 
-
 def extract_profil_from_bellefaye(firstname,lastname):
     page = wikipedia.BeautifulSoup(wikipedia.requests.post(
         "https://www.bellefaye.com/fr/login_check",
@@ -180,7 +253,7 @@ def extract_profil_from_bellefaye(firstname,lastname):
 
 
 
-def extract_actor_from_unifrance(name="céline sciamma",refresh_delay=31):
+def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     page=load_page("https://www.unifrance.org/recherche/personne?q=$query&sort=pertinence".replace("$query",parse.quote(name)),refresh_delay=refresh_delay)
     links=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/annuaires/personne/")})
 
@@ -433,8 +506,19 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     return rc
 
 
+def fusion(p1:PieceOfWork,p2:PieceOfWork):
+    if p1.title.lower().strip()==p2.title.lower().strip():
+        for attr in model_to_dict(p2).keys():
+            #On remplace tout les none
+            if attr not in ["id"]:
+                if type(p1.__getattribute__(attr))!=list:
+                    p1.__setattr__(attr,p1.__getattribute__(attr) | p2.__getattribute__(attr))
+                else:
+                    pass
+    return p1
 
-def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]):
+
+def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[],bot=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -462,6 +546,10 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                 source = "auto:unifrance"
                 film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay)
 
+            if "source" in l and "LeFilmFrancais" in l["source"]:
+                source="auto:LeFilmFrancais"
+                film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay,bot=bot)
+
             if "imdb" in l["url"]:
                 source = "auto:IMDB"
                 film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay)
@@ -486,9 +574,11 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                 try:
                     result=PieceOfWork.objects.filter(title__iexact=pow.title)
                     if len(result)>0:
-                        log("Le film existe déjà dans la base, on le récupére")
-                        pow=result.first()
-                        pow.add_link(l["url"],source)
+                        log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
+
+                        new_film=fusion(result.first(),pow)
+                        new_film.save()
+
                     else:
                         n_films=n_films+1
 
@@ -508,10 +598,15 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
             t_job = translate(job)
             if len(t_job)==0:t_job="Non identifié"
             if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
-                if job is not None and t_job is not None:
+                if job is not None and t_job is not None and len(job)>0:
                     log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
                     work = Work(pow=pow, profil=profil, job=t_job, source=source)
-                    work.save()
+
+                    try:
+                        work.save()
+                    except Exception as inst:
+                        log("Impossible d'enregistrer le travail: " + str(inst.args))
+
                     if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
                 else:
                     log("Pas d'enregistrement de la contribution")
@@ -554,13 +649,14 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 #http://localhost:8000/api/batch
-def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list()):
+def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list(),catalog="unifrance,imdb"):
     """
     Scan des profils
     :param profils:
     :param refresh_delay:
     :return:
     """
+    bot = None
     n_films = 0
     n_works=0
     rc_articles=list()
@@ -586,28 +682,39 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
             #log("Extraction bellefaye " + str(infos))
 
             try:
-                infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay)
-                log("Extraction d'imdb " + str(infos))
-                if "url" in infos:profil.add_link(infos["url"], "IMDB")
-                if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
-                if "links" in infos: links=links+infos["links"]
+                if "imdb" in catalog:
+                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay)
+                    log("Extraction d'imdb " + str(infos))
+                    if "url" in infos:profil.add_link(infos["url"], "IMDB")
+                    if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
+                    if "links" in infos: links=links+infos["links"]
             except:
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb")
 
-            infos = extract_actor_from_unifrance(profil.firstname + " " + profil.lastname,refresh_delay=refresh_delay)
-            log("Extraction d'un profil d'unifrance "+str(infos))
-            if infos is None:
-                advices = dict({"ref": "Vous devriez créer votre profil sur UniFrance"})
-                transact.update(advices=advices)
-            else:
-                if len(infos["photo"]) > 0 and not profil.photo.startswith("http"): transact.update(photo=infos["photo"])
-                transact.update(links=profil.add_link(infos["url"], "UniFrance"))
-                if "links" in infos:
+            try:
+                if "lefilmfrancais" in catalog:
+                    infos=extract_profil_from_lefimlfrancais(firstname=profil.firstname,lastname=profil.lastname)
+                    if "url" in infos:profil.add_link(infos["url"],"LeFilmF")
+                    if len(infos["links"])>0:
+                        bot=connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
                     links=links+infos["links"]
-                job_for=infos["url"]
+            except:
+                log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
+            if "unifrance" in catalog:
+                infos = extract_profil_from_unifrance(profil.firstname + " " + profil.lastname, refresh_delay=refresh_delay)
+                log("Extraction d'un profil d'unifrance "+str(infos))
+                if infos is None:
+                    advices = dict({"ref": "Vous devriez créer votre profil sur UniFrance"})
+                    transact.update(advices=advices)
+                else:
+                    if len(infos["photo"]) > 0 and not profil.photo.startswith("http"): transact.update(photo=infos["photo"])
+                    transact.update(links=profil.add_link(infos["url"], "UniFrance"))
+                    if "links" in infos:
+                        links=links+infos["links"]
+                    job_for=infos["url"]
 
-            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay=refresh_delay,templates=templates)
+            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay=refresh_delay,templates=templates,bot=bot)
             rc_articles.append(articles)
             n_films=n_films+rc_films
             n_works=n_works+rc_works

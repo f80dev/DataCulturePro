@@ -1,4 +1,4 @@
-import calendar
+
 import hashlib
 import html
 import os
@@ -16,6 +16,10 @@ import PyPDF2
 from django.core.mail import send_mail
 # from linkedin_v2 import linkedin
 # from linkedin_v2.linkedin import LinkedInApplication
+from django.core.serializers import json
+from requests import get
+
+from OpenAlumni.Bot import Bot
 
 if os.environ.get("DEBUG"):
     from OpenAlumni.settings_dev import *
@@ -447,9 +451,24 @@ def getConfig(varname=""):
     return rc
 
 
-def load_page(url:str,refresh_delay=31,save=True):
-    filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
+def load_json(url:str):
+    data=get(url)
+    return data.json()
 
+
+def load_with_selenium(url,username,password):
+    bot=Bot(url)
+    bot.login(username,password)
+
+def remove_html(text):
+    for balise in ["<a>","<br>","\n","\r","</a>","<p>","</p>","\t"]:
+        text=text.replace(balise,"")
+    return text
+
+
+
+def load_page(url:str,refresh_delay=31,save=True,bot=None):
+    filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
     if not exists("./Temp/" + filename) :
         if exists("./Temp/html.7z"):
@@ -483,7 +502,10 @@ def load_page(url:str,refresh_delay=31,save=True):
         for itry in range(5):
             try:
                 sleep(random.randint(1000, 2000) / 1000)
-                rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text, "html5lib")
+                if bot:
+                    rc = wikipedia.BeautifulSoup(bot.download_page(url), "html5lib")
+                else:
+                    rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text, "html5lib")
                 break
             except:
                 pass

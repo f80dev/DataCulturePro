@@ -62,7 +62,11 @@ export class AdminComponent implements OnInit {
   }
 
   batch(refresh_delay=31) {
-    this.api._get("batch/","refresh_delay="+refresh_delay).subscribe(()=>{
+    let catalog="imdb,unifrance,lefilmfrancais";
+    // for(let key of Object.keys(this.config.values.catalog)){
+    //   if(this.config.values.catalog[key])catalog=catalog+key.replace(" ","").trim()+"_";
+    // }
+    this.api._get("batch/","refresh_delay="+refresh_delay+"&catalogue="+catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }

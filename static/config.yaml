@@ -8,9 +8,10 @@ search:
   limit: 50
 
 catalog:
-  imdb: False
-  unifrance: True
-  senscritique: False
+  imdb: true
+  lefilmfrancais: false
+  unifrance: false
+  senscritique: false
 
 support:
   forum: "http://kerberus.les-forums.com/"

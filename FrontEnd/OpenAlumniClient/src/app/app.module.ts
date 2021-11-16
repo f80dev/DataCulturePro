@@ -146,6 +146,7 @@ import { IssuesComponent } from './issues/issues.component';
     MatSnackBarModule,
     ImageCropperModule,
     TextFieldModule,
+    MatSliderModule,
     SocialLoginModule,
     MatFormFieldModule,
     MatInputModule,

@@ -438,6 +438,7 @@ def rebuild_index(request):
 @permission_classes([AllowAny])
 def batch(request):
     filter= request.GET.get("filter", "*")
+    catalogue=request.GET.get("catalogue", "imdb,unifrance")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
     profils=Profil.objects.order_by("dtLastSearch").all()
@@ -453,7 +454,7 @@ def batch(request):
 
     profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"])
+    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"],catalog=catalogue)
     articles=[x for x in articles if x]
 
     return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})

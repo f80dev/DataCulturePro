@@ -266,6 +266,13 @@ class PieceOfWork(models.Model):
     lang=models.CharField(max_length=50,null=True,help_text="Langue originale de l'oeuvre")
 
     apiVideoId=models.CharField(max_length=20,default="",null=False,blank=True,help_text="Version stocké sur api.video")
+    distributer=models.CharField(max_length=150,default="",blank=True,null=True,help_text="Distribution de l'oeuvre")
+    minutes=models.IntegerField(default=None,null=True,help_text="Durée de l'oeuvre en minutes")
+    copies=models.IntegerField(default=None,null=True,help_text="Nombre de copies distribuée")
+    visa=models.CharField(max_length=10,null=True,help_text="Visa d'exploitation")
+    financal_partner=JSONField(null=True,help_text="Liste des partenaires financiers")
+    first_week_entrances=models.IntegerField(null=True,help_text="Nombre d'entrée la première semaine")
+    prizes=JSONField(null=True,help_text="Liste des prix")
 
 
     def __str__(self):
@@ -275,10 +282,12 @@ class PieceOfWork(models.Model):
         if not self.category is None:rc=rc+" - "+self.category
         return rc
 
+
     def delay_lastsearch(self):
         if self.dtLastSearch is None:return 1e12
         rc=(datetime.datetime.now().timestamp() - self.dtLastSearch.timestamp())/3600
         return rc
+
 
     def add_link(self, url, title, description=""):
         if self.links is None: self.links = []
@@ -293,6 +302,7 @@ class PieceOfWork(models.Model):
         self.links.append(obj)
         return self.links
 
+
     def quality_score(self):
         """
         Défini un score de qualité de la donnée. Ce score est notamment utilisé pour les fusions
@@ -306,10 +316,6 @@ class PieceOfWork(models.Model):
 def update_pow(sender, **kwargs):
     instance = kwargs['instance']
     registry.update(instance.profil)
-
-
-class Movie(PieceOfWork):
-    duration = models.DurationField(null=True,help_text="Durée du film")
 
 
 
