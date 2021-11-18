@@ -87,25 +87,21 @@
 
 
   <br>
-  <br>
 
-  <a title="Changer vos permissions"
+
+
+
+
+  <a title="Modifier vos paramètres"
      *ngIf="config.user?.user?.email?.length>0"
      mat-list-item
-     routerLink="profils"
-     id="cmdEditPerms">
-    <mat-icon>lock</mat-icon>
-    &nbsp;&nbsp;Permissions
+     routerLink="settings"
+     id="cmdSettings">
+    <mat-icon>person</mat-icon>
+    &nbsp;&nbsp;Mon compte
   </a>
 
 
-  <a title="Effacer votre compte"
-     *ngIf="config.user?.user?.email?.length>0"
-     mat-list-item (click)="del_user()"
-     id="cmdDeleteUser">
-    <mat-icon>delete</mat-icon>
-    &nbsp;&nbsp;Détruire votre compte
-  </a>
 
 
   <a title="Se déconnecter"

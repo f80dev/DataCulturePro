@@ -10,7 +10,6 @@ from urllib.request import urlopen
 import pandasql
 import yaml
 import pandas as pd
-from django.core.serializers import json
 from github import Github
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
@@ -48,7 +47,7 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
-from OpenAlumni.Batch import exec_batch, exec_batch_movies
+from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, levenshtein, getConfig
 from OpenAlumni.nft import NFTservice
 import os
@@ -227,16 +226,18 @@ def update_extrauser(request):
     """
     email=request.GET.get("email","")
     if len(email)>0:
+        log("Recherche du nouvel utilisateur dans les profils FEMIS")
         profils=Profil.objects.filter(email__exact=email)
         if len(profils)>0:
             log("Mise a jour du profil de l'utilisateur se connectant")
             user=ExtraUser.objects.get(user__email=email)
             if not user is None:
+                log("On enregistre un lien vers le profil FEMIS de l'utilisateur")
                 user.profil=profils.first()
                 user.save()
-                return JsonResponse({"message":"User update"})
+                return JsonResponse({"message":"Profil FEMIS lié"})
 
-    return JsonResponse({"message": "No update"})
+    return JsonResponse({"message": "Pas de profil FEMIS identifié"})
 
 
 
@@ -526,7 +527,9 @@ def helloworld(request):
 def set_perms(request):
     profil_id = request.GET.get("perm")
     response = request.GET.get("response")
-    ext_users = ExtraUser.objects.filter(user__id=int(request.GET.get("user")))
+    user_id=int(request.GET.get("user"))
+    log("Modification des permissions de "+str(user_id)+" pour " + profil_id)
+    ext_users = ExtraUser.objects.filter(user__id=user_id)
     if len(ext_users.values())>0:
         ext_user=ext_users.first()
         if response=="accept":
@@ -1004,9 +1007,10 @@ def movie_importer(request):
     return Response(str(record) + " films importés", 200)
 
 
-
+import openpyxl
 
 #http://localhost:8000/api/importer/
+#Importation des fichiers
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def importer(request):
@@ -1022,7 +1026,7 @@ def importer(request):
         for c in col.lower().split(","):
             if c in header:
                 if row is not None and len(row)>header.index(c):
-                    rc=row[header.index(c)]
+                    rc=str(row[header.index(c)])
                     if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
                     if min_len==0 or len(rc)>=min_len:
                         return rc
@@ -1031,9 +1035,10 @@ def importer(request):
         return default
 
 
-    log("Importation de profil")
+    log("Importation de fichier")
     data=base64.b64decode(str(request.data["file"]).split("base64,")[1])
 
+    log("Analyse du document")
     for _encoding in ["utf-8","ansi"]:
         try:
             txt=str(data, encoding=_encoding)
@@ -1042,22 +1047,37 @@ def importer(request):
             pass
 
     txt=txt.replace("&#8217;","")
+    log("Méthode d'encoding "+_encoding)
 
-    delimiter=";"
-    text_delimiter=False
-    if "\",\"" in txt:
-        delimiter=","
-        text_delimiter=True
-    d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
-    total_record = sum(1 for line in d)
+    d=[]
+    i = 0
+    record = 0
 
-    i=0
-    record=0
-    d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
+    if str(request.data["filename"]).endswith("xlsx"):
+        res=pd.read_excel(data)
+        d.append(list(res))
+        for k in range(1,len(res)):
+            d.append(list(res.loc[k]))
+        total_record=len(d)-1
+    else:
+        delimiter=";"
+        text_delimiter=False
+        if "\",\"" in txt:
+            delimiter=","
+            text_delimiter=True
+
+        log("Importation du CSV")
+        d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
+        total_record = sum(1 for line in d)
+        log("Nombre d'enregistrements identifié "+str(total_record))
+
+        #Répétion de la ligne pour remettre le curseur au début du fichier
+        d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
+
     for row in d:
         log(str(i) + "/" + str(total_record) + " en cours d'importation")
         if i==0:
-            header=[x.lower() for x in row]
+            header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
         else:
             s=request.data["dictionnary"].replace("'","\"")
             dictionnary=loads(s)
@@ -1072,28 +1092,30 @@ def importer(request):
                     photo=None
                     idx_gender=idx("gender,genre,civilite")
                     gender=row[idx_gender]
-                    if gender=="":
-                        photo="/assets/img/anonymous.png"
-                        row[idx_gender] = ""
 
-                    if gender=="Monsieur" or gender=="M." or gender.startswith("Mr"):
+                    if gender=="Monsieur" or gender=="M." or str(gender).startswith("Mr"):
                         photo="/assets/img/boy.png"
                         row[idx_gender] = "M"
 
+                    if str(gender).lower() in ["monsieur","mme","mademoiselle","mlle"]:
+                        photo="/assets/img/girl.png"
+                        row[idx_gender] = "F"
+
                     if photo is None:
-                        row[idx_gender]="F"
-                        photo = "/assets/img/girl.png"
+                        photo = "/assets/img/anonymous.png"
+                        row[idx_gender] = ""
+
                 else:
                     photo=stringToUrl(idx("photo",row,""))
 
                 #Calcul
                 dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row)
-                if len(dt_birthdate)==8:
-                    tmp=dt_birthdate.split("/")
-                    if int(tmp[2])>50:
-                        dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
-                    else:
-                        dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
+                # if len(dt_birthdate)==8:
+                #     tmp=dt_birthdate.split("/")
+                #     if int(tmp[2])>50:
+                #         dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
+                #     else:
+                #         dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
                 dt=dateToTimestamp(dt_birthdate)
 
                 promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie",row,dictionnary["promo"],0,4)
@@ -1106,11 +1128,12 @@ def importer(request):
                     nationality=idx("nationality",row,"Francaise"),
                     country=idx("country,pays",row,"France"),
                     birthdate=dt,
-                    department=idx("departement,department,formation",row,"",60),
+                    department=idx("CODE_TRAINING,departement,department,formation",row,"",60),
                     job=idx("job,metier,competences",row,"",60),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200),
                     town=idx("town,ville",row,"")[:50],
+                    source=idx("source", row, "FEMIS")[:50],
                     cp=idx("cp,codepostal,code_postal,postal_code,postalcode",row,"",5),
                     website=stringToUrl(idx("website,siteweb,site,url",row,"")),
                     biography=idx("biographie",row,""),
@@ -1127,6 +1150,10 @@ def importer(request):
                     cursus=idx("cursus",row,dictionnary["cursus"]),
                 )
                 try:
+                    res=Profil.objects.filter(email__iexact=profil.email).all()
+                    if len(res)>0:
+                        profil=fusion(res.first(),profil)
+
                     rc=profil.save()
                     log(profil.lastname + " est enregistré")
                     record=record+1

@@ -24,6 +24,8 @@ import {VisgraphComponent} from "./visgraph/visgraph.component";
 import {NftsComponent} from "./nfts/nfts.component";
 import {ProfilsScannerComponent} from "./profils-scanner/profils-scanner.component";
 import {IssuesComponent} from "./issues/issues.component";
+import {SettingsComponent} from "./settings/settings.component";
+import {RgpdComponent} from "./rgpd/rgpd.component";
 
 const routes: Routes = [
   { path: 'public', component: PublicComponent},
@@ -32,6 +34,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'import', component: ImportComponent},
   { path: 'profils', component: ProfilesComponent},
+  { path: 'rgpd', component: RgpdComponent},
   { path: 'about', component: AboutComponent},
   { path: 'edit', component: EditComponent},
   { path: 'faqs', component: FaqsComponent},
@@ -45,6 +48,7 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent},
   { path: 'dev', component: DevComponent},
   { path: 'stats', component: StatsComponent},
+  { path: 'settings', component: SettingsComponent},
   { path: 'visgraph', component: VisgraphComponent},
   { path: 'nfts', component: NftsComponent},
   { path: 'write', component: WriteComponent},

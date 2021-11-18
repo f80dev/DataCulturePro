@@ -9,9 +9,10 @@
   <app-tuto [delay]="10"
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
+
   <mat-form-field *ngIf="advanced_search.length==0" appearance="legacy"
                   style="max-width:300px;width:60%;font-size: medium;display: inline-block;margin:5px;" autofocus>
-    <mat-label>Rechercher un profil</mat-label>
+    <mat-label><mat-icon>search</mat-icon>&nbsp;Recherche</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."

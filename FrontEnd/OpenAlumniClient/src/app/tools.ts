@@ -92,7 +92,31 @@ export function getAuthServiceConfigs() {
   return config;
 }
 
+function readPerm(perm:string,perms,sep:string=","):string {
+    for(let p of perms){
+      let rc="";
+      if(p.tag==perm)rc=p.description;
+      if(rc.length==0 && p.tag==perm.replace("r_",""))rc=p.description;
+      if(rc.length==0 && p.tag==perm.replace("w_",""))rc=p.description+" en modification";
+      if(rc.length>0)return rc+sep;
+    }
+    return "";
+  }
 
+
+export function detailPerm(perm:string,perms,format="txt"): string {
+    if(!perm)return "";
+    let rc="";
+    if(format=="html")rc="<ul>";
+    for(let it of perm.split(" ")){
+      if(format=="txt")
+        rc=rc+readPerm(it,perms,"")+" / ";
+      else
+        rc=rc+"<li>"+readPerm(it,perms)+"</li>";
+    }
+    if(format=="html")rc=rc+"</ul>";
+    return rc;
+  }
 
 
 export function api(service: string , param: string= '', encode: boolean = true,format:string="json"): string  {
@@ -106,6 +130,7 @@ export function api(service: string , param: string= '', encode: boolean = true,
   if(rc.endsWith("?"))rc=rc.substr(0,rc.length-1);
   rc=rc.replace("http:/","http://").replace("https:/","https://");
   rc=rc.replace("&&","&");
+  $$("Appel de "+rc);
   return rc;
 }
 
@@ -853,6 +878,7 @@ export function fixTagPage(meta:any,coupon:any){
 }
 
 export function initAvailableCameras(func){
+  $$("Ouverture des caméras");
   WebcamUtil.getAvailableVideoInputs()
     .then((mediaDevices: MediaDeviceInfo[]) => {
       if(mediaDevices==null)

@@ -297,3 +297,4 @@ BC_PROXY="https://devnet-gateway.elrond.com"
 BC_EXPLORER="https://devnet-explorer.elrond.com"
 
 
+DEFAULT_PERMS_PROFIL="standard"

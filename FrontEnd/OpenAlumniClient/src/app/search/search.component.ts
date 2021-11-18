@@ -44,8 +44,8 @@ export class SearchComponent implements OnInit {
 
     setTimeout(()=>{this.refresh();},500);
     setTimeout(()=>{
-      debugger
       if(!this.config.isLogin() && !localStorage.getItem('propal_login') && !this._location.isCurrentPathEqualTo("./login")){
+        $$("Proposition d'authentification");
         localStorage.setItem("propal_login","Done");
         this.dialog.open(PromptComponent,{data: {
             title: 'Se connecter',

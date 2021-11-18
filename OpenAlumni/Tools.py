@@ -17,6 +17,8 @@ from django.core.mail import send_mail
 # from linkedin_v2 import linkedin
 # from linkedin_v2.linkedin import LinkedInApplication
 from django.core.serializers import json
+from django.db.models import Model
+from django.forms import model_to_dict
 from requests import get
 
 from OpenAlumni.Bot import Bot
@@ -380,6 +382,7 @@ def dateToTimestamp(txt):
         "%d/%m/%Y %H:%M",
         "%y-%m-%d %H:%M %p",
         "%Y-%m-%d %H:%M",
+        "%Y-%m-%d %H:%M:%S",
         "%d-%m-%Y_%H:%M",
     ]
     for format in formats:
@@ -391,6 +394,26 @@ def dateToTimestamp(txt):
 
     log("Probleme de conversion de " + str(txt) + " en date")
     return None
+
+
+def fusion(p1: Model, p2: Model):
+    attrs_p1=list(model_to_dict(p1).keys())
+    attrs_p2=list(model_to_dict(p2).keys())
+
+    for attr in attrs_p2:
+        # On remplace tout les none
+        if attr not in ["id"] and attr in attrs_p1:
+            val = p2.__getattribute__(attr)
+            if not val is None:
+                if type(p1.__getattribute__(attr)) == str:
+                    if len(val)>0:
+                        if (p1.__getattribute__(attr) is None or len(p1.__getattribute__(attr))==0):
+                            p1.__setattr__(attr, val)
+                else:
+                    if p1.__getattribute__(attr) is None:
+                        p1.__setattr__(attr,val)
+
+    return p1
 
 
 def init_dict():

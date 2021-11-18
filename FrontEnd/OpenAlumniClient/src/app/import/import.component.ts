@@ -26,7 +26,13 @@ export class ImportComponent implements OnInit {
       this.message="Chargement du fichier";
       reader.onload = ()=>{
         this.message="Transfert du fichier";
-        this.api._post("importer/","",{file:reader.result,dictionnary:this.dict},200).subscribe((r:any)=>{
+        this.api._post("importer/","",{
+              filename:fileInputEvent.target.files[0].name,
+              size:fileInputEvent.target.files[0].size,
+              type:fileInputEvent.target.files[0].type,
+              file:reader.result,
+              dictionnary:this.dict
+            },200).subscribe((r:any)=>{
           this.message="";
           showMessage(this,r);
           this.router.navigate(["search"])

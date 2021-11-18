@@ -21,6 +21,7 @@ export class ConfigService {
   profils:any[]=[];
   jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
+  perms: any;
 
   constructor(private location: Location,
               private http: HttpClient,
@@ -50,6 +51,7 @@ export class ConfigService {
   private async getConfig(): Promise<any> {
     if (!this.config) {
       this.config = (await this.api.getyaml("",environment.config_file).toPromise());
+      $$("Chargement de la configuration "+environment.name);
     }
     return Promise.resolve(this.config);
   }
@@ -70,8 +72,12 @@ export class ConfigService {
 
     initAvailableCameras((res)=>{this.webcamsAvailable=res;});
 
-    $$("Chargement des jobs");
+    this.api.getyaml("","perms").subscribe((r:any)=>{
+        this.perms=r.perms;
+    });
+
     this.api.getyaml("","dictionnary").subscribe((yaml:any)=>{
+      $$("Chargement des métiers du dictionnaire ok");
       if(!this.jobs) {
         let rc=[]
         this.jobs=[];
@@ -81,14 +87,16 @@ export class ConfigService {
             this.jobs.push({label:i,value:i});
           }
         }
+        $$(this.jobs.length+" jobs disponibles");
 
         this.api.getyaml("", "profils").subscribe((r: any) => {
+          $$("Chargements des profils de permissions Ok");
           this.profils = r.profils;
           this.raz_user();
           this.getConfig().then(r => {
+            $$("Chargement du fichier de configuration Ok");
             this.values = r;
             this.ready = true;
-            $$("Chargement du fichier de configuration", r);
             if (func) func(this.values);
           }, () => {
             $$("Probléme de chargement de la configuration")
@@ -100,14 +108,14 @@ export class ConfigService {
 
 
   init_user(func_success=null,func_anonyme=null,email=null) {
-    $$("Initialisation de l'utilisateur");
-    if(!email)email=localStorage.getItem("email");
+    $$("Initialisation de l'utilisateur "+email);
     if(email){
-      this.api.getuser(email).subscribe((r:any)=>{
+      this.api.getextrauser(email).subscribe((r:any)=>{
         if(r.count>0){
-          $$("Chargement de l'utilisateur ",r.results[0]);
+          $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
           this.user=r.results[0];
           if(!this.user.profil){
+            $$("Si l'utilisateur n'existe pas dans les profils des anciens");
             this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
               showMessage(this,"Message:"+r.result);
             })
@@ -123,11 +131,14 @@ export class ConfigService {
           if(func_anonyme)func_anonyme();
         }
       });
+    } else {
+      $$("L'email ne peut pas être vide");
     }
   }
 
 
   public raz_user() {
+    $$("Réinitialisation de l'utilisateur courant. Effacement de l'email et des permissions");
     this.user={email:"",perm:this.profils[0].perm};
   }
 

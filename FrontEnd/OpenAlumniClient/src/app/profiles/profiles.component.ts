@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {checkLogin, showError, showMessage} from "../tools";
+import {checkLogin, detailPerm, showError, showMessage} from "../tools";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Location} from "@angular/common";
@@ -14,7 +14,6 @@ import {MatDialog} from "@angular/material/dialog";
   styleUrls: ['./profiles.component.sass']
 })
 export class ProfilesComponent implements OnInit {
-  showPerm: boolean=false;
   perms:any;
   profil:string;
 
@@ -27,38 +26,13 @@ export class ProfilesComponent implements OnInit {
 
   ngOnInit(): void {
     if(checkLogin(this)){
-      this.api.getyaml("","perms").subscribe((r:any)=>{
-        this.perms=r.perms;
-        this.profil=r.id;
-      })
+
     }
   }
 
-  private readPerm(perm:string,sep:string=","):string {
-    for(let p of this.perms){
-      let rc="";
-      if(p.tag==perm)rc=p.description;
-      if(rc.length==0 && p.tag==perm.replace("r_",""))rc=p.description;
-      if(rc.length==0 && p.tag==perm.replace("w_",""))rc=p.description+" en modification";
-      if(rc.length>0)return rc+sep;
-    }
-    return "";
-  }
 
 
-  detailPerm(perm:string,format="txt"): string {
-    if(!perm)return "";
-    let rc="";
-    if(format=="html")rc="<ul>";
-    for(let it of perm.split(" ")){
-      if(format=="txt")
-        rc=rc+this.readPerm(it,"")+" / ";
-      else
-        rc=rc+"<li>"+this.readPerm(it)+"</li>";
-    }
-    if(format=="html")rc=rc+"</ul>";
-    return rc;
-  }
+
 
 
   sel_profil(p) {
@@ -96,5 +70,9 @@ export class ProfilesComponent implements OnInit {
         })
       }
     }
+  }
+
+  show_perm() {
+    return detailPerm(this.config.user.perm,"html",this.config.perms);
   }
 }

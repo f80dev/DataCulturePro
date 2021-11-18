@@ -83,6 +83,8 @@ import {ShareIconsModule} from 'ngx-sharebuttons/icons';
 import { ProfilsScannerComponent } from './profils-scanner/profils-scanner.component';
 import {FaqLinkComponent} from './faq-link/faq-link.component';
 import { IssuesComponent } from './issues/issues.component';
+import { SettingsComponent } from './settings/settings.component';
+import { RgpdComponent } from './rgpd/rgpd.component';
 
 @NgModule({
   declarations: [
@@ -121,7 +123,9 @@ import { IssuesComponent } from './issues/issues.component';
     VisgraphComponent,
     NftsComponent,
     ProfilsScannerComponent,
-    IssuesComponent
+    IssuesComponent,
+    SettingsComponent,
+    RgpdComponent
   ],
   imports: [
     BrowserModule,

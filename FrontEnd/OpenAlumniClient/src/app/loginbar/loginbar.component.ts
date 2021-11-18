@@ -45,23 +45,6 @@ export class LoginbarComponent implements OnInit,OnChanges {
 
   }
 
-  del_user() {
-    this.dialog.open(PromptComponent,{data: {
-        title: 'Confirmation',
-        question: 'Supprimer votre compte ?',
-        onlyConfirm: true,
-        canEmoji: false,
-        lbl_ok: 'Oui',
-        lbl_cancel: 'Non'
-      }}).afterClosed().subscribe((result_code) => {
-      if (result_code == 'yes') {
-        this.api._delete("users/"+this.config.user.user.id+"/","").subscribe(()=>{
-              showMessage(this,"Votre compte est effacé");
-              window.location.reload();
-            })
-      }
-    });
 
-  }
 }
 

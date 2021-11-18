@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
     this.appVersion=environment.appVersion;
 
     config.init(() => {
-      this.config.init_user();
+      this.config.init_user(null,null,localStorage.getItem("email"));
     });
   }
 

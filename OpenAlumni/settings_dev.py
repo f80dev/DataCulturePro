@@ -53,6 +53,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 STATIC_URL  = "/static/"
 STATIC_ROOT=os.path.join(BASE_DIR, "static")
+DEFAULT_PERMS_PROFIL="standard"
 
 # Application definition
 

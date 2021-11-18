@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  name: "local",
   domain_server:"http://localhost:8000",
   config_file:"config",
   domain_appli: "http://localhost:4200",

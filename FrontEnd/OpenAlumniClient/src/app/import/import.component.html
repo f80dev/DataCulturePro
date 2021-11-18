@@ -9,7 +9,7 @@
   <input #csvInput hidden="true"
          type="file" onclick="this.value=null"
          (change)="import($event)"
-         accept=".csv"/>
+         accept=".csv,.xls,.xlsx"/>
 
   <button mat-raised-button
           mat-button class="app-button"

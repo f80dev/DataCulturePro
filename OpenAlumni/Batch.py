@@ -1,17 +1,14 @@
-from asyncio import sleep
+
 from urllib import parse
 from urllib.parse import urlparse
 
-#import numpy as np
-from django.contrib.sites import requests
-from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from imdb import IMDb
 from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
-from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json,remove_html
+from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork
 
@@ -504,18 +501,6 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
             rc=rc.replace("{{"+model+"."+field+"}}",value)
 
     return rc
-
-
-def fusion(p1:PieceOfWork,p2:PieceOfWork):
-    if p1.title.lower().strip()==p2.title.lower().strip():
-        for attr in model_to_dict(p2).keys():
-            #On remplace tout les none
-            if attr not in ["id"]:
-                if type(p1.__getattribute__(attr))!=list:
-                    p1.__setattr__(attr,p1.__getattribute__(attr) | p2.__getattribute__(attr))
-                else:
-                    pass
-    return p1
 
 
 def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[],bot=None):

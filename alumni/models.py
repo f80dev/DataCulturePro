@@ -1,6 +1,9 @@
 import datetime
 
 import os
+
+import yaml
+
 if os.environ.get("DEBUG"):
     from OpenAlumni.settings_dev import *
 else:
@@ -21,8 +24,7 @@ from django.dispatch import receiver
 from django_elasticsearch_dsl.registries import registry
 
 from OpenAlumni.DataQuality import eval_field
-from OpenAlumni.Tools import now
-
+from OpenAlumni.Tools import now, log
 
 
 class Profil(models.Model):
@@ -75,6 +77,9 @@ class Profil(models.Model):
     links = JSONField(null=True, help_text="Liens vers des références externes au profil")
     auto_updates=models.CharField(max_length=300,null=False, default="0,0,0,0,0,0",help_text="Date de mise a jour")
     advices=JSONField(null=True,default=None,help_text="Liste de conseils alimenter par l'outil pour augmenter le rayonnement d'une personne")
+    source=models.CharField(null=True,blank=True,max_length=50,help_text="Source de la fiche")
+
+
 
     blockchain=models.CharField(null=False,blank=True,default="",max_length=50,help_text="Adresse elrond du profil")
 
@@ -169,7 +174,7 @@ class ExtraUser(models.Model):
     Classe supplémentaire pour gérer les permissions par utilisateur
     voir https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name="extrauser")
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     perm = models.TextField(max_length=500, blank=True,default="")
     profil_name=models.CharField(max_length=50,default="",blank=True)
     black_list=models.TextField(help_text="Contient l'ensemble des emails ne pouvant contacter la personne",null=False,default="")
@@ -178,6 +183,26 @@ class ExtraUser(models.Model):
     level=models.IntegerField(default=0,help_text="Niveau de l'utilisateur")
     ask=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
     friends=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        log("Creation de l'extrauser associé")
+        perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
+        perm=""
+        for p in perms["profils"]:
+            if p["id"] == DEFAULT_PERMS_PROFIL:
+                perm = p["perm"]
+                break
+
+        log("Permission par défaut pour les connectés : " + perm)
+        ExtraUser.objects.create(user=instance,perm=perm)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.extrauser.save()
+
 
 
 class Work(models.Model):

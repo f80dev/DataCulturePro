@@ -57,6 +57,7 @@ class UserSerializer(HyperlinkedModelSerializer):
             last_name=data["last_name"],
         )
         token = Token.objects.create(user=user)
+        return user
 
 
 

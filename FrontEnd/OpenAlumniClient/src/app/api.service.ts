@@ -122,6 +122,10 @@ export class ApiService {
 
 
   getuser(email: string) {
+    return this._get("users","email="+email);
+  }
+
+  getextrauser(email: string) {
     return this._get("extrausers","search="+email);
   }
 

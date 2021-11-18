@@ -52,12 +52,14 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     $$('Ouverture de la fenêtre de login');
-    if (!localStorage.getItem('lastEmail') || localStorage.getItem('lastEmail')=="null") {
-      localStorage.setItem('lastEmail',"paul.dudule@gmail.com");
-    }
+    // if (!localStorage.getItem('lastEmail') || localStorage.getItem('lastEmail')=="null") {
+    //   localStorage.setItem('lastEmail',"paul.dudule@gmail.com");
+    // }
 
+    let email=localStorage.getItem("email");
+    $$("Chargement de la configuration si l'email est dans les cookies");
     this.config.init_user(() => {
-      $$('L\'utilisateur est déjà loggé');
+      $$("L'utilisateur est déjà loggé");
       this.quit();
     }, () => {
       const params: ParamMap = this.route.snapshot.queryParamMap;
@@ -70,11 +72,12 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('lastEmail', addr);
         this.email_login();
       }
-    });
+    },email);
   }
 
 
 
+  //Cette fonction permet de rediriger automatiquement l'utilisateur après une authentification
   next() {
     $$('Traitement de la rediction vers ' + this.redirect);
     clearTimeout(this.handle);
@@ -107,6 +110,7 @@ export class LoginComponent implements OnInit {
 
 
   quit() {
+    $$("On quitte la fenêtre");
     this.router.navigate(['search'], {replaceUrl: true});
   }
 
@@ -130,13 +134,14 @@ export class LoginComponent implements OnInit {
         this.email=email;
         $$('Recherche d\'un compte déjà existant a l\'email=' + email);
         this.wait_message = 'Recherche du compte';
-        this.api.getuser(email).subscribe((result: any) => {
+        this.api.getextrauser(email).subscribe((result: any) => {
           this.wait_message = '';
           if (result.count > 0) {
             this.messageCode = 'Veuillez indiquer son code à 6 chiffres';
           } else {
             this.wait_message = 'Nouveau compte, création en cours';
             this.api.register({email, username: email}).subscribe((res: any) => {
+              this.api._get("set_perm")
               this.wait_message = '';
               if (res != null) {
                 this.messageCode = 'Afin de vérifier que vous êtes bien le propriétaire de ' + email + ', veuillez indiquer le code à 6 chiffres que vous avez reçu';
@@ -222,7 +227,6 @@ export class LoginComponent implements OnInit {
     this.wait_message = 'Récupération de l\'utilisateur';
     this.api.existuser(data.email).subscribe((result: any) => {
         this.email=data.email;
-        localStorage.setItem('email', data.email);
         if (result.results.length > 0) {
           $$("Le compte existe bien");
           this.updateCode(data.provider_id);
@@ -256,6 +260,7 @@ export class LoginComponent implements OnInit {
     this.socialAuthService.signIn(servicePlatform).then((socialUser) => {
         this.wait_message = '';
         this.message = '';
+        localStorage.setItem("email",socialUser.email);
         $$('Resultat de l\'authentification ', socialUser);
         this.initUser({
           email: socialUser.email,
@@ -274,7 +279,8 @@ export class LoginComponent implements OnInit {
           setTimeout(() => {this.socialSignIn(socialPlatform); }, 500);
         } else {
           this.wait_message = '';
-          showError(this, err);
+          showMessage(this,"Pas d'authentification");
+          this._location.back();
         }
       }
     );

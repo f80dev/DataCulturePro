@@ -1,0 +1,58 @@
+<div class="mainform" style="text-align: center;width:100%;">
+
+  <br>
+  <mat-accordion style="display: inline-block;width:98%;">
+
+    <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlJob">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Permission
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div style="width: 96%;margin:2%;">
+        <br>
+        <h2>Actuellement vous avez accès:</h2>
+        <br><small>{{show_perm}}</small>
+        <br>
+        <br>
+
+        <button class="app-button"
+                mat-button mat-raised-button
+                (click)="open_perms()">
+          Modifier vos permissions
+        </button>
+
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlJob">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Confidentialité
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <br>
+      <a href="./rgpd">En savoir plus sur la conformité RGPD</a>
+      <br>
+      <br>
+
+      <button class="app-button"
+              color="primary"
+              mat-button mat-raised-button
+              (click)="raz()">
+        Effacer votre compte
+      </button>
+
+    </mat-expansion-panel>
+
+
+
+
+
+
+
+  </mat-accordion>
+
+
+</div>
