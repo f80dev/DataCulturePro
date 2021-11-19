@@ -7,7 +7,6 @@ import {ConfigService} from "../config.service";
 import {Location} from "@angular/common"
 import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
-import {MatSelect} from "@angular/material/select";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 
 @Component({

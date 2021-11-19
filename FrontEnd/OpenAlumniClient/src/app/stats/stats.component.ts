@@ -94,6 +94,11 @@ export class StatsComponent implements OnInit {
       this.api._get("export_all/",param+"&out=graph",60,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code;
         this.sel_report.html_stat=html.values;
+      },(err)=>{
+        if(err.status==404){
+          this.sel_report.html_code="<div style='width:100%;text-align: center;color:white;font-size: large;'><br>"+err.error+"</div>";
+        }
+        showMessage(this,err.error);
       });
     }
   }

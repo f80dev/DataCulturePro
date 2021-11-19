@@ -141,7 +141,7 @@ export class ConfigService {
 
   public raz_user() {
     $$("Réinitialisation de l'utilisateur courant. Effacement de l'email et des permissions");
-    this.user={email:"",perm:this.profils[0].perm};
+    this.user={email:"",perm:this.profils["anonyme"].perm};
   }
 
   isLogin() {

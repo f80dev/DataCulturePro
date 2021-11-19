@@ -165,9 +165,17 @@ class ExtraProfilSerializer(serializers.ModelSerializer):
 
 class WorksCSVRenderer (CSVRenderer):
     header = [
-        "profil_id", "profil_genre","profil_nom", "profil_prenom", "profil_formation", "profil_cursus","profil_promotion","profil_code_postal", "profil_ville",
-        "film_id","film_titre", "film_catégorie", "film_genre","film_annee","film_budget","film_production",
-        "work_id", "work_job","work_comment","work_validate","work_source","work_state"
+        "profil_id", "profil_genre","profil_nom",
+        "profil_prenom", "profil_formation", "profil_cursus",
+        "profil_promotion","profil_code_postal", "profil_ville",
+
+
+        "film_id","film_titre", "film_catégorie",
+        "film_genre","film_annee","film_budget",
+        "film_production",
+
+        "work_id", "work_job","work_comment",
+        "work_validate","work_source","work_state"
     ]
 
 

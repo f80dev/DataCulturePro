@@ -11,7 +11,7 @@
 
 
   <mat-form-field *ngIf="advanced_search.length==0" appearance="legacy"
-                  style="max-width:300px;width:60%;font-size: medium;display: inline-block;margin:5px;" autofocus>
+                  style="max-width:400px;width:60%;font-size: medium;display: inline-block;margin:5px;" autofocus>
     <mat-label><mat-icon>search</mat-icon>&nbsp;Recherche</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
@@ -44,24 +44,24 @@
     </div>
   </div>
 
-  <div *ngIf="profils?.length>3"
-       style="display: inline-block;text-align: right;margin:5px;" autofocus>
+  <!--  <div *ngIf="profils?.length>3"-->
+  <!--       style="display: inline-block;text-align: right;margin:5px;" autofocus>-->
 
-    <mat-form-field appearance="legacy"
-                    *ngIf="config.width_screen>400"
-                    style="max-width:150px;font-size: small;">
-      <mat-label>Trier par</mat-label>
-      <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
-        <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <!--    <mat-form-field appearance="legacy"-->
+  <!--                    *ngIf="config.width_screen>400"-->
+  <!--                    style="max-width:150px;font-size: small;">-->
+  <!--      <mat-label>Trier par</mat-label>-->
+  <!--      <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">-->
+  <!--        <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>-->
+  <!--      </mat-select>-->
+  <!--    </mat-form-field>-->
 
-    <mat-icon style="font-size: large;cursor: pointer;"
-              (click)="change_order()" *ngIf="config.width_screen<=400">
-      sort
-    </mat-icon>
+  <!--    <mat-icon style="font-size: large;cursor: pointer;"-->
+  <!--              (click)="change_order()" *ngIf="config.width_screen<=400">-->
+  <!--      sort-->
+  <!--    </mat-icon>-->
 
-  </div>
+  <!--  </div>-->
 
 
 
@@ -76,7 +76,7 @@
   <!--          Chercher uniquement via les titres-->
   <!--        </mat-checkbox>-->
   <!--    </div>-->
-<!--Toolbar de recherche avancée -->
+  <!--Toolbar de recherche avancée -->
   <div style="font-size: small" *ngIf="profils?.length>3 && show_toolbar" >
     <div *ngIf="profils.length>8" style="display: inline-block;margin:5px;">
       <span *ngIf="profils.length==this.limit">+ de </span>

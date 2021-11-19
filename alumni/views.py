@@ -826,10 +826,20 @@ def export_all(request):
     headers=WorksCSVRenderer.header
     works=Work.objects.all()
     df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
-        "profil__id","profil__gender","profil__lastname","profil__firstname","profil__department","profil__cursus","profil__degree_year","profil__cp","profil__town",
-        "pow__id","pow__title","pow__nature","pow__category","pow__year","pow__budget","pow__production",
-        "id","job","comment","validate","source","state"
+        "profil__id","profil__gender","profil__lastname",
+        "profil__firstname","profil__department","profil__cursus",
+        "profil__degree_year","profil__cp","profil__town",
+
+        "pow__id","pow__title","pow__nature",
+        "pow__category","pow__year","pow__budget",
+        "pow__production",
+
+        "id","job","comment",
+        "validate","source","state"
     )))
+
+    if len(df)==0:return HttpResponse("Aucune donnée disponible",status=404)
+
     df.columns=headers
     lib_columns=",".join(list(df.columns))
 
