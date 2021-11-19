@@ -16,6 +16,7 @@ import {MatDialog} from "@angular/material/dialog";
 export class ProfilesComponent implements OnInit {
   perms:any;
   profil:string;
+  profils: any[]=[];
 
   constructor(public api:ApiService,
               public toast:MatSnackBar,
@@ -26,7 +27,7 @@ export class ProfilesComponent implements OnInit {
 
   ngOnInit(): void {
     if(checkLogin(this)){
-
+      this.profils=Object.values(this.config.profils);
     }
   }
 
@@ -36,6 +37,7 @@ export class ProfilesComponent implements OnInit {
 
 
   sel_profil(p) {
+    debugger
     if(false && !this.config.isProd()){
       this.config.user.perm = p.perm;
       this.config.user.profil_name = p.id;
@@ -72,7 +74,9 @@ export class ProfilesComponent implements OnInit {
     }
   }
 
-  show_perm() {
-    return detailPerm(this.config.user.perm,"html",this.config.perms);
+
+
+  show_perm(profilid) {
+    return detailPerm(this.config.profils[profilid].perm,this.config.perms,"html");
   }
 }

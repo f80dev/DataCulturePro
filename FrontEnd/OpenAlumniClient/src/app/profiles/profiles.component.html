@@ -9,7 +9,7 @@
     <app-tuto label="%appname% propose différents profils d'utilisateur pour s'adapter a vos besoins et ne présentez que les informations dont vous avez réelement besoin"></app-tuto>
 
     <mat-accordion [multi]="false" >
-      <div *ngFor="let profil of config.profils" style="text-align: left;">
+      <div *ngFor="let profil of profils" style="text-align: left;">
         <mat-expansion-panel *ngIf="profil.subscription!='offline'" name="tabProfils" class="app-panel" style="margin:10px;;display: inline-block;">
 
           <mat-expansion-panel-header>
@@ -18,9 +18,9 @@
 
           <p>{{profil.presentation}}</p>
 
-          <div *ngIf="this.perms" style="font-size: small;text-align: left;color:lightgrey;">
+          <div style="font-size: small;text-align: left;color:lightgrey;">
             Ce profil vous donnes accès:
-            <div [innerHTML]="show_perm()"></div>
+            <div [innerHTML]="show_perm(profil.id)"></div>
             <br>
           </div>
 

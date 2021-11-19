@@ -586,7 +586,6 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                 if job is not None and t_job is not None and len(job)>0:
                     log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
                     work = Work(pow=pow, profil=profil, job=t_job, source=source)
-
                     try:
                         work.save()
                     except Exception as inst:

@@ -18,7 +18,7 @@ export class ConfigService {
   width_screen: number;
   ready=false;
 
-  profils:any[]=[];
+  profils:any={};
   jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
   perms: any;
@@ -91,7 +91,9 @@ export class ConfigService {
 
         this.api.getyaml("", "profils").subscribe((r: any) => {
           $$("Chargements des profils de permissions Ok");
-          this.profils = r.profils;
+          for(let it of r.profils)
+            this.profils[it.id] = it;
+
           this.raz_user();
           this.getConfig().then(r => {
             $$("Chargement du fichier de configuration Ok");
