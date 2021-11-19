@@ -396,6 +396,8 @@ def dateToTimestamp(txt):
     return None
 
 
+
+
 def fusion(p1: Model, p2: Model):
     attrs_p1=list(model_to_dict(p1).keys())
     attrs_p2=list(model_to_dict(p2).keys())

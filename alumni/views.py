@@ -48,7 +48,8 @@ from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion
-from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, levenshtein, getConfig
+from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
+    levenshtein, getConfig
 from OpenAlumni.nft import NFTservice
 import os
 
@@ -1078,6 +1079,7 @@ def importer(request):
         log(str(i) + "/" + str(total_record) + " en cours d'importation")
         if i==0:
             header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
+            log("Liste des colonnes disponibles "+str(header))
         else:
             s=request.data["dictionnary"].replace("'","\"")
             dictionnary=loads(s)
@@ -1118,7 +1120,12 @@ def importer(request):
                 #         dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
                 dt=dateToTimestamp(dt_birthdate)
 
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie",row,dictionnary["promo"],0,4)
+                if not "promo" in dictionnary:dictionnary["promo"]=None
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year",row,dictionnary["promo"],0,4)
+                if not promo is None and len(promo)>4:
+                    promo=dateToTimestamp(promo)
+                    if not promo is None:promo=promo.year
+
                 profil=Profil(
                     firstname=firstname,
                     school="FEMIS",
@@ -1134,7 +1141,7 @@ def importer(request):
                     address=idx("address,adresse",row,"",200),
                     town=idx("town,ville",row,"")[:50],
                     source=idx("source", row, "FEMIS")[:50],
-                    cp=idx("cp,codepostal,code_postal,postal_code,postalcode",row,"",5),
+                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5),
                     website=stringToUrl(idx("website,siteweb,site,url",row,"")),
                     biography=idx("biographie",row,""),
 
@@ -1147,8 +1154,9 @@ def importer(request):
                     email=email,
                     photo=photo,
 
-                    cursus=idx("cursus",row,dictionnary["cursus"]),
+                    cursus=idx("cursus,session_name",row,dictionnary["cursus"]),
                 )
+
                 try:
                     res=Profil.objects.filter(email__iexact=profil.email).all()
                     if len(res)>0:
