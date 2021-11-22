@@ -42,7 +42,10 @@ class Profil(models.Model):
     birthdate=models.DateField(null=True,help_text="Date de naissance")
     mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="Numéro de mobile")
     nationality=models.CharField(blank=True,max_length=30,null=False,default="Française")
-    department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus suivi pendant les études")
+
+    department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
+    department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie de la formation")
+
     job=models.CharField(max_length=60,null=True,default="",blank=True,help_text="Profession actuelle")
     degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école")
 

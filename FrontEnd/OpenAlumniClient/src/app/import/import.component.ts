@@ -44,6 +44,7 @@ export class ImportComponent implements OnInit {
   }
 
   init_dict() {
-    this.dict="{'cursus':'S','promo':2022}"
+    //this.dict="{'cursus':'S','promo':2022}"
+    this.dict="cursur='S'\npromo=2020";
   }
 }

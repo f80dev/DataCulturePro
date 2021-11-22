@@ -86,6 +86,9 @@ export class StatsComponent implements OnInit {
     if(this.sel_report.group_by)param=param+"&group_by="+this.sel_report.group_by;
     if(this.sel_report.func)param=param+"&func="+this.sel_report.fun;
     if(this.sel_report.filter)param=param+"&filter="+this.sel_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
+    if(this.sel_report.data_cols){
+      param=param+"&data_cols="+this.sel_report.data_cols+"&cols="+this.sel_report.cols+"&table="+this.sel_report.table;
+    }
 
 
     if(!this.sel_report.html_code){

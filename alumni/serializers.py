@@ -141,7 +141,7 @@ class ProfilSerializer(serializers.ModelSerializer):
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",
                 "mobile","email","photo","gender","job",
                 "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
-                "linkedin","degree_year","department","works",
+                "linkedin","degree_year","department","department_category","works",
                 "dtLastUpdate","links","str_links","blockchain",
                 "cp","public_url","fullname","cursus",
                 "address","town","promo","dtLastSearch"]
@@ -157,7 +157,7 @@ class ExtraProfilSerializer(serializers.ModelSerializer):
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
                 "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
                 "mobile","email","photo","gender","job",
-                "linkedin","works","degree_year","department",
+                "linkedin","works","degree_year","department","department_category",
                 "dtLastUpdate","links","str_links",
                 "cp","public_url","fullname","cursus",
                 "address","town","promo"]
@@ -209,6 +209,7 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "photo",
                 "cp",
                 "department",
+                "department_category",
                 "address",
                 "town",
                 "promo",

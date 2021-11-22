@@ -140,8 +140,8 @@ class ExtraProfilViewSet(viewsets.ModelViewSet):
     serializer_class = ExtraProfilSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
-    search_fields = ["lastname","email","degree_year","department"]
-    filter_fields=("lastname","firstname","email","degree_year","department")
+    search_fields = ["lastname","email","degree_year","department","department_category"]
+    filter_fields=("lastname","firstname","email","degree_year","department","department_category",)
 
 
 
@@ -521,6 +521,8 @@ def helloworld(request):
     return Response({"message": "Hello world"})
 
 
+
+
 #test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
 #Accepter la demande de changement de status
 @api_view(["GET"])
@@ -775,7 +777,7 @@ def export_profils(request):
     cursus:str=request.GET.get("cursus","S")
     profils=Profil.objects.filter(cursus__exact=cursus)
     df: pd.DataFrame = pd.DataFrame.from_records(list(profils.values(
-        "id", "photo","gender", "lastname", "firstname", "email","mobile","department","address","cp", "town","country",
+        "id", "photo","gender", "lastname", "firstname", "email","mobile","department","department_category","address","cp", "town","country",
         "birthdate","nationality","degree_year" ,"job","cursus"
     )))
     df.columns = ProfilsCSVRenderer.header
@@ -810,7 +812,7 @@ def compare(lst,val,ope):
 
 
 from dict2xml import dict2xml as xmlify
-#http://localhost:8000/api/export_all/csv/
+#http://localhost:8000/api/export_all/?out=json
 #http://localhost:8000/api/export_all/xls/
 #http://localhost:8000/api/export_all/xml/
 #http://localhost:8000/api/export_all/json/
@@ -823,24 +825,31 @@ def export_all(request):
     :param request:
     :return:
     """
-    headers=WorksCSVRenderer.header
-    works=Work.objects.all()
-    df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
-        "profil__id","profil__gender","profil__lastname",
-        "profil__firstname","profil__department","profil__cursus",
-        "profil__degree_year","profil__cp","profil__town",
 
-        "pow__id","pow__title","pow__nature",
-        "pow__category","pow__year","pow__budget",
-        "pow__production",
+    if request.GET.get("data_cols","")=="":
+        headers=WorksCSVRenderer.header
+        works=Work.objects.all()
+        df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
+            "profil__id","profil__gender","profil__lastname",
+            "profil__firstname","profil__department","profil__cursus",
+            "profil__degree_year","profil__cp","profil__town",
 
-        "id","job","comment",
-        "validate","source","state"
-    )))
+            "pow__id","pow__title","pow__nature",
+            "pow__category","pow__year","pow__budget",
+            "pow__production",
 
-    if len(df)==0:return HttpResponse("Aucune donnée disponible",status=404)
+            "id","job","comment",
+            "validate","source","state"
+        )))
 
-    df.columns=headers
+        if len(df)==0:return HttpResponse("Aucune donnée disponible",status=404)
+        df.columns=headers
+    else:
+        values=request.GET.get("data_cols").split(",")
+        data=Profil.objects.all().values(*values)
+        df=pd.DataFrame.from_records(data)
+        df.columns=list(request.GET.get("cols").split(","))
+
     lib_columns=",".join(list(df.columns))
 
     format=request.GET.get("out","json")
@@ -852,8 +861,10 @@ def export_all(request):
 
     sql=request.GET.get("sql")
     if not sql is None:
-        if "from df" not in sql.lower():sql=sql+" FROM df"
-        df=pandasql.sqldf(sql)
+        if "from df" in sql.lower():
+            df=pandasql.sqldf(sql)
+
+
 
     if request.GET.get("percent","False")=="True":
         sum=df.groupby(request.GET.get("x",df.columns[0])).sum().apply(lambda x: 100 * x / float(x.sum())).values
@@ -1094,28 +1105,28 @@ def importer(request):
             s=request.data["dictionnary"].replace("'","\"")
             dictionnary=loads(s)
 
-            firstname=row[idx("fname,firstname,prenom")]
+            firstname=row[idx("fname,firstname,prenom,prénom")]
             lastname=row[idx("lastname,nom,lname")]
-            email=idx("email,mail",row)
+            email=idx("email,mail,e-mail",row)
             idx_photo=idx("photo,picture,image")
-            #Eligibilité
+
+            #Eligibilité et evoluation du genre
+            gender=idx("gender,genre,civilite,civilité",row,"")
             if len(lastname)>2 and len(lastname)+len(firstname)>5 and len(email)>4 and "@" in email:
                 if idx_photo is None or len(row[idx_photo])==0:
                     photo=None
-                    idx_gender=idx("gender,genre,civilite")
-                    gender=row[idx_gender]
 
                     if gender=="Monsieur" or gender=="M." or str(gender).startswith("Mr"):
                         photo="/assets/img/boy.png"
-                        row[idx_gender] = "M"
+                        gender = "M"
 
                     if str(gender).lower() in ["monsieur","mme","mademoiselle","mlle"]:
                         photo="/assets/img/girl.png"
-                        row[idx_gender] = "F"
+                        gender = "F"
 
                     if photo is None:
                         photo = "/assets/img/anonymous.png"
-                        row[idx_gender] = ""
+                        gender = ""
 
                 else:
                     photo=stringToUrl(idx("photo",row,""))
@@ -1131,7 +1142,8 @@ def importer(request):
                 dt=dateToTimestamp(dt_birthdate)
 
                 if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year",row,dictionnary["promo"],0,4)
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin",row,dictionnary["promo"],0,4)
+                if type(promo)!=str: promo=str(promo)
                 if not promo is None and len(promo)>4:
                     promo=dateToTimestamp(promo)
                     if not promo is None:promo=promo.year
@@ -1140,8 +1152,8 @@ def importer(request):
                     firstname=firstname,
                     school="FEMIS",
                     lastname=lastname,
-                    gender=idx("gender,genre,civilite",row,""),
-                    mobile=idx("mobile,telephone,tel",row,"",20),
+                    gender=gender,
+                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20),
                     nationality=idx("nationality",row,"Francaise"),
                     country=idx("country,pays",row,"France"),
                     birthdate=dt,
@@ -1177,6 +1189,8 @@ def importer(request):
                     record=record+1
                 except Exception as inst:
                     log("Probléme d'enregistrement de "+email+" :"+str(inst))
+            else:
+                log("Le profil "+str(row)+" ne peut être importée")
         i=i+1
 
     cr=str(record)+" profils importés"

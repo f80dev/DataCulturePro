@@ -17,11 +17,13 @@ Instant_reports:
   - title: Etudiants par departement/promotion (formation standard)
     id: student_by_depyear
     chart: bar
-    x: profil_promotion
+    x: promotion
     y: etudiants
-    color: profil_formation
-    cols: profil_formation,profil_promotion,profil_id,profil_cursus
-    sql: SELECT profil_formation, profil_promotion,count(profil_id) as etudiants FROM df WHERE profil_cursus='S' GROUP BY profil_formation,profil_promotion
+    color: formation
+    cols: id,formation,cursus,promotion
+    table: profil
+    data_cols: id,department,cursus,degree_year
+    sql: SELECT formation, promotion,count(id) as etudiants FROM df WHERE cursus='S' GROUP BY formation,promotion
 
 
   - title: Etudiants par departement / promotion formation pro
