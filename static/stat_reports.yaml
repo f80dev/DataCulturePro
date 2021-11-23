@@ -7,14 +7,16 @@ Reports:
   - title: Répartition des étudiants par formation
     url: https://datastudio.google.com/s/rcrmbRNDsq8
     desc:
+    prod: True
 
   - title: Répartition des étudiants par zone géographique
     url: building
     desc: en chantier
+    prod: True
+
 
 Instant_reports:
-
-  - title: Etudiants par departement/promotion
+  - title: Etudiants par formation
     id: student_by_depyear
     chart: bar
     x: promotion
@@ -24,6 +26,8 @@ Instant_reports:
     table: profil
     data_cols: id,department,cursus,degree_year
     sql: SELECT formation, promotion,count(id) as etudiants FROM df WHERE cursus='S' GROUP BY formation,promotion
+    prod: True
+
 
   - title: Etudiants par type de cursus
     id: student_by_cursus
@@ -35,16 +39,20 @@ Instant_reports:
     table: profil
     data_cols: id,cursus,degree_year
     sql: SELECT cursus,promotion,count(id) as etudiants FROM df GROUP BY cursus,promotion
+    prod: True
 
 
-  - title: Etudiants par departement / promotion formation pro
-    id: student_by_depyear
+  - title: Répartition des stagiaires de la formation profesionnelle
+    id: prostudent_by_depyear
+    x: promotion
+    y: stagiaires
     chart: bar
-    x: profil_promotion
-    y: etudiants
-    color: profil_formation
-    cols: profil_formation,profil_promotion,profil_id,profil_cursus
-    sql: SELECT profil_formation, profil_promotion,count(profil_id) as etudiants FROM df WHERE profil_cursus='P' GROUP BY profil_formation,profil_promotion
+    color: formation
+    table: profil
+    data_cols: id,department,cursus,degree_year
+    cols: id,formation,cursus,promotion
+    sql: SELECT formation, promotion,count(id) as stagiaires FROM df WHERE cursus='P' GROUP BY formation,promotion
+    prod: True
 
 
   - title: Films par categorie par departement
@@ -55,26 +63,20 @@ Instant_reports:
     color: profil_formation
     sql: SELECT profil_formation,film_catégorie,count(film_id) AS films FROM df WHERE profil_cursus='S' GROUP BY profil_formation,film_catégorie
     cols: profil_formation,film_catégorie,film_id,profil_cursus
+    prod: False
 
 
-  - title: Profils par ville de naissance
+  - title: 15 premières villes de naissance des étudiants
     id: student_by_depyear
     chart: pie
     y: etudiants
-    x: profil_ville
-    color: profil_ville
-    sql: SELECT * FROM (SELECT profil_ville,count(profil_id) AS etudiants FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_ville) ORDER BY etudiants DESC LIMIT 20
-    cols: profil_ville,profil_promotion,profil_id,profil_cursus
-
-
-  - title: Nombre d'étudiants par formation
-    id: student_by_cursus
-    chart: pie
-    x: profil_cursus
-    y: etudiants
-    color: profil_cursus
-    cols: profil_cursus,profil_id
-    sql: SELECT profil_cursus,count(profil_id) as etudiants FROM df GROUP BY profil_cursus
+    x: ville
+    table: profil
+    color: ville
+    sql: SELECT * FROM (SELECT ville,count(id) AS etudiants FROM df WHERE cursus='S' AND promotion>=2000 GROUP BY ville) ORDER BY etudiants DESC LIMIT 15
+    cols: ville,promotion,id,cursus
+    data_cols: town,degree_year,id,cursus
+    prod: True
 
 
   - title: Répartition du genre par département depuis 2000
@@ -85,6 +87,8 @@ Instant_reports:
     color: profil_genre
     sql: SELECT profil_formation,profil_genre,count(profil_id) AS etudiants FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,profil_genre
     cols: profil_formation,profil_genre,profil_id,profil_cursus,profil_promotion
+    prod: True
+
 
   - title: Type de réalisation par département
     id: film_category_by_department
@@ -94,6 +98,7 @@ Instant_reports:
     color: film_catégorie
     sql: SELECT profil_formation,film_catégorie,count(work_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,film_catégorie
     cols: profil_formation,film_catégorie,work_id,profil_cursus,profil_promotion
+    prod: False
 
 
   - title: Nombre de production par promotion depuis 2000
@@ -104,6 +109,7 @@ Instant_reports:
     color: film_catégorie
     sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
     cols: profil_promotion,film_catégorie,film_id,profil_cursus,profil_promotion
+    prod: True
 
 
   - title: Films par années et par département
@@ -117,6 +123,7 @@ Instant_reports:
     color: profil_formation
     val: film_id
     fun: count
+    prod: False
 
 
 

@@ -237,10 +237,10 @@ export class EditComponent implements OnInit,OnDestroy  {
   save_profil(func:Function=null,evt=null,field=""){
     if(this.profil){
       if(field=="acceptSponsor")this.profil.acceptSponsor=evt.checked;
-    this.profil.dtLastUpdate=new Date().toISOString();
-    this.api.setprofil(this.profil).subscribe(()=>{
-      if(func)func();
-    },(err)=>{showError(this,err);});
+      this.profil.dtLastUpdate=new Date().toISOString();
+      this.api.setprofil(this.profil).subscribe(()=>{
+        if(func)func();
+      },(err)=>{showError(this,err);});
     }
   }
 
@@ -306,11 +306,13 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   save_user(evt=null) {
-    if(evt!=null){
-      let prop=Object.keys(evt)[0];
-      this.config.user.user[prop]=evt[prop].checked;
+    if(this.config.user){
+      if(evt!=null){
+        let prop=Object.keys(evt)[0];
+        this.config.user.user[prop]=evt[prop].checked;
+      }
+      this.api.setuser(this.config.user.user).subscribe(()=>{});
     }
-    this.api.setuser(this.config.user.user).subscribe(()=>{});
   }
 
 
@@ -323,7 +325,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   analyse() {
     this.message="Analyse en cours des principaux annuaires";
-    this.api._post("batch/","filter="+this.profil.id,this.config.values.catalogue).subscribe((r:any)=>{
+    this.api._post("batch/","filter="+this.profil.id,this.config.values.catalog).subscribe((r:any)=>{
       this.message="";
       showMessage(this,"Analyse terminée. Ajour de "+r.films+" film(s) et "+r.works+" contribution(s)");
       this.refresh_works();

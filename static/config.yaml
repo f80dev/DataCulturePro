@@ -10,7 +10,7 @@ search:
 catalog:
   imdb: true
   lefilmfrancais: false
-  unifrance: false
+  unifrance: true
   senscritique: false
 
 support:

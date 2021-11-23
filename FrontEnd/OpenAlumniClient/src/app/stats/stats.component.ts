@@ -43,8 +43,14 @@ export class StatsComponent implements OnInit {
     this.message="Chargement des reporting";
     this.api._get("getyaml","name=stat_reports").subscribe((r:any)=>{
       this.message="";
-      this.reports=r["Reports"];
-      this.instant_reports=r["Instant_reports"];
+
+      this.reports=[];
+      for(let i of r["Reports"])
+        if(i.prod)this.reports.push(i);
+
+      this.instant_reports=[];
+      for(let i of r["Instant_reports"])
+        if(i.prod)this.instant_reports.push(i);
 
       let open=Number(this.routes.snapshot.queryParamMap.get("open")) || 0;
       this.sel_report=this.instant_reports[open];
@@ -71,10 +77,14 @@ export class StatsComponent implements OnInit {
     if(tools=="xml")open(api("export_all/","",true,"xml"));
   }
 
+
+
   openSocialGraph() {
     this.router.navigate(["visgraph"]);
     //open(environment.domain_server+"/api/social_graph/");
   }
+
+
 
   eval_stat() {
     //voir https://github.com/karllhughes/angular-d3
@@ -89,7 +99,6 @@ export class StatsComponent implements OnInit {
     if(this.sel_report.data_cols){
       param=param+"&data_cols="+this.sel_report.data_cols+"&cols="+this.sel_report.cols+"&table="+this.sel_report.table;
     }
-
 
     if(!this.sel_report.html_code){
       this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9),false,"");
@@ -106,10 +115,14 @@ export class StatsComponent implements OnInit {
     }
   }
 
+
+
   refresh_stats() {
     this.sel_report.html_code=null;
     this.eval_stat();
   }
+
+
 
   open_stats() {
     open(this.sel_report.url);
