@@ -20,7 +20,8 @@
               (click)="clearQuery()">cancel</mat-icon>
   </mat-form-field>
   &nbsp;&nbsp;
-  <mat-checkbox [(ngModel)]="all">Tout</mat-checkbox>
+  <mat-icon (click)="advanced=true" *ngIf="!advanced" style="cursor: pointer" title="Recherche en mode avancée">add_circle</mat-icon>
+  <mat-checkbox *ngIf="advanced" [(ngModel)]="all" ><div class="bloc-bouton">Tous les<br>termes</div></mat-checkbox>
 
   <br>
 

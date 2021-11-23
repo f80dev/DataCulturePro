@@ -60,6 +60,14 @@ export function brand_text(text:string,config:any){
 }
 
 
+export function abrege(s:string,abrevations:any):string {
+  for(let k of Object.keys(abrevations)) {
+    s=s.replace(k,abrevations[k]);
+  }
+  return s;
+}
+
+
 export function normaliser(s:string):string {
   s=s.replace("é","e").replace("è","e").replace("ê","e");
   return s.toLowerCase()

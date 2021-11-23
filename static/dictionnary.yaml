@@ -8,6 +8,18 @@
 #Le dictionnaire est modifiable par les personnes autorisés sur https://github.com/f80dev/DataCulturePro/blob/master/static/dictionnary.yaml
 
 
+#abrevation principalement utilisé pour raccourcir les noms de formations
+abreviations:
+  directeur: Dir.
+  direction: Dir.
+  Direction: Dir.
+  Directeur: Dir.
+  cinématographique: ciné.
+  Cinématographique: Ciné.
+  Expertiser: Exp.
+  d'exploitation: exp.
+
+
 #Normalisation des categories
 categories:
   Tv mini series: série
@@ -291,3 +303,4 @@ jobs:
   Scénariste réalisateur producteur: Scénario/Réalisation/Production
   Chef monteur son et chef opérateur du son: Ingé son
   Chefs électriciens: Chef électricien
+

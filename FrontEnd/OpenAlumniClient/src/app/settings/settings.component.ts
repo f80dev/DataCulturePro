@@ -25,7 +25,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     checkLogin(this);
-    this.show_perm=detailPerm(this.config.user.perm,this.config.perms);
+    this.show_perm=detailPerm(this.config.user.perm,this.config.perms,"html");
   }
 
   open_perms(){

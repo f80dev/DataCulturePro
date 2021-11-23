@@ -436,11 +436,11 @@ def rebuild_index(request):
 
 #http://localhost:8000/api/batch
 #https://server.f80.fr:8000/api/batch
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def batch(request):
+    content=loads(str(request.body,"utf8"))
     filter= request.GET.get("filter", "*")
-    catalogue=request.GET.get("catalogue", "imdb,unifrance")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
     profils=Profil.objects.order_by("dtLastSearch").all()
@@ -456,7 +456,7 @@ def batch(request):
 
     profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"],catalog=catalogue)
+    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"],content=content)
     articles=[x for x in articles if x]
 
     return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})
@@ -1097,7 +1097,7 @@ def importer(request):
         d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
 
     for row in d:
-        log(str(i) + "/" + str(total_record) + " en cours d'importation")
+        #log(str(i) + "/" + str(total_record) + " en cours d'importation")
         if i==0:
             header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
             log("Liste des colonnes disponibles "+str(header))
@@ -1142,7 +1142,7 @@ def importer(request):
                 dt=dateToTimestamp(dt_birthdate)
 
                 if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin",row,dictionnary["promo"],0,4)
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4)
                 if type(promo)!=str: promo=str(promo)
                 if not promo is None and len(promo)>4:
                     promo=dateToTimestamp(promo)
@@ -1185,7 +1185,7 @@ def importer(request):
                         profil=fusion(res.first(),profil)
 
                     rc=profil.save()
-                    log(profil.lastname + " est enregistré")
+                    #log(profil.lastname + " est enregistré")
                     record=record+1
                 except Exception as inst:
                     log("Probléme d'enregistrement de "+email+" :"+str(inst))

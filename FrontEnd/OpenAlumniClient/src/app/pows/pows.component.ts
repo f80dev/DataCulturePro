@@ -22,6 +22,7 @@ export class PowsComponent implements OnInit {
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number;
   filter$: Observable<string>;
+  advanced=false;
 
   constructor(public api:ApiService,
               public ngNavigatorShareService:NgNavigatorShareService,

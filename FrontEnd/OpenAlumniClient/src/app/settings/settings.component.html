@@ -6,13 +6,13 @@
     <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlJob">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Permission
+          Permissions
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div style="width: 96%;margin:2%;">
         <br>
         <h2>Actuellement vous avez accès:</h2>
-        <br><small>{{show_perm}}</small>
+        <div style="font-size: small;text-align: left;" [innerHTML]="show_perm"></div>
         <br>
         <br>
 

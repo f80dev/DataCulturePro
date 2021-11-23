@@ -22,6 +22,7 @@ export class ConfigService {
   jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
   perms: any;
+  abreviations: any;
 
   constructor(private location: Location,
               private http: HttpClient,
@@ -78,6 +79,10 @@ export class ConfigService {
 
     this.api.getyaml("","dictionnary").subscribe((yaml:any)=>{
       $$("Chargement des métiers du dictionnaire ok");
+      if(!this.abreviations){
+        this.abreviations=yaml.abreviations;
+      }
+
       if(!this.jobs) {
         let rc=[]
         this.jobs=[];
@@ -96,8 +101,8 @@ export class ConfigService {
 
           this.raz_user();
           this.getConfig().then(r => {
-            $$("Chargement du fichier de configuration Ok");
             this.values = r;
+            $$("Chargement du fichier de configuration Ok",r);
             this.ready = true;
             if (func) func(this.values);
           }, () => {

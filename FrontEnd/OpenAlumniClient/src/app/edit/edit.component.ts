@@ -70,22 +70,20 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   ngOnInit(): void {
-    this.config.init_user(()=>{
-      if(checkLogin(this,null,null,"login")){
-        this.message="Chargement de votre profil";
-        this.loadProfil(()=>{
-          this.url=this.profil.public_url;
-          this.title=this.profil.firstname+" "+this.profil.lastname;
-          this.showAddWork=0;
-          this.message="";
-          this.autoAddMovie();
-          this.refresh_job();
-          this.refresh_students();
-        });
-      }
-    },()=>{
-      showMessage(this,"Relancer le chargement");
-    })
+    if(checkLogin(this,null,this.router)) {
+      this.message = "Chargement de votre profil";
+      this.loadProfil(() => {
+        this.url = this.profil.public_url;
+        this.title = this.profil.firstname + " " + this.profil.lastname;
+        this.showAddWork = 0;
+        this.message = "";
+        this.autoAddMovie();
+        this.refresh_job();
+        this.refresh_students();
+      });
+    } else {
+      this.quit();
+    }
   }
 
   refresh(){
@@ -237,11 +235,13 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   save_profil(func:Function=null,evt=null,field=""){
-    if(field=="acceptSponsor")this.profil.acceptSponsor=evt.checked;
+    if(this.profil){
+      if(field=="acceptSponsor")this.profil.acceptSponsor=evt.checked;
     this.profil.dtLastUpdate=new Date().toISOString();
     this.api.setprofil(this.profil).subscribe(()=>{
       if(func)func();
     },(err)=>{showError(this,err);});
+    }
   }
 
 
@@ -323,7 +323,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   analyse() {
     this.message="Analyse en cours des principaux annuaires";
-    this.api._get("batch/","filter="+this.profil.id).subscribe((r:any)=>{
+    this.api._post("batch/","filter="+this.profil.id,this.config.values.catalogue).subscribe((r:any)=>{
       this.message="";
       showMessage(this,"Analyse terminée. Ajour de "+r.films+" film(s) et "+r.works+" contribution(s)");
       this.refresh_works();
@@ -407,7 +407,6 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   remove_student(id: string) {
-
     this.api._patch("profils/"+id+"/","",{sponsorBy:null}).subscribe(()=>{
       this._location.back();
     });

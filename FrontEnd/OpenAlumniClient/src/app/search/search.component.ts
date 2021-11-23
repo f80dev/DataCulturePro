@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {$$, normaliser, showError, showMessage, translateQuery} from "../tools";
+import {$$, abrege, normaliser, showError, showMessage, translateQuery} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigService} from "../config.service";
@@ -126,6 +126,11 @@ export class SearchComponent implements OnInit {
             item.backgroundColor="#341414";
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
+
+            if(item.department.length>30){
+              item.department=abrege(item.department,this.config.abreviations);
+            }
+
             this.profils.push(item);
           } else {
 

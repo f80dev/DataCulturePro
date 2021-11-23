@@ -66,7 +66,7 @@ export class AdminComponent implements OnInit {
     // for(let key of Object.keys(this.config.values.catalog)){
     //   if(this.config.values.catalog[key])catalog=catalog+key.replace(" ","").trim()+"_";
     // }
-    this.api._get("batch/","refresh_delay="+refresh_delay+"&catalogue="+catalog).subscribe(()=>{
+    this.api._post("batch/","refresh_delay="+refresh_delay,this.config.values.catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }

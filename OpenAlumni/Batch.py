@@ -503,7 +503,7 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     return rc
 
 
-def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[],bot=None):
+def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[],bot=None,content=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -545,7 +545,8 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
 
                 pow = PieceOfWork(title=film["title"])
                 pow.add_link(url=l["url"], title=source)
-                pow.add_link(extract_film_from_senscritique(film["title"]),title="Sens-critique")
+                if not content is None and content["senscritique"]:
+                    pow.add_link(extract_film_from_senscritique(film["title"]),title="Sens-critique")
                 if "nature" in film:
                     pow.nature=translate(film["nature"])
                 else:
@@ -633,7 +634,7 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 #http://localhost:8000/api/batch
-def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list(),catalog="unifrance,imdb"):
+def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list(),content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False}):
     """
     Scan des profils
     :param profils:
@@ -666,7 +667,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
             #log("Extraction bellefaye " + str(infos))
 
             try:
-                if "imdb" in catalog:
+                if content["imdb"]:
                     infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay)
                     log("Extraction d'imdb " + str(infos))
                     if "url" in infos:profil.add_link(infos["url"], "IMDB")
@@ -676,7 +677,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb")
 
             try:
-                if "lefilmfrancais" in catalog:
+                if content["lefilmfrancais"]:
                     infos=extract_profil_from_lefimlfrancais(firstname=profil.firstname,lastname=profil.lastname)
                     if "url" in infos:profil.add_link(infos["url"],"LeFilmF")
                     if len(infos["links"])>0:
@@ -685,7 +686,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
             except:
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
-            if "unifrance" in catalog:
+            if content["unifrance"]:
                 infos = extract_profil_from_unifrance(profil.firstname + " " + profil.lastname, refresh_delay=refresh_delay)
                 log("Extraction d'un profil d'unifrance "+str(infos))
                 if infos is None:

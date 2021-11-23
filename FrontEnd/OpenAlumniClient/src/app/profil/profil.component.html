@@ -3,12 +3,14 @@
   <div class="flip-card-inner mat-elevation-z8" [ngStyle]="{backgroundColor:backgroundColor}" >
     <div class="flip-card-front">
       <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
-        <td style="text-align: left;" *ngIf="config.hasPerm('r_department')">
+        <td style="text-align: left;">
 
         </td>
 
-        <td style="text-align: right">
-          {{profil.department}}<br>
+        <td style="text-align: right" >
+          <div *ngIf="config.hasPerm('r_department')">
+            {{profil.department}}
+          </div>
           <div *ngIf="config.hasPerm('r_promo')">
             <span *ngIf="profil?.cursus=='P'" name="lblCursus">Cursus Pro - </span>
             <span style='cursor: pointer'

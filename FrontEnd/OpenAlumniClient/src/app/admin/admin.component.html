@@ -42,12 +42,14 @@
       </mat-expansion-panel-header>
       <button mat-raised-button mat-button class="app-button" (click)="export_profils('S')">Export FI</button>
       <button mat-raised-button mat-button class="app-button" (click)="export_profils('P')">Export FPro</button>
-      <button mat-raised-button mat-button class="app-button" (click)="raz('profils')">Effacer les profils</button>
+      <button mat-raised-button mat-button class="app-button" (click)="raz('profils')">RAZ profils</button>
       <button mat-raised-button mat-button
               class="app-button" (click)="router.navigate(['import'])">Importation
       </button>
       <br>
       <button mat-raised-button mat-button class="app-button" (click)="analyzer('profils')">Traitement Qualite</button>
+
+
 
       <p>Gestion des contributions</p>
       <button mat-raised-button mat-button class="app-button" (click)="raz('works imdb')">RAZ IMDB</button>
@@ -83,21 +85,24 @@
       </mat-expansion-panel-header>
 
 
-<!--      <mat-slide-toggle #imdb [(ngModel)]="config.values.catalog.imdb" >-->
-<!--        IMDB-->
-<!--      </mat-slide-toggle>-->
+      <mat-checkbox [(ngModel)]="config?.values?.catalog.imdb" >
+        IMDB
+      </mat-checkbox>
+      &nbsp;&nbsp;&nbsp;
 
-<!--      <mat-slide-toggle #unifrance [(ngModel)]="config.values.catalog.unifrance" >-->
-<!--        unifrance-->
-<!--      </mat-slide-toggle>-->
+      <mat-checkbox [(ngModel)]="config?.values?.catalog.unifrance" >
+        unifrance
+      </mat-checkbox>
+      &nbsp;&nbsp;&nbsp;
 
-<!--      <mat-slide-toggle #senscritique [(ngModel)]="config.values.catalog.senscritique">-->
-<!--        senscritique-->
-<!--      </mat-slide-toggle>-->
+      <mat-checkbox [(ngModel)]="config?.values?.catalog.senscritique">
+        senscritique
+      </mat-checkbox>
+      &nbsp;&nbsp;&nbsp;
 
-<!--      <mat-slide-toggle #lff [(ngModel)]="config.values.catalog.lefilmfrancais">-->
-<!--        lefilmfrancais-->
-<!--      </mat-slide-toggle>-->
+      <mat-checkbox [(ngModel)]="config?.values?.catalog.lefilmfrancais">
+        lefilmfrancais
+      </mat-checkbox>
 
       <br><br>
 
