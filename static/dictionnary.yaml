@@ -56,51 +56,51 @@ jobs:
   Camera_department: Caméra
   Production_manager: Production
   Music_department: Musique
-  Artistic director: Directeur artistique
-  Assistant_director: Assistant réalisateur
-  Script_department: Scénariste
+  Artistic director: Direction artistique
+  Assistant_director: Ass. réalisation
+  Script_department: Scénario
   Soundtrack: Compositeur
   Executive in charge of production: Production
   Artistic production manager: Production
-  Sound department: Ingé son
-  Scénario: Scénariste
-  Second unit director or assistant director: Assistant réalisateur
+  Sound department: Ing. son
+  Scénario: Scénario
+  Second unit director or assistant director: Ass. réalisation
   Editor: Montage
   Monteur: Montage
-  Scénaristes: Scénariste
-  Assistant editor: Assitant(e) montage
+  Scénaristes: Scénario
+  Assistant editor: Ass. montage
   Sound editor: Montage son
-  Assistante editor: Assitant(e) montage
+  Assistante editor: Ass. montage
   Director: Réalisation
   Réalisateur: Réalisation
   Réalisatrice: Réalisation
   Dialogue editor: Montage son
-  Assistant sound editor: Assitant(e) montage
+  Assistant sound editor: Ass. montage
   Additional editor: Montage
-  Writer: Scénariste
+  Writer: Scénario
   Monitor technician: Caméra
   Set_decorator: Décor
   Production_designer: Production
-  Head writer: Scénariste
+  Head writer: Scénario
   Visual_effects: Effets spéciaux
   Craft service: Effets spéciaux
   Title designer: Designer
   Titles design: Designer
-  Technical consultant: Consultant technique
+  Technical consultant: Consult.technique
   Art_director: Décor
   Art_department: Décor
   Casting_department: Casting
   Casting_director: Casting
   Storyboardeur: Storyboard
-  production assistant: Assistant de production
-  second assistant director: Assistant Réalisation
+  production assistant: Ass. Production
+  second assistant director: Ass. Réalisation
   Composer: Compositeur
   Auteur de la musique: Compositeur
-  Assistante à la réalisation: Assistant Réalisation
-  Assistant à la réalisation: Assistant Réalisation
+  Assistante à la réalisation: Ass. Réalisation
+  Assistant à la réalisation: Ass. Réalisation
   Auteurs de la musique: Compositeur
   Attaché de presse (film): Relations presse
-  Assistant réalisateur: Assistant réalisation
+  Assistant réalisateur: Ass. Réalisation
   Directeur de production: Direction de production
   Actress: Acteur(trice)
   Attachée de presse (film): Relations presse
@@ -109,24 +109,24 @@ jobs:
   Directrice de la photo: Direction Photo
   Directeurs de la photo: Direction Photo
   Cinematographer: Direction Photo
-  Ingénieur du son  monteur son  sound designer  mixeur: Ingé son
-  Ingénieur du son monteur son mixeur: Ingé son
-  Ingénieurs du son: Ingé son
+  Ingénieur du son  monteur son  sound designer  mixeur: Ing. son
+  Ingénieur du son monteur son mixeur: Ing. son
+  Ingénieurs du son: Ing. son
   Monteur son: Montage son
   Art department: Décor
   Décorateur: Décor
   Décoratrice: Décor
   Décoratrices: Décor
   Additional crew: Assistant
-  Scénariste: Scénariste
+  Scénariste: Scénario
   Mixeur monteur son: Mixeur
   Attachées de presse (film): Relations presse
   Attachés de presse (film): Relations presse
-  Chef opérateur du son et monteur son: Ingé son
+  Chef opérateur du son et monteur son: Ing. son
   Directrice de production: Production
   Production designer: Production
   Responsable de la post-production: Post-production
-  Monteur son - ingénieur du son: Ingé son
+  Monteur son - ingénieur du son: Ing. son
   Producteurs délégués: Production déléguée
   Assistants opérateurs: Caméra
   Producteurs: Production
@@ -140,18 +140,18 @@ jobs:
   Script and continuity department: Scripte
   Agents (presse france): Relations presse
   Chef monteuse: Montage
-  Assistante opérateur: Assistant Caméra
+  Assistante opérateur: Ass.Caméra
   Productrice déléguée: Production déléguée
   Animation department: Animation
   Directeurs de production: Production
   Monteuse: Montage
   Art director: Décor
   Décorateur / ensemblier: Décor
-  Chef operateur son monteur son: Ingé son
-  Scénariste réalisateur: Réalisation / Scénario
+  Chef operateur son monteur son: Ing. son
+  Scénariste réalisateur: Réalisation/Scénario
   Producteur associé: Production
   Editorial department: Montage
-  Assistante monteuse: Assistant(e) montage
+  Assistante monteuse: Ass. montage
   Actor: Acteur(trice)
   Chef opérateur et réalisateur: Réalisation
   Directrices de la photo: Image
@@ -159,9 +159,9 @@ jobs:
   Chef opératrice: Image
   Cadre: Caméra
   Self: Acteur(trice)
-  Assistants son: Assistant son
-  Second sound assistant: Assistant son
-  Assistant monteur: Assistant montage
+  Assistants son: Ass. son
+  Second sound assistant: Ass. son
+  Assistant monteur: Ass. montage
   Directrices de production: Direction de production
   Coproducteur: Coproduction
   Camera and electrical department: Caméra
@@ -171,35 +171,35 @@ jobs:
   Productrices: Production
   Département animation: Animation
   Directrice artistique: Direction artistique
-  Opératrice du son: Ingé son
+  Opératrice du son: Ing. son
   Photographes de plateau: Photographe de Plateau
   Effets visuels: Effets spéciaux
   Assistant de production: Production
   Producteurs étrangers: Production
-  Pre-production sound: Ingé son
-  Sound_department: Ingé son
+  Pre-production sound: Ing. son
+  Sound_department: Ing. son
   Auteur de l'œuvre originale: Auteur
-  Scénariste et réalisatrice: Auteur/Réalisateur
-  Assistante opératrice: assistant image
+  Scénariste et réalisatrice: Scénario/Réalisation
+  Assistante opératrice: Ass. image
   Régisseuse générale: Régie
-  Réalisateur chef-op auteur compositeur: Auteur/Réalisateur
-  Narration: Scénariste
+  Réalisateur chef-op auteur compositeur: Scénario/Réalisation
+  Narration: Scénario
   Interprètes de la musique: Musique
   Chef décoratrice: Décor
   Interprète de la musique: Musique
   Intern: Stagiaire
   Segment team: Divers
-  Assistante décoratrice: Assist. Décor
+  Assistante décoratrice: Ass. Décor
   Auteur réalisateur: Auteur/Réalisateur
   Post: Postprod
   Assistant set manager: Régie
-  Adaptation: Scénariste
+  Adaptation: Scénario
   Productrice étrangère: Production
   Visual consultant: Effets spéciaux
   Participantes: Autre
   Post-audio supervisor: Postprod Son
   Assistant set manager - uncredited: Régie
-  Cast: Acteur/Actrice
+  Cast: Acteur(Actrice)
   Production trainee: Production
   Directed: Réalisation
   Series directed: Réalisation
@@ -209,33 +209,33 @@ jobs:
   Writing credits: Scénario
   Series additional crew: Assistant
   Series script and continuity department: Scripte
-  Series art department: Décorateur/trice
+  Series art department: Décorateur(trice)
   Series produced: Production
   Set decoration: Décor
   Series production management: Production
   Visual effects: Effets spéciaux
-  Production design: Decor
+  Production design: Décor
   Assistants de production: Production
   Series production desig: Décor
-  Series sound department: Ingé son
-  Series editorial department: Scénariste
+  Series sound department: Ing. son
+  Series editorial department: Scénario
   Costume design: Costumes
   Attachée de presse film: Relations presse
-  Idées originales: Scénariste
+  Idées originales: Scénario
   Coproductrices: CoProduction
   Productrices déléguées: Production Del
   Production coordinator: Production
   Production staff: Production
-  Screenplay assistant: scénario assist.
+  Screenplay assistant: scénario ass.
   Costume_designer: Costumes
   Assistant to jean labadie: Production
   Lui-même: Acteur(trice)
-  Series second unit director or assistant director: Assistant réalisation
+  Series second unit director or assistant director: Ass. Réalisation
   Directrice/responsable des ventes: Production
   Series cinematography: Image
   Dialogue coach: Coach
   Head of legal and business affairs: Production
-  Compositeur réalisateur: Réalisateur
+  Compositeur réalisateur: Réalisation
   Dialoguistes: Scénario
   Dialoguiste: Scénario
   Monteuse-  réalisatrice: Réalisation
@@ -243,21 +243,21 @@ jobs:
   Series writing credits: Scénario
   Film editing: Montage
   Cinematography: Image
-  Assistant montage: Assitant(e) montage
+  Assistant montage: Ass. montage
   Produced: Production
-  Series       cast: Casting
+  Series cast: Casting
   Series production design: Production
   Autre: Autres
-  Assistanat réalisation: Assistant Réalisation
+  Assistanat réalisation: Ass. Réalisation
   Postprod: Post-production
   Art direction: Décor
   Series art direction: Décor
   Series camera and electrical department: Caméra
   Acteurtrice: Acteur(trice)
-  Story consultant: Scénariste
+  Story consultant: Scénario
   Responsables de la post-production: Post-production
   Productrices associées: Production
-  Office production assistant: Assistant de Production
+  Office production assistant: Ass. Production
   France: Autres
   Cheffe op: Image
   Photographe: Image
@@ -267,40 +267,40 @@ jobs:
   Series film editing: Montage
   Series thanks: Autres
   Translation assistant: Scripte
-  Ingénieures du son: Ingé son
-  Assistant to producer: Assistant de production
+  Ingénieures du son: Ing.son
+  Assistant to producer: Ass. production
   Thanks: Remerciements
   Casting department: Casting
   Editorial_department: Montage
   Location_management: Repérages
   Writing credits in alphabetical order: Scénario
-  Assitant(e) montage: Assistant montage
+  Assitant(e) montage: Ass. montage
   Photographie: Image
   Décors: Décor
-  Direction artistique: Directeur artistique
-  Assistante montage: Assistant montage
-  Assistantes à la réalisation: Assistant réalisation
-  Réalisatrice et cadreuse: Réalisation et Image
-  Assistante monteuses: Assistant montage
+  Direction artistique: Direction artistique
+  Assistante montage: Ass. montage
+  Assistantes à la réalisation: Ass. réalisation
+  Réalisatrice et cadreuse: Réalisation/Image
+  Assistante monteuses: Ass. montage
   Auteure/réalisatrice/ scripte: Réalisation
   Productrices exécutives: Production Exé.
-  Assistants monteurs: Assistant montage
+  Assistants monteurs: Ass. montage
   Auteur/réalisateur: Scénario/Réalisation
   Producteurs associés: Coproduction
   Secrétaire de production: Production
   Series cast: Casting
-  Ingénieure du son: Ingé son
-  Ingénieur du son: Ingé son
-  Monteur son / chef opérateur son auditorium: Ingé son
+  Ingénieure du son: Ing. son
+  Ingénieur du son: Ing. son
+  Monteur son / chef opérateur son auditorium: Ing. son
   Réalisateur scénariste et directeur de la photographie: Scénario/Réalisation/Image
-  Superviseur sonore: Ingé son
+  Superviseur sonore: Ing. son
   Réalisateur scénariste enseignant en cinéma: Réalisation
-  Assistantes opérateur: Assistant op
-  Assistante son: Assistant son
+  Assistantes opérateur: Ass. op
+  Assistante son: Ass. son
   Monteuse / assistante monteuse: Montage
   Chef opérateur: Image
   Colorisation: Post Prod
   Scénariste réalisateur producteur: Scénario/Réalisation/Production
-  Chef monteur son et chef opérateur du son: Ingé son
-  Chefs électriciens: Chef électricien
+  Chef monteur son et chef opérateur du son: Ing. son
+  Chefs électriciens: Chef(fe) électricien
 
