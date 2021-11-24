@@ -9,9 +9,6 @@ if os.environ.get("DEBUG"):
 else:
     from OpenAlumni.settings import *
 
-from dataclasses import Field
-
-import django
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -190,6 +187,14 @@ class ExtraUser(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """
+    Création d'un utilisateur
+    :param sender:
+    :param instance:
+    :param created:
+    :param kwargs:
+    :return:
+    """
     if created:
         log("Creation de l'extrauser associé")
         perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
@@ -201,6 +206,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
         log("Permission par défaut pour les connectés : " + perm)
         ExtraUser.objects.create(user=instance,perm=perm)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

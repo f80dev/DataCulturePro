@@ -1044,11 +1044,16 @@ def importer(request):
     """
 
     header=list()
-    def idx(col:str,row=None,default=None,max_len=0,min_len=0):
+    def idx(col:str,row=None,default=None,max_len=0,min_len=0,replace_dict:dict={}):
         for c in col.lower().split(","):
             if c in header:
                 if row is not None and len(row)>header.index(c):
                     rc=str(row[header.index(c)])
+
+                    #Application des remplacement
+                    for old in replace_dict.keys():
+                        rc=rc.replace(old,replace_dict[old])
+
                     if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
                     if min_len==0 or len(rc)>=min_len:
                         return rc
@@ -1112,7 +1117,7 @@ def importer(request):
 
             #Eligibilité et evoluation du genre
             gender=idx("gender,genre,civilite,civilité",row,"")
-            if len(lastname)>2 and len(lastname)+len(firstname)>5 and len(email)>4 and "@" in email:
+            if len(lastname)>2 and len(lastname)+len(firstname)>5:
                 if idx_photo is None or len(row[idx_photo])==0:
                     photo=None
 
@@ -1148,23 +1153,26 @@ def importer(request):
                     promo=dateToTimestamp(promo)
                     if not promo is None:promo=promo.year
 
+                standard_replace_dict={"nan":""}
+
                 profil=Profil(
                     firstname=firstname,
                     school="FEMIS",
                     lastname=lastname,
                     gender=gender,
-                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20),
-                    nationality=idx("nationality",row,"Francaise"),
+                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict),
+                    nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict),
                     country=idx("country,pays",row,"France"),
                     birthdate=dt,
-                    department=idx("CODE_TRAINING,departement,department,formation",row,"",60),
-                    job=idx("job,metier,competences",row,"",60),
+                    department=idx("CODE_TRAINING,departement,department,formation",row,"",60,replace_dict=standard_replace_dict),
+                    job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict),
                     degree_year=promo,
-                    address=idx("address,adresse",row,"",200),
-                    town=idx("town,ville",row,"")[:50],
-                    source=idx("source", row, "FEMIS")[:50],
-                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5),
-                    website=stringToUrl(idx("website,siteweb,site,url",row,"")),
+                    address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict),
+                    department_category=idx("code_regroupement",row,"",50,replace_dict=standard_replace_dict),
+                    town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict),
+                    source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict),
+                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict),
+                    website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict)),
                     biography=idx("biographie",row,""),
 
                     facebook=idx("facebook",row,""),
