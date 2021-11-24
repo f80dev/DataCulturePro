@@ -54,6 +54,18 @@ Instant_reports:
     sql: SELECT formation, promotion,count(id) as stagiaires FROM df WHERE cursus='P' GROUP BY formation,promotion
     prod: True
 
+  - title: Répartition des anciens par type de formation
+    id: prostudent_by_categories
+    x: promotion
+    y: profils
+    chart: bar
+    color: formation
+    table: profil
+    data_cols: id,department_category,cursus,degree_year
+    cols: id,formation,cursus,promotion
+    sql: SELECT formation, promotion,count(id) as profils FROM df GROUP BY formation,promotion
+    prod: True
+
 
   - title: Films par categorie par departement
     id: student_by_category

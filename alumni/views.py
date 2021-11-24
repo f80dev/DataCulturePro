@@ -1117,7 +1117,7 @@ def importer(request):
 
             #Eligibilité et evoluation du genre
             gender=idx("gender,genre,civilite,civilité",row,"")
-            if len(lastname)>2 and len(lastname)+len(firstname)>5:
+            if len(lastname)>1 and len(lastname)+len(firstname)>4:
                 if idx_photo is None or len(row[idx_photo])==0:
                     photo=None
 
@@ -1168,7 +1168,7 @@ def importer(request):
                     job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict),
-                    department_category=idx("code_regroupement",row,"",50,replace_dict=standard_replace_dict),
+                    department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict),
                     town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict),
                     source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict),
                     cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict),
