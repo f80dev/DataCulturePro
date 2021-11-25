@@ -17,6 +17,7 @@ Reports:
 
 Instant_reports:
   - title: Etudiants par formation
+    description:
     id: student_by_depyear
     chart: bar
     x: promotion
@@ -30,6 +31,7 @@ Instant_reports:
 
 
   - title: Etudiants par type de cursus
+    description:
     id: student_by_cursus
     chart: bar
     x: promotion
@@ -43,6 +45,7 @@ Instant_reports:
 
 
   - title: Répartition des stagiaires de la formation profesionnelle
+    description:
     id: prostudent_by_depyear
     x: promotion
     y: stagiaires
@@ -55,6 +58,7 @@ Instant_reports:
     prod: True
 
   - title: Répartition des anciens par type de formation
+    description:
     id: prostudent_by_categories
     x: promotion
     y: profils
@@ -68,6 +72,7 @@ Instant_reports:
 
 
   - title: Films par categorie par departement
+    description:
     id: student_by_category
     chart: bar
     x: film_catégorie
@@ -99,7 +104,7 @@ Instant_reports:
     color: profil_genre
     sql: SELECT profil_formation,profil_genre,count(profil_id) AS etudiants FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,profil_genre
     cols: profil_formation,profil_genre,profil_id,profil_cursus,profil_promotion
-    prod: True
+    prod: False
 
 
   - title: Type de réalisation par département

@@ -850,6 +850,7 @@ def export_all(request):
         df=pd.DataFrame.from_records(data)
         df.columns=list(request.GET.get("cols").split(","))
 
+    title=request.GET.get("title","Reporting FEMIS")
     lib_columns=",".join(list(df.columns))
 
     format=request.GET.get("out","json")
@@ -900,19 +901,22 @@ def export_all(request):
 
     if format=="csv":
         response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response["Content-Disposition"]='attachment; filename="works.csv"'
+        response["Content-Disposition"]='attachment; filename="'+title+'".csv"'
         df.to_csv(response,sep=";",encoding="utf-8")
         return response
 
     if format=="json":
         return HttpResponse(content=df.to_json(orient="index",force_ascii=False),content_type='application/json')
 
-    if "xls" in format:
+    if "xls" in format or "excel" in format:
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         df.to_excel(writer,sheet_name="FEMIS")
-        response = HttpResponse(content=writer,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response["Content-Disposition"] = 'attachment; filename="femis.xlsx"'
+        writer.save()
+        output.seek(0)
+
+        response = HttpResponse(content=output.getvalue(),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response["Content-Disposition"] = 'attachment; filename='+title+'.xlsx'
         return response
 
     if format.startswith("graph"):

@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1637311249699,
+  "timestamp": 1637834664546,
   "index": "https://dcp.f80.fr/index.html",
   "assetGroups": [
     {
@@ -135,11 +135,11 @@
     "https://dcp.f80.fr/assets/reporting.pbix": "2b95ac35c6fee4fa408666be84d70943d4604ae8",
     "https://dcp.f80.fr/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
     "https://dcp.f80.fr/index.html": "73eed36bb1a85dcd6b2c4e2c87c18cda3ef1e82a",
-    "https://dcp.f80.fr/main.js": "0b6592ec7a7aa1f80772e284ed5d6d31a0b4254b",
+    "https://dcp.f80.fr/main.js": "ff2babcdfdca8f3a0872417eb90d79f2fe11bb48",
     "https://dcp.f80.fr/manifest.webmanifest": "5430bb03fa346e338146a0956939e110243e7d40",
     "https://dcp.f80.fr/polyfills.js": "8015375e29758a1df01e4d4841de190e271aca0b",
     "https://dcp.f80.fr/runtime.js": "972e87a3e09171d3043420006f1806a08746a4c0",
-    "https://dcp.f80.fr/styles.css": "bfe32b6d217890e587804ff0f05da6efe2af482b"
+    "https://dcp.f80.fr/styles.css": "cd08ce318f220508b9732e58af8507a3b0cf54e0"
   },
   "navigationUrls": [
     {

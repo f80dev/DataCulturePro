@@ -149,6 +149,22 @@
 
   <button mat-button mat-raised-button
           class="app-button"
+          id="cmdExport"
+          *ngIf="sel_report?.url?.length>0"
+          (click)="export_stats()">
+    <div class="bloc-bouton">Exporter<br>sous Excel</div>
+  </button>
+
+  <button mat-button mat-raised-button
+          class="app-button"
+          id="cmdShare"
+          *ngIf="sel_report?.url?.length>0"
+          (click)="share_stats()">
+    <div class="bloc-bouton">Partager<br>le rapport</div>
+  </button>
+
+  <button mat-button mat-raised-button
+          class="app-button"
           id="cmdRefresh"
           (click)="refresh_stats()">
     Refresh

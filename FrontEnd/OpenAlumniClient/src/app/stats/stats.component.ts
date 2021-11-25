@@ -6,6 +6,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {environment} from "../../environments/environment";
 import {MatTabChangeEvent} from "@angular/material/tabs";
+import {NgNavigatorShareService} from "ng-navigator-share";
+import {ClipboardService} from "ngx-clipboard";
 
 @Component({
   selector: 'app-stats',
@@ -29,7 +31,9 @@ export class StatsComponent implements OnInit {
   constructor(public _location:Location,
               public api:ApiService,
               public router:Router,
+              public ngNavigatorShareService:NgNavigatorShareService,
               public routes:ActivatedRoute,
+              public _clipboardService:ClipboardService,
               public config:ConfigService) {
     this.domain_server=environment.domain_server;
   }
@@ -45,12 +49,14 @@ export class StatsComponent implements OnInit {
       this.message="";
 
       this.reports=[];
-      for(let i of r["Reports"])
+      for(let i of r["Reports"]){
         if(i.prod)this.reports.push(i);
+      }
 
       this.instant_reports=[];
-      for(let i of r["Instant_reports"])
+      for(let i of r["Instant_reports"]){
         if(i.prod)this.instant_reports.push(i);
+      }
 
       let open=Number(this.routes.snapshot.queryParamMap.get("open")) || 0;
       this.sel_report=this.instant_reports[open];
@@ -101,7 +107,7 @@ export class StatsComponent implements OnInit {
     }
 
     if(!this.sel_report.html_code){
-      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9),false,"");
+      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9)+"&title="+this.sel_report.title,false,"");
       param=param+"&height="+(window.screen.availHeight*0.6);
       this.api._get("export_all/",param+"&out=graph",60,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code;
@@ -126,5 +132,25 @@ export class StatsComponent implements OnInit {
 
   open_stats() {
     open(this.sel_report.url);
+  }
+
+  export_stats() {
+    let url=this.sel_report.url.replace("out=graph_html","out=excel");
+    open(url);
+  }
+
+  share_stats() {
+    let url=this.sel_report.url.replace("out=graph_html","out=excel");
+    this.ngNavigatorShareService.share({
+      title: "Reporting FEMIS: "+this.sel_report.title,
+      text: this.sel_report.description,
+      url: url
+    })
+      .then( (response) => {console.log(response);},()=>{
+        this._clipboardService.copyFromContent(url);
+      })
+      .catch( (error) => {
+        this._clipboardService.copyFromContent(url);
+      });
   }
 }
