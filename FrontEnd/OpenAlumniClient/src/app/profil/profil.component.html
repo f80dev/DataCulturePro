@@ -1,6 +1,7 @@
 
-<div class="flip-card">
-  <div class="flip-card-inner mat-elevation-z8" [ngStyle]="{backgroundColor:backgroundColor}" >
+<div class="flip-card" (click)="select_card($event)">
+  <div [ngStyle]="{backgroundColor:backgroundColor}"
+       [ngClass]="reverseClass">
     <div class="flip-card-front">
       <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
         <td style="text-align: left;">
@@ -163,8 +164,6 @@
         <a *ngFor="let link of profil?.links" [href]="link.url" target="_blank" style="margin: 5px">{{link.text}}</a>
 
         </div>
-
-
 
       </div>
     </div>
