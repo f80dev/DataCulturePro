@@ -1256,13 +1256,14 @@ class ProfilDocumentView(DocumentViewSet):
         DefaultOrderingFilterBackend,
         SearchFilterBackend,
     ]
-    search_fields = ('lastname','firstname','department','promo','school','town',)
-    #search_nested_fields={"works":['title'],}
+    search_fields = ('lastname','firstname','department','promo','school','town','department_category',)
+
 
     filter_fields = {
         'name': 'name',
         'lastname':'lastname',
         'firstname': 'firstname',
+        'categorie': 'department_category',
         'cursus':'cursus',
         'promo':'promo',
         'school':'school',

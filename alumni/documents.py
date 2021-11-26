@@ -33,8 +33,10 @@ class ProfilDocument(Document):
     class Django(object):
         model=Profil
         fields=["id","firstname","lastname","gender",
-                "acceptSponsor","school",
-                "email","department",
+                "acceptSponsor",
+                "school",
+                "email",
+                "department","department_category",
                 "cp","cursus","blockchain",
                 "mobile","photo","address",
                 "town","degree_year","dtLastUpdate"]
