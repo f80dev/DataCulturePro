@@ -19,7 +19,7 @@ export class SearchComponent implements OnInit {
   query:any={value:""};
   order:any;
   message: string="";
-  limit=50;
+  limit=250;
   perm: string="";
   dtLastSearch: number=0;
   //@ViewChild('order', {static: false}) order: MatSelect;

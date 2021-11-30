@@ -110,9 +110,11 @@
 
     <mat-tab label="Documentation">
       <br>
-      <table class="mat-elevation-z4"  *ngIf="rows.length>0">
+      <table class="mat-elevation-z4"  *ngIf="rows.length>0" style="padding: 15px;">
         <tr>
-          <th>Nom du champs</th><th>Signification</th><th style="text-align: right;">Catégorie</th>
+          <th style="text-align: left;">Nom du champs</th>
+          <th>Signification</th>
+          <th style="text-align: right;">Catégorie</th>
         </tr>
         <tr *ngFor="let row of rows" style="width: 90% !important;">
           <td style="width: 20%;max-width: 60px;">{{row.field}}</td>
@@ -130,7 +132,6 @@
 
   <div *ngIf="showGraphQL">
     <app-tuto label="Grâce aux langages GraphQL vous pouvez interroger la base des anciens éleves"></app-tuto>
-
     <textarea
       [rows]="10"
       style="margin:2%;width: 95%;background-color: lightgray;"
