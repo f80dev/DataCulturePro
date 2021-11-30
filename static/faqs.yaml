@@ -88,6 +88,23 @@ content:
       </p>
       "
 
+  - index: export_stat
+    title: Comment analyser les statistiques ?
+    order: 0
+    format: html
+    content:
+      "
+      <p>
+      Les rapports statistiques peuvent être analysés :
+      <ul>
+      <li>Directement sur les graphiques grace à la barre d'outil présente en haut à droite</li>
+      <li>Par filtre, en sélectionnant les zones directement sur le graphique</li>
+      <li>Sous Excel en téléchargeant les données directement sur votre ordinateur</li>
+      </ul>
+
+      </p>
+      "
+
   - index: obsolescence
     title: comment se font les rappels de mise a jour de profil ?
     format: html

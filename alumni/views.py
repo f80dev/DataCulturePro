@@ -444,7 +444,8 @@ def batch(request):
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
     profils=Profil.objects.order_by("dtLastSearch").all()
-    refresh_delay=int(request.GET.get("refresh_delay", 31))
+    refresh_delay_profil=int(request.GET.get("refresh_delay_profil", 31))
+    refresh_delay_page=int(request.GET.get("refresh_delay_page", 31))
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
         profils.update(auto_updates="0,0,0,0,0,0")
@@ -456,7 +457,7 @@ def batch(request):
 
     profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay,int(limit),int(limit_contrib),templates["templates"],content=content)
+    n_films,n_works,articles=exec_batch(profils,refresh_delay_profil,refresh_delay_page,int(limit),int(limit_contrib),templates["templates"],content=content)
     articles=[x for x in articles if x]
 
     return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})

@@ -159,6 +159,11 @@ html, body, app-root {
   background-color: #303030;
   padding: 0px;
 }
+.mainform {
+  width: 100%;
+  text-align: center !important;
+  margin-top: 5px;
+}
 .app-field {
   width: 95%;
   max-width: 500px;

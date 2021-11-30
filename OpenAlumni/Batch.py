@@ -25,9 +25,9 @@ def extract_movie_from_cnca(title:str):
     return title
 
 
-def extract_movie_from_bdfci(pow:PieceOfWork):
+def extract_movie_from_bdfci(pow:PieceOfWork,refresh_delay=31):
     title = pow.title.replace(" ", "+")
-    page=load_page("https://www.bdfci.info/?q="+title+"&pa=f&d=f&page=search&src=bdfci&startFrom=1&offset=1")
+    page=load_page("https://www.bdfci.info/?q="+title+"&pa=f&d=f&page=search&src=bdfci&startFrom=1&offset=1",refresh_delay=refresh_delay)
     articles=page.find_all("article")
     url_ref=None
     if len(articles)==0:
@@ -50,13 +50,13 @@ def extract_movie_from_bdfci(pow:PieceOfWork):
     return title
 
 
-def extract_profil_from_lefimlfrancais(firstname,lastname):
+def extract_profil_from_lefimlfrancais(firstname,lastname,refresh_delay=31):
     rc=dict()
     url="http://www.lefilmfrancais.com/index.php?option=com_papyrus&view=recherche&task=json&tmpl=rss&term="+firstname+"+"+lastname
     data=load_json(url)
     if len(data)>1:
         rc["url"]=data[0]["link"]
-        page=load_page(rc["url"])
+        page=load_page(rc["url"],refresh_delay=refresh_delay)
         rc["links"]=[]
         for l in page.find_all("a"):
             if l.attrs["href"].startswith("http://www.lefilmfrancais.com/film/"):
@@ -503,7 +503,7 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     return rc
 
 
-def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[],bot=None,content=None):
+def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templates=[],bot=None,content=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -529,15 +529,15 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
         if not pow:
             if "unifrance" in l["url"]:
                 source = "auto:unifrance"
-                film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay)
+                film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
 
             if "source" in l and "LeFilmFrancais" in l["source"]:
                 source="auto:LeFilmFrancais"
-                film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay,bot=bot)
+                film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot)
 
             if "imdb" in l["url"]:
                 source = "auto:IMDB"
-                film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay)
+                film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
 
             if not film is None and "title" in film:
                 if not "nature" in film: film["nature"] = l["nature"]
@@ -561,10 +561,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay,templates=[]
                     result=PieceOfWork.objects.filter(title__iexact=pow.title)
                     if len(result)>0:
                         log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
-
-                        new_film=fusion(result.first(),pow)
-                        new_film.save()
-
+                        pow=fusion(result.first(),pow)
                     else:
                         n_films=n_films+1
 
@@ -634,7 +631,7 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 #http://localhost:8000/api/batch
-def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=list(),content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False}):
+def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000,limit_contrib=10,templates=list(),content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False}):
     """
     Scan des profils
     :param profils:
@@ -659,7 +656,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
 
         log("Traitement de " + profil.firstname+" "+profil.lastname+". Dernière recherche "+profil.dtLastSearch.isoformat(" "))
         transact = Profil.objects.filter(id=profil.id)
-        if profil.delay_lastsearch()/24 > refresh_delay or len(profils)==1:
+        if profil.delay_lastsearch()/24 > refresh_delay_profil or len(profils)==1:
             log("mise a jour de "+profil.lastname+" dont la dernière recherche est "+str(profil.delay_lastsearch()/24)+" jours")
             profil.dtLastSearch=datetime.now()
 
@@ -668,7 +665,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
 
             try:
                 if content["imdb"]:
-                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay)
+                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages)
                     log("Extraction d'imdb " + str(infos))
                     if "url" in infos:profil.add_link(infos["url"], "IMDB")
                     if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
@@ -687,7 +684,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
             if content["unifrance"]:
-                infos = extract_profil_from_unifrance(profil.firstname + " " + profil.lastname, refresh_delay=refresh_delay)
+                infos = extract_profil_from_unifrance(profil.firstname + " " + profil.lastname, refresh_delay=refresh_delay_pages)
                 log("Extraction d'un profil d'unifrance "+str(infos))
                 if infos is None:
                     advices = dict({"ref": "Vous devriez créer votre profil sur UniFrance"})
@@ -699,7 +696,7 @@ def exec_batch(profils,refresh_delay=31,limit=2000,limit_contrib=10,templates=li
                         links=links+infos["links"]
                     job_for=infos["url"]
 
-            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay=refresh_delay,templates=templates,bot=bot)
+            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
             rc_articles.append(articles)
             n_films=n_films+rc_films
             n_works=n_works+rc_works

@@ -399,6 +399,7 @@ def dateToTimestamp(txt):
 
 
 def fusion(p1: Model, p2: Model):
+    log("On opére la fusion de "+str(p1)+" avec "+str(p2))
     attrs_p1=list(model_to_dict(p1).keys())
     attrs_p2=list(model_to_dict(p2).keys())
 

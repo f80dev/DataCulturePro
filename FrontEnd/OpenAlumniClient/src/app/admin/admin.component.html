@@ -113,8 +113,13 @@
       </button>
 
       <button mat-raised-button mat-button
-              class="app-button" (click)="batch(0)">
-        <div class="bloc-bouton">Mise a<br>jour forcée</div>
+              class="app-button" (click)="batch(0,31)">
+        <div class="bloc-bouton">Mise a<br>jour forcée des profils</div>
+      </button>
+
+      <button mat-raised-button mat-button
+              class="app-button" (click)="batch(0,0)">
+        <div class="bloc-bouton">Mise a<br>jour forcée totale</div>
       </button>
 
       <button mat-raised-button mat-button
