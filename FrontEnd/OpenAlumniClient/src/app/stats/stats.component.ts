@@ -26,6 +26,7 @@ export class StatsComponent implements OnInit {
   _data:any=[];
   instant_reports: any[]=[];
   message: any="";
+  rows: any=[];
 
 
   constructor(public _location:Location,
@@ -41,6 +42,10 @@ export class StatsComponent implements OnInit {
   ngOnInit(): void {
     checkLogin(this);
     this.refresh(()=>this.eval_stat());
+
+    this.api._get("api_doc").subscribe((r:any)=>{
+      this.rows=r.content;
+    })
   }
 
   refresh(func=null){
@@ -153,4 +158,6 @@ export class StatsComponent implements OnInit {
         this._clipboardService.copyFromContent(url);
       });
   }
+
+
 }

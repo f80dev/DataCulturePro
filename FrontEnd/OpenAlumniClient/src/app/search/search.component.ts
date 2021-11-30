@@ -127,7 +127,7 @@ export class SearchComponent implements OnInit {
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
 
-            if(item.department.length>30){
+            if(item.department.length>60){
               item.department=abrege(item.department,this.config.abreviations);
             }
 
@@ -167,8 +167,8 @@ export class SearchComponent implements OnInit {
   handle=null;
   searchInTitle: boolean = false;
   fields=[
-    {field:"Anciennes Promo",value:"promo"},
-    {field:"Nouvelles Promos",value:"-promo"},
+    {field:"Promo ancienne",value:"promo"},
+    {field:"Promo récente",value:"-promo"},
     {field:"Mise a jour",value:"-update"},
     {field:"Création",value:"-id"}
   ]

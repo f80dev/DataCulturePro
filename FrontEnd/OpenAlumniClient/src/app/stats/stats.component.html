@@ -13,7 +13,7 @@
     Rapport en cours de construction
   </div>
 
-  <mat-tab-group style="height: 85vh;text-align: center;"
+  <mat-tab-group style="height: 87vh;text-align: center;"
                  #tabGroup mat-align-tabs="start"
                  *ngIf="message?.length==0">
 
@@ -107,6 +107,21 @@
         </tr>
       </table>
     </mat-tab>
+
+    <mat-tab label="Documentation">
+      <br>
+      <table class="mat-elevation-z4"  *ngIf="rows.length>0">
+        <tr>
+          <th>Nom du champs</th><th>Signification</th><th style="text-align: right;">Catégorie</th>
+        </tr>
+        <tr *ngFor="let row of rows" style="width: 90% !important;">
+          <td style="width: 20%;max-width: 60px;">{{row.field}}</td>
+          <td>{{row.description}}</td>
+          <td style="width: 20%;text-align: right;">{{row.table}}</td>
+        </tr>
+      </table>
+    </mat-tab>
+
   </mat-tab-group>
 
   <br>
@@ -119,7 +134,7 @@
     <textarea
       [rows]="10"
       style="margin:2%;width: 95%;background-color: lightgray;"
-      placeholder="Votre requête ici"  [(ngModel)]="query">
+      placeholder="Votre requête ici" [(ngModel)]="query">
     </textarea>
   </div>
 

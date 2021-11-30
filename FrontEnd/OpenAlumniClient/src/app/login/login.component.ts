@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit {
         this.api.getextrauser(email).subscribe((result: any) => {
           this.wait_message = '';
           if (result.count > 0) {
-            this.messageCode = 'Veuillez indiquer son code à 6 chiffres';
+            this.messageCode = 'Veuillez indiquer votre code à 6 chiffres reçu par mail';
           } else {
             this.wait_message = 'Nouveau compte, création en cours';
             this.api.register({email, username: email}).subscribe((res: any) => {

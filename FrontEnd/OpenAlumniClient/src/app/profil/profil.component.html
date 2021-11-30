@@ -5,26 +5,29 @@
     <div class="flip-card-front">
       <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
         <td style="text-align: left;">
-
+          <div *ngIf="config.hasPerm('r_department')">
+            <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
+          </div>
         </td>
 
         <td style="text-align: right" >
-          <div *ngIf="config.hasPerm('r_department')">
-            {{profil.department}}
-          </div>
           <div *ngIf="config.hasPerm('r_promo')">
-            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Cursus Pro - </span>
+<!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
             <span style='cursor: pointer'
                   name="lblPromo"
                   title="Rechercher par promotion"
                   (click)="onclick.emit(profil?.degree_year)">
-        {{profil?.degree_year}}
-      </span>
+              {{profil?.degree_year}}
+            </span>
           </div>
 
         </td>
       </tr>
       </table>
+
+      <div *ngIf="profil?.cursus=='P'" style="font-size: small;color: white;margin-left:12px;line-height: 95%;">
+        {{profil.department}}
+      </div>
 
       <div>
         <div *ngIf="!config.hasPerm('r_photo')"><br></div>
@@ -34,21 +37,23 @@
                style="pointer-events: none;"
                class="icon-profil avatar-photo">
 
-          <img src="./assets/img/boy.png"
-               *ngIf="!profil.public_photo && profil.gender=='M'"
-               style="pointer-events: none;"
-               class="icon-profil avatar-photo">
+          <!--          <img src="./assets/img/boy.png"-->
+          <!--               *ngIf="!profil.public_photo && profil.gender=='M'"-->
+          <!--               style="pointer-events: none;"-->
+          <!--               class="icon-profil avatar-photo">-->
 
-          <img src="./assets/img/girl.png"
-               *ngIf="!profil.public_photo && profil.gender=='F'"
-               style="pointer-events: none;"
-               class="icon-profil avatar-photo">
+          <!--          <img src="./assets/img/girl.png"-->
+          <!--               *ngIf="!profil.public_photo && profil.gender=='F'"-->
+          <!--               style="pointer-events: none;"-->
+          <!--               class="icon-profil avatar-photo">-->
 
         </div>
 
       </div>
 
+
       <div class="avatar-name">
+        <br>
         <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
         <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname}}</span>
       </div>

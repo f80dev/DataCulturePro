@@ -463,6 +463,21 @@ def batch(request):
     return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def api_doc(request):
+    rc=[]
+    for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields):
+        rc.append({
+            "field":field.name,
+            "description":field.help_text,
+            "table":str(field).split(".")[1]
+        })
+
+    return JsonResponse({"version":"1","content":rc},safe=False)
+
+
+
 #http://localhost:8000/api/quality_filter
 #https://server.f80.fr:8000/api/quality_filter
 @api_view(["GET"])

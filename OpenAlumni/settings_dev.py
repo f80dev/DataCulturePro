@@ -35,6 +35,10 @@ LOCAL_FEDORA_SERVER='172.30.11.56'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')0p@7b_kew8_w+jjuv=(zbn!sp!bm2*=7$s7#%@bvkwy0i--0p'

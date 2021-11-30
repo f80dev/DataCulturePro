@@ -43,6 +43,10 @@ export class AdminComponent implements OnInit {
     open(environment.domain_server+"/admin/","admin");
   }
 
+  openAPI() {
+    open(environment.domain_server+"/api/users/","admin");
+  }
+
   openHelloWorld() {
     this.api.hello_world().subscribe((r:any)=>{
       showMessage(this,r.message);

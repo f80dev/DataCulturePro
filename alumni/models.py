@@ -31,20 +31,20 @@ class Profil(models.Model):
     id=models.AutoField(primary_key=True)
     #company=models.ForeignKey("Company",on_delete=models.DO_NOTHING,null=True)
     gender = models.CharField(max_length=1, blank=True, default="M",
-                              choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')))
+                              choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
     lastname = models.CharField(max_length=70, null=False, default='', help_text="Nom du profil")
 
     public_photo=models.BooleanField(default=False,null=False,help_text="Indique si la photo peut être ou pas présentée sur la page publique")
-    birthdate=models.DateField(null=True,help_text="Date de naissance")
+    birthdate=models.DateField(null=True,help_text="Date de naissance du profil")
     mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="Numéro de mobile")
-    nationality=models.CharField(blank=True,max_length=30,null=False,default="Française")
+    nationality=models.CharField(blank=True,max_length=30,null=False,default="Française",help_text="Nationnalité du profil")
 
     department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
-    department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie de la formation")
+    department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie / code de regroupement de la formation")
 
     job=models.CharField(max_length=60,null=True,default="",blank=True,help_text="Profession actuelle")
-    degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école")
+    degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école (promotion)")
 
     linkedin = models.URLField(blank=True, null=True,help_text="Adresse de la page public linkedin du profil")
     email=models.EmailField(null=False,unique=True,help_text="email du profil")
@@ -52,34 +52,32 @@ class Profil(models.Model):
     telegram=models.URLField(blank=True, null=True,help_text="Adresse public du compte telegram")
     facebook=models.URLField(blank=True, null=True,help_text="Adresse de la page facebook du profil")
     twitter=models.URLField(blank=True, null=True,help_text="Adresse de la page twitter du profil")
-    tiktok=models.URLField(blank=True, null=True)
-    youtube = models.URLField(blank=True, null=True)
-    vimeo=models.URLField(blank=True, null=True)
+    tiktok=models.URLField(blank=True, null=True,help_text="Adresse de la page tiktok du profil")
+    youtube = models.URLField(blank=True, null=True,help_text="Adresse de la page youtube du profil")
+    vimeo=models.URLField(blank=True, null=True,help_text="Adresse de la page vimeo du profil")
     school=models.CharField(blank=True,max_length=30,null=True,default="FEMIS",help_text="Ecole")
 
-    acceptSponsor = models.BooleanField(null=False, default=False)
-    sponsorBy = models.ForeignKey('Profil', null=True,on_delete=CASCADE)
+    acceptSponsor = models.BooleanField(null=False, default=False,help_text="Le profil accepte les demandes de mentorat")
+    sponsorBy = models.ForeignKey('Profil', null=True,on_delete=CASCADE,help_text="Nom du mentor")
 
     photo=models.TextField(blank=True,default="/assets/img/anonymous.png",help_text="Photo du profil au format Base64")
 
     cursus=models.CharField(max_length=1,blank=False,default="S",choices=(('S','Standard'),('P','Professionnel')),help_text="Type de formation")
     address=models.CharField(null=True,blank=True,max_length=200,help_text="Adresse postale au format numéro / rue / batiment")
-    town = models.CharField(null=True,blank=True,max_length=50, help_text="Ville de l'adresse postale")
-    cp=models.CharField(null=True,blank=True,max_length=5,help_text="code postal")
+    town = models.CharField(null=True,blank=True,max_length=50, help_text="Ville de l'adresse postale de résidence")
+    cp=models.CharField(null=True,blank=True,max_length=5,help_text="code postal de résidence")
     country=models.CharField(null=True,default="France",blank=True,max_length=50, help_text="Pays de naissance")
 
-    website=models.URLField(null=True,blank=True,default="")
+    website=models.URLField(null=True,blank=True,default="",help_text="Site web du profil")
     dtLastUpdate=models.DateTimeField(null=False,auto_now=True,help_text="Date de la dernière modification du profil")
     dtLastSearch=models.DateTimeField(null=False,default=datetime.datetime(2021,1,1,0,0,0,0),help_text="Date de la dernière recherche d'expérience pour le profil")
-    dtLastNotif=models.DateTimeField(null=False,default=datetime.datetime(2021,1,1,0,0,0,0),help_text="Date de la dernière notification envoyé")
-    obsolescenceScore=models.IntegerField(default=0,help_text="Indique le degré d'obsolescence probable")
+    dtLastNotif=models.DateTimeField(null=False,default=datetime.datetime(2021,1,1,0,0,0,0),help_text="Date de la dernière notification envoyée")
+    obsolescenceScore=models.IntegerField(default=0,help_text="Indique le degré d'obsolescence probable (utilisé pour les relances)")
     biography=models.TextField(null=True,default="",max_length=2000,help_text="Biographie du profil")
     links = JSONField(null=True, help_text="Liens vers des références externes au profil")
     auto_updates=models.CharField(max_length=300,null=False, default="0,0,0,0,0,0",help_text="Date de mise a jour")
-    advices=JSONField(null=True,default=None,help_text="Liste de conseils alimenter par l'outil pour augmenter le rayonnement d'une personne")
+    advices=JSONField(null=True,default=None,help_text="Conseils pour augmenter la visibilité du profil")
     source=models.CharField(null=True,blank=True,max_length=50,help_text="Source de la fiche")
-
-
 
     blockchain=models.CharField(null=False,blank=True,default="",max_length=50,help_text="Adresse elrond du profil")
 
@@ -161,7 +159,7 @@ class Article(models.Model):
     html=models.TextField(max_length=5000, blank=True,default="",help_text="Contenu de l'article")
     dtPublish = models.DateField(null=True, help_text="Date de publication de l'article")
     dtCreate = models.DateField(auto_now=True, null=False, help_text="Date de création de l'article")
-    tags=models.CharField(max_length=100,default="")
+    tags=models.CharField(max_length=100,default="",help_text="Etiquettes de classification thématique")
     to_publish=models.BooleanField(default=False,null=False,help_text="Demander la publication")
 
     class Meta:
@@ -221,20 +219,20 @@ class Work(models.Model):
     Il peut être alimenté en automatique (par scrapping des sources) ou en manuel par le profil
     """
     id = models.AutoField(primary_key=True,help_text="Clé primaire interne des projets")
-    profil = models.ForeignKey('Profil', null=False, on_delete=models.CASCADE,related_name="works",help_text="Profil concerné par le projet")
-    pow = models.ForeignKey('PieceOfWork', null=False, on_delete=models.CASCADE, related_name="works",help_text="oeuvre concerné par le projet")
+    profil = models.ForeignKey('Profil', null=False, on_delete=models.CASCADE,related_name="works",help_text="Profil ayant réalisé le travail")
+    pow = models.ForeignKey('PieceOfWork', null=False, on_delete=models.CASCADE, related_name="works",help_text="Oeuvre concernée par le travail")
     status=models.CharField(max_length=200,default="")
     state=models.CharField(max_length=1,default="A",help_text="etat du travail entre A=automatiquement creer,E=editer par le profil, D=supprimé par le profil")
 
     #creator passera à user si l'utilisateur modifie l'enregistrement
-    creator=models.CharField(max_length=5,default="auto",help_text="Désigne qui est le dernier auteur de l'enregistrement dans la base de données")
+    creator=models.CharField(max_length=5,default="auto",help_text="Désigne qui est le dernier auteur de l'enregistrement du travail dans la base de données")
     public=models.BooleanField(default=True,help_text="Indique si le projet est publique (visible de ceux qui ont les droits) ou privé")
 
-    job=models.CharField(max_length=200,default="",help_text="Rôle dans le projet")
-    duration=models.IntegerField(default=0,null=False,help_text="Durée du projet en heure")
-    comment=models.TextField(max_length=400,null=False,default="",blank=True,help_text="Commentaire sur la façon dont s'est passé le projet")
+    job=models.CharField(max_length=200,default="",help_text="Désignation du travail réalisé")
+    duration=models.IntegerField(default=0,null=False,help_text="Durée du travail en heure")
+    comment=models.TextField(max_length=400,null=False,default="",blank=True,help_text="Commentaire libre sur la façon dont s'est passé le travail")
     earning=models.IntegerField(default=None,null=True,help_text="Revenu percu brut pour la durée annoncée")
-    source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, bellefaye, manuel")
+    source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
     validate=models.BooleanField(default=False,help_text="Indique si l'expérience est validé ou pas")
 
     @property
@@ -283,7 +281,7 @@ class PieceOfWork(models.Model):
     title=models.CharField(null=False,max_length=300,unique=True,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
     year=models.CharField(null=True,max_length=4,help_text="Année de sortie")
     nature=models.CharField(null=False,default='MOVIE',max_length=20,help_text="Classification de l'oeuvre")
-    dtCreate = models.DateField(auto_now_add=True,help_text="Date de création de l'oeuvre")
+    dtCreate = models.DateField(auto_now_add=True,help_text="Date d'enregistrement de l'oeuvre dans DataCulture")
 
     reference=models.CharField(null=False,default="",blank=True,max_length=50,help_text="Reference d'oeuvre")
     budget = models.IntegerField(default=0, help_text="Coût total de réalisation de l'oeuvre")
@@ -306,7 +304,7 @@ class PieceOfWork(models.Model):
     visa=models.CharField(max_length=10,null=True,help_text="Visa d'exploitation")
     financal_partner=JSONField(null=True,help_text="Liste des partenaires financiers")
     first_week_entrances=models.IntegerField(null=True,help_text="Nombre d'entrée la première semaine")
-    prizes=JSONField(null=True,help_text="Liste des prix")
+    prizes=JSONField(null=True,help_text="Liste des prix reçus")
 
 
     def __str__(self):
