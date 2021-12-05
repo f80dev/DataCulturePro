@@ -558,7 +558,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                 if "year" in film: pow.year = film["year"]
 
                 try:
-                    result=PieceOfWork.objects.filter(title__iexact=pow.title)
+                    result=PieceOfWork.objects.filter(title__iexact=pow.title,year__exact=pow.year)
                     if len(result)>0:
                         log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
                         pow=fusion(result.first(),pow)

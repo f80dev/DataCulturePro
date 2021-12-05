@@ -73,6 +73,12 @@ export function normaliser(s:string):string {
   return s.toLowerCase()
 }
 
+export function remove_ponctuation(s:string):string {
+  for(let it of [":",",",";","!","?"])
+    s=s.replace(it," ");
+  return s;
+}
+
 
 
 

@@ -16,6 +16,9 @@ perms:
   - tag: edit_profil
     description: l'édition de l'ensemble des profils
 
+  - tag: admin_sort
+    description: de nouveaux critères de tri des profils
+
   - tag: r_imdb
     description: au catalogue IMDB
 

@@ -109,11 +109,13 @@ export class EditComponent implements OnInit,OnDestroy  {
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.message="Récupération des expériences";
-    this.api._get("profils/"+id).subscribe((r:any)=>{
+    this.api._get("extraworks","profil__id="+id).subscribe((r:any)=>{
       $$("Travaux chargés");
       this.message="";
       this.works=[];
-      for(let w of r.works){
+      for(let w of r.results){
+        w.title=w.pow.title;
+        w.year=w.pow.year;
         let new_work=w;
         for(let tmp of this.works){
           if(tmp.title==w.title){
@@ -427,6 +429,11 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   preview() {
 
+  }
+
+  open_public_page() {
+    //this.router.navigate(['works'],{queryParams:{id:this.profil.id,name:this.profil.firstname+' '+this.profil.lastname}});
+    this.router.navigate(['public'],{queryParams:{id:this.profil.id}});
   }
 }
 

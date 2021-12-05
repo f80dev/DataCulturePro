@@ -148,6 +148,7 @@ export class ApiService {
     return this._get("helloworld/");
   }
 
+  //http://localhost:8000/api/extrapows/
   getPOW(id=null) {
     let params="";
     if(id)params=id+"/";

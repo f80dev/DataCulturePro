@@ -150,7 +150,8 @@ export class ConfigService {
   }
 
   isLogin() {
-    return(this.user && this.user.user && this.user.email && this.user.user.email.length>0);
+    let rc=(this.user && this.user.user && this.user.user.email && this.user.user.email.length>0);
+    return rc;
   }
 
   isProd() {

@@ -137,9 +137,9 @@
 
 
           <button mat-icon-button
-                  mat-raised-button
+                  mat-raised-button mat-button
                   class="icon-button"
-                  mat-button title="Enlever le film"
+                  title="Enlever le film"
                   *ngIf="config.hasPerm('delete_pow')"
                   (click)="deletePow(pow)">
             <mat-icon>delete</mat-icon>

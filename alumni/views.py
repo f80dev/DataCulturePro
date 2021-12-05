@@ -158,7 +158,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 #http://localhost:8000/api/pow
 class POWViewSet(viewsets.ModelViewSet):
-    queryset = PieceOfWork.objects.filter(works__source__in=SOURCES).all()
+    queryset = PieceOfWork.objects.all()
     serializer_class = POWSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend,)
@@ -170,23 +170,26 @@ class POWViewSet(viewsets.ModelViewSet):
 class ExtraWorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = ExtraWorkSerializer
+    filter_backends = (DjangoFilterBackend,)
     permission_classes = [AllowAny]
-    filter_fields = ('job',"pow__id","profil__id","profil__email","profil__school")
+    filter_fields = ['pow__id','profil__id']
+    #search_fields=["pow__id","profil__id"]
 
 
 class WorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = WorkSerializer
     permission_classes = [AllowAny]
-    search_fields=["id"]
+    filter_backends = (DjangoFilterBackend,)
     filter_fields=("profil","pow","job")
 
 
 #http://localhost:8000/api/extrapows
 class ExtraPOWViewSet(viewsets.ModelViewSet):
-    queryset = Work.objects.all()
+    queryset = PieceOfWork.objects.all()
     serializer_class = ExtraPOWSerializer
     permission_classes = [AllowAny]
+
 
 
 @api_view(["GET"])
@@ -468,11 +471,13 @@ def batch(request):
 def api_doc(request):
     rc=[]
     for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields):
-        rc.append({
-            "field":field.name,
-            "description":field.help_text,
-            "table":str(field).split(".")[1]
-        })
+        help_text=field.help_text
+        if len(help_text)>0 and not help_text.startswith("@"):
+            rc.append({
+                "field":field.name,
+                "description":help_text,
+                "table":str(field).split(".")[1]
+            })
 
     return JsonResponse({"version":"1","content":rc},safe=False)
 
@@ -1121,6 +1126,7 @@ def importer(request):
         #Répétion de la ligne pour remettre le curseur au début du fichier
         d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
 
+    l_department_category=[x.lower() for x in Profil.objects.values_list("department_category",flat=True)]
     for row in d:
         #log(str(i) + "/" + str(total_record) + " en cours d'importation")
         if i==0:
@@ -1175,6 +1181,12 @@ def importer(request):
 
                 standard_replace_dict={"nan":""}
 
+                department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict)
+                department = idx("CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict)
+                if department_category is None or len(department_category)==0:
+                    if department.lower() in l_department_category:
+                        department_category=department
+
                 profil=Profil(
                     firstname=firstname,
                     school="FEMIS",
@@ -1184,11 +1196,11 @@ def importer(request):
                     nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict),
                     country=idx("country,pays",row,"France"),
                     birthdate=dt,
-                    department=idx("CODE_TRAINING,departement,department,formation",row,"",60,replace_dict=standard_replace_dict),
+                    department=department,
                     job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict),
-                    department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict),
+                    department_category=department_category,
                     town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict),
                     source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict),
                     cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict),
@@ -1208,9 +1220,10 @@ def importer(request):
                 )
 
                 try:
-                    res=Profil.objects.filter(email__iexact=profil.email).all()
-                    if len(res)>0:
-                        profil=fusion(res.first(),profil)
+                    if len(profil.email)>0:
+                        res=Profil.objects.filter(email__iexact=profil.email).all()
+                        if len(res)>0:
+                            profil=fusion(res.first(),profil)
 
                     rc=profil.save()
                     #log(profil.lastname + " est enregistré")

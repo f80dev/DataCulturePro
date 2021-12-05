@@ -1,17 +1,29 @@
-<div class="mainform">
-<app-profil [profil]="profil"
-            class="large-card" width="90vw" style="display: inline-block;"
-            [showAction]="false">
-  <div style="width:100%;text-align: center;"
-       *ngIf="profil?.photo.indexOf('assets/')==-1">
-    <img [src]="profil?.photo" style="width:100%;max-height:300px;object-fit: cover;">
-  </div>
+<div class="mainform" style="text-align: left !important;margin-left: 10px;font-size: large;">
+  <br>
+  <table>
+    <tr>
+      <td>
+        <div style="width:100%;text-align: center;"
+             *ngIf="profil?.photo.indexOf('assets/')==-1 && profil.public_photo">
+          <img [src]="profil?.photo" style="width:100%;max-height:300px;object-fit: cover;">
+        </div>
 
-  {{profil?.job}}<br>
+      </td>
+      <td>
+        <div style="font-size: 3em;font-weight: lighter;">
+          {{profil.firstname+" "+profil.lastname}}<br>
+        </div>
+
+      </td>
+    </tr>
+  </table>
 
 
+  <br>
+  {{profil.department}}<br>
+  Promotion {{profil.degree_year}}<br>
 
-<!--  Travaux -->
+  <!--  Travaux -->
   <div *ngIf="profil?.works?.length>0">
     <hr>
     Expériences<br>
@@ -24,7 +36,7 @@
   </div>
 
 
-<!--  Références sur internet-->
+  <!--  Références sur internet-->
   <div *ngIf="profil?.links?.length>0">
     <hr>
     Références<br>
@@ -34,14 +46,12 @@
   </div>
 
 
-</app-profil>
-
-<div class="bottom-bar">
-  <hr>
-  <button mat-button mat-raised-button
+  <div class="bottom-bar">
+    <hr>
+    <button mat-button mat-raised-button
             class="app-button"
             (click)="router.navigate(['search'],{queryParams:{filter:profil.lastname}})">
       Annuaire
-   </button>
-</div>
+    </button>
+  </div>
 </div>

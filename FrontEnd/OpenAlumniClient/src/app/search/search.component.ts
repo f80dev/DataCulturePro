@@ -41,7 +41,16 @@ export class SearchComponent implements OnInit {
     if(localStorage.getItem("ordering"))this.order=localStorage.getItem("ordering");
     if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
 
-    setTimeout(()=>{this.refresh();},500);
+    setTimeout(()=>{
+      this.refresh();
+      if(this.config.isLogin()){
+        if(this.config.hasPerm("admin_sort")){
+          this.fields.push({field:"Profil mis a jour",value:"-update"});
+          this.fields.push({field:"Nouveau profil",value:"-id"});
+        }
+      }
+    },1000);
+
     setTimeout(()=>{
       if(!this.config.isLogin() && !localStorage.getItem('propal_login') && !this._location.isCurrentPathEqualTo("./login")){
         $$("Proposition d'authentification");
@@ -59,20 +68,22 @@ export class SearchComponent implements OnInit {
         });
       }
 
-      if(this.config.isLogin() && !localStorage.getItem('propal_profil')){
-        localStorage.setItem("propal_profil","Done");
-        this.dialog.open(PromptComponent,{data: {
-            title: 'Selectionner un profil',
-            question: 'Précisez votre profil pour accèder à d\'autres options de Data Culture',
-            onlyConfirm: true,
-            lbl_ok: 'Oui',
-            lbl_cancel: 'Non'
-          }}).afterClosed().subscribe((result_code) => {
-          if (result_code == 'yes') {
-            this.router.navigate(["profils"]);
-          }
-        });
-      }
+
+    //   if(this.config.isLogin() && !localStorage.getItem('propal_profil')){
+    //     localStorage.setItem("propal_profil","Done");
+    //     this.dialog.open(PromptComponent,{data: {
+    //         title: 'Selectionner un profil',
+    //         question: 'Précisez votre profil pour accèder à d\'autres options de Data Culture',
+    //         onlyConfirm: true,
+    //         lbl_ok: 'Oui',
+    //         lbl_cancel: 'Non'
+    //       }}).afterClosed().subscribe((result_code) => {
+    //       if (result_code == 'yes') {
+    //         this.router.navigate(["profils"]);
+    //       }
+    //     });
+    //   }
+
     },5000);
 
 
@@ -167,10 +178,8 @@ export class SearchComponent implements OnInit {
   handle=null;
   searchInTitle: boolean = false;
   fields=[
-    {field:"Promo ancienne",value:"promo"},
-    {field:"Promo récente",value:"-promo"},
-    {field:"Mise a jour",value:"-update"},
-    {field:"Création",value:"-id"}
+    {field:"Anciennes promos",value:"promo"},
+    {field:"Nouvelles Promos",value:"-promo"},
   ]
 
   advanced_search=[];

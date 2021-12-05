@@ -18,6 +18,24 @@ html_strip = analyzer(
 )
 
 
+
+
+@registry.register_document
+class PowDocument(Document):
+    works=fields.NestedField(properties={
+        "job":fields.TextField(),
+        "lastname":fields.TextField(),
+    })
+    links = fields.NestedField(properties={"url": fields.TextField(), "text": fields.TextField()})
+    class Index:
+        name='pows'
+        settings={"number_of_shards":1,"number_of_replicas":0}
+
+    class Django(object):
+        model=PieceOfWork
+        fields=["id","year","visual","title","nature","category","production","reference"]
+
+
 @registry.register_document
 class ProfilDocument(Document):
     name = fields.TextField(fielddata=True,attr='lastname',fields={'suggest': fields.Completion(),})
@@ -45,19 +63,3 @@ class ProfilDocument(Document):
         return super().get_queryset().select_related('extrauser')
 
 
-
-
-@registry.register_document
-class PowDocument(Document):
-    works=fields.NestedField(properties={
-        "job":fields.TextField(),
-        "lastname":fields.TextField(),
-    })
-    links = fields.NestedField(properties={"url": fields.TextField(), "text": fields.TextField()})
-    class Index:
-        name='pows'
-        settings={"number_of_shards":1,"number_of_replicas":0}
-
-    class Django(object):
-        model=PieceOfWork
-        fields=["id","year","visual","title","nature","category","production","reference"]

@@ -30,6 +30,7 @@ class Profil(models.Model):
     """
     id=models.AutoField(primary_key=True)
     #company=models.ForeignKey("Company",on_delete=models.DO_NOTHING,null=True)
+
     gender = models.CharField(max_length=1, blank=True, default="M",
                               choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
@@ -37,7 +38,7 @@ class Profil(models.Model):
 
     public_photo=models.BooleanField(default=False,null=False,help_text="Indique si la photo peut être ou pas présentée sur la page publique")
     birthdate=models.DateField(null=True,help_text="Date de naissance du profil")
-    mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="Numéro de mobile")
+    mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="@Numéro de mobile")
     nationality=models.CharField(blank=True,max_length=30,null=False,default="Française",help_text="Nationnalité du profil")
 
     department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
@@ -47,7 +48,7 @@ class Profil(models.Model):
     degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école (promotion)")
 
     linkedin = models.URLField(blank=True, null=True,help_text="Adresse de la page public linkedin du profil")
-    email=models.EmailField(null=False,unique=True,help_text="email du profil")
+    email=models.EmailField(null=False,unique=True,help_text="@email du profil")
     instagram=models.URLField(blank=True, null=True,help_text="Adresse du compte instagram")
     telegram=models.URLField(blank=True, null=True,help_text="Adresse public du compte telegram")
     facebook=models.URLField(blank=True, null=True,help_text="Adresse de la page facebook du profil")
@@ -211,7 +212,6 @@ def save_user_profile(sender, instance, **kwargs):
     instance.extrauser.save()
 
 
-
 class Work(models.Model):
     """
     Réalisation / projets des profils
@@ -235,23 +235,22 @@ class Work(models.Model):
     source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
     validate=models.BooleanField(default=False,help_text="Indique si l'expérience est validé ou pas")
 
-    @property
-    def title(self):
-        return self.pow.title
+    # @property
+    # def title(self):
+    #     return self.pow.title
+    #
+    # @property
+    # def year(self):
+    #     return self.pow.year
+    #
+    # @property
+    # def nature(self):
+    #     return self.pow.nature
 
 
-    @property
-    def year(self):
-        return self.pow.year
-
-    @property
-    def nature(self):
-        return self.pow.nature
-
-
-    @property
-    def lastname(self):
-        return self.profil.lastname
+    # @property
+    # def lastname(self):
+    #     return self.profil.lastname
 
 
     def __str__(self):
@@ -306,7 +305,6 @@ class PieceOfWork(models.Model):
     first_week_entrances=models.IntegerField(null=True,help_text="Nombre d'entrée la première semaine")
     prizes=JSONField(null=True,help_text="Liste des prix reçus")
 
-
     def __str__(self):
         rc=self.title
         if not self.id is None:rc=str(self.id)+" : "+rc
@@ -349,8 +347,6 @@ def update_pow(sender, **kwargs):
     instance = kwargs['instance']
     registry.update(instance.profil)
 
-
-
 # class School(models.Model):
 #     name = models.TextField(max_length=100)
 
@@ -359,5 +355,4 @@ def update_pow(sender, **kwargs):
 #     profil = models.ForeignKey('Profil',null=False,on_delete=models.CASCADE)
 #     school = models.ForeignKey('School',null=False,on_delete=models.CASCADE)
 #     dtCreate = models.DateField(auto_now_add=True)
-
 

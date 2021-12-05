@@ -1,9 +1,12 @@
+from json import loads
 
 import yaml
+from django_elasticsearch_dsl import NestedField
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
+from rest_framework.relations import StringRelatedField, RelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework.validators import UniqueValidator
 from rest_framework_csv.renderers import CSVRenderer
@@ -87,20 +90,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 
-class POWSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=PieceOfWork
-        fields=["id","title","url","links","owner","visual","category","year","description","nature","dtLastSearch"]
-
-
-class ExtraPOWSerializer(serializers.ModelSerializer):
-    works = serializers.StringRelatedField(many=True, read_only=True)
-    class Meta:
-        model=PieceOfWork
-        fields=["id","title","url","works","links","owner","visual","category","year","description","nature"]
-
-
-
 
 
 
@@ -122,6 +111,13 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+
+
+
 #http://localhost:8000/api/works/
 class WorkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -135,17 +131,22 @@ class WorkSerializer(serializers.ModelSerializer):
 
 #http://localhost:8000/api/profils/?filter{firstname}=Adrien
 class ProfilSerializer(serializers.ModelSerializer):
-    works=WorkSerializer(many=True,read_only=True)
     class Meta:
         model=Profil
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",
                 "mobile","email","photo","gender","job",
+                "works",
                 "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
-                "linkedin","degree_year","department","department_category","works",
+                "linkedin","degree_year","department","department_category",
                 "dtLastUpdate","links","str_links","blockchain",
                 "cp","public_url","fullname","cursus",
                 "address","town","promo","dtLastSearch"]
 
+
+class POWSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=PieceOfWork
+        fields=["id","title","url","links","owner","visual","category","year","description","nature","dtLastSearch","works"]
 
 
 #http://localhost:8000/api/profils/?filter{firstname}=Adrien
@@ -226,8 +227,16 @@ class PowDocumentSerializer(DocumentSerializer):
 
 
 class ExtraWorkSerializer(serializers.ModelSerializer):
-    pow= POWSerializer(many=False,read_only=True)
+    pow=POWSerializer(many=False,read_only=True)
     profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model=Work
         fields=["id","profil","pow","duration","comment","job","source","public"]
+
+
+
+class ExtraPOWSerializer(serializers.ModelSerializer):
+    works=ExtraWorkSerializer(many=True,read_only=True)
+    class Meta:
+        model=PieceOfWork
+        fields=["id","title","works","url","links","owner","visual","category","year","description","nature"]

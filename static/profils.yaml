@@ -48,7 +48,7 @@ profils:
     perm:
         r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo
         r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
-        w_linkedin write_email r_address r_lastname
+        w_linkedin write_email r_address r_lastname admin_sort
         publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
     price: 0
     subscription: secure

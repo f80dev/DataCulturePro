@@ -33,6 +33,7 @@ router.register(r'pows', views.POWViewSet)
 router.register(r'extraworks', views.ExtraWorkViewSet)
 router.register(r'works', views.WorkViewSet)
 router.register(r'extrapows', views.ExtraPOWViewSet)
+router.register(r'extrapow', views.ExtraPOWViewSet)
 router.register(r'profilsdoc', views.ProfilDocumentView,basename="profilsdoc")
 router.register(r'powsdoc', views.PowDocumentView,basename="powsdoc")
 

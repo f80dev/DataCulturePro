@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {$$, showError, showMessage, translateQuery} from "../tools";
+import {$$, normaliser, remove_ponctuation, showError, showMessage, translateQuery} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
@@ -18,7 +18,7 @@ import { map } from 'rxjs/operators';
 export class PowsComponent implements OnInit {
   pows: any[]=[];
   query: any={value:""};
-  limit=50;
+  limit=500;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number;
   filter$: Observable<string>;
@@ -34,7 +34,9 @@ export class PowsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.routes.snapshot.queryParamMap.has("filter"))this.query.value=this.routes.snapshot.queryParamMap.get("filter").replace(":","");
+    if(this.routes.snapshot.queryParamMap.has("filter"))
+      this.query.value=remove_ponctuation(this.routes.snapshot.queryParamMap.get("filter"));
+
     if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
     setTimeout(()=>{this.refresh();},500);
   }
@@ -76,9 +78,9 @@ export class PowsComponent implements OnInit {
         if(!this.filter_id || this.filter_id==i.id){
           let origin=i.links.length>0 ? i.links[0].text.split(":")[1] : "*";
           if(origin){
-          origin=origin.replace("-","");
-          if(origin=="*" || this.config.hasPerm("r_"+origin.toLowerCase()))
-            this.pows.push(i);
+            origin=origin.replace("-","");
+            if(origin=="*" || this.config.hasPerm("r_"+origin.toLowerCase()))
+              this.pows.push(i);
           } else {
             $$(i.links[0].url+" est en anomalie");
           }
@@ -116,29 +118,30 @@ export class PowsComponent implements OnInit {
   }
 
   get_pow(pow: any) {
-    this.api._get("extraworks/","pow__id="+pow.id).subscribe((r:any)=>{
-        let rc=[];
-        if(r.results.length>0){
-          pow.visual=r.results[0].pow.visual;
-          pow.description=r.results[0].pow.description;
-          for(let item of r.results){
-            if(item.public && item.profil.school=="FEMIS"){
-              rc.push({
-                job:item.job,
-                name:item.profil.firstname+" "+item.profil.lastname
-              })
-            }
+    this.api._get("extrapows/"+pow.id,"").subscribe((r:any)=>{
+      let rc=[];
+      if(r){
+        pow.visual=r.visual;
+        pow.description=r.description;
+        for(let item of r.works){
+          if(item.public){
+            rc.push({
+              job:item.job,
+              name:item.profil.firstname+" "+item.profil.lastname
+            })
           }
-          pow.expanded=true;
-          pow.works=rc;
         }
+        pow.expanded=true;
+        pow.works=rc;
+      }
 
-      });
+    });
   }
 
   deletePow(pow: any) {
     this.api._delete("/pows/"+pow.id).subscribe(()=>{
       showMessage(this,"film supprimé");
+      this.refresh();
     })
   }
 
