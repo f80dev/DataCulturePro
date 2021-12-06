@@ -1,12 +1,7 @@
-from json import loads
-
-import yaml
-from django_elasticsearch_dsl import NestedField
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
-from rest_framework.relations import StringRelatedField, RelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework.validators import UniqueValidator
 from rest_framework_csv.renderers import CSVRenderer
@@ -91,9 +86,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model=Article
@@ -104,12 +96,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['owner'] = ProfilSerializer(read_only=True)
         return super(ArticleSerializer, self).to_representation(instance)
-
-
-
-
-
-
 
 
 

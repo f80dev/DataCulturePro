@@ -1,57 +1,49 @@
-<div class="mainform" style="text-align: left !important;margin-left: 10px;font-size: large;">
+<div class="mainform" style="text-align: left !important;margin: 5px;font-size: large;">
   <br>
-  <table>
+  <table style="padding: 0px;margin:0px">
     <tr>
-      <td>
-        <div style="width:100%;text-align: center;"
-             *ngIf="profil?.photo.indexOf('assets/')==-1 && profil.public_photo">
+      <td *ngIf="profil?.photo.indexOf('assets/')==-1 && profil?.public_photo">
+        <div style="width:100%;text-align: center;">
           <img [src]="profil?.photo" style="width:100%;max-height:300px;object-fit: cover;">
         </div>
-
       </td>
       <td>
-        <div style="font-size: 3em;font-weight: lighter;">
-          {{profil.firstname+" "+profil.lastname}}<br>
+        <div style="font-size: 2.2em ;font-weight: lighter;">
+          {{profil?.firstname+" "+profil?.lastname}}<br>
         </div>
-
       </td>
     </tr>
   </table>
 
 
   <br>
-  {{profil.department}}<br>
-  Promotion {{profil.degree_year}}<br>
+  {{profil?.department}}<br>
+  Promotion {{profil?.degree_year}}<br>
 
-  <!--  Travaux -->
-  <div *ngIf="profil?.works?.length>0">
-    <hr>
-    Expériences<br>
-    <div class="wrap-list">
-      <div *ngFor="let wrk of works" style="max-width: 400px;margin:1%;">
-        <app-work [work]="wrk" backgroundColor="#265480">
-        </app-work>
-      </div>
-    </div>
-  </div>
-
-
-  <!--  Références sur internet-->
   <div *ngIf="profil?.links?.length>0">
-    <hr>
-    Références<br>
-    <div *ngFor="let link of profil.links" style="max-width: 400px;margin:1%;">
+    <br>
+    <small>Voir mon profil sur :</small>
+    <div *ngFor="let link of profil?.links" style="max-width: 400px;margin:1%;display: inline-block;">
       <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
     </div>
   </div>
 
-
-  <div class="bottom-bar">
-    <hr>
-    <button mat-button mat-raised-button
-            class="app-button"
-            (click)="router.navigate(['search'],{queryParams:{filter:profil.lastname}})">
-      Annuaire
-    </button>
+  <!--  Travaux -->
+  <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0px;">
+    <br>
+    ____
+    <br><br>Expériences<br><br>
+    <div class="wrap-list" style="width: 100%;">
+        <app-work *ngFor="let wrk of works"
+                  [work]="wrk"
+                  style="margin:5px;"
+                  maxwidth="450px"
+                  minwidth="300px"
+                  width="200px"
+                  height="100px"
+                  backgroundColor="#1c1a1a">
+        </app-work>
+    </div>
   </div>
+
 </div>

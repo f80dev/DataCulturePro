@@ -128,6 +128,18 @@ Instant_reports:
     cols: profil_promotion,film_catégorie,film_id,profil_cursus,profil_promotion
     prod: True
 
+  - title: Nombre d'oeuvres par genre et categorie
+    id: pow_by_category
+    chart: bar
+    x: catégorie
+    y: productions
+    color: nature
+    table: pieceofwork
+    sql: SELECT category AS catégorie,nature,count(id) AS productions FROM df GROUP BY category,nature
+    cols: catégorie,naturee,id
+    data_cols: category,nature,id
+    prod: True
+
 
   - title: Films par années et par département
     id: film_by_year_dep

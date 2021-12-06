@@ -399,6 +399,7 @@ def dateToTimestamp(txt):
 
 
 def fusion(p1: Model, p2: Model):
+    hasChanged=False
     log("On opére la fusion de "+str(p1)+" avec "+str(p2))
     attrs_p1=list(model_to_dict(p1).keys())
     attrs_p2=list(model_to_dict(p2).keys())
@@ -412,11 +413,14 @@ def fusion(p1: Model, p2: Model):
                     if len(val)>0:
                         if (p1.__getattribute__(attr) is None or len(p1.__getattribute__(attr))==0):
                             p1.__setattr__(attr, val)
+                            hasChanged=True
                 else:
                     if p1.__getattribute__(attr) is None:
                         p1.__setattr__(attr,val)
+                        hasChanged=True
 
-    return p1
+    return p1,hasChanged
+
 
 
 def init_dict():

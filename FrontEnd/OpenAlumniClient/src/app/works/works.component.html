@@ -28,6 +28,7 @@
     <div *ngFor="let wrk of works | filter:['filter',cat_filter] | filter:['job',job_filter]" style="max-width: 400px;margin:1%;">
 
       <app-work [work]="wrk" height="120px" [showAction]="true">
+
         <div style="display: flex;font-size: small;margin: 0px;">
           <div *ngIf="wrk.pow?.visual?.length>0 && config.hasPerm('r_movie_picture')" style="flex: 15%">
              <img [src]="wrk.pow?.visual"
@@ -43,6 +44,7 @@
 
         <small>{{wrk.comment}}</small>
       </app-work>
+
     </div>
   </div>
 </div>

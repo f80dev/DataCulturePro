@@ -867,9 +867,14 @@ def export_all(request):
         df.columns=headers
     else:
         values=request.GET.get("data_cols").split(",")
-        data=Profil.objects.all().values(*values)
+        table=request.GET.get("table","profil")
+        if table.startswith("profil"):data=Profil.objects.all().values(*values)
+        if table.startswith("pieceofwork"):data=PieceOfWork.objects.all().values(*values)
+        if table.startswith("work"):data=Work.objects.all().values(*values)
+
         df=pd.DataFrame.from_records(data)
-        df.columns=list(request.GET.get("cols").split(","))
+        if len(data)>0:
+            df.columns=list(request.GET.get("cols").split(","))
 
     title=request.GET.get("title","Reporting FEMIS")
     lib_columns=",".join(list(df.columns))
@@ -885,7 +890,6 @@ def export_all(request):
     if not sql is None:
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
-
 
 
     if request.GET.get("percent","False")=="True":
@@ -952,6 +956,39 @@ def export_all(request):
 
 
 
+
+def idx(col:str,row=None,default=None,max_len=20,min_len=0,replace_dict:dict={},header=list()):
+    """
+    Permet l'importation dynamique des colonnes
+    :param col:
+    :param row:
+    :param default:
+    :param max_len:
+    :param min_len:
+    :param replace_dict:
+    :param header:
+    :return:
+    """
+    for c in col.lower().split(","):
+        if c in header:
+            if row is not None and len(row)>header.index(c):
+                rc=str(row[header.index(c)])
+
+                #Application des remplacement
+                for old in replace_dict.keys():
+                    rc=rc.replace(old,replace_dict[old])
+
+                if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
+                if min_len==0 or len(rc)>=min_len:
+                    return rc
+            else:
+                return header.index(c)
+    return default
+
+
+
+
+#tag /importer
 #http://localhost:8000/api/movie_importer/
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -961,21 +998,13 @@ def movie_importer(request):
     :param request:
     :return:
     """
-    log("Importation de films")
-    content = str(request.body).split("base64,")[1]
-    b64_content = base64.b64decode(content)
+    d,total_record=importer_file(request)
 
-    try:
-        txt = str(b64_content,encoding="utf-8")
-    except:
-        txt = str(b64_content,encoding="ansi")
-
-
-    d = csv.reader(StringIO(txt), delimiter=";")
     i = 0
     record = 0
 
-    if txt.startswith("visa"):
+    #if txt.startswith("visa"):
+    if False:
         log("Fichier extrait du CNC")
         for row in list(d):
             if i>0:
@@ -994,59 +1023,56 @@ def movie_importer(request):
     else:
         log("Fichier extrait de la base des films")
 
-        for row in list(d):
+        for row in d:
             pow=None
             if len(row)>10:
+                if i==0:
+                    header = [x.lower().replace("[[", "").replace("]]", "").strip() for x in row]
+                    log("Liste des colonnes disponibles " + str(header))
                 if i>0:
-                    if row[6]=="":row[6]="0"
-                    if row[11]=="":row[11]="1800"
+                    title=idx("title",row,"",50,header=header)
 
-                    pow:PieceOfWork=PieceOfWork(
-                        title=row[0].replace(u'\xa0', u' '),
-                        description=row[1],
-                        visual=row[4],
-                        nature=row[5],
-                        dtStart=row[2],
-                        budget=int(row[6]),
-                        category=row[7],
-                        links=[{"url":row[9],"text":row[8]}],
-                        lang="US",
-                        year=int(row[11]),
-                        owner=row[10]
-                    )
+                    if len(title)>2:
+                        duration=idx("DURATION",row,max_len=20,header=header)
+                        name = idx("STUDENT_NAME", row, "", header=header)
 
-                    if not pow is None:
-                        try:
-                            pow.category = pow.category.replace("|", " ")
-                            rc = pow.save()
-                            log("Ajout de " + pow.title)
-                            record = record + 1
-                        except Exception as inst:
-                            log("Probléme d'enregistrement" + str(inst))
+                        pow:PieceOfWork=PieceOfWork(
+                            title=title.replace(u'\xa0', u' '),
+                            description=idx("FR_SYNOPSIS",row,max_len=3000,header=header),
+                            visual="",
+                            nature=translate(idx("LEVEL_PROJECT",row,max_len=50,header=header)),
+                            category=translate(idx("FILM_CLASSIFICATION",row,"",max_len=50, header=header)),
+                            links=[],
+                            lang="US",
+                            year=idx("YEAR_FILM",row,max_len=4,header=header),
+                            owner=name
+                        )
 
-            else:
-                pows=PieceOfWork.objects.filter(title__iexact=row[0])
-                if len(pows)==0:
-                    pow: PieceOfWork = PieceOfWork(
-                        title=row[0],
-                        description=translate(row[4]),
-                        nature=translate(row[2]),
-                        category=row[3],
-                        lang="FR"
-                    )
-                    if len(row[1])>0:pow.year=int(str(row[1]).split(",")[0])
-                    pow.add_link("","FEMIS","Film ajouter depuis le référencement FEMIS")
-                    pow.save()
-                    log("Ajout de "+pow.title)
-                else:
-                    pow=pows.first()
+                        if not pow is None:
+                            result = PieceOfWork.objects.filter(title__iexact=pow.title, year__exact=pow.year)
+                            hasChanged=True
+                            if len(result) > 0:
+                                pow,hasChanged = fusion(result.first(), pow)
 
-                name=row[6].replace("\n","")
-                if " " in name:
-                    profils = Profil.objects.filter(lastname__icontains=name.split(" ")[1],firstname__icontains=name.split(" ")[0])
-                    if len(profils)>0:
-                        work=Work(pow_id=pow.id,job=translate(row[5]),profil_id=profils.first().id)
-                        work.save()
+                            try:
+                                if hasChanged:
+                                    pow.save()
+                                    log("Ajout de " + pow.title)
+                                    record = record + 1
+
+                                #Ajout de la contribution
+                                if len(name) > 0 and " " in name:
+                                    profils = Profil.objects.filter(lastname__icontains=name.split(" ")[1],
+                                                                    firstname__icontains=name.split(" ")[0])
+                                    if len(profils) > 0:
+                                        work = Work(pow_id=pow.id, job=translate(row[5]), profil_id=profils.first().id)
+                                        log("Ajout de l'experience " + str(work) + " a " + name)
+                                        work.save()
+
+                            except Exception as inst:
+                                log("Probléme d'enregistrement" + str(inst)+" pour "+pow.title)
+
+
             i=i+1
 
     log("Importation terminé de "+str(record)+" films")
@@ -1054,7 +1080,46 @@ def movie_importer(request):
     return Response(str(record) + " films importés", 200)
 
 
-import openpyxl
+def importer_file(request):
+    d=list()
+
+    log("Importation de fichier")
+    data = base64.b64decode(str(request.data["file"]).split("base64,")[1])
+
+    log("Analyse du document")
+    for _encoding in ["utf-8", "ansi"]:
+        try:
+            txt = str(data, encoding=_encoding)
+            break
+        except:
+            pass
+
+    txt = txt.replace("&#8217;", "")
+    log("Méthode d'encoding " + _encoding)
+
+    if str(request.data["filename"]).endswith("xlsx"):
+        res = pd.read_excel(data)
+        d.append(list(res))
+        for k in range(1, len(res)):
+            d.append(list(res.loc[k]))
+        total_record = len(d) - 1
+    else:
+        delimiter = ";"
+        text_delimiter = False
+        if "\",\"" in txt:
+            delimiter = ","
+            text_delimiter = True
+
+        log("Importation du CSV")
+        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
+        total_record = sum(1 for line in d)
+        log("Nombre d'enregistrements identifié " + str(total_record))
+
+        # Répétion de la ligne pour remettre le curseur au début du fichier
+        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
+
+    return d,total_record
+
 
 #http://localhost:8000/api/importer/
 #Importation des fichiers
@@ -1067,64 +1132,11 @@ def importer(request):
     :param format:
     :return:
     """
-
-    header=list()
-    def idx(col:str,row=None,default=None,max_len=0,min_len=0,replace_dict:dict={}):
-        for c in col.lower().split(","):
-            if c in header:
-                if row is not None and len(row)>header.index(c):
-                    rc=str(row[header.index(c)])
-
-                    #Application des remplacement
-                    for old in replace_dict.keys():
-                        rc=rc.replace(old,replace_dict[old])
-
-                    if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
-                    if min_len==0 or len(rc)>=min_len:
-                        return rc
-                else:
-                    return header.index(c)
-        return default
-
-
-    log("Importation de fichier")
-    data=base64.b64decode(str(request.data["file"]).split("base64,")[1])
-
-    log("Analyse du document")
-    for _encoding in ["utf-8","ansi"]:
-        try:
-            txt=str(data, encoding=_encoding)
-            break
-        except:
-            pass
-
-    txt=txt.replace("&#8217;","")
-    log("Méthode d'encoding "+_encoding)
-
-    d=[]
+    d = []
     i = 0
     record = 0
 
-    if str(request.data["filename"]).endswith("xlsx"):
-        res=pd.read_excel(data)
-        d.append(list(res))
-        for k in range(1,len(res)):
-            d.append(list(res.loc[k]))
-        total_record=len(d)-1
-    else:
-        delimiter=";"
-        text_delimiter=False
-        if "\",\"" in txt:
-            delimiter=","
-            text_delimiter=True
-
-        log("Importation du CSV")
-        d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
-        total_record = sum(1 for line in d)
-        log("Nombre d'enregistrements identifié "+str(total_record))
-
-        #Répétion de la ligne pour remettre le curseur au début du fichier
-        d=csv.reader(StringIO(txt), delimiter=delimiter,doublequote=text_delimiter)
+    d,total_record=importer_file(request)
 
     l_department_category=[x.lower() for x in Profil.objects.values_list("department_category",flat=True)]
     for row in d:
@@ -1136,13 +1148,13 @@ def importer(request):
             s=request.data["dictionnary"].replace("'","\"")
             dictionnary=loads(s)
 
-            firstname=row[idx("fname,firstname,prenom,prénom")]
-            lastname=row[idx("lastname,nom,lname")]
-            email=idx("email,mail,e-mail",row)
-            idx_photo=idx("photo,picture,image")
+            firstname=idx("fname,firstname,prenom,prénom",row,header=header)
+            lastname=idx("lastname,nom,lname",row,header=header)
+            email=idx("email,mail,e-mail",row,header=header)
+            idx_photo=idx("photo,picture,image",header=header)
 
             #Eligibilité et evoluation du genre
-            gender=idx("gender,genre,civilite,civilité",row,"")
+            gender=idx("gender,genre,civilite,civilité",row,"",header=header)
             if len(lastname)>1 and len(lastname)+len(firstname)>4:
                 if idx_photo is None or len(row[idx_photo])==0:
                     photo=None
@@ -1163,7 +1175,7 @@ def importer(request):
                     photo=stringToUrl(idx("photo",row,""))
 
                 #Calcul
-                dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row)
+                dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row,header=header)
                 # if len(dt_birthdate)==8:
                 #     tmp=dt_birthdate.split("/")
                 #     if int(tmp[2])>50:
@@ -1173,7 +1185,7 @@ def importer(request):
                 dt=dateToTimestamp(dt_birthdate)
 
                 if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4)
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4,header=header)
                 if type(promo)!=str: promo=str(promo)
                 if not promo is None and len(promo)>4:
                     promo=dateToTimestamp(promo)
@@ -1181,8 +1193,8 @@ def importer(request):
 
                 standard_replace_dict={"nan":""}
 
-                department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict)
-                department = idx("CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict)
+                department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
+                department = idx("CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
                 if department_category is None or len(department_category)==0:
                     if department.lower() in l_department_category:
                         department_category=department
@@ -1192,40 +1204,41 @@ def importer(request):
                     school="FEMIS",
                     lastname=lastname,
                     gender=gender,
-                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict),
-                    nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict),
-                    country=idx("country,pays",row,"France"),
+                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict,header=header),
+                    nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
+                    country=idx("country,pays",row,"France",header=header),
                     birthdate=dt,
                     department=department,
-                    job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict),
+                    job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
                     degree_year=promo,
-                    address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict),
+                    address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),
                     department_category=department_category,
-                    town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict),
-                    source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict),
-                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict),
-                    website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict)),
-                    biography=idx("biographie",row,""),
+                    town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict,header=header),
+                    source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict,header=header),
+                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict,header=header),
+                    website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict,header=header)),
+                    biography=idx("biographie",row,"",header=header),
 
-                    facebook=idx("facebook",row,""),
-                    instagram=idx("instagram",row,""),
-                    vimeo=idx("vimeo",row,""),
-                    tiktok=idx("tiktok",row,""),
-                    linkedin=idx("linkedin", row, ""),
+                    facebook=idx("facebook",row,"",header=header),
+                    instagram=idx("instagram",row,"",header=header),
+                    vimeo=idx("vimeo",row,"",header=header),
+                    tiktok=idx("tiktok",row,"",header=header),
+                    linkedin=idx("linkedin", row, "",header=header),
 
                     email=email,
                     photo=photo,
 
-                    cursus=idx("cursus,session_name",row,dictionnary["cursus"]),
+                    cursus=idx("cursus,session_name",row,dictionnary["cursus"],header=header),
                 )
 
                 try:
                     if len(profil.email)>0:
-                        res=Profil.objects.filter(email__iexact=profil.email).all()
+                        res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
+                        hasChanged=False
                         if len(res)>0:
-                            profil=fusion(res.first(),profil)
+                            profil,hasChanged=fusion(res.first(),profil)
 
-                    rc=profil.save()
+                    if hasChanged:profil.save()
                     #log(profil.lastname + " est enregistré")
                     record=record+1
                 except Exception as inst:

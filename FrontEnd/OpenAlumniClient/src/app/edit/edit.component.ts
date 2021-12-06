@@ -70,20 +70,22 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   ngOnInit(): void {
-    if(checkLogin(this,null,this.router)) {
-      this.message = "Chargement de votre profil";
-      this.loadProfil(() => {
-        this.url = this.profil.public_url;
-        this.title = this.profil.firstname + " " + this.profil.lastname;
-        this.showAddWork = 0;
-        this.message = "";
-        this.autoAddMovie();
-        this.refresh_job();
-        this.refresh_students();
-      });
-    } else {
-      this.quit();
-    }
+    setTimeout(()=>{
+      if(checkLogin(this)) {
+        this.message = "Chargement de votre profil";
+        this.loadProfil(() => {
+          this.url = this.profil.public_url;
+          this.title = this.profil.firstname + " " + this.profil.lastname;
+          this.showAddWork = 0;
+          this.message = "";
+          this.autoAddMovie();
+          this.refresh_job();
+          this.refresh_students();
+        });
+      } else {
+        this.quit();
+      }
+    },1000);
   }
 
   refresh(){

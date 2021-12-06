@@ -18,12 +18,14 @@ export class PublicComponent implements OnInit {
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
     if(id){
-      this.api._get("profils/"+id+"/").subscribe((p:any)=>{
+      this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
         this.profil=p;
         this.works=[];
         for(let w of p.works){
-          for(var i=0;i<100;i++)
+          for(var i=0;i<100;i++){
             w=w.replace("'","\"")
+          }
+
           this.works.push(JSON.parse(w));
         }
       })

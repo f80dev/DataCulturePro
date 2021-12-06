@@ -233,6 +233,9 @@ a {
   color: lightblue;
   text-decoration: none;
 }
+mat-card-title {
+  font-size: large;
+}
 mat-panel-title {
   color: #c1c1c1 !important;
   font-weight: normal;

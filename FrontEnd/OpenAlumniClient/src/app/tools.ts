@@ -805,7 +805,7 @@ export function checkConfig(vm:any) {
 export function checkLogin(vm,params: any = null,router: Router=null,redirect="search" ) {
   if (vm.config.user==null || vm.config.user.user==null || vm.config.user.user.email=="") {
     if(router==null)router=vm.router;
-    router.navigate([redirect], {queryParams: params});
+    if(router)router.navigate([redirect], {queryParams: params});
     return false;
   } else {
     return true;

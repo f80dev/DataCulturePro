@@ -142,8 +142,15 @@ export class AddpowComponent implements OnInit {
       let format=filename.split(".")[1];
       this.message="Chargement du fichier";
       reader.onload = ()=>{
+        let body={
+              filename:fileInputEvent.target.files[0].name,
+              size:fileInputEvent.target.files[0].size,
+              type:fileInputEvent.target.files[0].type,
+              file:reader.result,
+              dictionnary:{}
+            }
         this.message="Importation du fichier de films";
-        this.api._post("movie_importer/","",reader.result,200).subscribe((r:any)=>{
+        this.api._post("movie_importer/","",body,200).subscribe((r:any)=>{
           this.message="";
           showMessage(this,r);
           this.router.navigate(["pows"])

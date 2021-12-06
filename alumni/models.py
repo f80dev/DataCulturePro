@@ -119,7 +119,7 @@ class Profil(models.Model):
 
     @property
     def public_url(self):
-        return DOMAIN_APPLI+"/works/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname
+        return DOMAIN_APPLI+"/public/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname+"&toolbar=false"
 
     @property
     def promo(self):
@@ -235,9 +235,9 @@ class Work(models.Model):
     source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
     validate=models.BooleanField(default=False,help_text="Indique si l'expérience est validé ou pas")
 
-    # @property
-    # def title(self):
-    #     return self.pow.title
+    @property
+    def title(self):
+        return self.pow.title
     #
     # @property
     # def year(self):
@@ -257,9 +257,12 @@ class Work(models.Model):
         d:dict=dict({
             "name":self.profil.firstname+" "+self.profil.lastname,
             "job":self.job,
-            "comment":self.comment,
+            "comment":self.comment
         })
-        if self.pow is not None:d["pow"]={"title":self.pow.title}
+
+        if self.pow is not None:
+            d["pow"]={"title":self.pow.title,"year":self.pow.year,"link":self.pow.links,"nature":self.pow.nature,"category":self.pow.category}
+            d["year"]=self.pow.year
 
         return str(d)
 
@@ -279,7 +282,7 @@ class PieceOfWork(models.Model):
     dtEnd=models.DateField(auto_now=True,null=False,help_text="Date de fin de la réalisation de l'oeuvre")
     title=models.CharField(null=False,max_length=300,unique=True,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
     year=models.CharField(null=True,max_length=4,help_text="Année de sortie")
-    nature=models.CharField(null=False,default='MOVIE',max_length=20,help_text="Classification de l'oeuvre")
+    nature=models.CharField(null=False,default='MOVIE',max_length=50,help_text="Classification de l'oeuvre")
     dtCreate = models.DateField(auto_now_add=True,help_text="Date d'enregistrement de l'oeuvre dans DataCulture")
 
     reference=models.CharField(null=False,default="",blank=True,max_length=50,help_text="Reference d'oeuvre")
@@ -293,7 +296,7 @@ class PieceOfWork(models.Model):
     description=models.TextField(null=False,default="",max_length=3000,help_text="Description/Resumer de l'oeuvre")
     # Structure : "url" du document, "type" de document (str), "title" du document
     files=JSONField(null=True,help_text="Liens vers des documents attaché")
-    category=models.TextField(null=True,max_length=200,help_text="Liste des categories auxquelles appartient le film")
+    category=models.TextField(null=True,max_length=50,help_text="Liste des categories auxquelles appartient le film")
     lang=models.CharField(max_length=50,null=True,help_text="Langue originale de l'oeuvre")
 
     apiVideoId=models.CharField(max_length=20,default="",null=False,blank=True,help_text="Version stocké sur api.video")
@@ -312,12 +315,10 @@ class PieceOfWork(models.Model):
         if not self.category is None:rc=rc+" - "+self.category
         return rc
 
-
     def delay_lastsearch(self):
         if self.dtLastSearch is None:return 1e12
         rc=(datetime.datetime.now().timestamp() - self.dtLastSearch.timestamp())/3600
         return rc
-
 
     def add_link(self, url, title, description=""):
         if self.links is None: self.links = []
@@ -331,7 +332,6 @@ class PieceOfWork(models.Model):
 
         self.links.append(obj)
         return self.links
-
 
     def quality_score(self):
         """

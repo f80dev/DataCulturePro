@@ -15,6 +15,9 @@ export class WorkComponent implements OnInit {
   @Input("level") level:number=1;
   @Input("perm") perm:string="";
   @Input("height") height:string="auto";
+  @Input("width") width:string="auto";
+  @Input("maxwidth") maxwidth:string="auto";
+  @Input("minwidth") minwidth:string="auto";
   @Input("showAction") showAction:boolean=true;
   @Input("writeAccess") writeAccess:boolean=false;
   @Input("backgroundColor") backgroundColor:string="grey";

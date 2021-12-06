@@ -557,20 +557,22 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                 if "category" in film: pow.category = translate(film["category"])
                 if "year" in film: pow.year = film["year"]
 
+                job = profil.job
+                if "job" in film: job = film["job"]
+
                 try:
+                    hasChanged=True
                     result=PieceOfWork.objects.filter(title__iexact=pow.title,year__exact=pow.year)
                     if len(result)>0:
                         log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
-                        pow=fusion(result.first(),pow)
+                        pow,hasChanged=fusion(result.first(),pow)
                     else:
                         n_films=n_films+1
 
-                    pow.save()
+                    if hasChanged:pow.save()
 
                     # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
                     # il faudrait désindenter le code ci-dessous mais du coup il faudrait retrouver le pow
-                    job = profil.job
-                    if "job" in film: job = film["job"]
 
                 except Exception as inst:
                     log("Impossible d'enregistrer le film: "+str(inst.args))
@@ -578,10 +580,11 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                 film = dict()
 
         if not pow is None:
+            if job is None: job = ""
             t_job = translate(job)
             if len(t_job)==0:t_job="Non identifié"
             if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
-                if job is not None and t_job is not None and len(job)>0:
+                if len(t_job)>0:
                     log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
                     work = Work(pow=pow, profil=profil, job=t_job, source=source)
                     try:
@@ -591,7 +594,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
 
                     if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
                 else:
-                    log("Pas d'enregistrement de la contribution")
+                    log("Pas d'enregistrement de la contribution job="+job)
 
             # Enregistrement du casting
             if not film is None and "casting" in film:
