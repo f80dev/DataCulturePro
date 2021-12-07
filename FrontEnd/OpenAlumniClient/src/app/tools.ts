@@ -802,14 +802,20 @@ export function checkConfig(vm:any) {
   }
 }
 
-export function checkLogin(vm,params: any = null,router: Router=null,redirect="search" ) {
-  if (vm.config.user==null || vm.config.user.user==null || vm.config.user.user.email=="") {
-    if(router==null)router=vm.router;
-    if(router)router.navigate([redirect], {queryParams: params});
-    return false;
-  } else {
-    return true;
-  }
+export function checkLogin(vm, func_success=null,func_abort=null,redirect="search" ,params= {}) {
+  setTimeout(() => {
+    if (vm.config.user == null || vm.config.user.user == null || vm.config.user.user.email == "") {
+      if (func_abort){
+        func_abort();
+      }else{
+        if(vm.router)vm.router.navigate([redirect], {queryParams: params});
+      }
+      return false;
+    } else {
+      if (func_success) func_success();
+      return true;
+    }
+  }, 1000);
 }
 
 export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://server.f80.fr"){

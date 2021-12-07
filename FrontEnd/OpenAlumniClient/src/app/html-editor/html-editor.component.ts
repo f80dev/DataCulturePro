@@ -45,14 +45,15 @@ export class HtmlEditorComponent implements OnInit {
     public _location:Location
   ) {
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
-        startWith(null),
-        map((tag: string | null) => tag ? this._filter(tag) : this.allTags.slice()));
+      startWith(null),
+      map((tag: string | null) => tag ? this._filter(tag) : this.allTags.slice()));
   }
 
   ngOnInit(): void {
-    checkLogin(this);
-    this.editorContent=localStorage.getItem("article_content");
-    if(!this.editorContent || this.editorContent=="null")this.editorContent="";
+    checkLogin(this,()=>{
+      this.editorContent=localStorage.getItem("article_content");
+      if(!this.editorContent || this.editorContent=="null")this.editorContent="";
+    });
   }
 
 
@@ -61,12 +62,12 @@ export class HtmlEditorComponent implements OnInit {
     this.save((id)=>{
       this.api._patch("articles/"+id+"/","", {to_publish:true}).subscribe((r:any)=>{
         this.message="";
-          showMessage(this,"Article en attente de publication");
-          localStorage.setItem("article_id",null);
-          localStorage.setItem("article_content",null);
-          this.editorContent="";
-          this._location.back();
-        },(err)=>{showError(this,err)});
+        showMessage(this,"Article en attente de publication");
+        localStorage.setItem("article_id",null);
+        localStorage.setItem("article_content",null);
+        this.editorContent="";
+        this._location.back();
+      },(err)=>{showError(this,err)});
     });
 
   }
@@ -141,24 +142,24 @@ export class HtmlEditorComponent implements OnInit {
 
   _import(fileInputEvent: any) {
     var reader = new FileReader();
-      reader.onload = ()=>{
-        this.editorContent=String(reader.result);
-      };
-      reader.readAsText(fileInputEvent.target.files[0],"utf-8");
+    reader.onload = ()=>{
+      this.editorContent=String(reader.result);
+    };
+    reader.readAsText(fileInputEvent.target.files[0],"utf-8");
   }
 
   clear_article() {
     this.dialog.open(PromptComponent, {
-          backdropClass:"removeBackground",
-          data: {
-            title: 'Effacer le contenu de votre article ?',
-            question: "",
-            onlyConfirm: true,
-            lbl_ok: 'Effacer',
-            lbl_cancel: 'Annuler'
-          }
-        }).afterClosed().subscribe((result_code) => {
-          if(result_code=="yes")this.editorContent="";
+      backdropClass:"removeBackground",
+      data: {
+        title: 'Effacer le contenu de votre article ?',
+        question: "",
+        onlyConfirm: true,
+        lbl_ok: 'Effacer',
+        lbl_cancel: 'Annuler'
+      }
+    }).afterClosed().subscribe((result_code) => {
+      if(result_code=="yes")this.editorContent="";
     });
 
   }

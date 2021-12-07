@@ -22,7 +22,7 @@
       <br>
       <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
         <mat-label>Sélectionner un rapport</mat-label>
-        <mat-select [(value)]="sel_report" (selectionChange)="eval_stat()">
+        <mat-select [(value)]="sel_report" (selectionChange)="eval_stat($event)">
           <mat-option *ngFor="let report of instant_reports" [value]="report">
             {{report.title}}
           </mat-option>

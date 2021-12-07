@@ -5,7 +5,7 @@ perms:
     description: au partage du profil
 
   - tag: works
-    description: aux réalisations
+    description: a l'expérience du profil
 
   - tag: admin
     description: à la console d'administration
@@ -20,13 +20,13 @@ perms:
     description: de nouveaux critères de tri des profils
 
   - tag: r_imdb
-    description: au catalogue IMDB
+    description: aux réalisations des profils référencées sur IMDB
 
   - tag: r_unifrance
-    description: au catalogue UniFrance
+    description: aux réalisations des profils référencées sur UniFrance
 
   - tag: r_senscritique
-    description: au catalogue UniFrance
+    description: aux réalisations des profils référencées sur SensCritique
 
   - tag: r_movie_synopsis
     description: au synopsis des film
@@ -56,19 +56,19 @@ perms:
     description: gérer les annonces, articles
 
   - tag: delete_profil
-    description: la suppression d'un profil
+    description: à la suppression d'un profil de la base de données
 
   - tag: lastname
     description: au nom
 
   - tag: write_email
-    description: à l'écriture de messages textuels
+    description: à la possibilité d'écrire aux autres profils
 
   - tag: blog
     description: au blog
 
   - tag: promo
-    description: à l'année de sortie de l'école
+    description: à l'année de sortie de l'école (promotion)
 
   - tag: annonce
     description: aux annonces
@@ -77,7 +77,7 @@ perms:
     description: à la recherche avancée
 
   - tag: r_photo
-    description: à la photo du profil
+    description: à la photo du profil (si celui-ci l'a publié)
 
   - tag: r_cp
     description: au code postal de l'adresse

@@ -31,37 +31,36 @@ export class WriteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    checkLogin(this);
-
-    if(this.config.user.profil){
-      this.api._get("profils/"+this.config.user.profil+"/").subscribe((p:any)=>{
-      for(let sn of ["facebook","youtube","tiktok","vimeo","instagram","telegram","twitter","linkedin"]){
-        if(p[sn] && p[sn]!='')
-          this.social_networks.push({value:p[sn],label:sn});
+    checkLogin(this,()=>{
+      if(this.config.user.profil){
+        this.api._get("profils/"+this.config.user.profil+"/").subscribe((p:any)=>{
+          for(let sn of ["facebook","youtube","tiktok","vimeo","instagram","telegram","twitter","linkedin"]){
+            if(p[sn] && p[sn]!='')
+              this.social_networks.push({value:p[sn],label:sn});
+          }
+          // if(this.social_networks.length>0)this.social_network=this.social_networks[0];
+        });
       }
-      // if(this.social_networks.length>0)this.social_network=this.social_networks[0];
-      });
-    }
 
-    let id=this.routes.snapshot.queryParamMap.get("id");
-    this.api._get("profils/"+id+"/").subscribe((p:any)=>{
-      this.profil=p;
-      this.api.getyaml("","social").subscribe((r:any)=>{
-        if(this.config.user.user){
-          let profil_name=this.config.user.profil_name;
-          for(let service of r.services){
-            let url=this.profil[service.name];
-            if(url && url.length>0 && service.profils.indexOf(profil_name)>-1)
-               this.buttons.push({
-                 "caption":service.name.toUpperCase(),
-                 "url":url
-               })
-           }
-        }
-      });
 
-    })
-
+      let id=this.routes.snapshot.queryParamMap.get("id");
+      this.api._get("profils/"+id+"/").subscribe((p:any)=>{
+        this.profil=p;
+        this.api.getyaml("","social").subscribe((r:any)=>{
+          if(this.config.user.user){
+            let profil_name=this.config.user.profil_name;
+            for(let service of r.services){
+              let url=this.profil[service.name];
+              if(url && url.length>0 && service.profils.indexOf(profil_name)>-1)
+                this.buttons.push({
+                  "caption":service.name.toUpperCase(),
+                  "url":url
+                })
+            }
+          }
+        });
+      })
+    });
   }
 
 

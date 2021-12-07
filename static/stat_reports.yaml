@@ -93,7 +93,7 @@ Instant_reports:
     sql: SELECT * FROM (SELECT ville,count(id) AS etudiants FROM df WHERE cursus='S' AND promotion>=2000 GROUP BY ville) ORDER BY etudiants DESC LIMIT 15
     cols: ville,promotion,id,cursus
     data_cols: town,degree_year,id,cursus
-    prod: True
+    prod: False
 
 
   - title: Répartition du genre par département depuis 2000

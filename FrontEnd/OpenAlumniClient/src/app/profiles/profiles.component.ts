@@ -26,9 +26,9 @@ export class ProfilesComponent implements OnInit {
               public router:Router) { }
 
   ngOnInit(): void {
-    if(checkLogin(this)){
+    checkLogin(this,()=>{
       this.profils=Object.values(this.config.profils);
-    }
+    });
   }
 
 
