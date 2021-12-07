@@ -1,48 +1,52 @@
 <div class="mainform" style="text-align: left !important;margin: 5px;font-size: large;">
   <br>
-  <table style="padding: 0px;margin:0px">
-    <tr>
-      <td *ngIf="profil?.photo.indexOf('assets/')==-1 && profil?.public_photo">
-        <div style="width:100%;text-align: center;">
-          <img [src]="profil?.photo" style="width:100%;max-height:300px;object-fit: cover;">
+  <table style="padding: 0px;margin:0px;width: 100%;">
+    <tr style="width: 100%;">
+      <td *ngIf="profil?.public_photo" style="width: 150px;">
+        <div style="width:100%;text-align: center;" >
+          <img [src]="profil?.photo" style="max-height:130px;object-fit: cover;border-radius: 10px;" class="mat-elevation-z8">
         </div>
       </td>
+
       <td>
         <div style="font-size: 2.2em ;font-weight: lighter;">
-          {{profil?.firstname+" "+profil?.lastname}}<br>
+          {{profil?.firstname+" "+profil?.lastname}}
+          <mat-icon title="Voir la page publique" (click)="share()" style="cursor: pointer;">share</mat-icon>
         </div>
+        <br>
+        &nbsp;{{profil?.department}}<br>
+        &nbsp;Promotion {{profil?.degree_year}}<br>
+
+        <div *ngIf="profil?.links?.length>0">
+          <br>
+          <small>Voir mon profil sur :</small>
+          <div *ngFor="let link of profil?.links" style="max-width: 400px;margin:1%;display: inline-block;">
+            <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
+          </div>
+        </div>
+      </td>
+      <td style="width:30px;margin:5px;text-align: center;vertical-align: text-top;">
+
       </td>
     </tr>
   </table>
 
 
-  <br>
-  {{profil?.department}}<br>
-  Promotion {{profil?.degree_year}}<br>
 
-  <div *ngIf="profil?.links?.length>0">
-    <br>
-    <small>Voir mon profil sur :</small>
-    <div *ngFor="let link of profil?.links" style="max-width: 400px;margin:1%;display: inline-block;">
-      <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
-    </div>
-  </div>
 
   <!--  Travaux -->
   <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0px;">
-    <br>
-    ____
     <br><br>Expériences<br><br>
     <div class="wrap-list" style="width: 100%;">
-        <app-work *ngFor="let wrk of works"
-                  [work]="wrk"
-                  style="margin:5px;"
-                  maxwidth="450px"
-                  minwidth="300px"
-                  width="200px"
-                  height="100px"
-                  backgroundColor="#1c1a1a">
-        </app-work>
+      <app-work *ngFor="let wrk of works"
+                [work]="wrk"
+                style="margin:5px;"
+                maxwidth="450px"
+                minwidth="300px"
+                width="200px"
+                height="100px"
+                backgroundColor="#1c1a1a">
+      </app-work>
     </div>
   </div>
 

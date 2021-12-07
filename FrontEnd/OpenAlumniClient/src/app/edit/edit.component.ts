@@ -237,6 +237,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   save_profil(func:Function=null,evt=null,field=""){
     if(this.profil){
       if(field=="acceptSponsor")this.profil.acceptSponsor=evt.checked;
+      if(field=="public_photo")this.profil.public_photo=evt.checked;
       this.profil.dtLastUpdate=new Date().toISOString();
       this.api.setprofil(this.profil).subscribe(()=>{
         if(func)func();

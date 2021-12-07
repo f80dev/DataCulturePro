@@ -40,20 +40,11 @@ export class ProfilComponent implements OnInit,OnChanges {
 
   }
 
-  share(profil:any){
-    showMessage(this,"Lien du profil disponible dans le presse-papier");
-    this.ngNavigatorShareService.share({
-      title: profil.firstname+" "+profil.lastname,
-      text: "Profil de l'annuaire de la FEMIS",
-      url: profil.public_url
-    })
-      .then( (response) => {console.log(response);},()=>{
-        this._clipboardService.copyFromContent(profil.public_url);
-      })
-      .catch( (error) => {
-        this._clipboardService.copyFromContent(profil.public_url);
-      });
+  open_public_profil(profil:any){
+    open(profil.public_url);
   }
+
+
 
   openWebSite(url: string) {
     open(url,"_blank");

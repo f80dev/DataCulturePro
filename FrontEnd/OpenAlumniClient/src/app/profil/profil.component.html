@@ -89,11 +89,11 @@
         </button>
 
         <button mat-button mat-icon-button
-                title="Partager / Envoyer ce profil"
+                title="Voir la page publique"
                 name="cmdShareProfil"
                 class="small-icon-button"
-                *ngIf="profil?.public_url?.length>0 && config.hasPerm('share')"
-                (click)="share(profil)">
+                *ngIf="profil?.public_url?.length>0"
+                (click)="open_public_profil(profil)">
           <mat-icon>share</mat-icon>
         </button>
 

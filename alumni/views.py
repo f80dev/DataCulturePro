@@ -957,7 +957,7 @@ def export_all(request):
 
 
 
-def idx(col:str,row=None,default=None,max_len=20,min_len=0,replace_dict:dict={},header=list()):
+def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={},header=list()):
     """
     Permet l'importation dynamique des colonnes
     :param col:
@@ -1132,7 +1132,6 @@ def importer(request):
     :param format:
     :return:
     """
-    d = []
     i = 0
     record = 0
 
@@ -1150,7 +1149,7 @@ def importer(request):
 
             firstname=idx("fname,firstname,prenom,prénom",row,header=header)
             lastname=idx("lastname,nom,lname",row,header=header)
-            email=idx("email,mail,e-mail",row,header=header)
+            email=idx("email,mail,e-mail",row,header=header,max_len=50)
             idx_photo=idx("photo,picture,image",header=header)
 
             #Eligibilité et evoluation du genre
@@ -1234,7 +1233,7 @@ def importer(request):
                 try:
                     if len(profil.email)>0:
                         res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
-                        hasChanged=False
+                        hasChanged=True
                         if len(res)>0:
                             profil,hasChanged=fusion(res.first(),profil)
 

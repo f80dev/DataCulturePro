@@ -48,7 +48,7 @@ class Profil(models.Model):
     degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école (promotion)")
 
     linkedin = models.URLField(blank=True, null=True,help_text="Adresse de la page public linkedin du profil")
-    email=models.EmailField(null=False,unique=True,help_text="@email du profil")
+    email=models.EmailField(null=True,unique=False,help_text="@email du profil")
     instagram=models.URLField(blank=True, null=True,help_text="Adresse du compte instagram")
     telegram=models.URLField(blank=True, null=True,help_text="Adresse public du compte telegram")
     facebook=models.URLField(blank=True, null=True,help_text="Adresse de la page facebook du profil")
