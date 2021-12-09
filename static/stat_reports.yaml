@@ -2,7 +2,13 @@ Version: 1.0
 #Liste des champs disponibles
 #"profil_id", "profil_genre","profil_nom", "profil_prenom", "profil_formation", "profil_cursus","profil_promotion","profil_code_postal", "profil_ville",
 #        "film_id","film_titre", "film_catégorie", "film_genre","film_annee","film_budget","film_production",
+#         "film_festival","film_award_id","film_récompense","film_année",
 #        "work_id", "work_job","work_comment","work_validate","work_source","work_state"
+
+
+#Documentation de la librairie graphique
+#camembert : https://plotly.com/python-api-reference/generated/plotly.express.pie.html
+
 Reports:
   - title: Répartition des étudiants par formation
     url: https://datastudio.google.com/s/rcrmbRNDsq8
@@ -16,7 +22,16 @@ Reports:
 
 
 Instant_reports:
-  - title: Etudiants par formation
+  - title: Les événements qui recompensent le plus les anciens de la FEMIS
+    id: film_by_festival
+    chart: pie
+    x: Evenements
+    y: Films
+    sql: SELECT * FROM (SELECT film_festival AS Evenements,count(film_id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
+    prod: True
+
+
+  - title: Répartition des etudiants par formation
     description:
     id: student_by_depyear
     chart: bar
@@ -49,7 +64,7 @@ Instant_reports:
     id: prostudent_by_depyear
     x: promotion
     y: stagiaires
-    chart: bar
+    chart: line
     color: formation
     table: profil
     data_cols: id,department,cursus,degree_year
@@ -127,6 +142,8 @@ Instant_reports:
     sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
     cols: profil_promotion,film_catégorie,film_id,profil_cursus,profil_promotion
     prod: True
+
+
 
   - title: Nombre d'oeuvres par genre et categorie
     id: pow_by_category

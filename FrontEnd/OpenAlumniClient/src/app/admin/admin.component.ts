@@ -65,7 +65,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  batch(refresh_delay_profil=31,refresh_delay_page=31) {
+  batch(refresh_delay_profil=31,refresh_delay_page=200) {
     let catalog="imdb,unifrance,lefilmfrancais";
     // for(let key of Object.keys(this.config.values.catalog)){
     //   if(this.config.values.catalog[key])catalog=catalog+key.replace(" ","").trim()+"_";

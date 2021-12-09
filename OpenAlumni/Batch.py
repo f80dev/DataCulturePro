@@ -10,7 +10,7 @@ from wikipedia import wikipedia, re
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion
 from OpenAlumni.settings import MOVIE_NATURE
-from alumni.models import Profil, Work, PieceOfWork
+from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
 #from scipy import pdist
 
@@ -182,13 +182,30 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
 
     if "category" in rc and len(rc["category"])==0:rc["category"]="inconnue"
 
+    rc["prix"]=[]
+    for section_prix in page.find_all("div",attrs={"class":"distinction palmares"}):
+        if len(section_prix.find_all("div"))>0:
+            content=section_prix.find_all("div")[1].text
+            if content is not None:
+                content=content.replace("PlusMoins", "")
+                dt=re.findall(r"[1-2][0-9]{3}",content)
+                if len(dt)>0 and ")Prix" in content:
+                    _prix={
+                        "title":content.split("(")[0],
+                        "year":int(dt[0]),
+                        "description":content.split(")Prix")[1].split(" : ")[0]
+                    }
+                    rc["prix"].append(_prix)
+                    log("Ajout du prix "+str(_prix))
+
+
 
     if not job_for is None:
         if "real" in rc and rc["real"]==job_for:
             rc["job"]="Réalisation"
         else:
+            #Recherche dans le générique détaillé
             section=page.find("section",{"id":"casting"})
-
             if not section is None:
                 jobs = section.findAll("h2")
                 paras = section.findAll("p")
@@ -212,6 +229,12 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                                         "source":"unifrance",
                                         "firstname":l.getText().replace(lastname,"").strip(),
                                         "job":job})
+
+            #Recherche dans les acteurs
+            for actor in page.find_all("div",{"itemprop":"actors"}):
+                if "data-title" in actor.attrs:
+                    if actor.attrs["data-title"].lower()==job_for.lower():
+                        rc["job"]="actor"
 
     if not "job" in rc:
         pass
@@ -520,66 +543,87 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
         film = None
         pow = None
         job = l["job"] if "job" in l else ""
-        for p in PieceOfWork.objects.filter(title__iexact=l["text"]):
-            for link in p.links:
-                if l["url"] == link["url"]:
-                    pow=p
-                    break
+        # for p in PieceOfWork.objects.filter(title__iexact=l["text"]):
+        #     #si la source à déjà été analysée on ne fait rien
+        #     for link in p.links:
+        #         if l["url"] == link["url"]:
+        #             pow=p
+        #             break
 
-        if not pow:
-            if "unifrance" in l["url"]:
-                source = "auto:unifrance"
-                film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
 
-            if "source" in l and "LeFilmFrancais" in l["source"]:
-                source="auto:LeFilmFrancais"
-                film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot)
+        if "unifrance" in l["url"]:
+            source = "auto:unifrance"
+            film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
 
-            if "imdb" in l["url"]:
-                source = "auto:IMDB"
-                film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
+        if "source" in l and "LeFilmFrancais" in l["source"]:
+            source="auto:LeFilmFrancais"
+            film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot)
 
-            if not film is None and "title" in film:
-                if not "nature" in film: film["nature"] = l["nature"]
-                if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
+        if "imdb" in l["url"]:
+            source = "auto:IMDB"
+            film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
 
-                pow = PieceOfWork(title=film["title"])
-                pow.add_link(url=l["url"], title=source)
-                if not content is None and content["senscritique"]:
-                    pow.add_link(extract_film_from_senscritique(film["title"]),title="Sens-critique")
-                if "nature" in film:
-                    pow.nature=translate(film["nature"])
-                else:
-                    pow.nature="Film"
+        if not film is None:
+            if not "nature" in film: film["nature"] = l["nature"]
+            if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 
-                if "synopsis" in film: pow.description = film["synopsis"]
-                if "visual" in film: pow.visual = film["visual"]
-                if "category" in film: pow.category = translate(film["category"])
-                if "year" in film: pow.year = film["year"]
-
-                job = profil.job
-                if "job" in film: job = film["job"]
-
-                try:
-                    hasChanged=True
-                    result=PieceOfWork.objects.filter(title__iexact=pow.title,year__exact=pow.year)
-                    if len(result)>0:
-                        log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
-                        pow,hasChanged=fusion(result.first(),pow)
-                    else:
-                        n_films=n_films+1
-
-                    if hasChanged:pow.save()
-
-                    # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
-                    # il faudrait désindenter le code ci-dessous mais du coup il faudrait retrouver le pow
-
-                except Exception as inst:
-                    log("Impossible d'enregistrer le film: "+str(inst.args))
+            pow = PieceOfWork(title=film["title"])
+            pow.add_link(url=l["url"], title=source)
+            if not content is None and content["senscritique"]:
+                pow.add_link(extract_film_from_senscritique(film["title"]),title="Sens-critique")
+            if "nature" in film:
+                pow.nature=translate(film["nature"])
             else:
-                film = dict()
+                pow.nature="Film"
+
+            if "synopsis" in film: pow.description = film["synopsis"]
+            if "visual" in film: pow.visual = film["visual"]
+            if "category" in film: pow.category = translate(film["category"])
+            if "year" in film: pow.year = film["year"]
+
+            job = profil.job
+            if "job" in film: job = film["job"]
+
+            try:
+                hasChanged=True
+                result=PieceOfWork.objects.filter(title__iexact=pow.title,year__exact=pow.year)
+                if len(result)>0:
+                    log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
+                    pow,hasChanged=fusion(result.first(),pow)
+                else:
+                    n_films=n_films+1
+
+                if hasChanged:
+                    log("Enregistrement du film dans la base")
+                    pow.save()
+
+                # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
+                # il faudrait désindenter le code ci-dessous mais du coup il faudrait retrouver le pow
+
+            except Exception as inst:
+                log("Impossible d'enregistrer le film: "+str(inst.args))
+        else:
+            log("Impossible de retrouver le film")
+
 
         if not pow is None:
+            if not film is None and "prix" in film and not film["prix"] is None and len(film["prix"]) > 0:
+                for prix in film["prix"]:
+                    f = Festival.objects.filter(title__iexact=prix["title"])
+                    if f.exists():
+                        f = f.first()
+                    else:
+                        f = Festival(title=prix["title"])
+                        f.save()
+
+                    a=Award.objects.filter(pow__id=pow.id,year=prix["year"],festival__id=f.id)
+                    if a.exists():
+                        a=a.first()
+                    else:
+                        a=Award(description=prix["description"],year=prix["year"],pow=pow,festival=f)
+                        a.save()
+
+
             if job is None: job = ""
             t_job = translate(job)
             if len(t_job)==0:t_job="Non identifié"
@@ -697,7 +741,8 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
                     transact.update(links=profil.add_link(infos["url"], "UniFrance"))
                     if "links" in infos:
                         links=links+infos["links"]
-                    job_for=infos["url"]
+                    #job_for=infos["url"]
+                    job_for=profil.firstname+" "+profil.lastname
 
             rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
             rc_articles.append(articles)

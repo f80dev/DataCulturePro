@@ -326,7 +326,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   analyse() {
     this.message="Analyse en cours des principaux annuaires";
-    this.api._post("batch/","filter="+this.profil.id,this.config.values.catalog).subscribe((r:any)=>{
+    this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=2&refresh_delay_profil=0",this.config.values.catalog).subscribe((r:any)=>{
       this.message="";
       showMessage(this,"Analyse terminée. Ajour de "+r.films+" film(s) et "+r.works+" contribution(s)");
       this.refresh_works();

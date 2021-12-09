@@ -8,7 +8,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from OpenAlumni.Tools import reset_password, log, sendmail
 from alumni.documents import ProfilDocument, PowDocument
-from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company
+from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 
 import os
 if os.environ.get("DEBUG"):
@@ -160,6 +160,7 @@ class WorksCSVRenderer (CSVRenderer):
         "film_id","film_titre", "film_catégorie",
         "film_genre","film_annee","film_budget",
         "film_production",
+        "film_festival","film_award_id","film_récompense","film_année",
 
         "work_id", "work_job","work_comment",
         "work_validate","work_source","work_state"
@@ -220,9 +221,23 @@ class ExtraWorkSerializer(serializers.ModelSerializer):
         fields=["id","profil","pow","duration","comment","job","source","public"]
 
 
+class FestivalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Festival
+        fields = ["id", "title"]
 
+
+class AwardSerializer(serializers.ModelSerializer):
+    festival=FestivalSerializer(many=False,read_only=True)
+    class Meta:
+        model = Award
+        fields = ["id","festival","description","year","pow","profil"]
+
+
+#Exemple : http://localhost:8000/api/extrapows/9808/
 class ExtraPOWSerializer(serializers.ModelSerializer):
-    works=ExtraWorkSerializer(many=True,read_only=True)
+    works =ExtraWorkSerializer(many=True,read_only=True)
+    award=AwardSerializer(many=True, read_only=True)
     class Meta:
         model=PieceOfWork
-        fields=["id","title","works","url","links","owner","visual","category","year","description","nature"]
+        fields=["id","title","works","award","url","links","owner","visual","category","year","description","nature"]

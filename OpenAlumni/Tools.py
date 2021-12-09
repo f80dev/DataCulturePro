@@ -510,7 +510,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None):
     else:
         delay = 0
 
-    if exists("./Temp/"+filename) and delay<3600*24*refresh_delay:
+    if exists("./Temp/"+filename) and delay<refresh_delay:
         log("Utilisation du fichier cache "+filename+" pour "+url)
         try:
             with open("./Temp/"+filename, 'r', encoding='utf8') as f:
@@ -541,7 +541,9 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None):
                 pass
 
         if not rc is None and save:
-            with open("./Temp/"+filename, 'w', encoding='utf8') as f:
+            path="./Temp/"+filename
+            log("Enregistrement sur  " + path)
+            with open(path, 'w', encoding='utf8') as f:
                 f.write(str(rc))
                 f.close()
 

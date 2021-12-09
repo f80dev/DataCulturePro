@@ -55,4 +55,9 @@ export class PublicComponent implements OnInit {
         this._clipboardService.copyFromContent(this.profil.public_url);
       });
   }
+
+  open_price(a: any,movie_title) {
+    let url="https://www.google.com/search?q="+a.title+" "+movie_title;
+    open(url.replace(" ","+"),"search");
+  }
 }

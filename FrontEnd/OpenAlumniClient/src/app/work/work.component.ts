@@ -18,6 +18,7 @@ export class WorkComponent implements OnInit {
   @Input("width") width:string="auto";
   @Input("maxwidth") maxwidth:string="auto";
   @Input("minwidth") minwidth:string="auto";
+  @Input("minheight") minheight:string="auto";
   @Input("showAction") showAction:boolean=true;
   @Input("writeAccess") writeAccess:boolean=false;
   @Input("backgroundColor") backgroundColor:string="grey";

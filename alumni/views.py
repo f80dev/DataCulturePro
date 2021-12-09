@@ -61,11 +61,11 @@ else:
 
 from OpenAlumni.social import SocialGraph
 from alumni.documents import ProfilDocument, PowDocument
-from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company
+from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award
 from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer, ExtraUserSerializer, POWSerializer, \
     WorkSerializer, ExtraPOWSerializer, ExtraWorkSerializer, ProfilDocumentSerializer, \
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
-    CompanySerializer
+    CompanySerializer, AwardSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -182,6 +182,14 @@ class WorkViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
     filter_fields=("profil","pow","job")
+
+#http://localhost:8000/api/awards/?format=json
+class AwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.all()
+    serializer_class = AwardSerializer
+    permission_classes = [AllowAny]
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields=("profil","pow","festival")
 
 
 #http://localhost:8000/api/extrapows
@@ -858,6 +866,7 @@ def export_all(request):
             "pow__id","pow__title","pow__nature",
             "pow__category","pow__year","pow__budget",
             "pow__production",
+            "pow__award__festival__title","pow__award__id","pow__award__description","pow__award__year",
 
             "id","job","comment",
             "validate","source","state"
@@ -890,7 +899,6 @@ def export_all(request):
     if not sql is None:
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
-
 
     if request.GET.get("percent","False")=="True":
         sum=df.groupby(request.GET.get("x",df.columns[0])).sum().apply(lambda x: 100 * x / float(x.sum())).values
@@ -946,7 +954,14 @@ def export_all(request):
 
     if format.startswith("graph"):
         graph=StatGraph(df)
-        graph.trace(request.GET.get("x",df.columns[0]),request.GET.get("y",df.columns[1]),request.GET.get("color"),request.GET.get("height",400),style=request.GET.get("chart","bar"))
+        graph.trace(
+            request.GET.get("x",df.columns[0]),
+            request.GET.get("y",df.columns[1]),
+            request.GET.get("color"),
+            request.GET.get("height",400),
+            style=request.GET.get("chart","bar"),
+            title=title,
+        )
         rc = graph.to_html()
 
         if format=="graph":
@@ -980,9 +995,10 @@ def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={}
 
                 if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
                 if min_len==0 or len(rc)>=min_len:
-                    return rc
+                    return rc.strip()
             else:
                 return header.index(c)
+
     return default
 
 

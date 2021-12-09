@@ -18,14 +18,20 @@ class StatGraph:
     def query(self,sql):
         self.df=ps.sqldf(sql)
 
-    def trace(self,x,y,color,height,style="bar"):
+    def trace(self,x,y,color,height,style="bar",title=""):
         if height is not None:height=int(height)
         if style=="bar":
-            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=self.template)
+            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=self.template,title=title)
+
+        if style=="line":
+            self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=self.template,title=title)
 
         if style=="pie":
+            if color=="undefined": color=x
             if x==color:
-                self.fig = px.pie(self.df,color=color,height=height,names=x,values=y,template=self.template)
+                # camembert : https://plotly.com/python-api-reference/generated/plotly.express.pie.html
+                self.fig = px.pie(self.df,color=color,height=height,names=x,values=y,template=self.template,title=title)
+                self.fig.update_traces(textinfo="value")
             else:
                 n_cols=4
                 n_rows=int(len(set(self.df[x]))/n_cols)

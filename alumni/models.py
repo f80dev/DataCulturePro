@@ -15,7 +15,7 @@ from django.db import models
 
 # Create your models here.
 #Mise a jour du model : python manage.py makemigrations
-from django.db.models import Model, CASCADE, JSONField
+from django.db.models import Model, CASCADE, JSONField, SET_NULL
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_elasticsearch_dsl.registries import registry
@@ -261,11 +261,26 @@ class Work(models.Model):
         })
 
         if self.pow is not None:
-            d["pow"]={"title":self.pow.title,"year":self.pow.year,"link":self.pow.links,"nature":self.pow.nature,"category":self.pow.category}
+            d["pow"]={
+                "title":self.pow.title,
+                "year":self.pow.year,
+                "link":self.pow.links,
+                "nature":self.pow.nature,
+                "category":self.pow.category,
+                "awards":list()
+            }
             d["year"]=self.pow.year
+            if self.pow.award.exists():
+                for a in self.pow.award.all():
+                    d["pow"]["awards"].append({"title":a.festival.title.replace("'"," "),"description":a.description.replace("'"," "),"year":a.year})
 
         return str(d)
 
+
+
+class Festival(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(null=False, max_length=300, unique=True, default="sans titre",help_text="Nom du festival")
 
 
 
@@ -280,7 +295,7 @@ class PieceOfWork(models.Model):
     visual = models.TextField(blank=True,help_text="Visuel de l'oeuvre")
     dtStart=models.DateField(auto_now=True,null=False,help_text="Date de début de la réalisation de l'oeuvre")
     dtEnd=models.DateField(auto_now=True,null=False,help_text="Date de fin de la réalisation de l'oeuvre")
-    title=models.CharField(null=False,max_length=300,unique=True,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
+    title=models.CharField(null=False,max_length=300,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
     year=models.CharField(null=True,max_length=4,help_text="Année de sortie")
     nature=models.CharField(null=False,default='MOVIE',max_length=50,help_text="Classification de l'oeuvre")
     dtCreate = models.DateField(auto_now_add=True,help_text="Date d'enregistrement de l'oeuvre dans DataCulture")
@@ -356,3 +371,11 @@ def update_pow(sender, **kwargs):
 #     school = models.ForeignKey('School',null=False,on_delete=models.CASCADE)
 #     dtCreate = models.DateField(auto_now_add=True)
 
+
+class Award(models.Model):
+    id = models.AutoField(primary_key=True)
+    festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant")
+    profil = models.ForeignKey('Profil', null=True, on_delete=models.SET_NULL, related_name="award",help_text="Profil destinataire du prix")
+    pow = models.ForeignKey('PieceOfWork', null=True, on_delete=models.CASCADE, related_name="award",help_text="Oeuvre récompensé")
+    description = models.CharField(null=False, max_length=100, default="sans titre", help_text="Nom du festival")
+    year = models.IntegerField(null=False, help_text="Date de la remise du prix")

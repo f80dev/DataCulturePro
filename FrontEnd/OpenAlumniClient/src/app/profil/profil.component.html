@@ -53,7 +53,16 @@
 
 
       <div class="avatar-name">
-        <br>
+
+         <button mat-button mat-icon-button
+                title="Voir la page publique"
+                name="cmdShareProfil"
+                class="small-icon-button"
+                (click)="open_public_profil(profil)">
+          <mat-icon>zoom_in</mat-icon>
+
+        </button>
+
         <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
         <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname}}</span>
       </div>
@@ -86,15 +95,6 @@
                 *ngIf="profil?.works?.length>0 && config.hasPerm('r_works')"
                 (click)="openWork(profil)">
           <mat-icon>videocam</mat-icon>
-        </button>
-
-        <button mat-button mat-icon-button
-                title="Voir la page publique"
-                name="cmdShareProfil"
-                class="small-icon-button"
-                *ngIf="profil?.public_url?.length>0"
-                (click)="open_public_profil(profil)">
-          <mat-icon>share</mat-icon>
         </button>
 
         <button mat-button mat-icon-button

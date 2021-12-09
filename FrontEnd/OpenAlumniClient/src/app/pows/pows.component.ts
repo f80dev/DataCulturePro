@@ -9,6 +9,7 @@ import {environment} from "../../environments/environment";
 import {MatAccordion} from "@angular/material/expansion";
 import {Observable} from "rxjs";
 import { map } from 'rxjs/operators';
+import {stringify} from "querystring";
 
 @Component({
   selector: 'app-pows',
@@ -34,8 +35,15 @@ export class PowsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.routes.snapshot.queryParamMap.has("filter"))
+    if(this.routes.snapshot.queryParamMap.has("filter")){
       this.query.value=remove_ponctuation(this.routes.snapshot.queryParamMap.get("filter"));
+    } else {
+      //exemple : http://localhost:4200/pows?query=grave
+      if(this.routes.snapshot.queryParamMap.has("query")){
+        this.query.value=remove_ponctuation(this.routes.snapshot.queryParamMap.get("query"));
+      }
+    }
+
 
     if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
     setTimeout(()=>{this.refresh();},500);
@@ -121,8 +129,9 @@ export class PowsComponent implements OnInit {
     this.api._get("extrapows/"+pow.id,"").subscribe((r:any)=>{
       let rc=[];
       if(r){
+        pow.title=r.title;
         pow.visual=r.visual;
-        pow.description=r.description;
+        pow.award=r.award;
         for(let item of r.works){
           if(item.public){
             rc.push({
@@ -134,7 +143,6 @@ export class PowsComponent implements OnInit {
         pow.expanded=true;
         pow.works=rc;
       }
-
     });
   }
 

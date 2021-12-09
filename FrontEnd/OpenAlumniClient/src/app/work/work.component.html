@@ -1,10 +1,10 @@
-<mat-card [ngStyle]="{'backgroundColor':backgroundColor,'text-align':'left','max-width':maxwidth,'min-width':minwidth,'width':width,height:height}">
+<mat-card [ngStyle]="{'backgroundColor':backgroundColor,'text-align':'left','max-width':maxwidth,'min-height':minheight,'min-width':minwidth,'width':width,height:height}">
   <mat-card-header>
     <div mat-card-avatar>
       <img src="/assets/img/movie.png" style="height:40px">
     </div>
     <mat-card-title>
-      {{work?.pow?.title}}
+       {{work.job}} de {{work?.pow?.title}}
       <span *ngIf="work?.year">({{work?.year}})</span>
     </mat-card-title>
     <mat-card-subtitle *ngIf="work?.pow">
@@ -14,7 +14,8 @@
   </mat-card-header>
 
   <mat-card-content [ngStyle]="{margin: '0px','margin-top':'5px'}">
-    <small>{{work.job}}</small>
+
+
     <ng-content></ng-content>
 
   </mat-card-content>
