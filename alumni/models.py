@@ -119,7 +119,7 @@ class Profil(models.Model):
 
     @property
     def public_url(self):
-        return DOMAIN_APPLI+"/public/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname+"&toolbar=false"
+        return "./public/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname+"&toolbar=false"
 
     @property
     def promo(self):
@@ -248,9 +248,9 @@ class Work(models.Model):
     #     return self.pow.nature
 
 
-    # @property
-    # def lastname(self):
-    #     return self.profil.lastname
+    @property
+    def lastname(self):
+        return self.profil.lastname
 
 
     def __str__(self):

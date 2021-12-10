@@ -431,8 +431,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   open_public_page() {
-    //this.router.navigate(['works'],{queryParams:{id:this.profil.id,name:this.profil.firstname+' '+this.profil.lastname}});
-    this.router.navigate(['public'],{queryParams:{id:this.profil.id}});
+    open(this.profil.public_url,"page_public");
   }
 }
 

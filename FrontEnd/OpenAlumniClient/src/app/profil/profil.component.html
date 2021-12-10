@@ -53,12 +53,11 @@
 
 
       <div class="avatar-name">
-
          <button mat-button mat-icon-button
                 title="Voir la page publique"
                 name="cmdShareProfil"
                 class="small-icon-button"
-                (click)="open_public_profil(profil)">
+                (click)="open_public_profil($event,profil)">
           <mat-icon>zoom_in</mat-icon>
 
         </button>

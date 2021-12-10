@@ -42,7 +42,6 @@ class ProfilDocument(Document):
     works= fields.NestedField(properties={"job":fields.TextField(),"title":fields.TextField()})
     promo=fields.TextField(attr="promo")
     links=fields.NestedField(properties={"url":fields.TextField(),"text":fields.TextField()})
-    public_url=fields.TextField(attr="public_url")
 
     class Index:
         name='profils'
