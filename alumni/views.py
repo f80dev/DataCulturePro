@@ -61,7 +61,7 @@ else:
 
 from OpenAlumni.social import SocialGraph
 from alumni.documents import ProfilDocument, PowDocument
-from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award
+from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer, ExtraUserSerializer, POWSerializer, \
     WorkSerializer, ExtraPOWSerializer, ExtraWorkSerializer, ProfilDocumentSerializer, \
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
@@ -478,7 +478,7 @@ def batch(request):
 @permission_classes([AllowAny])
 def api_doc(request):
     rc=[]
-    for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields):
+    for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields)+list(Award._meta.fields)+list(Festival._meta.fields):
         help_text=field.help_text
         if len(help_text)>0 and not help_text.startswith("@"):
             rc.append({
@@ -876,10 +876,12 @@ def export_all(request):
         df.columns=headers
     else:
         values=request.GET.get("data_cols").split(",")
-        table=request.GET.get("table","profil")
+        table=request.GET.get("table","profil").lower()
         if table.startswith("profil"):data=Profil.objects.all().values(*values)
         if table.startswith("pieceofwork"):data=PieceOfWork.objects.all().values(*values)
         if table.startswith("work"):data=Work.objects.all().values(*values)
+        if table.startswith("award"):data=Award.objects.all().values(*values)
+        if table.startswith("festival"):data=Festival.objects.all().values(*values)
 
         df=pd.DataFrame.from_records(data)
         if len(data)>0:
@@ -919,6 +921,12 @@ def export_all(request):
         funcname=request.GET.get("func","count")
         log("On regroupe sur  "+str(group_fields)+" avec la fonction "+funcname)
         df=df.groupby(by=group_fields,dropna=True,as_index=False).agg(funcname)
+
+    dictionnary=request.GET.get("replace")
+    if dictionnary:
+        dictionnary=loads(dictionnary)
+        for k in dictionnary.keys():
+            df=df.replace(str(k),str(dictionnary[k]))
 
     if request.method=="POST":
         pivot_obj=loads(str(request.body,"utf8"))
@@ -961,6 +969,7 @@ def export_all(request):
             request.GET.get("height",400),
             style=request.GET.get("chart","bar"),
             title=title,
+            template=request.GET.get("template","seaborn")
         )
         rc = graph.to_html()
 

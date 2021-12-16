@@ -500,30 +500,30 @@ def remove_html(text):
 def load_page(url:str,refresh_delay=31,save=True,bot=None):
     filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
-    if not exists("./Temp/" + filename) :
+    if not exists(PAGEFILE_PATH + filename) :
         if exists("./Temp/html.7z"):
-            with py7zr.SevenZipFile("./Temp/html.7z", 'r') as archive:
-                archive.extract(path="./Temp",targets=filename)
+            with py7zr.SevenZipFile(PAGEFILE_PATH + "/html.7z", 'r') as archive:
+                archive.extract(path=PAGEFILE_PATH,targets=filename)
 
-    if exists("./Temp/" + filename):
-        delay=(datetime.datetime.now().timestamp()-stat("./Temp/"+filename).st_mtime)/(3600*24)
+    if exists(PAGEFILE_PATH +  filename):
+        delay=(datetime.datetime.now().timestamp()-stat(PAGEFILE_PATH +filename).st_mtime)/(3600*24)
     else:
         delay = 0
 
-    if exists("./Temp/"+filename) and delay<refresh_delay:
+    if exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
         log("Utilisation du fichier cache "+filename+" pour "+url)
         try:
-            with open("./Temp/"+filename, 'r', encoding='utf8') as f:
+            with open(PAGEFILE_PATH + filename, 'r', encoding='utf8') as f:
                 html=f.read()
                 f.close()
         except:
-            os.remove("./Temp/"+filename)
+            os.remove(PAGEFILE_PATH + filename)
             return load_page(url)
 
         page=wikipedia.BeautifulSoup(html)
         if len(page.contents)==0:
             log("Le fichier ./Temp/"+filename+" est corrompu")
-            os.remove("./Temp/"+filename)
+            os.remove(PAGEFILE_PATH + filename)
             return load_page(url)
 
         return page
@@ -541,15 +541,15 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None):
                 pass
 
         if not rc is None and save:
-            path="./Temp/"+filename
+            path=PAGEFILE_PATH + filename
             log("Enregistrement sur  " + path)
             with open(path, 'w', encoding='utf8') as f:
                 f.write(str(rc))
                 f.close()
 
-            if exists("./Temp/html.7z"):
-                with py7zr.SevenZipFile("./Temp/html.7z", 'a') as archive:
-                    archive.write("./Temp/"+filename,filename)
+            if exists(PAGEFILE_PATH + "html.7z"):
+                with py7zr.SevenZipFile(PAGEFILE_PATH + "html.7z", 'a') as archive:
+                    archive.write(PAGEFILE_PATH + filename,filename)
 
         return rc
 

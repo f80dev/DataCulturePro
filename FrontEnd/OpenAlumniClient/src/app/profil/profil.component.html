@@ -5,7 +5,9 @@
     <div class="flip-card-front">
       <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
         <td style="text-align: left;">
-          <div *ngIf="config.hasPerm('r_department')">
+          <div *ngIf="config.hasPerm('r_department')"
+               style="cursor: pointer;"
+               (click)="openQuery($event,profil?.department_category)">
             <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
           </div>
         </td>
@@ -16,7 +18,7 @@
             <span style='cursor: pointer'
                   name="lblPromo"
                   title="Rechercher par promotion"
-                  (click)="onclick.emit(profil?.degree_year)">
+                  (click)="openQuery($event,profil?.degree_year)">
               {{profil?.degree_year}}
             </span>
           </div>
@@ -25,7 +27,9 @@
       </tr>
       </table>
 
-      <div *ngIf="profil?.cursus=='P'" style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;">
+      <div *ngIf="profil?.cursus=='P'"
+           (click)="openQuery($event,profil?.department)"
+           style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;cursor: pointer;">
         {{profil.department}}
       </div>
 
@@ -63,7 +67,7 @@
         </button>
 
         <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
-        <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname}}</span>
+        <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
       </div>
 
 
@@ -76,8 +80,8 @@
     </div>
 
     <div class="flip-card-back" name="cardAction">
+      <div style="margin-top: 5px;">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
       <div *ngIf="showAction">
-        <br>
         <button mat-button mat-icon-button
                 name="cmdContact"
                 class="small-icon-button"

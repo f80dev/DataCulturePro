@@ -377,5 +377,5 @@ class Award(models.Model):
     festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant")
     profil = models.ForeignKey('Profil', null=True, on_delete=models.SET_NULL, related_name="award",help_text="Profil destinataire du prix")
     pow = models.ForeignKey('PieceOfWork', null=True, on_delete=models.CASCADE, related_name="award",help_text="Oeuvre récompensé")
-    description = models.CharField(null=False, max_length=100, default="sans titre", help_text="Nom du festival")
-    year = models.IntegerField(null=False, help_text="Date de la remise du prix")
+    description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom du festival")
+    year = models.IntegerField(null=True, help_text="Date de la remise du prix")

@@ -121,5 +121,10 @@ export class ProfilComponent implements OnInit,OnChanges {
     }
 
   }
+
+  openQuery(evt,q:string) {
+    evt.stopPropagation();
+    this.onclick.emit(q);
+  }
 }
 

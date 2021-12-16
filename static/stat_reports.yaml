@@ -6,8 +6,13 @@ Version: 1.0
 #        "work_id", "work_job","work_comment","work_validate","work_source","work_state"
 
 
+#liste des templates : voir https://plotly.com/python/templates/
+#simple_white, seaborn, ggplot2, plotly_dark
+
 #Documentation de la librairie graphique
 #camembert : https://plotly.com/python-api-reference/generated/plotly.express.pie.html
+
+
 
 Reports:
   - title: Répartition des étudiants par formation
@@ -25,13 +30,14 @@ Instant_reports:
   - title: Les événements qui recompensent le plus les anciens de la FEMIS
     id: film_by_festival
     chart: pie
+    template: "plotly_dark"
     x: Evenements
     y: Films
     sql: SELECT * FROM (SELECT film_festival AS Evenements,count(film_id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
     prod: True
 
 
-  - title: Répartition des etudiants par formation
+  - title: Répartition des etudiants (formation initiale) par département
     description:
     id: student_by_depyear
     chart: bar
@@ -56,6 +62,23 @@ Instant_reports:
     table: profil
     data_cols: id,cursus,degree_year
     sql: SELECT cursus,promotion,count(id) as etudiants FROM df GROUP BY cursus,promotion
+    template: simple_white
+    replace:
+      P: Formation pro
+      S: Formation initiale
+    prod: True
+
+  - title: Liste des prix gagnés par les films de la FEMIS
+    description:
+    id: award_by_film
+    chart: none
+    x: award
+    y: nb
+    color: description
+    cols: id,description
+    table: Award
+    data_cols: id,description
+    sql: SELECT description,count(id) as nb FROM df GROUP BY description ORDER BY nb
     prod: True
 
 
@@ -72,7 +95,8 @@ Instant_reports:
     sql: SELECT formation, promotion,count(id) as stagiaires FROM df WHERE cursus='P' GROUP BY formation,promotion
     prod: True
 
-  - title: Répartition des anciens par type de formation
+
+  - title: Répartition des anciens (pro et initiale) par domaine
     description:
     id: prostudent_by_categories
     x: promotion

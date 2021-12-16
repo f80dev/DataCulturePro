@@ -156,7 +156,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         log("Analyse du film "+rc["title"])
 
     for title in page.findAll('h1'):
-        if "Affiches" in title.text:
+        if title.text.startswith("Affiches"):
             section=title.parent
             _img=section.find("img",attrs={'itemprop': "image"})
             if not _img is None:
@@ -173,6 +173,12 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
     for div in page.findAll("div",attrs={'class': "details_bloc"}):
         if idx_div==0:
             if not ":" in div.text:rc["nature"]=div.text
+
+        if "Numéro de visa" in div.text:
+            rc["visa"]=div.text.split(" : ")[1].replace(".","")
+
+        if "Langues de tournage" in div.text:
+            rc["langue"]=div.text.split(" : ")[1]
 
         if "Année de production : " in div.text:
             rc["year"]=div.text.replace("Année de production : ","")
@@ -202,8 +208,13 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
 
     if not job_for is None:
         if "real" in rc and rc["real"]==job_for:
-            rc["job"]="Réalisation"
+            rc["job"]=translate("Réalisation")
         else:
+            #Recherche en réalisation
+            section=page.find("div",{"itemprop":"director"})
+            if job_for.lower() in section.text.lower():
+                rc["job"] = translate("Réalisation")
+
             #Recherche dans le générique détaillé
             section=page.find("section",{"id":"casting"})
             if not section is None:
@@ -215,7 +226,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     for l in links:
                         job=jobs[idx].text.replace("<h2>","").replace("</h2>","").replace(" : ","")
                         if "/personne" in l.get("href"):
-                            if l.get("href")==job_for:
+                            if (job_for.startswith("http") and l.get("href")==job_for) or (job_for.lower()==l.text.lower()):
                                 rc["job"]=job
                                 break
                             else:
@@ -311,8 +322,9 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                 film_zone=page.find("div",{"id":"filmography"})
                 if film_zone is None:film_zone=page
 
+                #Contient l'ensemble des liens qui renvoi vers une oeuvre
+                infos["links"] = []
                 links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
-                infos["links"]=[]
                 for l in links:
                     if len(l.getText())>3 and l.parent.parent.parent.parent and l.parent.parent.parent.parent["id"]=="filmography":
                         texts=l.parent.parent.text.split("(")
@@ -328,25 +340,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                         url = "https://www.imdb.com" + l.get("href")
                         url = url.split("?")[0]
 
-                        if len(texts)>1:
-                            nature = ""
-                            for tmp in texts[1:]:
-                                tmp=tmp.split(")")[0].split(":")[0].split(" - ")[0].lower()
-                                if len(job)==0 and in_dict(tmp,"jobs"):job=translate(tmp)
-                                if in_dict(tmp,"categories"):nature=translate(tmp)
-
-                            if len(job)==0:log("job introuvable dans "+texts[1:])
-                            if len(nature)==0:log("nature de l'oeuvre introuvable dans "+texts[1:])
-
-                            # for nat in MOVIE_NATURE:
-                            #     if nat.lower() in texts[1].lower():
-                            #         nature=nat
-                            #         break
-                            # if nature=="":
-                            #     log("Nature inconnue depuis "+texts[1]+" pour "+url)
-
-
-                        infos["links"].append({"url":url,"text":l.getText(),"job":job,"nature":nature})
+                        infos["links"].append({"url":url,"text":l.getText(),"job":"","nature":""})
 
     return infos
 
@@ -620,13 +614,15 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                     if a.exists():
                         a=a.first()
                     else:
-                        a=Award(description=prix["description"],year=prix["year"],pow=pow,festival=f)
+                        a=Award(description=prix["description"][:249],year=prix["year"],pow=pow,festival=f)
                         a.save()
 
 
             if job is None: job = ""
             t_job = translate(job)
-            if len(t_job)==0:t_job="Non identifié"
+            if len(t_job)==0:
+                t_job="Non identifié"
+
             if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
                 if len(t_job)>0:
                     log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
@@ -762,7 +758,10 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
             # except:
             #     pass
 
-            transact.update(dtLastSearch=profil.dtLastSearch)
+            try:
+                transact.update(dtLastSearch=profil.dtLastSearch)
+            except:
+                pass
         else:
             log(profil.lastname+" est déjà à jour")
 

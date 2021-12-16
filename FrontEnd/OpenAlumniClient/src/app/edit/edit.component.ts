@@ -63,7 +63,6 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
 
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

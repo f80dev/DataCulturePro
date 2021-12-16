@@ -10,7 +10,6 @@ class StatGraph:
     #dash= dash.Dash(__name__)
     df:DataFrame
     fig=None
-    template="seaborn"
 
     def __init__(self,df:DataFrame):
         self.df=df
@@ -18,19 +17,22 @@ class StatGraph:
     def query(self,sql):
         self.df=ps.sqldf(sql)
 
-    def trace(self,x,y,color,height,style="bar",title=""):
+    def trace(self,x,y,color,height,style="bar",title="",template="seaborn"):
         if height is not None:height=int(height)
+        if style=="none":
+            self.fig=None
+
         if style=="bar":
-            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=self.template,title=title)
+            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
 
         if style=="line":
-            self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=self.template,title=title)
+            self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
 
         if style=="pie":
             if color=="undefined": color=x
             if x==color:
                 # camembert : https://plotly.com/python-api-reference/generated/plotly.express.pie.html
-                self.fig = px.pie(self.df,color=color,height=height,names=x,values=y,template=self.template,title=title)
+                self.fig = px.pie(self.df,color=color,height=height,names=x,values=y,template=template,title=title)
                 self.fig.update_traces(textinfo="value")
             else:
                 n_cols=4
@@ -61,7 +63,7 @@ class StatGraph:
         # ])
 
     def to_html(self):
-        code=self.fig.to_html()
+        code="" if self.fig is None else self.fig.to_html()
         return {"code": code,"values":self.df.to_html()}
 
 
