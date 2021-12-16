@@ -1159,6 +1159,7 @@ def importer(request):
     """
     i = 0
     record = 0
+    non_import=list()
 
     d,total_record=importer_file(request)
 
@@ -1169,8 +1170,8 @@ def importer(request):
             header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
             log("Liste des colonnes disponibles "+str(header))
         else:
-            s=request.data["dictionnary"].replace("'","\"")
-            dictionnary=loads(s)
+            s=request.data["dictionnary"].replace("'","\"").replace("\n","").strip()
+            dictionnary=dict() if len(s)==0 else loads(s)
 
             firstname=idx("fname,firstname,prenom,prénom",row,header=header)
             lastname=idx("lastname,nom,lname",row,header=header)
@@ -1267,13 +1268,15 @@ def importer(request):
                     record=record+1
                 except Exception as inst:
                     log("Probléme d'enregistrement de "+email+" :"+str(inst))
+                    non_import.append(str(profil))
             else:
                 log("Le profil "+str(row)+" ne peut être importée")
+                non_import.append(str(profil))
         i=i+1
 
     cr=str(record)+" profils importés"
     log(cr)
-    return Response(cr,200)
+    return JsonResponse({"imports":record,"abort":non_import},200)
 
 
 

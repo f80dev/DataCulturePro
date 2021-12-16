@@ -87,7 +87,7 @@ Instant_reports:
     id: prostudent_by_depyear
     x: promotion
     y: stagiaires
-    chart: line
+    chart: aera
     color: formation
     table: profil
     data_cols: id,department,cursus,degree_year

@@ -7,6 +7,7 @@ import {environment} from "../environments/environment";
 import {MatSidenav} from "@angular/material/sidenav";
 import {ChatAdapter} from "ng-chat";
 import { MyAdapter } from './MyAdapter';
+import {$$} from "./tools";
 
 @Component({
   selector: 'app-root',
@@ -35,29 +36,30 @@ export class AppComponent implements OnInit {
   }
 
 
-    closeMenu() {
-     if (this.innerWidth < 800)
+  closeMenu() {
+    if (this.innerWidth < 800)
       this.drawer.close();
+  }
+
+  logout() {
+    $$("Déconnexion");
+    this.api.logout();
+    this.config.raz_user();
+    window.location.reload();
+  }
+
+
+  @HostListener('window:resize', ['$event'])
+  onResize($event: any) {
+    this.innerWidth = $event.currentTarget.innerWidth;
+    if (this.innerWidth >= 800 && this.drawer){
+      this.sidemenu_mode="side";
+      this.drawer.open();
     }
-
-    logout() {
-      this.api.logout();
-      this.config.raz_user();
-      window.location.reload();
+    else{
+      this.closeMenu();
+      this.sidemenu_mode="over";
     }
-
-
-    @HostListener('window:resize', ['$event'])
-    onResize($event: any) {
-      this.innerWidth = $event.currentTarget.innerWidth;
-      if (this.innerWidth >= 800 && this.drawer){
-        this.sidemenu_mode="side";
-        this.drawer.open();
-      }
-      else{
-        this.closeMenu();
-        this.sidemenu_mode="over";
-      }
 
   }
 
@@ -66,8 +68,6 @@ export class AppComponent implements OnInit {
       this.onResize({currentTarget:{innerWidth:window.innerWidth}});
     },1000);
   }
-
-
 
 }
 

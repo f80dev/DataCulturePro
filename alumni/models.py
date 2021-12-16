@@ -167,6 +167,11 @@ class Article(models.Model):
         ordering = ["dtCreate"]
 
 
+class Training(models.Model):
+    title=models.CharField(max_length=100,blank=False,null=False)
+    url=models.CharField(max_length=150,null=True)
+    #https://www.femis.fr/presentation-de-l-atelier-ludwig
+
 #Gestion du modele UserExtra______________________________________________________________________________________
 class ExtraUser(models.Model):
     """

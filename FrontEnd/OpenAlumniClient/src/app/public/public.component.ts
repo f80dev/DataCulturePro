@@ -32,7 +32,6 @@ export class PublicComponent implements OnInit {
           for(var i=0;i<100;i++){
             w=w.replace("'","\"")
           }
-
           this.works.push(JSON.parse(w));
         }
       })

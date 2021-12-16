@@ -28,6 +28,10 @@ class StatGraph:
         if style=="line":
             self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
 
+        if style=="aera":
+            #https://plotly.com/python-api-reference/generated/plotly.express.area.html
+            self.fig = px.area(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
+
         if style=="pie":
             if color=="undefined": color=x
             if x==color:

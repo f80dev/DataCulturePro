@@ -14,7 +14,12 @@
           <mat-icon title="Voir la page publique" (click)="share()" style="cursor: pointer;">share</mat-icon>
         </div>
         <br>
-        &nbsp;{{profil?.department}}<br>
+        &nbsp;{{profil?.department}}
+        &nbsp;
+
+          <mat-icon style="font-size: small;cursor: pointer;" title="En savoir plus">help</mat-icon>
+
+        <br>
         &nbsp;Promotion {{profil?.degree_year}}<br>
 
         <div *ngIf="profil?.links?.length>0">

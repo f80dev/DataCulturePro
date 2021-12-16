@@ -99,7 +99,7 @@ export class ConfigService {
           for(let it of r.profils)
             this.profils[it.id] = it;
 
-          this.raz_user();
+          //this.raz_user();
           this.getConfig().then(r => {
             this.values = r;
             $$("Chargement du fichier de configuration Ok",r);
@@ -116,31 +116,29 @@ export class ConfigService {
 
   init_user(func_success=null,func_anonyme=null,email=null) {
     $$("Initialisation de l'utilisateur "+email);
-    if(email){
-      this.api.getextrauser(email).subscribe((r:any)=>{
-        if(r.count>0){
-          $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
-          this.user=r.results[0];
-          if(!this.user.profil){
-            $$("Si l'utilisateur n'existe pas dans les profils des anciens");
-            this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
-              showMessage(this,"Message:"+r.result);
-            })
-          }
-
-          if(func_success)func_success();
-        } else {
-          $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")
-          this.raz_user();
-          this.api.logout();
-          this.user.perm=this.profils[this.values.anonymousOffer].perm;
-          this.user.profil=this.values.anonymousOffer;
-          if(func_anonyme)func_anonyme();
+    this.api.getextrauser(email).subscribe((r:any)=>{
+      if(r.count>0){
+        $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
+        this.user=r.results[0];
+        if(!this.user.profil){
+          $$("Si l'utilisateur n'existe pas dans les profils des anciens");
+          this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
+            showMessage(this,"Message:"+r.result);
+          })
         }
-      });
-    } else {
-      $$("L'email ne peut pas être vide");
-    }
+
+        if(func_success)func_success();
+      } else {
+
+        $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")
+        if(email){
+          this.api.logout();
+        }
+        this.raz_user();
+        this.user.profil="Anonyme";
+        if(func_anonyme)func_anonyme();
+      }
+    });
   }
 
 
