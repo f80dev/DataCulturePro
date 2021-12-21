@@ -1,6 +1,7 @@
 python manage.py makemigrations
 python manage.py migrate --settings OpenAlumni.settings_dev
 python manage.py search_index --settings OpenAlumni.settings_dev --rebuild
+python manage.py archive --settings OpenAlumni.settings_dev
 
 echo "Deployer le dev"
 pause 0

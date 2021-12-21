@@ -127,7 +127,7 @@ class Profil(models.Model):
 
     @property
     def fullname(self):
-        return '%s %s' % (self.firstname, self.lastname)
+        return '%s %s' % (self.firstname, self.lastname.upper())
 
     @property
     def str_links(self):
@@ -142,7 +142,7 @@ class Profil(models.Model):
 
     @property
     def name_field_indexing(self):
-        return {"name":self.lastname+" "+self.firstname}
+        return {"name":self.lastname.upper()+" "+self.firstname}
 
 
 class Company(models.Model):
@@ -255,12 +255,12 @@ class Work(models.Model):
 
     @property
     def lastname(self):
-        return self.profil.lastname
+        return self.profil.lastname.upper()
 
 
     def __str__(self):
         d:dict=dict({
-            "name":self.profil.firstname+" "+self.profil.lastname,
+            "name":self.profil.firstname+" "+self.profil.lastname.upper(),
             "job":self.job,
             "comment":self.comment
         })

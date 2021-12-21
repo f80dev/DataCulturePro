@@ -1,6 +1,8 @@
 <div class="mainform" style="text-align: center !important;width: 100%;">
-  <h3>{{profil?.firstname}} {{profil?.lastname}}</h3>
+  <h3>{{profil?.firstname}} {{profil?.lastname?.toUpperCase()}}</h3>
 
+  <app-hourglass [message]="message"></app-hourglass>
+  <br>
 
   <div *ngIf="showAddWork==0 && profil" style="display: inline-block;max-width: 950px;width: 95%">
     <mat-accordion style="width:100%;">
@@ -258,9 +260,10 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
-          <div *ngIf="works.length==0">
+          <div *ngIf="works.length==0 && message.length==0">
             Aucune expérience identifiée.
           </div>
+
           <tr *ngFor="let work of works" style="width:100%;text-align: left;">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
@@ -336,19 +339,36 @@
           </button>
 
 
-          <button class="app-button" mat-button mat-raised-button
+          <button mat-icon-button mat-button
+                  mat-raised-button
+                  class="icon-button"
+                  id="cmdDeletePows"
+                  title="Efface les films"
+                  *ngIf="works?.length>0 && config.hasPerm('add_movies')"
+                  (click)="delete_pows()">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+
+          <button mat-icon-button
+                  mat-raised-button
+                  class="icon-button"
+                  mat-button
                   id="cmdClear"
                   title="Sont effacées uniquement les expériences issue des annuaires publiques"
                   *ngIf="works?.length>0"
                   (click)="reset_works()">
-            <div class="bloc-bouton">Effacer les<br>expériences</div>
+            <mat-icon>loop</mat-icon>
           </button>
 
-          <button class="app-button" mat-button mat-raised-button
+          <button mat-icon-button
+                  mat-raised-button
+                  class="icon-button"
+                  mat-button
                   title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
                   id="cmdAnalyse"
                   (click)="analyse()">
-            <div class="bloc-bouton">Recherche<br>automatique</div>
+            <mat-icon>search</mat-icon>
           </button>
 
           <button class="app-button" mat-button mat-raised-button
@@ -508,7 +528,5 @@
 
   </div>
 
-  <br>
-  <app-hourglass [message]="message"></app-hourglass>
 
 </div>

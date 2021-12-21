@@ -47,7 +47,7 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
-from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion
+from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pows
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig
 from OpenAlumni.nft import NFTservice
@@ -628,43 +628,60 @@ def ask_perms(request):
 
 
 
+#
+#
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticatedOrReadOnly])
+# def rebuild_index_old(request):
+#     index_name=request.GET.get("name","profils")
+#     es = Index(index_name,using="default")
+#     if es.exists():es.delete()
+#     es.create("default")
+#     es.save("default")
+#     return Response({"message": "Reconstruction de l'index "+index_name+" terminée"})
+#
+#
+#
+# @api_view(["GET"])
+# def scrap_linkedin(request):
+#     """
+#     test: http://localhost:8000/api/scrap_linkedin
+#     :return:
+#     """
+#     proxy=request.GET.get("proxy","")
+#     capabilities = DesiredCapabilities.CHROME
+#     if len(proxy) > 0:
+#         p = Proxy()
+#         p.proxy_type = ProxyType.MANUAL
+#         p.http_proxy = proxy
+#         p.socks_proxy = proxy
+#         p.ssl_proxy = proxy
+#         p.add_to_capabilities(capabilities)
+#
+#     url="https://www.linkedin.com/in/hhoareau/"
+#     driver:WebDriver = WebDriver(command_executor="http://127.0.0.1:9515", desired_capabilities=capabilities)
+#     driver.implicitly_wait(1)
+#     driver.get(url)
+#     sections=driver.find_elements_by_tag_name("section")
+#     return Response("scrapped",200)
 
 
+
+#http://localhost:8000/api/analyse_pow/
 @api_view(["GET"])
-@permission_classes([IsAuthenticatedOrReadOnly])
-def rebuild_index_old(request):
-    index_name=request.GET.get("name","profils")
-    es = Index(index_name,using="default")
-    if es.exists():es.delete()
-    es.create("default")
-    es.save("default")
-    return Response({"message": "Reconstruction de l'index "+index_name+" terminée"})
+@permission_classes([AllowAny])
+def get_analyse_pow(request):
 
+    ids=[]
+    if request.GET.get("id",None):ids=[request.GET.get("id")]
+    if request.GET.get("ids", None):ids = request.GET.get("ids").split(",")
 
+    if len(ids)==0:
+        pows = PieceOfWork.objects.all()
+    else:
+        pows=PieceOfWork.objects.filter(id__in=ids)
 
-@api_view(["GET"])
-def scrap_linkedin(request):
-    """
-    test: http://localhost:8000/api/scrap_linkedin
-    :return:
-    """
-    proxy=request.GET.get("proxy","")
-    capabilities = DesiredCapabilities.CHROME
-    if len(proxy) > 0:
-        p = Proxy()
-        p.proxy_type = ProxyType.MANUAL
-        p.http_proxy = proxy
-        p.socks_proxy = proxy
-        p.ssl_proxy = proxy
-        p.add_to_capabilities(capabilities)
-
-    url="https://www.linkedin.com/in/hhoareau/"
-    driver:WebDriver = WebDriver(command_executor="http://127.0.0.1:9515", desired_capabilities=capabilities)
-    driver.implicitly_wait(1)
-    driver.get(url)
-    sections=driver.find_elements_by_tag_name("section")
-    return Response("scrapped",200)
-
+    return JsonResponse({"message":"ok","pow":analyse_pows(pows)})
 
 
 
@@ -685,6 +702,8 @@ def raz(request):
 
     if "pows" in filter  or filter=="all":
         log("Effacement des oeuvres")
+        Work.objects.all().delete()
+        Award.objects.all().delete()
         PieceOfWork.objects.all().delete()
 
     if "work" in filter or filter=="all":

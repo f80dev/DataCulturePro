@@ -71,6 +71,7 @@ urlpatterns = [
     path('api/export_profils/', views.export_profils),
     path('api/ask_for_update/', views.ask_for_update),
     path('api/show_movies/', views.show_movies),
+    path('api/analyse_pow/', views.get_analyse_pow),
     url(r'^api/movie_importer/$',views.movie_importer),
     url('^api/api-token-auth/', obtain_auth_token),
     path("api/",include(router.urls)),

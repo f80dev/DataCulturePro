@@ -44,7 +44,6 @@ export class PowsComponent implements OnInit {
       }
     }
 
-
     if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
     setTimeout(()=>{this.refresh();},500);
   }
@@ -54,6 +53,7 @@ export class PowsComponent implements OnInit {
     if(name.indexOf(" ")>-1)name=name.substr(name.lastIndexOf(' ')).trim();
     this.router.navigate(["search"],{queryParams:{filter:name}});
   }
+
 
   clearQuery() {
     this.query.value='';
@@ -71,7 +71,6 @@ export class PowsComponent implements OnInit {
       this.refresh();
     },1000);
   }
-
 
 
   refresh() {
@@ -92,9 +91,7 @@ export class PowsComponent implements OnInit {
           } else {
             $$(i.links[0].url+" est en anomalie");
           }
-
         }
-
       }
       if(r.results.length<10){
         this.powAccordion.openAll();
@@ -103,6 +100,7 @@ export class PowsComponent implements OnInit {
       showError(this,err);
     });
   }
+
 
   add_experience(pow: any) {
     this.router.navigate(["edit"],{queryParams:{id:this.config.user.profil,add:pow.id,title:pow.title}})
@@ -165,5 +163,11 @@ export class PowsComponent implements OnInit {
   openGoogle(pow: any) {
     let url=pow.title.replace(" ","+")+" "+pow.year;
     open("https://www.google.com/search?q="+url,"_blank");
+  }
+
+  analyse(pow: any) {
+    this.api._get("analyse_pow","id="+pow.id).subscribe((r:any)=>{
+      debugger
+    });
   }
 }

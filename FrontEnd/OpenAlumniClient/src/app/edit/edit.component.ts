@@ -79,6 +79,7 @@ export class EditComponent implements OnInit,OnDestroy  {
         this.autoAddMovie();
         this.refresh_job();
         this.refresh_students();
+        this.refresh_works();
       });
     },()=>{this.quit();})
   }
@@ -106,6 +107,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.message="Récupération des expériences";
+    showMessage(this,"Chargement des expériences en cours");
     this.api._get("extraworks","profil__id="+id).subscribe((r:any)=>{
       $$("Travaux chargés");
       this.message="";
@@ -164,10 +166,11 @@ export class EditComponent implements OnInit,OnDestroy  {
           }
         }
       }
+
       if(func)func();
     });
 
-    this.refresh_works();
+
   }
 
 
@@ -431,6 +434,14 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   open_public_page() {
     open(this.profil.public_url,"page_public");
+  }
+
+  delete_pows() {
+    for(let w of this.works){
+      this.api._delete("pows/"+w.pow.id).subscribe((r:any)=>{});
+    }
+    //this.refresh_job(()=>{this.refresh()});
+    this.refresh_job();
   }
 }
 

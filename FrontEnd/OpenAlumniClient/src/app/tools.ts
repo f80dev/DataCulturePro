@@ -74,9 +74,10 @@ export function normaliser(s:string):string {
 }
 
 export function remove_ponctuation(s:string):string {
-  for(let it of [":",",",";","!","?","-","_"])
+  for(let it of [":",",",";","!","?","-","_","  "])
     s=s.replace(it," ");
-  return s;
+
+  return s.trim();
 }
 
 

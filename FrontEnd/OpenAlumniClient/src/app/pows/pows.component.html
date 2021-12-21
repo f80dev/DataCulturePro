@@ -141,6 +141,15 @@
           <button mat-icon-button
                   mat-raised-button
                   class="icon-button"
+                  mat-button title="Réanalyse du film"
+                  *ngIf="config.hasPerm('add_movies')"
+                  (click)="analyse(pow)">
+            <mat-icon>build</mat-icon>
+          </button>
+
+          <button mat-icon-button
+                  mat-raised-button
+                  class="icon-button"
                   mat-button title="Rechercher avec Google"
                   (click)="openGoogle(pow)">
             <mat-icon>search</mat-icon>

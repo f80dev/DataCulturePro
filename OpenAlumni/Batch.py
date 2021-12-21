@@ -1,9 +1,10 @@
-
+from json import loads
 from urllib import parse
 from urllib.parse import urlparse
 
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
+from django.utils.timezone import make_aware
 from imdb import IMDb
 from wikipedia import wikipedia, re
 
@@ -224,9 +225,9 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                 for idx in range(len(paras)):
                     links=paras[idx].findAll("a")
                     for l in links:
-                        job=jobs[idx].text.replace("<h2>","").replace("</h2>","").replace(" : ","")
+                        job=jobs[idx].text.replace(":","").strip()
                         if "/personne" in l.get("href"):
-                            if (job_for.startswith("http") and l.get("href")==job_for) or (job_for.lower()==l.text.lower()):
+                            if (job_for.startswith("http") and l.get("href")==job_for) or (job_for.lower()==l.text.replace("  "," ").lower()):
                                 rc["job"]=job
                                 break
                             else:
@@ -371,14 +372,22 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     """
     page=load_page(url,refresh_delay)
 
-    rc = dict({"title": title,"nature":translate("film"),"casting":list()})
+    rc = dict({"title": title,"nature":"","casting":list(),"url":url})
 
     divs=dict()
-    elts=page.find_all("div",recursive=True)+page.find_all("h1",recursive=True)+page.find_all("ul",recursive=True)+page.find_all("p")
+    elts=page.find_all("div",recursive=True)+page.find_all("h1",recursive=True)+page.find_all("ul",recursive=True)+page.find_all("p")+page.find_all("li")
     for div in elts:
+        s=div.text
+        s_t=translate(s)
+        if s_t in MOVIE_NATURE:
+            rc["nature"]=s_t
+        if s.startswith("1h") or s.startswith("2h") and s.endswith("m") and len(rc["nature"])==0:
+            rc["nature"]=translate("long")
         if "data-testid" in div.attrs:
             divs[div.attrs["data-testid"]]=div
 
+
+    #Recherche de la nature et de la catégorie
     if not "genres" in divs:
         elt=page.find("li",{"role":"presentation","class":"ipc-inline-list__item"})
         if not elt is None:
@@ -386,7 +395,21 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         else:
             cat = "inconnu"
     else:
-        cat = translate(divs["genres"].text.lower())
+        cat=""
+        for div in divs["genres"]:
+            cat = cat+translate(div.text.lower())+" "
+        if cat.split(" ")[0] in MOVIE_NATURE:
+            rc["nature"]=cat.split(" ")[0]
+            cat=cat.replace(rc["nature"],"").strip()
+
+    rc["category"]=cat.strip()
+
+    # if len(rc["nature"])==0:
+    #     if "storyline-genres" in divs:
+    #         rc["nature"]=translate(divs["storyline-genres"].text)
+
+
+
 
     try:
         title=divs["hero-title-block__title"].text
@@ -396,24 +419,18 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         log("Erreur sur title="+title)
         return None
 
-    if title.startswith("Episode"):
-        section_title = page.find("div", {"class": "titleParent"})
-        if not section_title is None: title = section_title.find("a").text + " " + title
-        #Recherche de l'épisode
-        rc["nature"]=MOVIE_NATURE[0]
-        zone_info_comp=page.find("div",{"class":"button_panel navigation_panel"})
-        if not zone_info_comp is None and "Season" in zone_info_comp.getText():
-            extract_text="S"+zone_info_comp.getText().split("Season")[1].replace("Episode ","E").replace(" | ","").replace(" ","")
-            rc["title"]=title+" "+extract_text.split("\n")[0]
+    # if title.startswith("Episode"):
+    #     section_title = page.find("div", {"class": "titleParent"})
+    #     if not section_title is None: title = section_title.find("a").text + " " + title
+    #     #Recherche de l'épisode
+    #     rc["nature"]=MOVIE_NATURE[0]
+    #     zone_info_comp=page.find("div",{"class":"button_panel navigation_panel"})
+    #     if not zone_info_comp is None and "Season" in zone_info_comp.getText():
+    #         extract_text="S"+zone_info_comp.getText().split("Season")[1].replace("Episode ","E").replace(" | ","").replace(" ","")
+    #         rc["title"]=title+" "+extract_text.split("\n")[0]
 
-    if "storyline-genres" in divs:
-        rc["nature"]=translate(divs["storyline-genres"].text)
-    else:
-        rc["nature"] = MOVIE_NATURE[0]
-    rc["category"]=cat
-    # if not "category" in rc:
-    #     rc["category"]="Inconnue"
-    #     log("Pas de categorie pour "+url)
+
+
 
     affiche = divs["hero-media__poster"]
     if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
@@ -428,28 +445,28 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     if not credits is None:
         credits=credits.find("div",{"id":"fullcredits_content"})
         if not credits is None:
-            jobs=credits.find_all("h4")
-            profils=credits.find_all("table")
+            sur_jobs = credits.find_all("h4")
+            tables=credits.find_all("table")
+            for i in range(0,len(tables)):
+                trs=tables[i].find_all("tr")
 
-            for i in range(0,len(jobs)):
-                job = str(jobs[i].getText().replace("\n", "")).replace("by","").strip()
-                if "(in credits order)" in job:job="Actor"
-
-                links=profils[i].find_all("a")
-                for l in links:
-                    if "/name/nm" in l.attrs["href"]:
-                        if name.upper() in l.text.upper():
-                            rc["job"]=job
+                for tr in trs:
+                    tds=tr.find_all("td")
+                    if len(tds)>1:
+                        findname=tds[0].text.replace("\n","").replace("  "," ").strip()
+                        if findname.upper()==name.upper():
+                            job = tds[len(tds)-1].text.split("(")[0].strip()
+                            if len(job) == 0 and len(sur_jobs[i].text) > 0:
+                                job = sur_jobs[i].text.replace(" by", "").strip()
+                            rc["job"] = translate(job)
                         else:
                             if all_casting:
-                                names=l.text.replace("\n","").split(" ")
-                                lastname=names[len(names)-1]
+                                names=tds[0].split(" ")
                                 rc["casting"].append({
-                                    "firstname":l.text.replace("\n","").replace(lastname,""),
-                                    "lastname":lastname,
-                                    "url":l.attrs["href"],
+                                    "name":" ".join(names),
                                     "source":"imdb",
                                     "job":job})
+
 
     if not "job" in rc: rc["job"]=job
 
@@ -556,6 +573,9 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
         if "imdb" in l["url"]:
             source = "auto:IMDB"
             film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
+            if film and (film["category"]=="News" or len(film["nature"])==0):
+                log("Ce type d'événement est exlue :"+str(film))
+                film=None
 
         if not film is None:
             if not "nature" in film: film["nature"] = l["nature"]
@@ -614,7 +634,9 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                     if a.exists():
                         a=a.first()
                     else:
-                        a=Award(description=prix["description"][:249],year=prix["year"],pow=pow,festival=f)
+                        desc=prix["description"][:249]
+                        if desc.startswith("(") and ")" in desc:desc=desc.split(")")[1]
+                        a=Award(description=desc,year=prix["year"],pow=pow,festival=f)
                         a.save()
 
 
@@ -671,6 +693,21 @@ def exec_batch_movies(pows,refresh_delay=31):
             extract_movie_from_bdfci(pow)
         pass
     return 0,0
+
+
+
+def analyse_pows(pows:list):
+    infos=list()
+    for pow in pows:
+        for l in pow.links:
+            if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
+            if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
+
+        infos.append(info)
+
+    return infos
+
+
 
 
 #http://localhost:8000/api/batch
@@ -759,7 +796,7 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
             #     pass
 
             try:
-                transact.update(dtLastSearch=profil.dtLastSearch)
+                transact.update(dtLastSearch=make_aware(profil.dtLastSearch))
             except:
                 pass
         else:

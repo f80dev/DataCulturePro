@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'alumni.apps.AlumniConfig',
     'django_elasticsearch_dsl',
     'django_filters',
+    'django_archive',
     'django_elasticsearch_dsl_drf',
     'django.contrib.staticfiles',
     'graphene_django'

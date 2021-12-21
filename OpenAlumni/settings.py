@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'alumni.apps.AlumniConfig',
     'django_elasticsearch_dsl',
     'django_filters',
+    'django_archive',
     'django_elasticsearch_dsl_drf',
     'django.contrib.staticfiles',
     'graphene_django'
@@ -282,7 +283,7 @@ MOVIE_CATEGORIES=[
     "Sport"
 ]
 
-MOVIE_NATURE=["Serie","TV","Short","Long","Documentary"]
+MOVIE_NATURE=["Serie","TV","Short","Long","Documentary","Court-métrage","Long-métrage","Film","Film TV","Série","Documentaire"]
 MYDICT=None
 
 DELAY_TO_AUTOSEARCH=10   #10 jours
