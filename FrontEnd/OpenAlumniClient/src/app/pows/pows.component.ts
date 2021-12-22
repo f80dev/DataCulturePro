@@ -166,7 +166,7 @@ export class PowsComponent implements OnInit {
   }
 
   analyse(pow: any) {
-    this.api._get("analyse_pow","id="+pow.id).subscribe((r:any)=>{
+    this.api._get("analyse_pow","id="+pow.id+"&search_by=title").subscribe((r:any)=>{
       debugger
     });
   }

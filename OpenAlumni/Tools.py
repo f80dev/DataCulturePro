@@ -476,6 +476,12 @@ def clear_directory(dir, ext):
             remove(file.path)
 
 
+def remove_ponctuation(text):
+    if text:
+        text=text.replace(","," ").replace(" - "," ")
+        text=text.replace("  "," ")
+    return text
+
 def getConfig(varname=""):
     rc=os.environ[varname]
     return rc
@@ -494,6 +500,13 @@ def remove_html(text):
     for balise in ["<a>","<br>","\n","\r","</a>","<p>","</p>","\t"]:
         text=text.replace(balise,"")
     return text
+
+
+def equal_str(s1:str,s2:str):
+    if s1 and s2:
+        s1=s1.replace(" ","").upper().strip()
+        s2=s2.replace(" ","").upper().strip()
+    return (remove_ponctuation(s1)==remove_ponctuation(s2))
 
 
 
@@ -529,6 +542,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None):
         return page
     else:
         log("Chargement de la page "+url)
+        rc=None
         for itry in range(5):
             try:
                 sleep(random.randint(1000, 2000) / 1000)

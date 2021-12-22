@@ -2,6 +2,7 @@ from json import loads
 from urllib import parse
 from urllib.parse import urlparse
 
+from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import make_aware
@@ -9,7 +10,8 @@ from imdb import IMDb
 from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
-from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion
+from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
+    equal_str
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
@@ -92,7 +94,17 @@ def connect_to_lefilmfrancais(user:str,password:str):
     return bot
 
 def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refresh_delay=30,bot=None):
-    rc=dict({"nature":"","title":""})
+    rc=dict({"nature":"","title":"","source":"auto:LeFilmFrancais","url":url})
+    if not url.startswith("http"):
+        page=load_page("http://www.lefilmfrancais.com/index.php?option=com_papyrus&view=recherche&searchword="+parse.quote(url))
+        bFind=False
+        for l in page.find("div",{"id":"fiche_film"}).find_all("a"):
+            if l and l["href"].startswith("http://www.lefilmfrancais.com/film/"):
+                url=l["href"]
+                bFind=True
+                break
+        if not bFind:return None
+
     page=load_page(url,bot=bot)
     if page.find("div",{"id":"synopsis"}):rc["synopsis"]=remove_html(page.find("div",{"id":"synopsis"}).text)
 
@@ -139,7 +151,7 @@ def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refr
 
 
 def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_delay=30):
-    rc=dict({"casting":[]})
+    rc = dict({"casting": [], "source": "auto:unifrance", "url": url})
     if not url.startswith("http"):
         log("On passe par la page de recherche pour retrouver le titre")
         page=load_page("https://unifrance.org/recherche?q="+parse.quote(url),refresh_delay=refresh_delay)
@@ -147,6 +159,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         if _link is None:return rc
 
         url=_link.get("href")
+        rc["url"]=url
 
     #r=wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0',"accept-encoding": "gzip, deflate"})
     #page = wikipedia.BeautifulSoup(str(r.content,encoding="utf-8"),"html5lib")
@@ -213,7 +226,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         else:
             #Recherche en réalisation
             section=page.find("div",{"itemprop":"director"})
-            if job_for.lower() in section.text.lower():
+            if section and (job_for.lower() in section.text.lower()):
                 rc["job"] = translate("Réalisation")
 
             #Recherche dans le générique détaillé
@@ -370,9 +383,24 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
     :return:
     """
+    if not url.startswith("http"):
+        page=load_page("https://www.imdb.com/find?s=tt&q="+parse.quote(url))
+        bFind=False
+        for link in page.find_all("a"):
+            if link and equal_str(link.text,url) and link["href"].startswith("/title/tt"):
+                url="https://www.imdb.com"+link["href"]
+                bFind=True
+                break
+        if not bFind:
+            log(url+" introuvable sur IMDB")
+            return None
+
+
     page=load_page(url,refresh_delay)
 
-    rc = dict({"title": title,"nature":"","casting":list(),"url":url})
+    title=remove_ponctuation(title)
+
+    rc = dict({"title": title,"nature":"","casting":list(),"url":url,"source":"auto:IMDB"})
 
     divs=dict()
     elts=page.find_all("div",recursive=True)+page.find_all("h1",recursive=True)+page.find_all("ul",recursive=True)+page.find_all("p")+page.find_all("li")
@@ -455,10 +483,15 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                     if len(tds)>1:
                         findname=tds[0].text.replace("\n","").replace("  "," ").strip()
                         if findname.upper()==name.upper():
-                            job = tds[len(tds)-1].text.split("(")[0].strip()
-                            if len(job) == 0 and len(sur_jobs[i].text) > 0:
-                                job = sur_jobs[i].text.replace(" by", "").strip()
+                            if " Cast\n" in sur_jobs[i].text:
+                                job="Actor"
+                            else:
+                                job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
+                                if len(job) == 0 and len(sur_jobs[i].text) > 0:
+                                    job = sur_jobs[i].text.replace(" by", "").strip()
+
                             rc["job"] = translate(job)
+                            if len(job)==0:log("Job non identifié pour "+name+" sur "+url)
                         else:
                             if all_casting:
                                 names=tds[0].split(" ")
@@ -536,6 +569,27 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
 
     return rc
 
+def dict_to_pow(film:dict,content=None):
+    pow = PieceOfWork(title=film["title"])
+    pow.add_link(url=film["url"], title=film["source"])
+    if not content is None and content["senscritique"]:
+        pow.add_link(extract_film_from_senscritique(film["title"]), title="Sens-critique")
+
+    for k in list(model_to_dict(pow).keys()):
+        if k in film:pow.__setattr__(k,film[k])
+
+    if "nature" in film:
+        pow.nature = translate(film["nature"])
+    else:
+        pow.nature = "Film"
+
+
+
+    if "category" in film: pow.category = translate(film["category"])
+
+
+    return pow
+
 
 def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templates=[],bot=None,content=None):
     """
@@ -563,15 +617,12 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
 
 
         if "unifrance" in l["url"]:
-            source = "auto:unifrance"
             film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
 
         if "source" in l and "LeFilmFrancais" in l["source"]:
-            source="auto:LeFilmFrancais"
             film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot)
 
         if "imdb" in l["url"]:
-            source = "auto:IMDB"
             film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
             if film and (film["category"]=="News" or len(film["nature"])==0):
                 log("Ce type d'événement est exlue :"+str(film))
@@ -581,19 +632,7 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
             if not "nature" in film: film["nature"] = l["nature"]
             if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 
-            pow = PieceOfWork(title=film["title"])
-            pow.add_link(url=l["url"], title=source)
-            if not content is None and content["senscritique"]:
-                pow.add_link(extract_film_from_senscritique(film["title"]),title="Sens-critique")
-            if "nature" in film:
-                pow.nature=translate(film["nature"])
-            else:
-                pow.nature="Film"
-
-            if "synopsis" in film: pow.description = film["synopsis"]
-            if "visual" in film: pow.visual = film["visual"]
-            if "category" in film: pow.category = translate(film["category"])
-            if "year" in film: pow.year = film["year"]
+            pow=dict_to_pow(film,content)
 
             job = profil.job
             if "job" in film: job = film["job"]
@@ -696,12 +735,29 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 
-def analyse_pows(pows:list):
+def analyse_pows(pows:list,search_with="link",bot=None):
     infos=list()
     for pow in pows:
-        for l in pow.links:
-            if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
-            if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
+        if search_with=="link":
+            for l in pow.links:
+                if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
+                if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
+
+        if search_with=="title":
+            title=pow.title
+            year=pow.year
+            if title and year:
+                for source in ["unifrance","imdb","lefilmfrancais"]:
+                    log("Analyse de "+source)
+                    if source=="unifrance":film=extract_film_from_unifrance(title)
+                    if source=="imdb":film=extract_film_from_imdb(title,title=title)
+                    if source=="lefilmfrancais":
+                        if bot is None:bot = connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
+                        film=extract_film_from_leFilmFrancais(title,bot=bot)
+                    pow_2=dict_to_pow(film)
+                    if pow_2.year==year and pow_2.title==title:
+                        pow,hasChanged=fusion(pow,pow_2)
+                        if hasChanged: pow.save()
 
         infos.append(info)
 

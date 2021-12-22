@@ -29,6 +29,15 @@
         </mat-select>
       </mat-form-field>
 
+       &nbsp;
+      <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" *ngIf="filter_values?.length>0">
+        <mat-label>{{filter_name}}</mat-label>
+        <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">
+          <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
       <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:70vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">
         <app-hourglass message="En cours de calcul"></app-hourglass>
       </iframe>

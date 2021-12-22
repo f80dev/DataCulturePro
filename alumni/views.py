@@ -666,7 +666,7 @@ def ask_perms(request):
 #     return Response("scrapped",200)
 
 
-
+#tag analyse_movie
 #http://localhost:8000/api/analyse_pow/
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -675,13 +675,14 @@ def get_analyse_pow(request):
     ids=[]
     if request.GET.get("id",None):ids=[request.GET.get("id")]
     if request.GET.get("ids", None):ids = request.GET.get("ids").split(",")
+    if request.GET.get("search_by", None):search_by = request.GET.get("search_by")
 
     if len(ids)==0:
         pows = PieceOfWork.objects.all()
     else:
         pows=PieceOfWork.objects.filter(id__in=ids)
 
-    return JsonResponse({"message":"ok","pow":analyse_pows(pows)})
+    return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by)})
 
 
 
@@ -916,10 +917,22 @@ def export_all(request):
         log("On ne conserve que "+cols+" dans "+","+lib_columns)
         df=df[cols.split(",")].drop_duplicates()
 
-    sql=request.GET.get("sql")
+    sql:str=request.GET.get("sql")
     if not sql is None:
+        filter_clause=request.GET.get("filter_value","")
+        if len(filter_clause)>0:
+            filter_clause=request.GET.get("filter")+"='"+filter_clause+"'"
+            sql=sql.replace("where","WHERE")
+            if "WHERE" in sql:
+                sql=sql.replace("WHERE ","WHERE "+filter_clause+" AND ")
+            else:
+                pos=sql.index(" FROM ")+6
+                pos=sql.index(" ",pos)
+                sql=sql[:pos]+" WHERE "+filter_clause+" "+sql[pos:]
+
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
+
 
     if request.GET.get("percent","False")=="True":
         sum=df.groupby(request.GET.get("x",df.columns[0])).sum().apply(lambda x: 100 * x / float(x.sum())).values
@@ -946,6 +959,7 @@ def export_all(request):
         dictionnary=loads(dictionnary)
         for k in dictionnary.keys():
             df=df.replace(str(k),str(dictionnary[k]))
+
 
     if request.method=="POST":
         pivot_obj=loads(str(request.body,"utf8"))
@@ -991,6 +1005,10 @@ def export_all(request):
             template=request.GET.get("template","seaborn")
         )
         rc = graph.to_html()
+
+        filter = request.GET.get("filter")
+        if filter:
+            rc["filter_values"] = list(set(df[filter].values))
 
         if format=="graph":
             return JsonResponse(rc)

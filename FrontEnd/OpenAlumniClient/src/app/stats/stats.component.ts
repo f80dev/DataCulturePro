@@ -27,6 +27,9 @@ export class StatsComponent implements OnInit {
   instant_reports: any[]=[];
   message: any="";
   rows: any=[];
+  filter_values=[];
+  sel_filter="";
+  filter_name="Filtre";
 
 
   constructor(public _location:Location,
@@ -106,6 +109,8 @@ export class StatsComponent implements OnInit {
 
 
   eval_stat(evt=null) {
+    this.sel_filter="";
+    this.filter_values=[];
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
@@ -118,7 +123,12 @@ export class StatsComponent implements OnInit {
     if(this.sel_report.replace)param=param+"&replace="+JSON.stringify(this.sel_report.replace);
     if(this.sel_report.func)param=param+"&func="+this.sel_report.fun;
     if(this.sel_report.title)param=param+"&title="+this.sel_report.title;
-    if(this.sel_report.filter)param=param+"&filter="+this.sel_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
+    if(this.sel_report.filter){
+      param=param+"&filter="+this.sel_report.filter;
+      this.filter_name="Filtrer par "+this.sel_report.filter;
+    }
+    if(this.sel_filter)param=param+"&filter_value="+this.sel_filter;
+    //if(this.sel_report.filter)param=param+"&filter="+this.sel_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
     if(this.sel_report.data_cols){
       param=param+"&data_cols="+this.sel_report.data_cols+"&cols="+this.sel_report.cols+"&table="+this.sel_report.table;
     }
@@ -129,6 +139,7 @@ export class StatsComponent implements OnInit {
       this.api._get("export_all/",param+"&out=graph",60,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code;
         this.sel_report.html_stat=html.values;
+        if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;
       },(err)=>{
         if(err.status==404){
           this.sel_report.html_code="<div style='width:100%;text-align: center;color:white;font-size: large;'><br>"+err.error+"</div>";
