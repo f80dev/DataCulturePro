@@ -56,6 +56,7 @@ Instant_reports:
     y: etudiants
     color: formation
     cols: id,formation,cursus,promotion
+    filter: formation
     table: profil
     data_cols: id,department,cursus,degree_year
     sql: SELECT formation, promotion,count(id) as etudiants FROM df WHERE cursus='S' GROUP BY formation,promotion
@@ -100,6 +101,7 @@ Instant_reports:
     y: stagiaires
     chart: aera
     color: formation
+    filter: formation
     table: profil
     data_cols: id,department,cursus,degree_year
     cols: id,formation,cursus,promotion
@@ -173,9 +175,9 @@ Instant_reports:
     chart: bar
     x: profil_promotion
     y: réalisations
+    filter: Formation
     color: film_catégorie
-    sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
-    cols: profil_promotion,film_catégorie,film_id,profil_cursus,profil_promotion
+    sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations,profil_formation AS 'Formation' FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
     prod: True
 
 

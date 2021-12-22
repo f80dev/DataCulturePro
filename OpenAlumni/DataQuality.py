@@ -86,7 +86,7 @@ class PowAnalyzer:
         for p1 in self.pows:
             for p2 in self.pows:
                 d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
-                if d>0.95 and p1.year==p2.year and p1.id!=p2.id:
+                if d>0.97 and p1.year==p2.year and p1.id!=p2.id:
                     log("Suspission de doublon entre "+str(p1)+" et "+str(p2))
                     rc=rc+1
                     if with_fusion:

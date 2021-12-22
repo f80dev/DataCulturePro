@@ -73,12 +73,15 @@ jobs:
   Artistic production manager: Production
   Sound department: Ing. son
   Foley artist: Assistant son
-  First assistant camera: Premier assistant caméra
+  First assistant camera: Assistant caméra
+  Creative director: Directeur de création
   Assistant director: Ass. réalisation
   Director of photography: Direction photo
   Camera operator: Caméra
   Associate producer: Producteur associé
   Second assistant camera: Ass. caméra
+  Re-recording mixer: Ing. son
+  Script supervisor: Scripte
   Post-production coordinator: Post-production
   Boom operator: Assistant son
   Scénario: Scénario
@@ -150,6 +153,11 @@ jobs:
   Producteurs: Production
   Producteurs exécutifs: Production exécutive
   Producteur exécutif: Production exécutive
+  Producteur délégué: Production déléguée
+  Sound mixer: Ing. son
+  Electrician: Electricien
+  Second camera operator: Assistant caméra
+  Assistant camera: Assistant caméra
   Monteur son et mixeur: Son 
   Distributrice france: Distribution
   Scriptes: Scripte

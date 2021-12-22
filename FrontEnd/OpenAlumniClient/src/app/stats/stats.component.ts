@@ -109,8 +109,6 @@ export class StatsComponent implements OnInit {
 
 
   eval_stat(evt=null) {
-    this.sel_filter="";
-    this.filter_values=[];
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
@@ -183,4 +181,14 @@ export class StatsComponent implements OnInit {
   }
 
 
+  change_report($event: any) {
+    this.sel_filter="";
+    this.filter_values=[];
+    this.eval_stat($event);
+  }
+
+  cancel_filter() {
+    this.sel_filter="";
+    this.refresh_stats();
+  }
 }

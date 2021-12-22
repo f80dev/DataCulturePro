@@ -22,7 +22,7 @@
       <br>
       <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
         <mat-label>Sélectionner un rapport</mat-label>
-        <mat-select [(value)]="sel_report" (selectionChange)="eval_stat($event)">
+        <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)">
           <mat-option *ngFor="let report of instant_reports" [value]="report">
             {{report.title}}
           </mat-option>
@@ -30,12 +30,18 @@
       </mat-form-field>
 
        &nbsp;
-      <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" *ngIf="filter_values?.length>0">
+      <div *ngIf="filter_values?.length>0" style="display: inline-block;">
+      <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >
         <mat-label>{{filter_name}}</mat-label>
         <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">
           <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>
         </mat-select>
       </mat-form-field>
+        <mat-icon style="cursor: pointer;font-size: small;"
+                  *ngIf="sel_filter?.length>0"
+                  (click)="cancel_filter()">cancel</mat-icon>
+      </div>
+
 
 
       <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:70vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">

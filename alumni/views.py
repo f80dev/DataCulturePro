@@ -921,6 +921,7 @@ def export_all(request):
     if not sql is None:
         filter_clause=request.GET.get("filter_value","")
         if len(filter_clause)>0:
+            title=title+" ("+request.GET.get("filter")+": "+filter_clause+")"
             filter_clause=request.GET.get("filter")+"='"+filter_clause+"'"
             sql=sql.replace("where","WHERE")
             if "WHERE" in sql:
