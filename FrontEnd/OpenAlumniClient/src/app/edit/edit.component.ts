@@ -264,10 +264,11 @@ export class EditComponent implements OnInit,OnDestroy  {
         lbl_ok: 'Oui',
         lbl_cancel: 'Non'
       }}).afterClosed().subscribe((result_code) => {
-      if (result_code != 'no') {
+      if (result_code) {
         this.api._delete("works/" + wrk.id + "/").subscribe(() => {
           this.loadProfil();
           this.api.setprofil(this.profil).subscribe(()=>{});
+          this.refresh_works();
         });
       }
     });

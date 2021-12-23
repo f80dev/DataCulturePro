@@ -501,11 +501,13 @@ def remove_html(text):
         text=text.replace(balise,"")
     return text
 
+def remove_accents(s:str):
+    return s.replace("é","e").replace("à","a").replace("è","e").replace("é".upper(),"E").replace("è".upper(),"E")
 
 def equal_str(s1:str,s2:str):
     if s1 and s2:
-        s1=s1.replace(" ","").upper().strip()
-        s2=s2.replace(" ","").upper().strip()
+        s1=remove_accents(s1.replace(" ","").upper())
+        s2=remove_accents(s2.replace(" ","").upper())
     return (remove_ponctuation(s1)==remove_ponctuation(s2))
 
 

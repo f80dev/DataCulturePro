@@ -240,7 +240,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     for l in links:
                         job=jobs[idx].text.replace(":","").strip()
                         if "/personne" in l.get("href"):
-                            if (job_for.startswith("http") and l.get("href")==job_for) or (job_for.lower()==l.text.replace("  "," ").lower()):
+                            if (job_for.startswith("http") and l.get("href")==job_for) or equal_str(job_for,l.text):
                                 rc["job"]=job
                                 break
                             else:
@@ -676,12 +676,16 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                         desc=prix["description"][:249]
                         if desc.startswith("(") and ")" in desc:desc=desc.split(")")[1]
                         a=Award(description=desc,year=prix["year"],pow=pow,festival=f)
-                        a.save()
+                        try:
+                            a.save()
+                        except:
+                            log("Probleme d'enregistrement de l'award sur "+pow.title)
 
 
             if job is None: job = ""
             t_job = translate(job)
             if len(t_job)==0:
+                log("!Job non identifié pour "+job_for+" sur "+pow.title)
                 t_job="Non identifié"
 
             if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():

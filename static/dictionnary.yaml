@@ -203,6 +203,14 @@ jobs:
   Assistant de production: Production
   Producteurs étrangers: Production
   Pre-production sound: Ing. son
+  Sound: Ing. son
+  Graphic designer: Décor
+  Assistant art director: Décor
+  Supervising art director: Décor
+  Matte painter: Décor
+  Digital compositor: Décor
+  Concept artist: Décor
+  Assistant script supervisor: Script assistant
   Sound_department: Ing. son
   Auteur de l'œuvre originale: Auteur
   Scénariste et réalisatrice: Scénario/Réalisation
@@ -296,6 +304,7 @@ jobs:
   Ingénieures du son: Ing.son
   Assistant to producer: Ass. production
   Thanks: Remerciements
+  Writing credits  in alphabetical order: Scénario
   Casting department: Casting
   Editorial_department: Montage
   Location_management: Repérages
