@@ -415,9 +415,14 @@ def fusion(p1: Model, p2: Model):
                             p1.__setattr__(attr, val)
                             hasChanged=True
                 else:
-                    if p1.__getattribute__(attr) is None:
+                    if type(p1.__getattribute__(attr)) == list:
+                        for it in p1.__getattribute__(attr):
+                            if not it in val:val.append(it)
                         p1.__setattr__(attr,val)
-                        hasChanged=True
+                    else:
+                        if p1.__getattribute__(attr) is None:
+                            p1.__setattr__(attr,val)
+                            hasChanged=True
 
     return p1,hasChanged
 

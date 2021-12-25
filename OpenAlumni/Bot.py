@@ -40,6 +40,9 @@ class Bot:
         html=self.driver.page_source
         return html
 
+    def quit(self):
+        self.driver.quit()
+
 
 
 

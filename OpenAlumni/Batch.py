@@ -679,13 +679,13 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
                         try:
                             a.save()
                         except:
-                            log("Probleme d'enregistrement de l'award sur "+pow.title)
+                            log("!!Probleme d'enregistrement de l'award sur "+pow.title)
 
 
             if job is None: job = ""
             t_job = translate(job)
             if len(t_job)==0:
-                log("!Job non identifié pour "+job_for+" sur "+pow.title)
+                if job_for and pow and pow.title: log("!Job non identifié pour "+job_for+" sur "+pow.title)
                 t_job="Non identifié"
 
             if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
@@ -747,6 +747,8 @@ def analyse_pows(pows:list,search_with="link",bot=None):
                 if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
                 if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
 
+            infos.append(info)
+
         if search_with=="title":
             title=pow.title
             year=pow.year
@@ -758,12 +760,12 @@ def analyse_pows(pows:list,search_with="link",bot=None):
                     if source=="lefilmfrancais":
                         if bot is None:bot = connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
                         film=extract_film_from_leFilmFrancais(title,bot=bot)
+                        bot.quit()
+
                     pow_2=dict_to_pow(film)
                     if pow_2.year==year and pow_2.title==title:
                         pow,hasChanged=fusion(pow,pow_2)
                         if hasChanged: pow.save()
-
-        infos.append(info)
 
     return infos
 

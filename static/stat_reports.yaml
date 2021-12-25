@@ -38,6 +38,17 @@ Instant_reports:
     sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='S' GROUP BY work_job ORDER BY -nb LIMIT 20
     prod: True
 
+  - title: Liste des métiers les plus exercés par les stagiaires
+    description:
+    id: job_by_formation
+    chart: pie
+    x: Job
+    y: nb
+    filter: Formation
+    color: Job
+    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='P' GROUP BY work_job ORDER BY -nb LIMIT 20
+    prod: True
+
   - title: Les événements qui recompensent le plus les anciens de la FEMIS
     id: film_by_festival
     chart: pie
