@@ -154,7 +154,7 @@ class WorksCSVRenderer (CSVRenderer):
     header = [
         "profil_id", "profil_genre","profil_nom",
         "profil_prenom", "profil_formation", "profil_cursus",
-        "profil_promotion","profil_code_postal", "profil_ville",
+        "profil_promotion","profil_code_postal", "profil_ville","profil_dtlastupdate","profil_dtLastSearch",
 
 
         "film_id","film_titre", "film_catégorie",

@@ -38,6 +38,7 @@ Instant_reports:
     sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='S' GROUP BY work_job ORDER BY -nb LIMIT 20
     prod: True
 
+
   - title: Liste des métiers les plus exercés par les stagiaires
     description:
     id: job_by_formation
@@ -71,6 +72,22 @@ Instant_reports:
     table: profil
     data_cols: id,department,cursus,degree_year
     sql: SELECT formation, promotion,count(id) as etudiants FROM df WHERE cursus='S' GROUP BY formation,promotion
+    prod: True
+
+  - title: Dates de dernière mise a jour des profils
+    description: Indicateur d'obsolescence de la base
+    id: student_by_lastmodification
+    table: profil
+    data_cols: cursus,dtLastSearch,id
+    cols: cursus,last_search,id
+    sql: SELECT cursus, DATE(last_search) AS lastsearch,count(id) as n_profils FROM df GROUP BY cursus,lastsearch
+    chart: bar
+    x: lastsearch
+    y: n_profils
+    color: cursus
+    replace:
+      P: Formation pro
+      S: Formation initiale
     prod: True
 
 

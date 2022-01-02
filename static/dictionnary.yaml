@@ -241,6 +241,7 @@ jobs:
   Casting by: Casting
   Production management: Production
   Writing credits: Scénario
+  Writing credits in alphabetical order: Scénario
   Series additional crew: Assistant
   Series script and continuity department: Scripte
   Series art department: Décorateur(trice)
@@ -264,6 +265,8 @@ jobs:
   Costume_designer: Costumes
   Assistant to jean labadie: Production
   Lui-même: Acteur(trice)
+  Writing Credits (in alphabetical order): Scénario
+  Writing Credits in alphabetical order: Scénario
   Series second unit director or assistant director: Ass. Réalisation
   Directrice/responsable des ventes: Production
   Series cinematography: Image
@@ -308,7 +311,6 @@ jobs:
   Casting department: Casting
   Editorial_department: Montage
   Location_management: Repérages
-  Writing credits in alphabetical order: Scénario
   Assitant(e) montage: Ass. montage
   Photographie: Image
   Décors: Décor

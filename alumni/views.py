@@ -36,9 +36,6 @@ from rest_framework.decorators import api_view,  permission_classes, renderer_cl
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from selenium.webdriver import DesiredCapabilities
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.common.proxy import ProxyType, Proxy
 
 import requests
 from django.contrib.auth.models import User, Group
@@ -55,6 +52,13 @@ import os
 
 if os.environ.get("DEBUG"):
     from OpenAlumni.settings_dev import *
+
+    import logging
+
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
+    # logging.getLogger('engineio.server').setLevel(logging.ERROR)
+    # logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
+    # logging.getLogger('environments').setLevel(logging.ERROR)
 else:
     from OpenAlumni.settings import *
 
@@ -675,14 +679,15 @@ def get_analyse_pow(request):
     ids=[]
     if request.GET.get("id",None):ids=[request.GET.get("id")]
     if request.GET.get("ids", None):ids = request.GET.get("ids").split(",")
-    if request.GET.get("search_by", None):search_by = request.GET.get("search_by")
+    search_by = request.GET.get("search_by","title")
+    cat=request.GET.get("cat","unifrance,imdb")
 
     if len(ids)==0:
         pows = PieceOfWork.objects.all()
     else:
         pows=PieceOfWork.objects.filter(id__in=ids)
 
-    return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by)})
+    return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by,cat=cat)})
 
 
 
@@ -881,7 +886,7 @@ def export_all(request):
         df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
             "profil__id","profil__gender","profil__lastname",
             "profil__firstname","profil__department","profil__cursus",
-            "profil__degree_year","profil__cp","profil__town",
+            "profil__degree_year","profil__cp","profil__town","profil__dtLastUpdate","profil__dtLastSearch",
 
             "pow__id","pow__title","pow__nature",
             "pow__category","pow__year","pow__budget",
@@ -1139,8 +1144,9 @@ def movie_importer(request):
             i=i+1
 
     log("Importation terminé de "+str(record)+" films")
+    return Response(str(record) + " films importés",200)
 
-    return Response(str(record) + " films importés", 200)
+
 
 
 def importer_file(request):
@@ -1185,7 +1191,7 @@ def importer_file(request):
 
 
 #http://localhost:8000/api/importer/
-#Importation des fichiers
+#Importation des profils
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def importer(request):
@@ -1203,7 +1209,7 @@ def importer(request):
 
     l_department_category=[x.lower() for x in Profil.objects.values_list("department_category",flat=True)]
     for row in d:
-        #log(str(i) + "/" + str(total_record) + " en cours d'importation")
+
         if i==0:
             header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
             log("Liste des colonnes disponibles "+str(header))
@@ -1211,8 +1217,11 @@ def importer(request):
             s=request.data["dictionnary"].replace("'","\"").replace("\n","").strip()
             dictionnary=dict() if len(s)==0 else loads(s)
 
-            firstname=idx("fname,firstname,prenom,prénom",row,header=header)
-            lastname=idx("lastname,nom,lname",row,header=header)
+            firstname=idx("fname,firstname,prenom,prénom",row,max_len=40,header=header)
+            lastname=idx("lastname,nom,lname",row,max_len=100,header=header)
+            if i % 10 == 0:
+                log(firstname + " " + lastname + " - " + str(i) + "/" + str(total_record) + " en cours d'importation")
+
             email=idx("email,mail,e-mail",row,header=header,max_len=50)
             idx_photo=idx("photo,picture,image",header=header)
 
@@ -1291,7 +1300,7 @@ def importer(request):
                     email=email,
                     photo=photo,
 
-                    cursus=idx("cursus,session_name",row,dictionnary["cursus"],header=header),
+                    cursus=idx("cursus",row,default=dictionnary["cursus"],header=header,max_len=1),
                 )
 
                 try:
@@ -1299,9 +1308,13 @@ def importer(request):
                         res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
                         hasChanged=True
                         if len(res)>0:
+                            #log("Le profil existe déjà")
                             profil,hasChanged=fusion(res.first(),profil)
 
-                    if hasChanged:profil.save()
+                    if hasChanged:
+                        log("Mise a jour de "+firstname+" "+lastname)
+                        profil.save()
+
                     #log(profil.lastname + " est enregistré")
                     record=record+1
                 except Exception as inst:
@@ -1312,9 +1325,7 @@ def importer(request):
                 non_import.append(str(profil))
         i=i+1
 
-    cr=str(record)+" profils importés"
-    log(cr)
-    return JsonResponse({"imports":record,"abort":non_import},200)
+    return JsonResponse({"imports":str(record),"abort":non_import})
 
 
 

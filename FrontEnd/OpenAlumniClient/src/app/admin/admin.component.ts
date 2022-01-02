@@ -76,7 +76,12 @@ export class AdminComponent implements OnInit {
   }
 
   batch_movies() {
-    this.api._get("batch_movies/").subscribe(()=>{
+    let cat="";
+    for(let key of Object.keys(this.config.values.catalog)){
+      if(this.config.values.catalog[key])
+        cat=cat+key+","
+    }
+    this.api._get("analyse_pow/","cat="+cat).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }

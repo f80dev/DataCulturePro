@@ -108,7 +108,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.message="Récupération des expériences";
     showMessage(this,"Chargement des expériences en cours");
-    this.api._get("extraworks","profil__id="+id).subscribe((r:any)=>{
+    this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
       this.message="";
       this.works=[];

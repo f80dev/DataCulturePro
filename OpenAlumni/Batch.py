@@ -156,7 +156,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         log("On passe par la page de recherche pour retrouver le titre")
         page=load_page("https://unifrance.org/recherche?q="+parse.quote(url),refresh_delay=refresh_delay)
         _link=page.find("a",attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]")})
-        if _link is None:return rc
+        if _link is None:return None
 
         url=_link.get("href")
         rc["url"]=url
@@ -483,13 +483,14 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                     if len(tds)>1:
                         findname=tds[0].text.replace("\n","").replace("  "," ").strip()
                         if findname.upper()==name.upper():
-                            if " Cast\n" in sur_jobs[i].text:
+                            if " Cast\n" in sur_jobs[i].text or " Serie Cast\n" in sur_jobs[i].text:
                                 job="Actor"
                             else:
                                 job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
                                 if len(job) == 0 and len(sur_jobs[i].text) > 0:
                                     job = sur_jobs[i].text.replace(" by", "").strip()
 
+                            job=job.split("\n")[0]
                             rc["job"] = translate(job)
                             if len(job)==0:log("Job non identifié pour "+name+" sur "+url)
                         else:
@@ -591,7 +592,7 @@ def dict_to_pow(film:dict,content=None):
     return pow
 
 
-def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templates=[],bot=None,content=None):
+def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=None,content=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -638,16 +639,15 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
             if "job" in film: job = film["job"]
 
             try:
-                hasChanged=True
-                result=PieceOfWork.objects.filter(title__iexact=pow.title,year__exact=pow.year)
+                result=PieceOfWork.objects.filter(title__iexact=pow.title)
                 if len(result)>0:
-                    log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
-                    pow,hasChanged=fusion(result.first(),pow)
+                    for p in result:
+                        if abs(int(p.year)-int(pow.year))<=1:
+                            log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
+                            pow,hasChanged=fusion(p,pow)
+                            if hasChanged:pow.save()
                 else:
                     n_films=n_films+1
-
-                if hasChanged:
-                    log("Enregistrement du film dans la base")
                     pow.save()
 
                 # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
@@ -686,20 +686,20 @@ def add_pows_to_profil(profil,links,all_links,job_for,refresh_delay_page,templat
             t_job = translate(job)
             if len(t_job)==0:
                 if job_for and pow and pow.title: log("!Job non identifié pour "+job_for+" sur "+pow.title)
-                t_job="Non identifié"
+                #t_job="Non identifié"
+            else:
+                if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
+                    if len(t_job)>0:
+                        log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
+                        work = Work(pow=pow, profil=profil, job=t_job, source=source)
+                        try:
+                            work.save()
+                        except Exception as inst:
+                            log("Impossible d'enregistrer le travail: " + str(inst.args))
 
-            if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
-                if len(t_job)>0:
-                    log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
-                    work = Work(pow=pow, profil=profil, job=t_job, source=source)
-                    try:
-                        work.save()
-                    except Exception as inst:
-                        log("Impossible d'enregistrer le travail: " + str(inst.args))
-
-                    if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
-                else:
-                    log("Pas d'enregistrement de la contribution job="+job)
+                        if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
+                    else:
+                        log("Pas d'enregistrement de la contribution job="+job)
 
             # Enregistrement du casting
             if not film is None and "casting" in film:
@@ -739,7 +739,7 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 
-def analyse_pows(pows:list,search_with="link",bot=None):
+def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefilmfrancais"):
     infos=list()
     for pow in pows:
         if search_with=="link":
@@ -753,19 +753,23 @@ def analyse_pows(pows:list,search_with="link",bot=None):
             title=pow.title
             year=pow.year
             if title and year:
-                for source in ["unifrance","imdb","lefilmfrancais"]:
+                for source in cat.split(","):
                     log("Analyse de "+source)
                     if source=="unifrance":film=extract_film_from_unifrance(title)
                     if source=="imdb":film=extract_film_from_imdb(title,title=title)
                     if source=="lefilmfrancais":
                         if bot is None:bot = connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
                         film=extract_film_from_leFilmFrancais(title,bot=bot)
-                        bot.quit()
 
-                    pow_2=dict_to_pow(film)
-                    if pow_2.year==year and pow_2.title==title:
-                        pow,hasChanged=fusion(pow,pow_2)
-                        if hasChanged: pow.save()
+                    if film:
+                        pow_2=dict_to_pow(film)
+                        if pow_2.year==year and equal_str(pow_2.title,title):
+                            pow,hasChanged=fusion(pow,pow_2)
+                            if hasChanged:
+                                pow.save()
+
+    bot.quit()
+    bot=None
 
     return infos
 
@@ -784,10 +788,11 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
     n_films = 0
     n_works=0
     rc_articles=list()
-    all_links=list()
-    for pow in PieceOfWork.objects.all():
-        for l in pow.links:
-            all_links.append(l["url"])
+
+    # all_links=list()
+    # for pow in PieceOfWork.objects.all():
+    #     for l in pow.links:
+    #         all_links.append(l["url"])
 
     for profil in profils:
         limit=limit-1
@@ -839,7 +844,7 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
                     #job_for=infos["url"]
                     job_for=profil.firstname+" "+profil.lastname
 
-            rc_films,rc_works,articles=add_pows_to_profil(profil,links,all_links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
+            rc_films,rc_works,articles=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
             rc_articles.append(articles)
             n_films=n_films+rc_films
             n_works=n_works+rc_works

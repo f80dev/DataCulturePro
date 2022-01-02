@@ -398,9 +398,9 @@ def dateToTimestamp(txt):
 
 
 
-def fusion(p1: Model, p2: Model):
+def fusion(p1: Model, p2: Model,withLog=False):
     hasChanged=False
-    log("On opére la fusion de "+str(p1)+" avec "+str(p2))
+    if withLog: log("On opére la fusion de "+str(p1)+" avec "+str(p2))
     attrs_p1=list(model_to_dict(p1).keys())
     attrs_p2=list(model_to_dict(p2).keys())
 
@@ -458,6 +458,7 @@ def translate(wrd:str,dictionnary=None):
         return None
 
     key=wrd.lower().replace(",","").replace("(","").replace(")","").replace(":","").strip()
+    key=key.replace("\n"," ").replace("  "," ")
     for i in range(10):
         key=key.replace("   "," ").replace("  "," ")
 
