@@ -484,8 +484,8 @@ def clear_directory(dir, ext):
 
 def remove_ponctuation(text):
     if text:
-        text=text.replace(","," ").replace(" - "," ")
-        text=text.replace("  "," ")
+        text=text.replace(","," ").replace("-"," ")
+        text=text.replace("  "," ").replace("   "," ")
     return text
 
 def getConfig(varname=""):
@@ -518,7 +518,7 @@ def equal_str(s1:str,s2:str):
 
 
 
-def load_page(url:str,refresh_delay=31,save=True,bot=None):
+def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
     filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
     if not exists(PAGEFILE_PATH + filename) :

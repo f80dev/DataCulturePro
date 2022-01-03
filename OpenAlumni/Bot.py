@@ -35,6 +35,7 @@ class Bot:
 
 
     def download_page(self,url):
+        self.driver.set_page_load_timeout(3600)
         self.driver.get(url)
         sleep(random.randint(3000, 20000) / 1000)
         html=self.driver.page_source

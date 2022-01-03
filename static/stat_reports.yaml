@@ -75,7 +75,7 @@ Instant_reports:
     prod: True
 
   - title: Dates de dernière mise a jour des profils
-    description: Indicateur d'obsolescence de la base
+    description: Indicateur d'obsolescence de la base des profils
     id: student_by_lastmodification
     table: profil
     data_cols: cursus,dtLastSearch,id
@@ -90,6 +90,17 @@ Instant_reports:
       S: Formation initiale
     prod: True
 
+  - title: Dates de réfencement des oeuvres
+    description: Indicateur d'obsolescence de la base des films
+    id: pow_by_lastcreate
+    table: PieceOfWork
+    data_cols: dtLastSearch,id
+    cols: dt_lastsearch,id
+    sql: SELECT DATE(dt_lastsearch) AS 'Dernière mise a jour',count(id) as n_pow FROM df GROUP BY 'Dernière mise a jour'
+    chart: bar
+    x: Dernière mise a jour
+    y: n_pow
+    prod: True
 
   - title: Etudiants par type de cursus
     description:

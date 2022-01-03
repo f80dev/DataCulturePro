@@ -23,7 +23,10 @@ class StatGraph:
             self.fig=None
 
         if style=="bar":
-            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
+            if color!="undefined":
+                self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
+            else:
+                self.fig = px.bar(self.df, x=x, y=y,  height=height, template=template, title=title)
 
         if style=="line":
             self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=template,title=title)

@@ -11,7 +11,7 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str
+    equal_str, now
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
@@ -98,11 +98,13 @@ def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refr
     if not url.startswith("http"):
         page=load_page("http://www.lefilmfrancais.com/index.php?option=com_papyrus&view=recherche&searchword="+parse.quote(url))
         bFind=False
-        for l in page.find("div",{"id":"fiche_film"}).find_all("a"):
-            if l and l["href"].startswith("http://www.lefilmfrancais.com/film/"):
-                url=l["href"]
-                bFind=True
-                break
+        fiche_film=page.find("div",{"id":"fiche_film"})
+        if fiche_film:
+            for l in fiche_film.find_all("a"):
+                if l and l["href"].startswith("http://www.lefilmfrancais.com/film/"):
+                    url=l["href"]
+                    bFind=True
+                    break
         if not bFind:return None
 
     page=load_page(url,bot=bot)
@@ -645,9 +647,12 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                         if abs(int(p.year)-int(pow.year))<=1:
                             log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
                             pow,hasChanged=fusion(p,pow)
-                            if hasChanged:pow.save()
+                            if hasChanged:
+                                pow.dtLastSearch=datetime.now()
+                                pow.save()
                 else:
                     n_films=n_films+1
+                    pow.dtLastSearch = datetime.now()
                     pow.save()
 
                 # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
@@ -742,6 +747,10 @@ def exec_batch_movies(pows,refresh_delay=31):
 def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefilmfrancais"):
     infos=list()
     for pow in pows:
+
+        pow.dtLastSearch=datetime.now()
+        pow.save()
+
         if search_with=="link":
             for l in pow.links:
                 if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
@@ -765,8 +774,7 @@ def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefil
                         pow_2=dict_to_pow(film)
                         if pow_2.year==year and equal_str(pow_2.title,title):
                             pow,hasChanged=fusion(pow,pow_2)
-                            if hasChanged:
-                                pow.save()
+                            if hasChanged:pow.save()
 
     bot.quit()
     bot=None

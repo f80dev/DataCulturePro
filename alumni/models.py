@@ -233,6 +233,8 @@ class Work(models.Model):
     creator=models.CharField(max_length=5,default="auto",help_text="Désigne qui est le dernier auteur de l'enregistrement du travail dans la base de données")
     public=models.BooleanField(default=True,help_text="Indique si le projet est publique (visible de ceux qui ont les droits) ou privé")
 
+    dtCreate = models.DateField(auto_now_add=True,null=True, help_text="Date d'enregistrement de la contribution")
+
     job=models.CharField(max_length=200,default="",help_text="Désignation du travail réalisé")
     duration=models.IntegerField(default=0,null=False,help_text="Durée du travail en heure")
     comment=models.TextField(max_length=400,null=False,default="",blank=True,help_text="Commentaire libre sur la façon dont s'est passé le travail")

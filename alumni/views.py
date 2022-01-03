@@ -683,9 +683,9 @@ def get_analyse_pow(request):
     cat=request.GET.get("cat","unifrance,imdb")
 
     if len(ids)==0:
-        pows = PieceOfWork.objects.all()
+        pows = PieceOfWork.objects.order_by("dtLastSearch").all()
     else:
-        pows=PieceOfWork.objects.filter(id__in=ids)
+        pows=PieceOfWork.objects.filter(id__in=ids).order_by("dtLastSearch")
 
     return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by,cat=cat)})
 
@@ -1004,7 +1004,7 @@ def export_all(request):
         graph.trace(
             request.GET.get("x",df.columns[0]),
             request.GET.get("y",df.columns[1]),
-            request.GET.get("color"),
+            request.GET.get("color",None),
             request.GET.get("height",400),
             style=request.GET.get("chart","bar"),
             title=title,
