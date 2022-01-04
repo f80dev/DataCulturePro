@@ -17,7 +17,7 @@
         &nbsp;{{profil?.department}}
         &nbsp;
 
-          <mat-icon style="font-size: small;cursor: pointer;" title="En savoir plus">help</mat-icon>
+        <mat-icon style="font-size: small;cursor: pointer;" title="En savoir plus">help</mat-icon>
 
         <br>
         &nbsp;Promotion {{profil?.degree_year}}<br>
@@ -36,32 +36,66 @@
     </tr>
   </table>
 
+  <app-hourglass [message]="message"></app-hourglass>
 
+  <!--  Travaux nouvelle version -->
+  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;" *ngIf="message.length==0">
+    <br>Expériences<br><br>
+    <mgl-timeline [mobileWidthThreshold]="200"
+                  [toggle]="false"
+                  [alternate]="false"
+                  side="right"
+                  style="color:black"
+                  [focusOnOpen]="true">
 
+      <mgl-timeline-entry *ngFor="let wrk of works">
 
-  <!--  Travaux -->
-  <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0px;">
-    <br><br>Expériences<br><br>
-    <div class="wrap-list" style="width: 100%;">
-      <app-work *ngFor="let wrk of works"
-                [work]="wrk"
-                style="margin:5px;"
-                maxwidth="450px"
-                width="350px"
-                minheight="100px"
-                height="auto"
-                backgroundColor="#1c1a1a">
-        <br>
-
-          <img  *ngFor="let a of wrk.pow.awards"
-                src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/trophy_1f3c6.png"
-                style="width: 35px;display: inline-block;margin:3px;cursor: pointer"
-                (click)="open_price(a,wrk.pow.title)"
-                [title]="a.title+': '+a.description+'('+a.year+')'"
-               >
-
-      </app-work>
-    </div>
+        <mgl-timeline-entry-header>
+          {{wrk.pow.title}}<br>
+          <span style="font-size: x-small">{{wrk.pow.nature}}/{{wrk.pow.category}}</span>
+        </mgl-timeline-entry-header>
+        <mgl-timeline-entry-content style="font-size: small;line-height: 85%;">
+          {{wrk.job}}<br>
+          <small>
+            <a [href]="wrk.pow.link[0].url" target="_blank" class="app-link">{{wrk.pow.link[0].text}}</a>
+          </small>
+        </mgl-timeline-entry-content>
+         <mgl-timeline-entry-dot [size]="40" style="color:red;"
+                                 expandAnimationTiming="200ms ease"
+                                 collapseAnimationTiming="100ms ease"
+                                 >
+         </mgl-timeline-entry-dot>
+        <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">
+          <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </mgl-timeline-entry-side>
+      </mgl-timeline-entry>
+    </mgl-timeline>
   </div>
+
+
+  <!--  Travaux old version -->
+  <!--  <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0px;">-->
+  <!--    <br><br>Expériences<br><br>-->
+  <!--    <div class="wrap-list" style="width: 100%;">-->
+  <!--      <app-work *ngFor="let wrk of works"-->
+  <!--                [work]="wrk"-->
+  <!--                style="margin:5px;"-->
+  <!--                maxwidth="450px"-->
+  <!--                width="350px"-->
+  <!--                minheight="100px"-->
+  <!--                height="auto"-->
+  <!--                backgroundColor="#1c1a1a">-->
+  <!--        <br>-->
+
+  <!--          <img  *ngFor="let a of wrk.pow.awards"-->
+  <!--                src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/trophy_1f3c6.png"-->
+  <!--                style="width: 35px;display: inline-block;margin:3px;cursor: pointer"-->
+  <!--                (click)="open_price(a,wrk.pow.title)"-->
+  <!--                [title]="a.title+': '+a.description+'('+a.year+')'"-->
+  <!--               >-->
+
+  <!--      </app-work>-->
+  <!--    </div>-->
+  <!--  </div>-->
 
 </div>

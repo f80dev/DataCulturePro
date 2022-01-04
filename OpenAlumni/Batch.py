@@ -308,19 +308,67 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     if len(links)>0:
         u=links[0].get("href")
         page=wikipedia.BeautifulSoup(wikipedia.requests.get(u, headers={'User-Agent': 'Mozilla/5.0'}).text,"html5lib")
+        if equal_str(name,page.title.text.split("-")[0]):
+            photo = ""
+            _photo = page.find('div', attrs={'class': "profil-picture pull-right"})
+            if not _photo is None: photo = _photo.find("a").get("href")
 
-        photo = ""
-        _photo = page.find('div', attrs={'class': "profil-picture pull-right"})
-        if not _photo is None: photo = _photo.find("a").get("href")
+            links_film=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]*/")})
+            for l in links_film:
+                rc.append({"url":l.get("href"),"text":l.get("text"),"nature":""})
 
-        links_film=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]*/")})
-        for l in links_film:
-            rc.append({"url":l.get("href"),"text":l.get("text"),"nature":""})
-    else:
-        return None
+            return {"links": rc, "photo": photo, "url": u}
 
-    return {"links":rc,"photo":photo,"url":u}
+    return None
 
+
+def extract_awards_from_imdb(profil_url,profil):
+    # Recherche des awards
+    page = load_page(profil_url + "awards?ref_=nm_awd")
+
+    awards = page.find_all("h3")
+    if len(awards)>0:
+        awards.pop(0)
+
+    tables = page.find_all("table", {"class": "awards"})
+
+    for i in range(0, len(tables)):
+        for tr in tables[i].find_all("tr"):
+            if tr:
+                festival_title = translate(awards[i].text.split(",")[0].lower().strip())
+                tds = tr.find_all("td")
+                if len(tds)<=2:
+                    log("Format non conforme "+tr.text)
+                else:
+                    year = tds[0].text.replace("\n","").replace(" ","").strip()
+                    award = tds[1].text
+
+                    film = tds[2].find("a")
+                    if film and award:
+                        win=("Winner" in award)
+                        film_title=film.text
+                        if "(" in tds[2].text:
+                            film_year =tds[2].text.split("(")[1].split(")")[0]
+                            pow=PieceOfWork.objects.filter(title__iexact=film_title,year__iexact=film_year)
+                            if pow.exists():
+                                pow=pow.first()
+                                f = Festival.objects.filter(title__iexact=festival_title)
+                                if f.exists():
+                                    f = f.first()
+                                else:
+                                    f = Festival(title=festival_title)
+                                    f.save()
+
+                                a = Award.objects.filter(pow__id=pow.id, year=year, festival__id=f.id,profil__id=profil.id)
+                                if a.exists():
+                                    a = a.first()
+                                else:
+                                    award=award.replace("\n","").replace("Winner","").replace("Nominee","")
+                                    a = Award(description=award, year=year, pow=pow, festival=f,profil=profil,winner=win)
+                                try:
+                                    a.save()
+                                except:
+                                    log("!!Probleme d'enregistrement de l'award sur " + pow.title)
 
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
@@ -357,8 +405,8 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
                         url = url.split("?")[0]
 
                         infos["links"].append({"url":url,"text":l.getText(),"job":"","nature":""})
-
     return infos
+
 
 def extract_film_from_senscritique(title:str,refresh_delay=31):
     url="https://www.senscritique.com/search?q="+urlencode(title.lower())
@@ -459,9 +507,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     #         extract_text="S"+zone_info_comp.getText().split("Season")[1].replace("Episode ","E").replace(" | ","").replace(" ","")
     #         rc["title"]=title+" "+extract_text.split("\n")[0]
 
-
-
-
     affiche = divs["hero-media__poster"]
     if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
 
@@ -469,7 +514,7 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     if "plot" in divs:
         rc["synopsis"]=divs["plot"].text.replace("Read all","")
 
-    log("Recherche du role sur le film")
+    #log("Recherche du role sur le film")
 
     credits=load_page(url+"fullcredits",refresh_delay)
     if not credits is None:
@@ -484,24 +529,31 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                     tds=tr.find_all("td")
                     if len(tds)>1:
                         findname=tds[0].text.replace("\n","").replace("  "," ").strip()
-                        if findname.upper()==name.upper():
-                            if " Cast\n" in sur_jobs[i].text or " Serie Cast\n" in sur_jobs[i].text:
-                                job="Actor"
-                            else:
-                                job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
-                                if len(job) == 0 and len(sur_jobs[i].text) > 0:
-                                    job = sur_jobs[i].text.replace(" by", "").strip()
+                        if len(findname) ==0:findname=tds[1].text.replace("\n","").replace("  "," ").strip()
+                        if len(findname)>0:
+                            #log("Nom identifié "+findname)
+                            if equal_str(findname,name):
+                                sur_job=sur_jobs[i].text.replace("\n"," ").strip()
+                                if "Cast" in sur_job or "Serie Cast" in sur_job:
+                                    job="Actor"
+                                else:
+                                    job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
+                                    if len(job) == 0 and len(sur_jobs[i].text) > 0:
+                                        job = sur_job.replace(" by", "").strip()
 
-                            job=job.split("\n")[0]
-                            rc["job"] = translate(job)
-                            if len(job)==0:log("Job non identifié pour "+name+" sur "+url)
-                        else:
-                            if all_casting:
-                                names=tds[0].split(" ")
-                                rc["casting"].append({
-                                    "name":" ".join(names),
-                                    "source":"imdb",
-                                    "job":job})
+                                job=job.split("\n")[0]
+                                rc["job"] = translate(job)
+                                if len(job)==0:
+                                    log("Job non identifié pour "+name+" sur "+url)
+                                else:
+                                    if not all_casting: break
+                            else:
+                                if all_casting:
+                                    names=tds[0].split(" ")
+                                    rc["casting"].append({
+                                        "name":" ".join(names),
+                                        "source":"imdb",
+                                        "job":job})
 
 
     if not "job" in rc: rc["job"]=job
@@ -661,7 +713,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             except Exception as inst:
                 log("Impossible d'enregistrer le film: "+str(inst.args))
         else:
-            log("Impossible de retrouver le film")
+            log("Impossible de retrouver le film"+str(film))
 
 
         if not pow is None:
@@ -671,7 +723,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                     if f.exists():
                         f = f.first()
                     else:
-                        f = Festival(title=prix["title"])
+                        f = Festival(title=prix["title"].strip().lower())
                         f.save()
 
                     a=Award.objects.filter(pow__id=pow.id,year=prix["year"],festival__id=f.id)
@@ -785,7 +837,11 @@ def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefil
 
 
 #http://localhost:8000/api/batch
-def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000,limit_contrib=10,templates=list(),content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False}):
+def exec_batch(profils,refresh_delay_profil=31,
+               refresh_delay_pages=31,limit=2000,
+               limit_contrib=10,templates=list(),
+               content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False},
+               remove_works=False):
     """
     Scan des profils
     :param profils:
@@ -819,10 +875,14 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
             #log("Extraction bellefaye " + str(infos))
 
             try:
+                imdb_profil_url=None
                 if content["imdb"]:
                     infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages)
                     log("Extraction d'imdb " + str(infos))
-                    if "url" in infos:profil.add_link(infos["url"], "IMDB")
+                    if "url" in infos:
+                        profil.add_link(infos["url"], "IMDB")
+                        imdb_profil_url = infos["url"]
+
                     if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
                     if "links" in infos: links=links+infos["links"]
             except:
@@ -852,8 +912,12 @@ def exec_batch(profils,refresh_delay_profil=31,refresh_delay_pages=31,limit=2000
                     #job_for=infos["url"]
                     job_for=profil.firstname+" "+profil.lastname
 
+            if remove_works:
+                Work.objects.filter(profil_id=profil.id,source__contains="auto").delete()
+
             rc_films,rc_works,articles=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
             rc_articles.append(articles)
+            if imdb_profil_url:extract_awards_from_imdb(imdb_profil_url,profil)
             n_films=n_films+rc_films
             n_works=n_works+rc_works
 

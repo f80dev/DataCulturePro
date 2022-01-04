@@ -15,41 +15,41 @@ export function showError(vm:any,err:any){
 
 
 export function translateQuery(text:string,all_term=false):string {
-    if(text.length==0)return "";
-    let dict={
-      "nom":"lastname",
-      "prenom":"firstname",
-      "prénom":"firstname",
-      "code postal":"cp",
-      "film":"works__title",
-      "ville":"town",
-      "promotion":"promo",
-      "job":"works__job"
-    }
-    for(let k in dict){
-      text=text.replace(k+":",dict[k]+":");
-    }
-
-    if(text.indexOf(":")>0){
-      let rc="";
-      for(let term of text.split(" ")){
-        rc=rc + term.replace(":","=")+"&"
-      }
-      return rc.substr(0,rc.length-1);
-    }
-
-    if(all_term){
-      let rc="";
-      for(let wrd of text.split(" ")){
-        rc=rc+"title__term="+wrd.toLowerCase().trim()+"&";
-      }
-      text=rc.substr(0,rc.length-1);
-    }
-    else
-      text="search="+text;
-
-    return text;
+  if(text.length==0)return "";
+  let dict={
+    "nom":"lastname",
+    "prenom":"firstname",
+    "prénom":"firstname",
+    "code postal":"cp",
+    "film":"works__title",
+    "ville":"town",
+    "promotion":"promo",
+    "job":"works__job"
   }
+  for(let k in dict){
+    text=text.replace(k+":",dict[k]+":");
+  }
+
+  if(text.indexOf(":")>0){
+    let rc="";
+    for(let term of text.split(" ")){
+      rc=rc + term.replace(":","=")+"&"
+    }
+    return rc.substr(0,rc.length-1);
+  }
+
+  if(all_term){
+    let rc="";
+    for(let wrd of text.split(" ")){
+      rc=rc+"title__term="+wrd.toLowerCase().trim()+"&";
+    }
+    text=rc.substr(0,rc.length-1);
+  }
+  else
+    text="search="+text;
+
+  return text;
+}
 
 export function brand_text(text:string,config:any){
   if(config.values){
@@ -93,6 +93,34 @@ export function extract_id(url:string):string {
 }
 
 
+export function group_works(wrks) {
+  let rc=[];
+  for(let w of wrks){
+    w.title=w.pow.title;
+    w.year=w.pow.year;
+    let new_work=w;
+    for(let tmp of rc){
+      if(tmp.title==w.title){
+        let idx=rc.indexOf(tmp);
+        rc[idx].job=rc[idx].job +" & "+w.job
+        new_work=null;
+        break;
+      }
+    }
+
+    if(w.state!="D"){
+      if(new_work){
+        rc.push(new_work);
+      }
+
+    }
+  }
+
+  rc.sort((a, b) => (Number(a.year) > Number(b.year) ? -1 : 1));
+  return rc;
+}
+
+
 export function range(start=0, end) {
   var ans = [];
   for (let i = start; i <= end; i++) {
@@ -108,30 +136,30 @@ export function getAuthServiceConfigs() {
 }
 
 function readPerm(perm:string,perms,sep:string=","):string {
-    for(let p of perms){
-      let rc="";
-      if(p.tag==perm)rc=p.description;
-      if(rc.length==0 && p.tag==perm.replace("r_",""))rc=p.description;
-      if(rc.length==0 && p.tag==perm.replace("w_",""))rc=p.description+" en modification";
-      if(rc.length>0)return rc+sep;
-    }
-    return "";
+  for(let p of perms){
+    let rc="";
+    if(p.tag==perm)rc=p.description;
+    if(rc.length==0 && p.tag==perm.replace("r_",""))rc=p.description;
+    if(rc.length==0 && p.tag==perm.replace("w_",""))rc=p.description+" en modification";
+    if(rc.length>0)return rc+sep;
   }
+  return "";
+}
 
 
 export function detailPerm(perm:string,perms,format="txt"): string {
-    if(!perm)return "";
-    let rc="";
-    if(format=="html")rc="<ul>";
-    for(let it of perm.split(" ")){
-      if(format=="txt")
-        rc=rc+readPerm(it,perms,"")+" / ";
-      else
-        rc=rc+"<li>"+readPerm(it,perms)+"</li>";
-    }
-    if(format=="html")rc=rc+"</ul>";
-    return rc;
+  if(!perm)return "";
+  let rc="";
+  if(format=="html")rc="<ul>";
+  for(let it of perm.split(" ")){
+    if(format=="txt")
+      rc=rc+readPerm(it,perms,"")+" / ";
+    else
+      rc=rc+"<li>"+readPerm(it,perms)+"</li>";
   }
+  if(format=="html")rc=rc+"</ul>";
+  return rc;
+}
 
 
 export function api(service: string , param: string= '', encode: boolean = true,format:string="json"): string  {
@@ -431,16 +459,16 @@ export function askForAuthent(vm:any,message:string,redirect:string){
     $$("L'utilisateur n'est pas encore authentifié, il est renvoyé vers la page de login");
     vm.router.navigate(["login"],{queryParams:{message:message,redirect:redirect}});
   } else {
-      $$("Email renseigne "+vm.config.user.user.email+", redirection vers "+redirect);
-      if(redirect.startsWith("http")){
-        redirect=redirect.replace("{{email}}",vm.config.user.user.email);
-        open(redirect,"_blank");
-      } else{
-        if(redirect.indexOf("?")>-1)
-          vm.router.navigateByUrl(redirect);
-        else
-          vm.router.navigate([redirect]);
-      }
+    $$("Email renseigne "+vm.config.user.user.email+", redirection vers "+redirect);
+    if(redirect.startsWith("http")){
+      redirect=redirect.replace("{{email}}",vm.config.user.user.email);
+      open(redirect,"_blank");
+    } else{
+      if(redirect.indexOf("?")>-1)
+        vm.router.navigateByUrl(redirect);
+      else
+        vm.router.navigate([redirect]);
+    }
 
   }
 }
@@ -837,65 +865,65 @@ export function arrayRemove(arr, value) {
 }
 
 export function stringDistance(a: string, b: string): number {
-	const an = a ? a.length : 0;
-	const bn = b ? b.length : 0;
-	if (an === 0)
-	{
-		return bn;
-	}
-	if (bn === 0)
-	{
-		return an;
-	}
-	const matrix = new Array<number[]>(bn + 1);
-	for (let i = 0; i <= bn; ++i)
-	{
-		let row = matrix[i] = new Array<number>(an + 1);
-		row[0] = i;
-	}
-	const firstRow = matrix[0];
-	for (let j = 1; j <= an; ++j)
-	{
-		firstRow[j] = j;
-	}
-	for (let i = 1; i <= bn; ++i)
-	{
-		for (let j = 1; j <= an; ++j)
-		{
-			if (b.charAt(i - 1) === a.charAt(j - 1))
-			{
-				matrix[i][j] = matrix[i - 1][j - 1];
-			}
-			else
-			{
-				matrix[i][j] = Math.min(
-					matrix[i - 1][j - 1], // substitution
-					matrix[i][j - 1], // insertion
-					matrix[i - 1][j] // deletion
-				) + 1;
-			}
-		}
-	}
-	return matrix[bn][an];
+  const an = a ? a.length : 0;
+  const bn = b ? b.length : 0;
+  if (an === 0)
+  {
+    return bn;
+  }
+  if (bn === 0)
+  {
+    return an;
+  }
+  const matrix = new Array<number[]>(bn + 1);
+  for (let i = 0; i <= bn; ++i)
+  {
+    let row = matrix[i] = new Array<number>(an + 1);
+    row[0] = i;
+  }
+  const firstRow = matrix[0];
+  for (let j = 1; j <= an; ++j)
+  {
+    firstRow[j] = j;
+  }
+  for (let i = 1; i <= bn; ++i)
+  {
+    for (let j = 1; j <= an; ++j)
+    {
+      if (b.charAt(i - 1) === a.charAt(j - 1))
+      {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      }
+      else
+      {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1], // substitution
+          matrix[i][j - 1], // insertion
+          matrix[i - 1][j] // deletion
+        ) + 1;
+      }
+    }
+  }
+  return matrix[bn][an];
 }
 
 
 
 export function fixTagPage(meta:any,coupon:any){
-    meta.removeTag('name = "og:url"');
-    meta.removeTag('name = "og:type"');
-    meta.removeTag('name = "og:title"');
-    meta.removeTag('name = "og:description"');
-    meta.removeTag('name = "og:image"');
+  meta.removeTag('name = "og:url"');
+  meta.removeTag('name = "og:type"');
+  meta.removeTag('name = "og:title"');
+  meta.removeTag('name = "og:description"');
+  meta.removeTag('name = "og:image"');
 
-    meta.addTags([
-      {name:"og:url",content:coupon.url},
-      {name:"og:type",content:"website"},
-      {name:"og:locale",content:"fr_FR"},
-      {name:"og:title",content:coupon.label},
-      {name:"og:description",content:"Ouvrir pour profiter vous aussi de la promotion"},
-      {name:"og:image",content:coupon.picture}
-    ],true);
+  meta.addTags([
+    {name:"og:url",content:coupon.url},
+    {name:"og:type",content:"website"},
+    {name:"og:locale",content:"fr_FR"},
+    {name:"og:title",content:coupon.label},
+    {name:"og:description",content:"Ouvrir pour profiter vous aussi de la promotion"},
+    {name:"og:image",content:coupon.picture}
+  ],true);
 }
 
 export function initAvailableCameras(func){
@@ -1022,12 +1050,12 @@ export function autoRotate(src: string, quality: number, func) {
 
   });
 
-    //   }else{
-    //     debugger;
-    //     rotate(src, -90, quality, func);
-    //   }
-    //
-    // });
+  //   }else{
+  //     debugger;
+  //     rotate(src, -90, quality, func);
+  //   }
+  //
+  // });
 }
 
 // export function autoRotate(src: string, quality: number, func) {

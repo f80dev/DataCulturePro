@@ -472,7 +472,10 @@ def batch(request):
 
     profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay_profil,refresh_delay_page,int(limit),int(limit_contrib),templates["templates"],content=content)
+    n_films,n_works,articles=exec_batch(profils,refresh_delay_profil,
+                                        refresh_delay_page,int(limit),int(limit_contrib),
+                                        templates["templates"],
+                                        content=content,remove_works=request.GET.get("remove_works","false")=="true")
     articles=[x for x in articles if x]
 
     return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})

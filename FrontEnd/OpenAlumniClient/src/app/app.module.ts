@@ -38,7 +38,6 @@ import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 import {
   FacebookLoginProvider,
   GoogleLoginProvider,
-  SocialAuthService,
   SocialAuthServiceConfig, SocialLoginModule
 } from 'angularx-social-login';
 import {getAuthServiceConfigs} from './tools';
@@ -86,6 +85,8 @@ import { IssuesComponent } from './issues/issues.component';
 import { SettingsComponent } from './settings/settings.component';
 import { RgpdComponent } from './rgpd/rgpd.component';
 
+import { MglTimelineModule } from 'angular-mgl-timeline';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -132,6 +133,7 @@ import { RgpdComponent } from './rgpd/rgpd.component';
     AppRoutingModule,
     MatTabsModule,
     HttpClientModule,
+    MglTimelineModule,
     ScrollingModule,
     QuillModule.forRoot({
       modules: {

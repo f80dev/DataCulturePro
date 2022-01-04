@@ -286,8 +286,15 @@ class Work(models.Model):
 
 
 class Festival(models.Model):
+    """
+
+    """
     id = models.AutoField(primary_key=True)
     title = models.CharField(null=False, max_length=300, unique=True, default="sans titre",help_text="Nom du festival")
+    country = models.CharField(null=True, max_length=100, help_text="Pays du festival")
+    url=models.CharField(null=False,blank=True, default="",max_length=150, help_text="URL de la page d'acceuil du festival")
+    dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
+
 
 
 
@@ -381,8 +388,11 @@ def update_pow(sender, **kwargs):
 
 class Award(models.Model):
     id = models.AutoField(primary_key=True)
+    winner = models.BooleanField(null=False,default=True, help_text="Indique s'il s'agit d'une nomination ou d'une victoire")
     festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant")
     profil = models.ForeignKey('Profil', null=True, on_delete=models.SET_NULL, related_name="award",help_text="Profil destinataire du prix")
     pow = models.ForeignKey('PieceOfWork', null=True, on_delete=models.CASCADE, related_name="award",help_text="Oeuvre récompensé")
     description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom du festival")
     year = models.IntegerField(null=True, help_text="Date de la remise du prix")
+    dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
+

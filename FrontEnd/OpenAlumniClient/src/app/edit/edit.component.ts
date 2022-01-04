@@ -3,7 +3,7 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {$$, checkLogin,  showError, showMessage, stringDistance} from "../tools";
+import {$$, checkLogin, group_works, showError, showMessage, stringDistance} from "../tools";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {PromptComponent} from "../prompt/prompt.component";
@@ -111,31 +111,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
       this.message="";
-      this.works=[];
-      for(let w of r.results){
-        w.title=w.pow.title;
-        w.year=w.pow.year;
-        let new_work=w;
-        for(let tmp of this.works){
-          if(tmp.title==w.title){
-            let idx=this.works.indexOf(tmp);
-            this.works[idx].job=this.works[idx].job +" & "+w.job
-            new_work=null;
-            break;
-          }
-        }
-
-        if(w.state!="D"){
-          if(new_work){
-            this.works.push(new_work);
-          }
-
-        }
-      }
-
-      $$("Tri de la liste");
-      this.works.sort((a, b) => (Number(a.year) > Number(b.year) ? -1 : 1));
-
+      this.works=group_works(r.results);
     },(err)=>{
       showError(this,err);
       this.message="";

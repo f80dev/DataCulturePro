@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
-import {$$, api, checkLogin, showMessage} from "../tools";
+import {$$, api, checkLogin, showError, showMessage} from "../tools";
 import {ConfigService} from "../config.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
@@ -134,7 +134,7 @@ export class StatsComponent implements OnInit {
     if(!this.sel_report.html_code){
       this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9)+"&title="+this.sel_report.title,false,"");
       param=param+"&height="+(window.screen.availHeight*0.6);
-      this.api._get("export_all/",param+"&out=graph",60,"").subscribe((html:any)=>{
+      this.api._get("export_all/",param+"&out=graph",600,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code;
         this.sel_report.html_stat=html.values;
         if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;
@@ -142,7 +142,7 @@ export class StatsComponent implements OnInit {
         if(err.status==404){
           this.sel_report.html_code="<div style='width:100%;text-align: center;color:white;font-size: large;'><br>"+err.error+"</div>";
         }
-        showMessage(this,err.error);
+        showError(this,err);
       });
     }
   }

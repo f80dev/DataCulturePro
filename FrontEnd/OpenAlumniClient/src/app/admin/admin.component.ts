@@ -65,12 +65,12 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  batch(refresh_delay_profil=31,refresh_delay_page=200) {
+  batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false) {
     let catalog="imdb,unifrance,lefilmfrancais";
     // for(let key of Object.keys(this.config.values.catalog)){
     //   if(this.config.values.catalog[key])catalog=catalog+key.replace(" ","").trim()+"_";
     // }
-    this.api._post("batch/","refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page,this.config.values.catalog).subscribe(()=>{
+    this.api._post("batch/","remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page,this.config.values.catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }

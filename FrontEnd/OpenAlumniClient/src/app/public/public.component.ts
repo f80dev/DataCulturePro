@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
-import {showMessage} from "../tools";
+import {$$, group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 
@@ -14,6 +14,7 @@ export class PublicComponent implements OnInit {
 
   profil:any;
   works: any[]=[];
+  message: string;
 
   constructor(public router:Router,
               public ngNavigatorShareService:NgNavigatorShareService,
@@ -25,14 +26,26 @@ export class PublicComponent implements OnInit {
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
     if(id){
+      this.message="Chargement des expériences";
       this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
+        this.message="";
         this.profil=p;
-        this.works=[];
+        let rc=[];
+        debugger
         for(let w of p.works){
           for(var i=0;i<100;i++){
             w=w.replace("'","\"")
           }
-          this.works.push(JSON.parse(w));
+          try {
+            rc.push(JSON.parse(w));
+          } catch (e) {
+            $$("Probleme de conversion "+w);
+          }
+        }
+        this.works=group_works(rc);
+        this.works[0].show_year=true;
+        for(let i=1;i<this.works.length;i++){
+          this.works[i].show_year=(this.works[i].pow.year!=this.works[i-1].pow.year);
         }
       })
     } else {
