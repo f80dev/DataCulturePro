@@ -1,13 +1,13 @@
 <div class="mainform" style="overflow: hidden;">
   <div id="toolbar" class="toolbar-app"
-       style="position:absolute;display:block;padding:3px;width:fit-content;right:0px;top:0px;z-index:100;background-color: #424242;height:90px;vertical-align: middle;line-height: 90%;">
+       style="font-size:small;position:absolute;display:block;padding:3px;width:fit-content;right:0px;top:0px;z-index:100;background-color: #424242;height:70px;vertical-align: middle;line-height: 90%;">
     <mat-slider
       title="Dispersion"
       color="primary"
       class="app-slider"
       style="width: 30px;margin:0;padding:0"
       [(ngModel)]="forceProperties.link.distance"
-      (valueChange)="updateForces()"
+      (valueChange)="updateForces(width,height)"
       min="5" max="100">
     </mat-slider>
 
@@ -51,5 +51,5 @@
 
   </div>
   <app-hourglass [message]="message"></app-hourglass>
-  <figure id="graph"></figure>
+  <figure #graph_zone id="graph" style="width: 95%;height:90vh;overflow: hidden;" class="mat-elevation-z4"></figure>
 </div>

@@ -809,8 +809,18 @@ def social_graph(request,format="json"):
     :param request:
     :return:
     """
+
+    log("Extraction des profils")
+    filter=request.GET.get("filter")
+    degree_filter = filter.split("_")[0]
+    department_filter = filter.split("_")[1]
+
+    profils = Profil.objects.filter(department__contains=department_filter)
+    if degree_filter != "0":
+        profils = Profil.objects.filter(degree_filter=int(degree_filter), department__contains=department_filter)
+
     G=SocialGraph()
-    G.load(request.GET.get("filter"),request.GET.get("film")!="false")
+    G.load(profils,request.GET.get("film")!="false")
     G.eval(request.GET.get("eval"))
     G.filter("pagerank",0.0005)
 

@@ -43,8 +43,6 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     checkLogin(this,()=>{
-
-
       this.refresh(()=>this.eval_stat());
       this.api._get("api_doc").subscribe((r:any)=>{
         this.rows=r.content;
@@ -59,7 +57,11 @@ export class StatsComponent implements OnInit {
 
       this.reports=[];
       for(let i of r["Reports"]){
-        if(i.prod)this.reports.push(i);
+        if(i.prod){
+          if(!i.hasOwnProperty("visiblity") || this.config.hasPerm(i.visibility)){
+            this.reports.push(i);
+          }
+        }
       }
 
       this.instant_reports=[];
@@ -133,7 +135,9 @@ export class StatsComponent implements OnInit {
     if(!this.sel_report.html_code){
       this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9)+"&title="+this.sel_report.title,false,"");
       param=param+"&height="+(window.screen.availHeight*0.6);
-      this.api._get("export_all/",param+"&out=graph",600,"").subscribe((html:any)=>{
+      this.message="Mise a jour du graphique";
+      this.api._get("export_all/",param+"&out=graph",6000,"").subscribe((html:any)=>{
+        this.message="";
         this.sel_report.html_code=html.code;
         this.sel_report.html_stat=html.values;
         if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;

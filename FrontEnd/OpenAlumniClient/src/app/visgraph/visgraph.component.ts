@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
 import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
@@ -10,12 +10,8 @@ import {$$} from "../tools";
   templateUrl: './visgraph.component.html',
   styleUrls: ['./visgraph.component.sass']
 })
-export class VisgraphComponent implements OnInit {
-
+export class VisgraphComponent implements OnInit,AfterViewInit {
   private svg;
-  private margin = 50;
-  width = screen.availWidth - (this.margin * 2);
-  height = screen.availHeight - (this.margin * 2);
 
   props=["pagerank"]
 
@@ -65,6 +61,9 @@ export class VisgraphComponent implements OnInit {
   };
   message: string="";
   edge_props: any;
+  width=screen.availWidth;
+  height=screen.availHeight;
+  @ViewChild('graph_zone') graph_zone : ElementRef;
 
   constructor(
     public api:ApiService,
@@ -75,15 +74,14 @@ export class VisgraphComponent implements OnInit {
 
 
 
-  private createSvg(): any {
+  createSvg(width,height,margin): any {
     return d3.select("figure#graph")
       .append("svg")
-      .attr("width", this.width + (this.margin * 2))
-      .attr("height", this.height + (this.margin * 2))
+      .attr("width", width)
+      .attr("height", height)
       .append("g")
-      .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
+      .attr("transform", "translate(" + (-width/4) + "," + (-height/8) + ")");
   }
-
 
 
   resetGraph(svg){
@@ -158,16 +156,16 @@ export class VisgraphComponent implements OnInit {
 
       });
 
-    this.updateForces();
+    this.updateForces(this.width,this.height);
   }
 
 
 
-  updateForces() {
+  updateForces(width,height) {
     // get each force by name and update the properties
     this.simulation.force("center")
-      .x(this.width * this.forceProperties.center.x)
-      .y(this.height * this.forceProperties.center.y);
+      .x(width * this.forceProperties.center.x)
+      .y(height * this.forceProperties.center.y);
     this.simulation.force("charge")
       .strength(this.forceProperties.charge.strength * Number(this.forceProperties.charge.enabled))
       .distanceMin(this.forceProperties.charge.distanceMin)
@@ -178,10 +176,10 @@ export class VisgraphComponent implements OnInit {
       .iterations(this.forceProperties.collide.iterations);
     this.simulation.force("forceX")
       .strength(this.forceProperties.forceX.strength * Number(this.forceProperties.forceX.enabled))
-      .x(this.width * this.forceProperties.forceX.x);
+      .x(width * this.forceProperties.forceX.x);
     this.simulation.force("forceY")
       .strength(this.forceProperties.forceY.strength * Number(this.forceProperties.forceY.enabled))
-      .y(this.height * this.forceProperties.forceY.y);
+      .y(height * this.forceProperties.forceY.y);
     this.simulation.force("link")
       .id(function(d) {return d.id;})
       .distance(this.forceProperties.link.distance)
@@ -217,12 +215,10 @@ export class VisgraphComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.svg=this.createSvg();
+    this.svg=this.createSvg(this.width,this.height,-this.height/4);
     this.message="Chargement du réseau";
     if(this.routes.snapshot.queryParamMap.has("formation"))this.filter.department.value=this.routes.snapshot.queryParamMap.get("formation");
     if(this.routes.snapshot.queryParamMap.has("promo"))this.filter.promo.value=Number(this.routes.snapshot.queryParamMap.get("promo"));
-
-    this.refresh(this.filter.promo.value,this.filter.department.value);
   }
 
 
@@ -272,4 +268,11 @@ export class VisgraphComponent implements OnInit {
       this.initializeForces(data.graph,this.svg);
     });
   }
+
+  ngAfterViewInit(): void {
+    this.width=this.graph_zone.nativeElement.clientWidth;
+    this.height=this.graph_zone.nativeElement.clientHeight;
+    this.refresh(this.filter.promo.value,this.filter.department.value);
+  }
 }
+

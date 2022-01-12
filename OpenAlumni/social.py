@@ -24,14 +24,10 @@ class SocialGraph:
     def extract_subgraph(self):
         res=shortest_path(self.G)
 
-    def load(self,filter="",with_film=False):
-        ids=[]
-        degree_filter=filter.split("_")[0]
-        department_filter=filter.split("_")[1]
 
-        profils=Profil.objects.filter(department__contains=department_filter)
-        if degree_filter!="0":
-            profils=Profil.objects.filter(degree_filter=int(degree_filter),department__contains=department_filter)
+
+    def load(self,profils,with_film=False):
+        ids = []
 
         for p in profils:
             self.G.add_node(p.id,

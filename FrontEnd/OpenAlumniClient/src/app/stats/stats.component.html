@@ -15,7 +15,7 @@
 
   <mat-tab-group style="height: 87vh;text-align: center;"
                  #tabGroup mat-align-tabs="start"
-                 *ngIf="message?.length==0">
+                 >
 
     <mat-tab label="Rapports pré-définis">
 
@@ -48,11 +48,8 @@
         <app-hourglass message="En cours de calcul"></app-hourglass>
       </iframe>
 
-      <div *ngIf="!sel_report.html_stat">
-        <app-hourglass message="Graphique en cours d'élaboration" ></app-hourglass>
-      </div>
 
-       <div *ngIf="sel_report?.html_stat?.length>0" style="min-width:300px;height: auto;margin:10px;overflow: scroll;">
+       <div *ngIf="sel_report?.html_stat?.length>0 && message.length==0" style="min-width:300px;height: auto;margin:10px;overflow: scroll;">
         <mat-expansion-panel class="app-panel" style="display: inline-block;"
                            [expanded]="false" >
         <mat-expansion-panel-header>
