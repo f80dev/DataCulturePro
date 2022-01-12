@@ -405,7 +405,7 @@ def fusion(p1: Model, p2: Model,withLog=False):
     attrs_p2=list(model_to_dict(p2).keys())
 
     for attr in attrs_p2:
-        # On remplace tout les none
+        # On remplace tous les None
         if attr not in ["id"] and attr in attrs_p1:
             val = p2.__getattribute__(attr)
             if not val is None:
@@ -508,13 +508,16 @@ def remove_html(text):
     return text
 
 def remove_accents(s:str):
-    return s.replace("é","e").replace("à","a").replace("è","e").replace("é".upper(),"E").replace("è".upper(),"E")
+    if s is None:return None
+    for p in ["ée","àa","èe","âa","îi","ôo","êe","àa","ïi","öo","äa","ëe"]:
+        s=s.replace(p[0],p[1]).replace(p[0].upper(),p[1].upper())
+    return s
 
 def equal_str(s1:str,s2:str):
     if s1 and s2:
-        s1=remove_accents(s1.replace(" ","").upper())
-        s2=remove_accents(s2.replace(" ","").upper())
-    return (remove_ponctuation(s1)==remove_ponctuation(s2))
+        s1=remove_accents(remove_ponctuation(s1).replace(" ","").upper()).strip()
+        s2=remove_accents(remove_ponctuation(s2).replace(" ","").upper()).strip()
+    return (s1==s2)
 
 
 

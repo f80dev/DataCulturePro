@@ -73,26 +73,32 @@ class PowAnalyzer:
         try:
             log("Destruction de " + str(p_old))
             p_old.delete()
+            return True
         except:
             log("Destruction de " + str(p_new))
             try:
                 p_new.delete()
+                return True
             except:
                 log("Destruction impossible entre "+str(p_old)+" et "+str(p_new))
+                return False
 
 
     def find_double(self,with_fusion=True):
+        log("Recherche des doublons sur les films")
         rc=0
         for p1 in self.pows:
             for p2 in self.pows:
                 d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
                 if d>0.97 and p1.year==p2.year and p1.id!=p2.id:
                     log("Suspission de doublon entre "+str(p1)+" et "+str(p2))
-                    rc=rc+1
                     if with_fusion:
                         if p1.quality_score()>p2.quality_score():
-                            self.fusion(p2,p1)
+                            b=self.fusion(p2,p1)
                         else:
-                            self.fusion(p1, p2)
+                            b=self.fusion(p1, p2)
+                        if b:
+                            log("Fusion réalisée")
+                            rc = rc + 1
 
         return rc

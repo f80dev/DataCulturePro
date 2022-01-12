@@ -96,15 +96,19 @@ export function extract_id(url:string):string {
 export function group_works(wrks) {
   let rc=[];
   for(let w of wrks){
-    w.title=w.pow.title;
-    w.year=w.pow.year;
+    if(w.hasOwnProperty("pow")){
+      w.title=w.pow.title;
+      w.year=w.pow.year;
+    }
     let new_work=w;
-    for(let tmp of rc){
+    for(let tmp of wrks){
       if(tmp.title==w.title){
         let idx=rc.indexOf(tmp);
-        rc[idx].job=rc[idx].job +" & "+w.job
-        new_work=null;
-        break;
+        if(idx>-1){
+          rc[idx].job=rc[idx].job +" & "+w.job
+          new_work=null;
+          break;
+        }
       }
     }
 

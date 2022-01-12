@@ -187,7 +187,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields=("profil","pow","job")
 
-#http://localhost:8000/api/awards/?format=json
+#http://localhost:8000/api/awards/?format=json&profil=12313
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.all()
     serializer_class = AwardSerializer
@@ -310,7 +310,6 @@ def test(request):
         cp="75010",
         email="paul.dudule@gmail.com"
     )
-    profil.save()
     return JsonResponse({"result":profil})
 
 
@@ -448,7 +447,6 @@ def rebuild_index(request):
 
 
 
-
 #http://localhost:8000/api/batch
 #https://server.f80.fr:8000/api/batch
 @api_view(["POST"])
@@ -506,6 +504,8 @@ def quality_filter(request):
     filter= request.GET.get("filter", "*")
     ope = request.GET.get("ope", "profils,films")
     profils=Profil.objects.order_by("dtLastSearch").all()
+    n_profils=0
+    n_pows=0
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
@@ -515,9 +515,9 @@ def quality_filter(request):
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
-        pow_analyzer.find_double()
+        n_pows=pow_analyzer.find_double()
 
-    return Response({"message":"ok","profils modifies":n_profils,"anomalie":log})
+    return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows,"anomalie":log})
 
 
 

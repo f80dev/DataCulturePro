@@ -14,13 +14,24 @@
           <mat-icon title="Voir la page publique" (click)="share()" style="cursor: pointer;">share</mat-icon>
         </div>
         <br>
-        &nbsp;{{profil?.department}}
-        &nbsp;
+        <table style="border-spacing: 5px;">
+          <tr><td>Département</td><td>{{profil?.department}}</td><td><mat-icon style="font-size: small;cursor: pointer;"
+                                                                               [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">help</mat-icon></td></tr>
+          <tr>
+            <td>Promotion</td><td>{{profil?.degree_year}}</td>
+            <td>
+              <mat-icon style="font-size: small;cursor: pointer;"
+                        (click)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})"
+                        [title]="'Composition de la promotion '+profil.degree_year">help</mat-icon>
+            </td>
+          </tr>
 
-        <mat-icon style="font-size: small;cursor: pointer;" title="En savoir plus">help</mat-icon>
-
+          <tr *ngIf="profil.works.length>0"><td>Expériences</td><td>{{profil.expe}}</td></tr>
+          <tr *ngIf="profil.works.length>0"><td></td><td>{{profil.works.length}} expériences référencées</td></tr>
+          <tr *ngIf="profil.awards?.length>0"><td></td><td>{{profil.awards.length}} disctinctions</td></tr>
+        </table>
         <br>
-        &nbsp;Promotion {{profil?.degree_year}}<br>
+
 
         <div *ngIf="profil?.links?.length>0">
           <br>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Django default" uuid="f9a64453-51a9-4255-bd3d-a4c0df005204">
+    <data-source source="LOCAL" name="Django dev" uuid="30f2596f-8552-40f9-8b45-f8eab985d2b3">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/OpenAlumni/settings.py</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://207.180.198.227:5432/test_alumni_db</jdbc-url>
+      <jdbc-url>jdbc:postgresql://161.97.75.165:5432/test_alumni_db</jdbc-url>
     </data-source>
   </component>
 </project>

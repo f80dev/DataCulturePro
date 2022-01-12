@@ -118,4 +118,8 @@ export class AdminComponent implements OnInit {
       this.message="";
     })
   }
+
+  openServer(url: string) {
+    open(url,"terminal");
+  }
 }

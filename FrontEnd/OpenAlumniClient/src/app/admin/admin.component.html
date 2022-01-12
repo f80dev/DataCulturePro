@@ -17,9 +17,10 @@
       <button mat-raised-button mat-button class="app-button" (click)="router.navigate(['search'])">Recherche</button>
 
       <button mat-raised-button mat-button class="app-button" (click)="openQuery()">Extraction</button>
-      <button mat-raised-button mat-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
+
       <button mat-raised-button mat-button class="app-button" (click)="openAPI()">APIs</button>
       <button mat-raised-button mat-button class="app-button" (click)="initdb()">Initialisation</button>
+
 
       <button mat-raised-button mat-button class="app-button" (click)="apply_dict()"
               title="Uniformiser la terminologie en réappliquant le dictionnaire">Terminologie</button>
@@ -28,6 +29,26 @@
 
       <hr>
       <button mat-raised-button mat-button class="app-button" (click)="send_update()" color="secondary">Demande de mise a jour</button>
+
+
+    </mat-expansion-panel>
+
+ <mat-expansion-panel class="app-panel" [expanded]="true">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+          Serveur
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+       <button mat-raised-button mat-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
+
+      <button mat-raised-button mat-button class="app-button" (click)="openServer('https://207.180.198.227:9090/system/terminal')">
+        Connexion serveur Django
+      </button>
+
+      <button mat-raised-button mat-button class="app-button" (click)="openServer('https://161.97.75.165:9090/system/terminal')">
+        Connexion serveur Postgre
+      </button>
 
 
     </mat-expansion-panel>
@@ -137,7 +158,8 @@
       </button>
 
       <button mat-raised-button mat-button
-              class="app-button" (click)="analyzer('films')">Traitement Qualite
+              title="Traitement des doublons films"
+              class="app-button" (click)="analyzer('films')">Traitement Qualite (doublons)
       </button>
 
 

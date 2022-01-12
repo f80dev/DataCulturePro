@@ -11,7 +11,7 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str, now
+    equal_str, now, remove_accents
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
@@ -308,7 +308,7 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     if len(links)>0:
         u=links[0].get("href")
         page=wikipedia.BeautifulSoup(wikipedia.requests.get(u, headers={'User-Agent': 'Mozilla/5.0'}).text,"html5lib")
-        if equal_str(name,page.title.text.split("-")[0]):
+        if equal_str(name,page.title.text.split("-")[0]) or equal_str(name,links[0].text.split("Activités : ")[0]):
             photo = ""
             _photo = page.find('div', attrs={'class': "profil-picture pull-right"})
             if not _photo is None: photo = _photo.find("a").get("href")
@@ -372,10 +372,10 @@ def extract_awards_from_imdb(profil_url,profil):
 
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
-    peoples=ia.search_person(firstname+" "+lastname)
+    peoples=ia.search_person(remove_accents(firstname)+" "+remove_accents(lastname))
     infos=dict()
     for p in peoples:
-        name=p.data["name"].upper()
+        name=remove_accents(remove_ponctuation(p.data["name"].upper()))
         if firstname.upper() in name and lastname.upper() in name:
             if not "nopicture" in p.data["headshot"]:
                 infos["photo"]=p.data["headshot"]
@@ -535,7 +535,10 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                             if equal_str(findname,name):
                                 sur_job=sur_jobs[i].text.replace("\n"," ").strip()
                                 if "Cast" in sur_job or "Serie Cast" in sur_job:
-                                    job="Actor"
+                                    if len(tds)>3 and "Self" in tds[3].text:
+                                        job=""
+                                    else:
+                                        job="Actor"
                                 else:
                                     job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
                                     if len(job) == 0 and len(sur_jobs[i].text) > 0:
@@ -657,6 +660,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
     n_films=0
     n_works=0
     articles=list()
+    job_for=remove_accents(remove_ponctuation(job_for))
 
     for l in links:
         source = "auto"
@@ -899,7 +903,7 @@ def exec_batch(profils,refresh_delay_profil=31,
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
             if content["unifrance"]:
-                infos = extract_profil_from_unifrance(profil.firstname + " " + profil.lastname, refresh_delay=refresh_delay_pages)
+                infos = extract_profil_from_unifrance(remove_accents(profil.firstname + " " + profil.lastname), refresh_delay=refresh_delay_pages)
                 log("Extraction d'un profil d'unifrance "+str(infos))
                 if infos is None:
                     advices = dict({"ref": "Vous devriez créer votre profil sur UniFrance"})

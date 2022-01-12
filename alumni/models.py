@@ -23,7 +23,7 @@ from django_elasticsearch_dsl.registries import registry
 from OpenAlumni.DataQuality import eval_field
 from OpenAlumni.Tools import now, log
 
-
+#http://localhost:8000/api/profils/?lastname=ducournau
 class Profil(models.Model):
     """
     Le profil stocke l'ensemble des informations sur les anciens étudiants, issue du cursus standard ou pro
@@ -245,14 +245,6 @@ class Work(models.Model):
     @property
     def title(self):
         return self.pow.title
-    #
-    # @property
-    # def year(self):
-    #     return self.pow.year
-    #
-    # @property
-    # def nature(self):
-    #     return self.pow.nature
 
 
     @property
@@ -362,12 +354,19 @@ class PieceOfWork(models.Model):
         self.links.append(obj)
         return self.links
 
+
     def quality_score(self):
         """
         Défini un score de qualité de la donnée. Ce score est notamment utilisé pour les fusions
         :return: le score
         """
-        score=eval_field(self.title,5)+eval_field(self.budget,2)+eval_field(self.owner,3)+2*len(self.links)+eval_field(self.visual,2)+eval_field(self.year,3)
+        score=eval_field(self.title,5)\
+              +eval_field(self.budget,2)\
+              +eval_field(self.owner,3)\
+              +2*len(self.links)\
+              +eval_field(self.visual,2)\
+              +eval_field(self.year,3)
+
         return score
 
 

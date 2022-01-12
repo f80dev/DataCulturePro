@@ -5,7 +5,6 @@ import {ConfigService} from "../config.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {environment} from "../../environments/environment";
-import {MatTabChangeEvent} from "@angular/material/tabs";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 

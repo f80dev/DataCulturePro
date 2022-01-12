@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
+import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {$$} from "../tools";
 
 @Component({
@@ -60,14 +61,16 @@ export class VisgraphComponent implements OnInit {
     pagerank:{value:0.0005,min:1000,max:-1000,step:0},
     centrality:{value:0.0005,min:1000,max:-1000,step:0},
     promo:{value:0,values:[1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]},
-    department:{value:"",values:["Image","Son","Réalisation","Montage","Décor"]}
+    department:{value:"Réalisation",values:["Image","Son","Réalisation","Montage","Décor"]}
   };
   message: string="";
   edge_props: any;
 
   constructor(
     public api:ApiService,
-    public router:Router
+    public router:Router,
+    public _location:Location,
+    public routes:ActivatedRoute,
   ) { }
 
 
@@ -82,6 +85,12 @@ export class VisgraphComponent implements OnInit {
   }
 
 
+
+  resetGraph(svg){
+    svg.selectAll("g").remove();
+    svg.selectAll("line").remove();
+    svg.selectAll("circle").remove();
+  }
 
 
   initializeForces(data,svg) {
@@ -154,7 +163,6 @@ export class VisgraphComponent implements OnInit {
 
 
 
-
   updateForces() {
     // get each force by name and update the properties
     this.simulation.force("center")
@@ -201,6 +209,7 @@ export class VisgraphComponent implements OnInit {
     // this.updateForces();
   }
 
+
   sel_edge(d:any){
     let prop=this.edge_props[d.target.__data__.index];
     this.router.navigate(["pows"],{queryParams:{id:prop}})
@@ -210,10 +219,14 @@ export class VisgraphComponent implements OnInit {
   ngOnInit(): void {
     this.svg=this.createSvg();
     this.message="Chargement du réseau";
+    if(this.routes.snapshot.queryParamMap.has("formation"))this.filter.department.value=this.routes.snapshot.queryParamMap.get("formation");
+    if(this.routes.snapshot.queryParamMap.has("promo"))this.filter.promo.value=Number(this.routes.snapshot.queryParamMap.get("promo"));
+
     this.refresh(this.filter.promo.value,this.filter.department.value);
   }
 
 
+  //Sélection d'un noeud
   sel(d: any) {
     this.router.navigate(["search"],{queryParams:{filter:d.target.__data__.lastname}})
   }
@@ -238,11 +251,19 @@ export class VisgraphComponent implements OnInit {
   }
 
   updateData() {
+    let query="";
+    if(this.filter.department.value)query=query+"&formation="+this.filter.department.value;
+    if(this.filter.promo.value)query=query+"&promo="+this.filter.promo.value;
+    if(query.length>0){
+      this._location.replaceState("stats",query);
+    }
+    this.resetGraph(this.svg);
     this.refresh(this.filter.promo.value,this.filter.department.value);
   }
 
   refresh(promo_filter=2021,department_filter="") {
     let filter=promo_filter+"_"+department_filter;
+    this.message="Chargement du graphe";
     this.api._get("social_graph/json/","film&eval="+this.props.join(",")+"&filter="+filter,120,"").subscribe((data:any)=>{
       this.message="";
       this.data=data.graph;
