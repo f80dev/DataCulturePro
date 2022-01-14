@@ -4,7 +4,7 @@ import {ApiService} from "./api.service";
 import {Platform} from "@angular/cdk/platform";
 import {HttpClient} from "@angular/common/http";
 import { Location } from '@angular/common';
-import {$$, initAvailableCameras, showMessage} from "./tools";
+import {$$, group_works, initAvailableCameras, showMessage} from "./tools";
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +47,9 @@ export class ConfigService {
     return true;
   }
 
+  public load_awards(p,vm=null){
+
+  }
 
 
   private async getConfig(): Promise<any> {

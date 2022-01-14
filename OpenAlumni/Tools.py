@@ -2,6 +2,7 @@
 import hashlib
 import html
 import os
+from platform import system
 from time import sleep, strptime, struct_time, mktime
 from os import remove, scandir, stat
 from os.path import exists
@@ -520,21 +521,30 @@ def equal_str(s1:str,s2:str):
     return (s1==s2)
 
 
+def index_string(s):
+    return remove_accents(remove_ponctuation(s.replace(" ",""))).upper()
+
+
+def isWindows():
+    return system()=="Windows"
+
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
+
     filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
-    if not exists(PAGEFILE_PATH + filename) :
-        if exists("./Temp/html.7z"):
-            with py7zr.SevenZipFile(PAGEFILE_PATH + "/html.7z", 'r') as archive:
-                archive.extract(path=PAGEFILE_PATH,targets=filename)
+    if isWindows():
+        if not exists(PAGEFILE_PATH + filename) :
+            if exists("./Temp/html.7z"):
+                with py7zr.SevenZipFile(PAGEFILE_PATH + "/html.7z", 'r') as archive:
+                    archive.extract(path=PAGEFILE_PATH,targets=filename)
 
-    if exists(PAGEFILE_PATH +  filename):
-        delay=(datetime.datetime.now().timestamp()-stat(PAGEFILE_PATH +filename).st_mtime)/(3600*24)
-    else:
-        delay = 0
+        if exists(PAGEFILE_PATH +  filename):
+            delay=(datetime.datetime.now().timestamp()-stat(PAGEFILE_PATH +filename).st_mtime)/(3600*24)
+        else:
+            delay = 0
 
-    if exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
+    if  isWindows() and exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
         log("Utilisation du fichier cache "+filename+" pour "+url)
         try:
             with open(PAGEFILE_PATH + filename, 'r', encoding='utf8') as f:
@@ -565,7 +575,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
             except:
                 pass
 
-        if not rc is None and save:
+        if not rc is None and save and isWindows():
             path=PAGEFILE_PATH + filename
             log("Enregistrement sur  " + path)
             with open(path, 'w', encoding='utf8') as f:

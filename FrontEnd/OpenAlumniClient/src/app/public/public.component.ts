@@ -4,6 +4,7 @@ import {ApiService} from "../api.service";
 import {$$, group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
+import {ConfigService} from "../config.service";
 
 @Component({
   selector: 'app-public',
@@ -18,6 +19,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
   items: any[]=[];
 
   constructor(public router:Router,
+              public config:ConfigService,
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
               public route:ActivatedRoute,
@@ -25,9 +27,8 @@ export class PublicComponent implements OnInit,AfterViewInit {
   }
 
 
-
-  load_awards(p){
-    let expe={};
+  load_items(p){
+   let expe={};
     this.api._get("awards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
 
@@ -65,6 +66,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
     });
   }
 
+
   //test http://localhost:4200/public/?id=3076
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
@@ -74,7 +76,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
       this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
         this.profil=p;
         setTimeout(()=>{
-          this.load_awards(this.profil);
+          this.load_items(this.profil);
         },100);
       })
     } else {

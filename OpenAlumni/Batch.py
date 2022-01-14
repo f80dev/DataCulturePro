@@ -11,7 +11,7 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str, now, remove_accents
+    equal_str, now, remove_accents, index_string
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
@@ -210,20 +210,32 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
             content=section_prix.find_all("div")[1].text
             if content is not None:
                 content=content.replace("PlusMoins", "")
-                dt=re.findall(r"[1-2][0-9]{3}",content)
-                if len(dt)>0 and ")Prix" in content:
-                    _prix={
-                        "title":content.split("(")[0],
-                        "year":int(dt[0]),
-                        "description":content.split(")Prix")[1].split(" : ")[0]
-                    }
+                _prix={
+                    "description":content.split(")Prix")[1].split(" : ")[0]
+                }
+
+                for l in section_prix.find_all("div")[1].find_all("a"):
+                    if "festivals" in l.attrs["href"]:
+                        _prix["title"]=l.text.split("(")[0]
+                        _prix["year"] = re.findall(r"[1-2][0-9]{3}", l.text)[0]
+                    if "person" in l.attrs["href"] and "profil" not in _prix:
+                        _prix["profil"]=index_string(l.text)
+
+                if not "profil" in _prix:
+                    log("Attribution du prix à "+job_for)
+                    _prix["profil"]=index_string(job_for)
+
+                if "year" in _prix and "title" in _prix:
                     rc["prix"].append(_prix)
                     log("Ajout du prix "+str(_prix))
+                else:
+                    log("!Prix non conforme sur "+url)
 
 
 
     if not job_for is None:
-        if "real" in rc and rc["real"]==job_for:
+        real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
+        if len(real_links)>0 and equal_str(real_links[0].text,job_for):
             rc["job"]=translate("Réalisation")
         else:
             #Recherche en réalisation
@@ -267,7 +279,8 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         pass
 
     _synopsis = page.find("div", attrs={"itemprop": "description"})
-    if not _synopsis is None:rc["synopsis"]=_synopsis.getText(strip=True)
+    if not _synopsis is None:
+        rc["synopsis"]=_synopsis.getText(strip=True)
 
     return rc
 
@@ -363,7 +376,8 @@ def extract_awards_from_imdb(profil_url,profil):
                                 if a.exists():
                                     a = a.first()
                                 else:
-                                    award=award.replace("\n","").replace("Winner","").replace("Nominee","")
+                                    award=award.replace("\n","").replace("Winner","").replace("Nominee","").strip()
+                                    if award.startswith("(") and ")" in award: award=award.split(")")[1]
                                     a = Award(description=award, year=year, pow=pow, festival=f,profil=profil,winner=win)
                                 try:
                                     a.save()
@@ -482,12 +496,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
     rc["category"]=cat.strip()
 
-    # if len(rc["nature"])==0:
-    #     if "storyline-genres" in divs:
-    #         rc["nature"]=translate(divs["storyline-genres"].text)
-
-
-
 
     try:
         title=divs["hero-title-block__title"].text
@@ -496,16 +504,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     except:
         log("Erreur sur title="+title)
         return None
-
-    # if title.startswith("Episode"):
-    #     section_title = page.find("div", {"class": "titleParent"})
-    #     if not section_title is None: title = section_title.find("a").text + " " + title
-    #     #Recherche de l'épisode
-    #     rc["nature"]=MOVIE_NATURE[0]
-    #     zone_info_comp=page.find("div",{"class":"button_panel navigation_panel"})
-    #     if not zone_info_comp is None and "Season" in zone_info_comp.getText():
-    #         extract_text="S"+zone_info_comp.getText().split("Season")[1].replace("Episode ","E").replace(" | ","").replace(" ","")
-    #         rc["title"]=title+" "+extract_text.split("\n")[0]
 
     affiche = divs["hero-media__poster"]
     if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
@@ -628,7 +626,7 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     return rc
 
 def dict_to_pow(film:dict,content=None):
-    pow = PieceOfWork(title=film["title"])
+    pow = PieceOfWork(title=film["title"],title_index=index_string(film["title"]))
     pow.add_link(url=film["url"], title=film["source"])
     if not content is None and content["senscritique"]:
         pow.add_link(extract_film_from_senscritique(film["title"]), title="Sens-critique")
@@ -641,9 +639,8 @@ def dict_to_pow(film:dict,content=None):
     else:
         pow.nature = "Film"
 
-
-
     if "category" in film: pow.category = translate(film["category"])
+    if "synopsis" in film:pow.description=film["synopsis"]
 
 
     return pow
@@ -697,7 +694,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             if "job" in film: job = film["job"]
 
             try:
-                result=PieceOfWork.objects.filter(title__iexact=pow.title)
+                result=PieceOfWork.objects.filter(title_index__iexact=pow.title_index)
                 if len(result)>0:
                     for p in result:
                         if abs(int(p.year)-int(pow.year))<=1:
@@ -730,13 +727,19 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                         f = Festival(title=prix["title"].strip().lower())
                         f.save()
 
-                    a=Award.objects.filter(pow__id=pow.id,year=prix["year"],festival__id=f.id)
+                    a=Award.objects.filter(pow__id=pow.id,year=int(prix["year"]),festival__id=f.id)
                     if a.exists():
                         a=a.first()
                     else:
                         desc=prix["description"][:249]
                         if desc.startswith("(") and ")" in desc:desc=desc.split(")")[1]
-                        a=Award(description=desc,year=prix["year"],pow=pow,festival=f)
+
+                        a=Award(description=desc,
+                                year=prix["year"],
+                                pow=pow,
+                                festival=f,
+                                profil=None if not "profil" in prix else Profil.objects.filter(name_index__iexact=prix["profil"]).first()
+                                )
                         try:
                             a.save()
                         except:
@@ -770,6 +773,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                             log("Ajout de " + p["lastname"] + " comme externe en tant que " + p["job"])
                             _p = Profil(firstname=p["firstname"],
                                         lastname=p["lastname"],
+                                        name_index=index_string(p["firstname"]+p["lastname"]),
                                         department="Ext",
                                         cursus="E",
                                         school="",

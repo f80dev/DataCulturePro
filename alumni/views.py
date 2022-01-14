@@ -46,7 +46,7 @@ from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pows
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
-    levenshtein, getConfig
+    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string
 from OpenAlumni.nft import NFTservice
 import os
 
@@ -1119,6 +1119,7 @@ def movie_importer(request):
 
                         pow:PieceOfWork=PieceOfWork(
                             title=title.replace(u'\xa0', u' '),
+                            title_index=index_string(title.replace(u'\xa0', u' ')),
                             description=idx("FR_SYNOPSIS",row,max_len=3000,header=header),
                             visual="",
                             nature=translate(idx("LEVEL_PROJECT",row,max_len=50,header=header)),
@@ -1288,6 +1289,7 @@ def importer(request):
                     firstname=firstname,
                     school="FEMIS",
                     lastname=lastname,
+                    name_index=index_string(firstname+lastname),
                     gender=gender,
                     mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict,header=header),
                     nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),

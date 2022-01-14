@@ -113,7 +113,8 @@ export class StatsComponent implements OnInit {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
-    let param="cols="+this.sel_report.cols+"&color="+this.sel_report.color+"&chart="+this.sel_report.chart;
+    let param="color="+this.sel_report.color+"&chart="+this.sel_report.chart;
+    if(this.sel_report.cols)param=param+"&cols="+this.sel_report.cols;
     if(this.sel_report.sql)param=param+"&sql="+this.sel_report.sql;
     if(this.sel_report.percent)param=param+"&percent=True";
     if(this.sel_report.x)param=param+"&x="+this.sel_report.x+"&y="+this.sel_report.y;

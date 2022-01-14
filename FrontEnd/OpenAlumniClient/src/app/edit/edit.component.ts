@@ -48,6 +48,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   query: string = "";
   title: string="";
   url:string="";
+  awards: any[];
 
 
   constructor(public _location:Location,
@@ -80,6 +81,7 @@ export class EditComponent implements OnInit,OnDestroy  {
         this.refresh_job();
         this.refresh_students();
         this.refresh_works();
+        this.refresh_awards();
       });
     },()=>{this.quit();})
   }
@@ -106,15 +108,11 @@ export class EditComponent implements OnInit,OnDestroy  {
   //Récupération des experiences;
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
-    this.message="Récupération des expériences";
-    showMessage(this,"Chargement des expériences en cours");
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
-      this.message="";
       this.works=group_works(r.results);
     },(err)=>{
       showError(this,err);
-      this.message="";
     });
   }
 
@@ -305,10 +303,14 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   analyse() {
     this.message="Analyse en cours des principaux annuaires";
+    let handle=setInterval(()=>{this.refresh_works();},10000);
     this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=2&refresh_delay_profil=0",this.config.values.catalog).subscribe((r:any)=>{
       this.message="";
+      clearInterval(handle);
       showMessage(this,"Analyse terminée. Ajour de "+r.films+" film(s) et "+r.works+" contribution(s)");
       this.refresh_works();
+    },(err)=>{
+      showError(this,err);
     });
   }
 
@@ -349,6 +351,13 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.api._get("jobsites/","profil="+this.profil.id+"&job="+this.query).subscribe((res:any)=>{
       this.jobsites=res.sites.content;
       this.query=res.job;
+      if(func)func();
+    })
+  }
+
+  refresh_awards(func:Function=null) {
+    this.api._get("awards/","profil="+this.profil.id).subscribe((awards:any)=>{
+      this.awards=awards.results;
       if(func)func();
     })
   }
@@ -415,10 +424,14 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   delete_pows() {
     for(let w of this.works){
-      this.api._delete("pows/"+w.pow.id).subscribe((r:any)=>{});
+      this.api._delete("pows/"+w.pow.id).subscribe((r:any)=>{
+           this.works.splice(this.works.indexOf(w),1);
+      });
     }
-    //this.refresh_job(()=>{this.refresh()});
-    this.refresh_job();
+  }
+
+  edit_award(award: any) {
+
   }
 }
 

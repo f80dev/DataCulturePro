@@ -35,6 +35,7 @@ class Profil(models.Model):
                               choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
     lastname = models.CharField(max_length=70, null=False, default='', help_text="Nom du profil")
+    name_index=models.CharField(max_length=70, null=False, default='', help_text="Index du nomprenom du profil")
 
     public_photo=models.BooleanField(default=False,null=False,help_text="Indique si la photo peut être ou pas présentée sur la page publique")
     birthdate=models.DateField(null=True,help_text="Date de naissance du profil")
@@ -302,6 +303,8 @@ class PieceOfWork(models.Model):
     dtStart=models.DateField(auto_now=True,null=False,help_text="Date de début de la réalisation de l'oeuvre")
     dtEnd=models.DateField(auto_now=True,null=False,help_text="Date de fin de la réalisation de l'oeuvre")
     title=models.CharField(null=False,max_length=300,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
+    title_index=models.CharField(null=False,max_length=300,default="",help_text="Titre de l'oeuvre simplifier pour gestion de la recherche")
+
     year=models.CharField(null=True,max_length=4,help_text="Année de sortie")
     nature=models.CharField(null=False,default='MOVIE',max_length=50,help_text="Classification de l'oeuvre")
     dtCreate = models.DateField(auto_now_add=True,help_text="Date d'enregistrement de l'oeuvre dans DataCulture")
@@ -314,7 +317,7 @@ class PieceOfWork(models.Model):
     links=JSONField(null=True,help_text="Liens vers des références externes à l'oeuvre")
 
     owner=models.CharField(max_length=150,default="public",help_text="Auteur de l'oeuvre")
-    description=models.TextField(null=False,default="",max_length=3000,help_text="Description/Resumer de l'oeuvre")
+    description=models.TextField(null=False,default="",max_length=3000,help_text="Synopsis/Description/Résumé de l'oeuvre")
     # Structure : "url" du document, "type" de document (str), "title" du document
     files=JSONField(null=True,help_text="Liens vers des documents attaché")
     category=models.TextField(null=True,max_length=50,help_text="Liste des categories auxquelles appartient le film")

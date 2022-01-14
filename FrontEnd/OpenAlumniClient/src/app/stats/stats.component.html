@@ -44,7 +44,10 @@
 
 
 
-      <iframe *ngIf="sel_report?.html_code" style="width: 90%;height:70vh;border:None;display: inline-block;" [srcdoc]="sel_report.html_code | safe">
+      <iframe *ngIf="sel_report?.html_code"
+              style="padding: 0px;width: 90%;height:69vh;border:None;display: inline-block;"
+              [srcdoc]="sel_report.html_code | safe"
+              class="mat-elevation-z4">
         <app-hourglass message="En cours de calcul"></app-hourglass>
       </iframe>
 
