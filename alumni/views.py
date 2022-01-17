@@ -189,7 +189,7 @@ class WorkViewSet(viewsets.ModelViewSet):
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.all()
+    queryset = Award.objects.all().order_by("-year")
     serializer_class = AwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
@@ -517,7 +517,7 @@ def quality_filter(request):
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
         n_pows=pow_analyzer.find_double()
 
-    return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows,"anomalie":log})
+    return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows})
 
 
 
@@ -841,6 +841,11 @@ def social_graph(request,format="json"):
 @renderer_classes((ProfilsCSVRenderer,))
 @permission_classes([AllowAny])
 def export_profils(request):
+    """
+    Exportation des profils vers OASIS
+    :param request:
+    :return:
+    """
     cursus:str=request.GET.get("cursus","S")
     profils=Profil.objects.filter(cursus__exact=cursus)
     df: pd.DataFrame = pd.DataFrame.from_records(list(profils.values(
@@ -860,7 +865,7 @@ def export_profils(request):
 
     response = HttpResponse(content_type='text/csv; charset=ansi')
     response["Content-Disposition"]='attachment; filename="profils.csv"'
-    df.to_csv(response,sep=";",encoding="ansi")
+    df.to_csv(response,sep=";",encoding="utf8")
     return response
 
 def compare(lst,val,ope):

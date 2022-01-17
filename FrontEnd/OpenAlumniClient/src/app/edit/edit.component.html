@@ -118,7 +118,7 @@
 
 
       <!--      Mentorat-->
-      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlTutorat">
+      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlTutorat" *ngIf="config.hasPerm('tutorat')">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Tutorat
@@ -210,7 +210,7 @@
       </mat-expansion-panel>
 
       <!--      Job-->
-      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlJob">
+      <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlJob" *ngIf="config.hasPerm('job_search')">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Offres d'emplois
@@ -253,7 +253,7 @@
       </mat-expansion-panel>
 
       <!--      Expérience -->
-      <mat-expansion-panel class="app-panel" [expanded]="true" id="pnlExperience">
+      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlExperience">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Expériences
@@ -312,8 +312,60 @@
           </tr>
         </table>
 
+        <mat-action-row>
+          <button class="app-button" mat-button mat-raised-button
+                  color="primary"
+                  id="cmdAddExperience"
+                  (click)="add_pow()">
+            <div class="bloc-bouton">Ajouter une<br>expérience</div>
+          </button>
+
+        </mat-action-row>
+      </mat-expansion-panel>
+
+      <!-- Récompenses-->
+      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlRecompenses">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Récompenses
+          </mat-panel-title>
+        </mat-expansion-panel-header>
         <br>
-        <br>
+        <table style="width: 100%;font-size: small;">
+          <tr *ngFor="let award of awards" style="width:100%;text-align: left;">
+            <td>-</td>
+            <td style="line-height: 100%;width: fit-content;">
+              {{award.year}} :
+              {{award.description}} à {{award.festival.title}}
+            </td>
+            <td style="text-align: right;width:70px;" name="experience_panel">
+              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                        name="cmdEdit"
+                        (click)="edit_award(award)">
+                edit
+              </mat-icon>
+            </td>
+          </tr>
+        </table>
+        <mat-action-row>
+          <button class="app-button" mat-button mat-raised-button
+                  color="primary"
+                  *ngIf="works.length>0"
+                  id="cmdAddAward"
+                  (click)="add_award()">
+            <div class="bloc-bouton">Ajouter une<br>récompense</div>
+          </button>
+
+        </mat-action-row>
+
+      </mat-expansion-panel>
+
+      <!--      Commandes -->
+      <mat-expansion-panel [expanded]="true" id="pnlCommand">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Commandes</mat-panel-title>
+        </mat-expansion-panel-header>
+
         <div *ngIf="works.length>0">
           <p>Partagez votre profil public sur vos réseaux</p>
           <!--      voir https://ngx-sharebuttons.netlify.app/ -->
@@ -327,10 +379,6 @@
                          [title]="title">
           </share-buttons>
           <br>
-        </div>
-
-
-        <mat-action-row id="pnlActionExperience" *ngIf="message.length==0">
           <button class="app-button" mat-button mat-raised-button
                   id="cmdPreview"
                   title="Permet de voir la page publique qui liste vos expériences"
@@ -338,6 +386,11 @@
                   (click)="open_public_page()">
             <div class="bloc-bouton">Voir la page<br>publique</div>
           </button>
+          <br>
+        </div>
+
+        <mat-action-row id="pnlActionExperience" *ngIf="message.length==0">
+
 
 
           <button mat-icon-button mat-button
@@ -372,43 +425,10 @@
             <mat-icon>search</mat-icon>
           </button>
 
-          <button class="app-button" mat-button mat-raised-button
-                  color="primary"
-                  id="cmdAdd"
-                  (click)="add_pow()">
-            <div class="bloc-bouton">Ajouter une<br>expérience</div>
-          </button>
+
         </mat-action-row>
 
-
       </mat-expansion-panel>
-
-
-      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlRecompenses">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Récompenses
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <br>
-        <table style="width: 100%;font-size: small;">
-          <tr *ngFor="let award of awards" style="width:100%;text-align: left;">
-            <td>-</td>
-            <td style="line-height: 100%;width: fit-content;">
-              {{award.year}} :
-              {{award.description}} à {{award.festival.title}}
-            </td>
-            <td style="text-align: right;width:70px;" name="experience_panel">
-              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
-                        name="cmdEdit"
-                        (click)="edit_award(award)">
-                edit
-              </mat-icon>
-            </td>
-          </tr>
-        </table>
-      </mat-expansion-panel>
-
 
     </mat-accordion>
 

@@ -20,7 +20,6 @@ export interface DialogData {
   subtitle:string
 }
 
-
 @Component({
   selector: 'app-prompt',
   templateUrl: './prompt.component.html',
@@ -33,7 +32,6 @@ export class PromptComponent implements OnInit {
   _type="text";
   _min: number;
   _max: number;
-
 
   constructor(
     public dialogRef_prompt: MatDialogRef<PromptComponent>,

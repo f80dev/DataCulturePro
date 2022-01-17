@@ -86,6 +86,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { RgpdComponent } from './rgpd/rgpd.component';
 
 import { MglTimelineModule } from 'angular-mgl-timeline';
+import { EditAwardComponent } from './edit-award/edit-award.component';
 
 @NgModule({
   declarations: [
@@ -126,7 +127,8 @@ import { MglTimelineModule } from 'angular-mgl-timeline';
     ProfilsScannerComponent,
     IssuesComponent,
     SettingsComponent,
-    RgpdComponent
+    RgpdComponent,
+    EditAwardComponent
   ],
   imports: [
     BrowserModule,

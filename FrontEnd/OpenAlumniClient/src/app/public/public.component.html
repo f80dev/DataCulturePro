@@ -20,7 +20,7 @@
         <br>
         <table style="border-spacing: 5px;">
           <tr>
-          <td>FEMIS Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{{profil?.degree_year}}</td>
+          <td>Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{{profil?.degree_year}}</td>
             <td>
               <mat-icon style="font-size: small;cursor: pointer;"
                         (click)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})"
@@ -55,7 +55,7 @@
   <app-hourglass [message]="message"></app-hourglass>
 
   <!--  Travaux nouvelle version -->
-  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;" *ngIf="message.length==0">
+  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;" *ngIf="message.length==0 && items.length>0">
     <br>Expériences<br><br>
     <mgl-timeline [mobileWidthThreshold]="200"
                   [toggle]="false"

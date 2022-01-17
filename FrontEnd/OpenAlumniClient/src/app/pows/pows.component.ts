@@ -10,6 +10,7 @@ import {MatAccordion} from "@angular/material/expansion";
 import {Observable} from "rxjs";
 import { map } from 'rxjs/operators';
 import {stringify} from "querystring";
+import set = Reflect.set;
 
 @Component({
   selector: 'app-pows',
@@ -45,7 +46,7 @@ export class PowsComponent implements OnInit {
     }
 
     if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
-    setTimeout(()=>{this.refresh();},500);
+    setTimeout(()=>{this.refresh();},1000);
   }
 
   open_search(work: any) {
@@ -93,8 +94,10 @@ export class PowsComponent implements OnInit {
           }
         }
       }
-      if(r.results.length<10){
-        this.powAccordion.openAll();
+      if(r.results.length==1){
+        setTimeout(()=>{
+          this.pows[0].expanded=true;
+        },1000);
       }
     },(err)=>{
       showError(this,err);

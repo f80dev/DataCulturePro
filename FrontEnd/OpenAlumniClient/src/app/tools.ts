@@ -7,6 +7,9 @@ import {SocialServiceConfig} from "ngx-social-button";
 declare var EXIF: any;
 export const ADMIN_PASSWORD="hh4271";
 
+
+
+
 export function showError(vm:any,err:any){
   $$("!Error ",err);
   if(vm.hasOwnProperty("message"))vm.message="";

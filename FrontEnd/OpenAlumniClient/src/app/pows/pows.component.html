@@ -87,15 +87,15 @@
         </div>
 
 
-        <div *ngIf="pow.works?.length>0" style="line-height: 95%">
+        <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;">
           <br>
-          <table style="width: 100%;display: inline-block;text-align: left;padding: 5px;" class="mat-elevation-z2">
+          <table style="width: 100%;text-align: left;padding: 5px;font-size: small;" class="mat-elevation-z2">
             <tr *ngFor="let work of pow.works"
-                style="cursor: pointer;"
+                style="cursor: pointer;min-width: 400px;"
                 (click)="open_search(work)">
-              <td><span style="color:lightgrey">{{work.job}}:</span></td>
-              <td>{{work.name}}</td>
-              <td style="width: 10%;">
+              <td style="width: 45%;"><span style="color:lightgrey">{{work.job}}:</span></td>
+              <td style="width: 45%;">{{work.name}}</td>
+              <td style="width: 10px;text-align: right;">
                 <mat-icon style="font-size: small;padding:0px;margin:0px;height: 17px;"
                           title="Cliquer pour consulter le profil">account_circle</mat-icon>
               </td>
@@ -103,13 +103,13 @@
           </table>
         </div>
 
-        <div *ngIf="pow.award?.length>0" style="line-height: 95%;font-size: x-small;">
+        <div *ngIf="pow.award?.length>0" style="line-height: 95%;font-size: small;">
           <br>
-          <table style="width: 100%;display: inline-block;text-align: left;padding: 5px;" class="mat-elevation-z2">
+          <table style="width: 100%;text-align: left;padding: 5px;" class="mat-elevation-z2">
             <tr *ngFor="let a of pow.award" style="width:100%;">
-              <td><span style="color:lightgrey">{{a.festival.title}}</span></td>
-              <td>{{a.description}}</td>
-              <td style="width: 20px;text-align: right;">
+              <td><span style="color:lightgrey;width:45%;">{{a.festival.title}}</span></td>
+              <td style="width: 45%;">{{a.description}}</td>
+              <td style="width: 10px;text-align: right;">
                 {{a.year}}
               </td>
             </tr>

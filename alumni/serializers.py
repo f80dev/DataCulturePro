@@ -169,7 +169,7 @@ class WorksCSVRenderer (CSVRenderer):
 
 class ProfilsCSVRenderer (CSVRenderer):
     header = [
-        "id","photo","genre","lastname", "firstname", "email","mobile","departement","adresse","CP", "ville","country",
+        "id","photo","genre","lastname", "firstname", "email","mobile","departement","department_category","adresse","CP", "ville","country",
         "birthdate","nationality","promotion","job","cursus"
     ]
 

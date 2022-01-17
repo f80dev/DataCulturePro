@@ -3,13 +3,14 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {$$, checkLogin, group_works, showError, showMessage, stringDistance} from "../tools";
+import {$$, checkLogin, group_works, now, showError, showMessage, stringDistance} from "../tools";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {PromptComponent} from "../prompt/prompt.component";
 import {ImageSelectorComponent} from "../image-selector/image-selector.component";
 import {FormControl} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {EditAwardComponent} from "../edit-award/edit-award.component";
 
 export interface Movie {
   title: string;
@@ -110,6 +111,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
+      //TODO: ouvrir la fenetre works si non vide
       this.works=group_works(r.results);
     },(err)=>{
       showError(this,err);
@@ -377,6 +379,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     });
   }
 
+
   contact_profil(profil: any) {
     this.router.navigate(["write"],{queryParams:{id:profil.id}})
   }
@@ -425,12 +428,33 @@ export class EditComponent implements OnInit,OnDestroy  {
   delete_pows() {
     for(let w of this.works){
       this.api._delete("pows/"+w.pow.id).subscribe((r:any)=>{
-           this.works.splice(this.works.indexOf(w),1);
+        this.works.splice(this.works.indexOf(w),1);
       });
     }
   }
 
   edit_award(award: any) {
+
+  }
+
+
+  add_award() {
+    debugger
+    this.api._post("awards","",{
+      winner:false,
+      festival: 1,
+      profil: this.profil.id,
+      pow: 1,
+      description:"à compléter",
+      year:2022
+    }).subscribe((award:any)=>{
+      this.dialog.open(EditAwardComponent,{width: '250px',data: {id: award.id, title:"Ajouter une récompense", question: ""}
+      }).afterClosed().subscribe((result) => {
+        if(result){
+
+        }
+      });
+    })
 
   }
 }

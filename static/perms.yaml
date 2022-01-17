@@ -13,6 +13,12 @@ perms:
   - tag: firstname
     description: au prénom
 
+  - tag: tutorat
+    description: a la possibilité d'être tuteur
+
+  - tag: job_search
+    description: aux outils de recherches d'emploi
+
   - tag: edit_profil
     description: l'édition de l'ensemble des profils
 
