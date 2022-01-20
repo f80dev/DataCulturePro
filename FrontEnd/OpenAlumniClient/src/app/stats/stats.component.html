@@ -47,12 +47,14 @@
 
       <iframe *ngIf="sel_report?.html_code"
               style="padding: 0px;width: 90%;height:69vh;border:None;display: inline-block;"
+              [title]="sel_report.description"
               [srcdoc]="sel_report.html_code | safe"
               class="mat-elevation-z4">
         <app-hourglass message="En cours de calcul"></app-hourglass>
       </iframe>
 
 
+      <br><br>
        <div *ngIf="sel_report?.html_stat?.length>0 && message.length==0" style="min-width:300px;height: auto;margin:10px;overflow: scroll;">
         <mat-expansion-panel class="app-panel" style="display: inline-block;"
                            [expanded]="false" >
@@ -62,7 +64,8 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <div style="width: 90%;height:300px;border:None" [innerHTML]="sel_report.html_stat | safe">
+        <div style="width: 90%;height:300px;border:None"
+             [innerHTML]="sel_report.html_stat | safe">
         </div>
       </mat-expansion-panel>
       </div>

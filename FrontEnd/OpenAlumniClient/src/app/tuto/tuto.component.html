@@ -1,4 +1,6 @@
-<div *ngIf="_if && text?.length>0" (click)="hideTuto(true)" style="margin:0;z-index: 100000;" id="zone_tuto">
+<div *ngIf="_if && text?.length>0" (click)="hideTuto(true)"
+     [ngStyle]="{margin:0,zIndex: 100000,width:width}"
+     id="zone_tuto">
   <div *ngIf="_type=='tips'" style="max-width:800px;text-align:left;display:inline-block;margin-top:6px;margin-bottom:8px;">
     <table>
       <tr>

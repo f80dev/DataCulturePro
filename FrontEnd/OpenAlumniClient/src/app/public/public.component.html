@@ -18,9 +18,9 @@
           </mat-icon>
         </div>
         <br>
-        <table style="border-spacing: 5px;">
+        <table style="border-spacing: 8px;vertical-align: top;">
           <tr>
-          <td>Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{{profil?.degree_year}}</td>
+            <td>Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{{profil?.degree_year}}</td>
             <td>
               <mat-icon style="font-size: small;cursor: pointer;"
                         (click)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})"
@@ -31,23 +31,19 @@
           <tr><td>Département</td><td>{{profil?.department}}</td><td><mat-icon style="font-size: small;cursor: pointer;"
                                                                                [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">help</mat-icon></td></tr>
 
-          <tr *ngIf="profil.works.length>0"><td>Expériences</td><td>{{profil.expe}}</td></tr>
-          <tr *ngIf="profil.works.length>0"><td></td><td>{{profil.works.length}} expériences référencées</td></tr>
+          <tr *ngIf="profil.works.length>0"><td>Expériences principales</td><td>{{profil.expe}}</td></tr>
+          <tr *ngIf="profil.works.length>0"><td></td><td>{{profil.works.length}} expériences référencées<br><br></td></tr>
           <tr *ngIf="profil.awards?.length>0"><td></td><td>{{profil.awards.length}} disctinctions</td></tr>
+          <tr *ngIf="profil?.links?.length>0">
+            <td>Voir son profil sur</td>
+            <td>
+              <div *ngFor="let link of profil?.links" style="display: inline-block;">
+                <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
+              </div>
+            </td>
+          </tr>
         </table>
         <br>
-
-
-        <div *ngIf="profil?.links?.length>0">
-          <br>
-          <small>Voir mon profil sur :</small>
-          <div *ngFor="let link of profil?.links" style="max-width: 400px;margin:1%;display: inline-block;">
-            <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
-          </div>
-        </div>
-      </td>
-      <td style="width:30px;margin:5px;text-align: center;vertical-align: text-top;">
-
       </td>
     </tr>
   </table>
@@ -78,11 +74,11 @@
             </a>
           </small>
         </mgl-timeline-entry-content>
-         <mgl-timeline-entry-dot [size]="40" style="color:red;"
-                                 expandAnimationTiming="200ms ease"
-                                 collapseAnimationTiming="100ms ease"
-                                 >
-         </mgl-timeline-entry-dot>
+        <mgl-timeline-entry-dot [size]="40" style="color:red;"
+                                expandAnimationTiming="200ms ease"
+                                collapseAnimationTiming="100ms ease"
+        >
+        </mgl-timeline-entry-dot>
         <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">
           <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </mgl-timeline-entry-side>

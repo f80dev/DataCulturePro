@@ -27,15 +27,15 @@ Reports:
 
 
 Instant_reports:
-  - title: Liste des métiers les plus exercés par les anciens étudiants
-    description:
+  - title: Liste des métiers les plus exercés par les anciens étudiants et stagiaires
+    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
     id: job_by_formation
     chart: pie
     x: Job
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='S' GROUP BY work_job ORDER BY -nb LIMIT 20
+    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='S' GROUP BY work_job ORDER BY -nb LIMIT 15
     prod: True
 
 
@@ -47,7 +47,7 @@ Instant_reports:
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='P' GROUP BY work_job ORDER BY -nb LIMIT 20
+    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='P' GROUP BY work_job ORDER BY -nb LIMIT 15
     prod: True
 
   - title: Les événements qui recompensent le plus les anciens de la FEMIS
@@ -58,6 +58,16 @@ Instant_reports:
     y: Films
     sql: SELECT * FROM (SELECT film_festival AS Evenements,count(film_id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
     prod: True
+
+  - title: Nombre de récompenses par département et par promotion
+    id: award_by_promo
+    chart: bar
+    x: Promotion
+    color: Formation
+    y: Awards
+    table: Awards
+    sql: SELECT profil_department AS Formation,count(award_id) AS Awards,profil_promotion AS Promotion FROM df GROUP BY Formation,Promotion
+    prod: False
 
 
   - title: Répartition des etudiants (formation initiale) par département
@@ -109,7 +119,7 @@ Instant_reports:
 
 
 
-  - title: Etudiants par type de cursus
+  - title: Répartition des éleves de la FEMIS entre formation initiale et formation professionnelle
     description:
     id: student_by_cursus
     chart: bar

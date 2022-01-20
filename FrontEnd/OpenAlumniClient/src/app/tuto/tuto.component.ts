@@ -14,6 +14,7 @@ export class TutoComponent implements OnInit,OnChanges {
   @Input("text") text: string="";
   @Input("text-align") text_align: string="center";
   @Input("title") title: string="";
+  @Input("width") width: string="auto";
   @Input("type") _type: string="tips";
   @Input("label") label: string="";
   @Input("subtitle")subtitle: string="";

@@ -40,14 +40,19 @@ export class PublicComponent implements OnInit,AfterViewInit {
         try {
           let _w=JSON.parse(w);
           rc.push(_w);
-          expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 0;
+          expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
         } catch (e) {
           $$("Probleme de conversion "+w);
         }
       }
       this.profil.expe="";
-      for(let k of Object.keys(expe))
-        this.profil.expe=this.profil.expe+k+", ";
+      let lst=Object.values(expe).sort((a,b) => (a<b ? 1 : -1));
+      if(lst.length>3)lst=lst.slice(0,3)
+
+      for(let k of Object.keys(expe)){
+        if(lst.indexOf(expe[k])>-1)
+          this.profil.expe=this.profil.expe+k+", ";
+      }
 
       if(awards && awards.count>0){
         for(let a of awards.results){

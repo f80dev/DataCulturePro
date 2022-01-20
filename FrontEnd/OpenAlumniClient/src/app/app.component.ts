@@ -97,7 +97,7 @@ export class AppComponent implements OnInit,AfterViewInit {
                 }
               });
             }
-          },2000);
+          },60000);
         }
       }
     },500);
