@@ -72,6 +72,11 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('lastEmail', addr);
         this.email_login();
       }
+      if(params.has("login") && params.has("password")){
+        debugger
+        this.email=params.get("login");
+        this.updateCode(params.get("password"));
+      }
     },email);
   }
 
@@ -196,7 +201,6 @@ export class LoginComponent implements OnInit {
     if (typeof(code) == 'object') {code = code.target.value; }
     $$('Vérification du code: '+code);
     this.wait_message = 'Vérification du code';
-    debugger
     this.api.checkCode(this.email, code).subscribe((r: any) => {
       this.wait_message = '';
       if (r != null) {

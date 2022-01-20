@@ -49,7 +49,8 @@ export class EditComponent implements OnInit,OnDestroy  {
   query: string = "";
   title: string="";
   url:string="";
-  awards: any[];
+  awards: any[]=[];
+  pows:any[]=[];
 
 
   constructor(public _location:Location,
@@ -113,6 +114,10 @@ export class EditComponent implements OnInit,OnDestroy  {
       $$("Travaux chargés");
       //TODO: ouvrir la fenetre works si non vide
       this.works=group_works(r.results);
+      for(let w of this.works) {
+        if(w.pow)this.pows.push(w.pow);
+      }
+
     },(err)=>{
       showError(this,err);
     });
@@ -358,8 +363,10 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   refresh_awards(func:Function=null) {
-    this.api._get("awards/","profil="+this.profil.id).subscribe((awards:any)=>{
-      this.awards=awards.results;
+    this.api._get("extraawards/","profil="+this.profil.id).subscribe((awards:any)=>{
+      this.awards=[];
+      for(let a of awards.results)
+        if(a.state!="D")this.awards.push(a);
       if(func)func();
     })
   }
@@ -439,23 +446,37 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   add_award() {
-    debugger
-    this.api._post("awards","",{
-      winner:false,
-      festival: 1,
-      profil: this.profil.id,
-      pow: 1,
-      description:"à compléter",
-      year:2022
-    }).subscribe((award:any)=>{
-      this.dialog.open(EditAwardComponent,{width: '250px',data: {id: award.id, title:"Ajouter une récompense", question: ""}
-      }).afterClosed().subscribe((result) => {
+    this.api._get("festivals","").subscribe((festivals:any)=>{
+      this.dialog.open(EditAwardComponent,{width: '350px',data: {
+          profil:this.profil,
+          pows:this.pows,
+          title:"Ajouter une récompense",
+          question: "",
+          festivals:festivals.results,
+      }}).afterClosed().subscribe((result) => {
         if(result){
+          this.api._post("awards","",{
+            pow:result.pow.id,
+            winner: true,
+            festival:result.festival.id,
+            description: result.title,
+            profil: this.profil.id,
+            year: result.year,
+            state: 'E'
+          }).subscribe((r:any)=>{
 
+            this.refresh_awards();
+          })
         }
       });
     })
 
+  }
+
+  del_award(award: any) {
+    this.api._patch("awards/"+award.id,"",{state:'D'}).subscribe((r:any)=>{
+      this.refresh_awards();
+    })
   }
 }
 

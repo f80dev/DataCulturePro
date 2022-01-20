@@ -69,7 +69,7 @@ from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company
 from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer, ExtraUserSerializer, POWSerializer, \
     WorkSerializer, ExtraPOWSerializer, ExtraWorkSerializer, ProfilDocumentSerializer, \
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
-    CompanySerializer, AwardSerializer
+    CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -194,6 +194,21 @@ class AwardViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
     filter_fields=("profil","pow","festival")
+
+class ExtraAwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.all().order_by("-year")
+    serializer_class = ExtraAwardSerializer
+    permission_classes = [AllowAny]
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields=("profil","pow","festival")
+
+#http://localhost:8000/api/awards/?format=json&profil=12313
+class FestivalViewSet(viewsets.ModelViewSet):
+    queryset = Festival.objects.all().order_by("title")
+    serializer_class = FestivalSerializer
+    permission_classes = [AllowAny]
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields=("title","country",)
 
 
 #http://localhost:8000/api/extrapows

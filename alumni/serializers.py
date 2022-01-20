@@ -224,14 +224,19 @@ class ExtraWorkSerializer(serializers.ModelSerializer):
 class FestivalSerializer(serializers.ModelSerializer):
     class Meta:
         model=Festival
-        fields = ["id", "title"]
+        fields = ["id", "title","url","country","dtCreate"]
 
 
 class AwardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Award
+        fields = ["id","festival","description","year","pow","profil","state"]
+
+class ExtraAwardSerializer(serializers.ModelSerializer):
     festival=FestivalSerializer(many=False,read_only=True)
     class Meta:
         model = Award
-        fields = ["id","festival","description","year","pow","profil"]
+        fields = ["id","festival","description","year","pow","profil","state"]
 
 
 #Exemple : http://localhost:8000/api/extrapows/9808/

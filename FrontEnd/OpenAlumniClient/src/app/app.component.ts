@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {ConfigService} from "./config.service";
 import {ApiService} from "./api.service";
 import {Location} from "@angular/common";
@@ -8,13 +8,15 @@ import {MatSidenav} from "@angular/material/sidenav";
 import {ChatAdapter} from "ng-chat";
 import { MyAdapter } from './MyAdapter';
 import {$$} from "./tools";
+import {PromptComponent} from "./prompt/prompt.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit,AfterViewInit {
   title = 'OpenAlumniClient';
   message: string="";
   appVersion: any;
@@ -25,11 +27,11 @@ export class AppComponent implements OnInit {
 
   constructor(public config: ConfigService,
               public api:ApiService,
+              public dialog:MatDialog,
               public _location:Location,
               public routes:ActivatedRoute,
               public router:Router){
     this.appVersion=environment.appVersion;
-
     config.init(() => {
       this.config.init_user(null,null,localStorage.getItem("email"));
     });
@@ -67,6 +69,39 @@ export class AppComponent implements OnInit {
     setTimeout(()=>{
       this.onResize({currentTarget:{innerWidth:window.innerWidth}});
     },1000);
+  }
+
+  ngAfterViewInit(): void {
+
+    setTimeout(()=>{
+      if(this.routes.snapshot.queryParamMap.has("login") && this.routes.snapshot.queryParamMap.has("password")){
+        this.router.navigate(["login"],{queryParams:{
+            login:this.routes.snapshot.queryParamMap.get("login"),
+            password:this.routes.snapshot.queryParamMap.get("password"),
+          }});
+      } else {
+        if(!this.routes.snapshot.queryParamMap.has("no_auto_login")){
+          setTimeout(()=>{
+            if(!this.config.isLogin() && !this._location.isCurrentPathEqualTo("./login") && localStorage.getItem("propal_login")!="Done"){
+              $$("Proposition d'authentification");
+              localStorage.setItem("propal_login","Done");
+              this.dialog.open(PromptComponent,{data: {
+                  title: 'Se connecter',
+                  question: 'Vous souhaitez en savoir plus sur les profils. Connectez-vous !',
+                  onlyConfirm: true,
+                  lbl_ok: 'Oui',
+                  lbl_cancel: 'Non'
+                }}).afterClosed().subscribe((result_code) => {
+                if (result_code == 'yes') {
+                  this.router.navigate(["login"]);
+                }
+              });
+            }
+          },2000);
+        }
+      }
+    },500);
+
   }
 
 }

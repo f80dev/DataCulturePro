@@ -50,43 +50,6 @@ export class SearchComponent implements OnInit {
         }
       }
     },1000);
-
-    setTimeout(()=>{
-      if(!this.config.isLogin() && !localStorage.getItem('propal_login') && !this._location.isCurrentPathEqualTo("./login")){
-        $$("Proposition d'authentification");
-        localStorage.setItem("propal_login","Done");
-        this.dialog.open(PromptComponent,{data: {
-            title: 'Se connecter',
-            question: 'Vous souhaitez en savoir plus sur les profils. Connectez-vous !',
-            onlyConfirm: true,
-            lbl_ok: 'Oui',
-            lbl_cancel: 'Non'
-          }}).afterClosed().subscribe((result_code) => {
-          if (result_code == 'yes') {
-            this.router.navigate(["login"]);
-          }
-        });
-      }
-
-
-    //   if(this.config.isLogin() && !localStorage.getItem('propal_profil')){
-    //     localStorage.setItem("propal_profil","Done");
-    //     this.dialog.open(PromptComponent,{data: {
-    //         title: 'Selectionner un profil',
-    //         question: 'Précisez votre profil pour accèder à d\'autres options de Data Culture',
-    //         onlyConfirm: true,
-    //         lbl_ok: 'Oui',
-    //         lbl_cancel: 'Non'
-    //       }}).afterClosed().subscribe((result_code) => {
-    //       if (result_code == 'yes') {
-    //         this.router.navigate(["profils"]);
-    //       }
-    //     });
-    //   }
-
-    },5000);
-
-
   }
 
 

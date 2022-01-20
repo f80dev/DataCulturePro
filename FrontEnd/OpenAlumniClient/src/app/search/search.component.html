@@ -11,7 +11,7 @@
 
 
   <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
-                  style="max-width:400px;width:60%;font-size: x-large;display: inline-block;margin:5px;" autofocus>
+                  style="max-width:600px;width:60%;font-size: x-large;display: inline-block;margin:5px;" autofocus>
     <mat-label><mat-icon><mat-icon>person_search</mat-icon></mat-icon>&nbsp;Recherche</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
@@ -22,13 +22,17 @@
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"
                 matSuffix style="cursor: pointer;color:lightgray;"
+                id="cmdCancel"
                 (click)="clearQuery()">cancel</mat-icon>
       <mat-icon *ngIf="query.value?.length==0"
                 matSuffix style="cursor: pointer;color:lightgray;"
+                id="cmdHelp"
                 (click)="help()">help</mat-icon>
       <mat-icon *ngIf="advanced_search?.length==0"
                 matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
+                id="cmdExpertMode"
                 (click)="switch_motor()">add_circle</mat-icon>
+
     </div>
 
   </mat-form-field>
@@ -43,7 +47,9 @@
                placeholder=""
                [(ngModel)]="i.value">
       </mat-form-field>
+
     </div>
+
   </div>
 
 
@@ -73,6 +79,11 @@
     </mat-icon>
 
   </div>
+   <mat-icon *ngIf="advanced_search?.length>0"
+      matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
+      id="cmdSimpleMode"
+      (click)="switch_motor()">remove_circle</mat-icon>
+
   <br>
 
 

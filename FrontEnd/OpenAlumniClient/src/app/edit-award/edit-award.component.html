@@ -1,6 +1,42 @@
 <div class="app-prompt">
   <div mat-dialog-title style="margin-bottom: 10px !important;width:100%;text-align: center;">{{data.title}}</div>
-<!--  <div style="font-size: small;margin-bottom: 5px;" *ngIf="data.subtitle?.length>0">{{data.subtitle}}</div>-->
   <div mat-dialog-content>
+
+     <mat-form-field class="app-field" >
+      <mat-label>Pour quel film</mat-label>
+      <mat-select [(ngModel)]="sel_pow">
+        <mat-option *ngFor="let pow of data.pows" [value]="pow">{{pow.title}}</mat-option>
+      </mat-select>
+      <mat-hint style="font-size: x-small;">Sélectionner le film récompensé</mat-hint>
+    </mat-form-field>
+
+    <br><br>
+     <mat-form-field class="app-field" >
+      <mat-label>Dans quel festival / événement</mat-label>
+      <mat-select [(ngModel)]="sel_festival">
+        <mat-option *ngFor="let f of data.festivals" [value]="f">{{f.title}}</mat-option>
+      </mat-select>
+      <mat-hint style="font-size: x-small;">Sélectionner le festival / l'événement de la récompense</mat-hint>
+    </mat-form-field>
+    <br><br>
+     <mat-form-field appearance="fill" class="app-field">
+      <mat-label>Titre de la récompense</mat-label>
+      <input matInput placeholder="mon titre" id="txtTitle"
+             type="text" max="300" [(ngModel)]="title"
+             required>
+    </mat-form-field>
+    <br>
+     <mat-form-field appearance="fill" class="app-field" >
+      <mat-label>Année</mat-label>
+      <input matInput placeholder="2022" id="txtYear"
+             type="number" [min]="sel_pow.year" max="2030" [(ngModel)]="year"
+             required>
+    </mat-form-field>
+
   </div>
+  <hr>
+  <br>
+  <button id="cmdCancel" mat-button mat-raised-button (click)="cancel()">Annuler</button>
+  <button id="cmdValide" mat-button mat-raised-button (click)="valide()">Ok</button>
+
 </div>

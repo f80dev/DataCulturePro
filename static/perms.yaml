@@ -13,6 +13,9 @@ perms:
   - tag: firstname
     description: au prénom
 
+  - tag: export_stats
+    description: à l'exportation des données anonymes de Data Culture
+
   - tag: tutorat
     description: a la possibilité d'être tuteur
 

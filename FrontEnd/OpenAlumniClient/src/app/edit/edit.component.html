@@ -335,14 +335,14 @@
           <tr *ngFor="let award of awards" style="width:100%;text-align: left;">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
-              {{award.year}} :
-              {{award.description}} à {{award.festival.title}}
+              {{award?.year}} :
+              {{award?.description}} à {{award?.festival?.title}}
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
               <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
-                        name="cmdEdit"
-                        (click)="edit_award(award)">
-                edit
+                        name="cmdDeleteAward"
+                        (click)="del_award(award)">
+                delete
               </mat-icon>
             </td>
           </tr>

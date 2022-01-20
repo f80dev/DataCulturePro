@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1642432604184,
+  "timestamp": 1642678313385,
   "index": "https://testdcp.f80.fr/index.html",
   "assetGroups": [
     {
@@ -135,11 +135,11 @@
     "https://testdcp.f80.fr/assets/reporting.pbix": "2b95ac35c6fee4fa408666be84d70943d4604ae8",
     "https://testdcp.f80.fr/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
     "https://testdcp.f80.fr/index.html": "5d0fa8665b06f44927b630fa936b41f0d74e2243",
-    "https://testdcp.f80.fr/main.js": "cf2d37ced2cb6d479605f03087d010ad0a5715c8",
+    "https://testdcp.f80.fr/main.js": "0a5bc5ff0918713d325515f967c6fd39592b7409",
     "https://testdcp.f80.fr/manifest.webmanifest": "5430bb03fa346e338146a0956939e110243e7d40",
     "https://testdcp.f80.fr/polyfills.js": "40875d3f921c24d91b5d7428bfdbf408c52d792e",
     "https://testdcp.f80.fr/runtime.js": "e908a65cae93f2badc8382e13a553166c24cd6f6",
-    "https://testdcp.f80.fr/styles.css": "b3b3c65cb422b819a72afc744ae78c2d442b3d93"
+    "https://testdcp.f80.fr/styles.css": "0fbad835ce73c747bb492f2e13b96341a943f369"
   },
   "navigationUrls": [
     {

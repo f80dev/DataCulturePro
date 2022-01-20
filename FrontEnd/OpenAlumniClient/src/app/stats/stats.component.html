@@ -14,15 +14,16 @@
   </div>
 
   <mat-tab-group style="height: 87vh;text-align: center;"
+                 id="tabStats"
                  #tabGroup mat-align-tabs="start"
                  >
 
-    <mat-tab label="Rapports pré-définis">
+    <mat-tab name="tabs" label="Rapports pré-définis">
 
       <br>
       <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
         <mat-label>Sélectionner un rapport</mat-label>
-        <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)">
+        <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
           <mat-option *ngFor="let report of instant_reports" [value]="report">
             {{report.title}}
           </mat-option>
@@ -69,7 +70,7 @@
 
     </mat-tab>
 
-    <mat-tab label="Exports">
+    <mat-tab name="tabs" label="Exports" *ngIf="config.hasPerm('export_stats')">
 
       <mat-form-field class="app-field" style="font-size: medium;max-width: 300px;" id="lstRapports">
         <mat-label>Rapports statistiques disponibles</mat-label>
@@ -123,7 +124,7 @@
       </table>
     </mat-tab>
 
-    <mat-tab label="Documentation">
+    <mat-tab name="tabs" label="Documentation">
       <br>
       <p>Ci joint la liste des données disponibles via DataCulture pour construire les reportings</p>
       <table class="mat-elevation-z4"  *ngIf="rows.length>0" style="padding: 15px;">
