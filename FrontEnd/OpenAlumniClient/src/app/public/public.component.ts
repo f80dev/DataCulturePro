@@ -54,6 +54,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
           this.profil.expe=this.profil.expe+k+", ";
       }
 
+
       if(awards && awards.count>0){
         for(let a of awards.results){
           this.items.push({

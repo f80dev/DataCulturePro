@@ -14,7 +14,7 @@ import {MatDialog} from "@angular/material/dialog";
   templateUrl: './loginbar.component.html',
   styleUrls: ['./loginbar.component.sass']
 })
-export class LoginbarComponent implements OnInit,OnChanges {
+export class LoginbarComponent implements OnInit {
 
   @Input("user") user:any;
   @Output('logout') onlogout: EventEmitter<any>=new EventEmitter();
@@ -37,12 +37,7 @@ export class LoginbarComponent implements OnInit,OnChanges {
 
 
 
-  ngOnChanges(changes: SimpleChanges): void {
-
-  }
-
   help() {
-
   }
 
 

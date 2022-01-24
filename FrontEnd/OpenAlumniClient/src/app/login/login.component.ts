@@ -211,6 +211,7 @@ export class LoginComponent implements OnInit {
         this.messageCode = '';
         this.config.init_user(() => {this.quit();}, () => {},this.email);
       } else {
+
         $$('Problème technique');
         this.config.raz_user();
         this.messageCode = '';
@@ -219,7 +220,8 @@ export class LoginComponent implements OnInit {
     }, (err) => {
       this.wait_message = '';
       this.code = '';
-      showMessage(this, 'Code incorrect, veuillez recommencer la procédure');
+      window.location.reload();
+      //showMessage(this, 'Code incorrect, veuillez recommencer la procédure');
     });
   }
 

@@ -38,7 +38,7 @@ export class ApiService {
 
   _post(url,params="",body,_timeoutInSec=60,format="json"){
     url=api(url,params,true,format);
-    $$("Appel de "+url)
+    $$("!Appel de "+url)
     return this.http.post(url,body,this.getHttpOptions()).pipe(timeout(_timeoutInSec*1000));
   }
 
@@ -62,6 +62,7 @@ export class ApiService {
   }
 
   refreshToken() {
+    debugger
     this.http.post('/api-token-refresh/', JSON.stringify({token: this.token}), this.getHttpOptions()).subscribe(
       data => {
         this.token=data['token'];
@@ -98,8 +99,10 @@ export class ApiService {
 
 
   login(user) {
+    debugger
     this.http.post('/api-token-auth/', JSON.stringify(user), this.getHttpOptions()).subscribe(
       data => {
+
         this.updateData(data['token']);
       },
       err => {showError(this,err);}
@@ -110,8 +113,7 @@ export class ApiService {
 
   checkCode(username: string, code: string) {
     $$("Vérification du code pour username="+username);
-    let body={"username":username,"password":code}
-    return this._post("api-token-auth/", "",body);
+    return this._post("api-token-auth/", "",{"username":username,"password":code})
   }
 
 

@@ -23,7 +23,6 @@ class UserSerializer(HyperlinkedModelSerializer):
         model = User
         fields = ['id','url','email','username','first_name',"last_name"]
 
-
     def create(self, data):
         """
         Création d'un profil utilisateur avec initialisation du mot de passe
