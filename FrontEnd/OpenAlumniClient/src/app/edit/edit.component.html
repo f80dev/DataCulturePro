@@ -253,7 +253,7 @@
       </mat-expansion-panel>
 
       <!--      Expérience -->
-      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlExperience">
+      <mat-expansion-panel class="app-panel" [expanded]="expanded_experience_pnl" id="pnlExperience">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Expériences
@@ -336,13 +336,18 @@
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
               {{award?.year}} :
-              {{award?.description}} à {{award?.festival?.title}}
+              {{award?.description}} - {{award?.festival?.title}}
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
               <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
                         name="cmdDeleteAward"
                         (click)="del_award(award)">
                 delete
+              </mat-icon>
+              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+                        name="cmdOpenSourceAward"
+                        (click)="open_source_award(award)">
+                link
               </mat-icon>
             </td>
           </tr>
@@ -360,13 +365,10 @@
 
       </mat-expansion-panel>
 
-      <!--      Commandes -->
-      <mat-expansion-panel [expanded]="true" id="pnlCommand">
-        <mat-expansion-panel-header>
-          <mat-panel-title>Commandes</mat-panel-title>
-        </mat-expansion-panel-header>
+    </mat-accordion>
 
-        <div *ngIf="works.length>0">
+    <br>
+        <div *ngIf="works.length>0" style="text-align: center;width: 100%;">
           <p>Partagez votre profil public sur vos réseaux</p>
           <!--      voir https://ngx-sharebuttons.netlify.app/ -->
           <share-buttons [theme]="'circles-dark'"
@@ -387,10 +389,8 @@
             <div class="bloc-bouton">Voir la page<br>publique</div>
           </button>
           <br>
+      <br>
         </div>
-
-        <mat-action-row id="pnlActionExperience" *ngIf="message.length==0">
-
 
 
           <button mat-icon-button mat-button
@@ -425,12 +425,6 @@
             <mat-icon>search</mat-icon>
           </button>
 
-
-        </mat-action-row>
-
-      </mat-expansion-panel>
-
-    </mat-accordion>
 
     <br><br>
     <p style="font-size: small">

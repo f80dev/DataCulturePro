@@ -117,6 +117,7 @@ export class StatsComponent implements OnInit {
     if(this.sel_report.cols)param=param+"&cols="+this.sel_report.cols;
     if(this.sel_report.sql)param=param+"&sql="+this.sel_report.sql;
     if(this.sel_report.percent)param=param+"&percent=True";
+    if(this.sel_report.table)param=param+"&table="+this.sel_report.table;
     if(this.sel_report.x)param=param+"&x="+this.sel_report.x+"&y="+this.sel_report.y;
     if(this.sel_report.group_by)param=param+"&group_by="+this.sel_report.group_by;
     if(this.sel_report.template)param=param+"&template="+this.sel_report.template;

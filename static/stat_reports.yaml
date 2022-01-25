@@ -35,7 +35,7 @@ Instant_reports:
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='S' GROUP BY work_job ORDER BY -nb LIMIT 15
+    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE profil__cursus='S' GROUP BY Job ORDER BY -nb LIMIT 15
     prod: True
 
 
@@ -47,7 +47,7 @@ Instant_reports:
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT work_job as 'Job', count(work_id) as nb,profil_formation as 'Formation' FROM df WHERE profil_cursus='P' GROUP BY work_job ORDER BY -nb LIMIT 15
+    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE profil__cursus='P' GROUP BY Job ORDER BY -nb LIMIT 15
     prod: True
 
   - title: Les événements qui recompensent le plus les anciens de la FEMIS
@@ -56,18 +56,48 @@ Instant_reports:
     template: "plotly_dark"
     x: Evenements
     y: Films
-    sql: SELECT * FROM (SELECT film_festival AS Evenements,count(film_id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
+    table: Award
+    sql: SELECT * FROM (SELECT festival__title AS Evenements,count(pow__id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
     prod: True
 
   - title: Nombre de récompenses par département et par promotion
     id: award_by_promo
     chart: bar
-    x: Promotion
-    color: Formation
+    x: Formation
+    color: Promotion
     y: Awards
     table: Awards
-    sql: SELECT profil_department AS Formation,count(award_id) AS Awards,profil_promotion AS Promotion FROM df GROUP BY Formation,Promotion
-    prod: False
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,CAST (profil__degree_year AS text) AS Promotion FROM df GROUP BY Formation,Promotion
+    prod: True
+
+  - title: Nombre de récompenses pour la FEMIS par festival
+    id: award_by_festival
+    chart: pie
+    x: Festival
+    y: Awards
+    table: Awards
+    sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=True GROUP BY Festival ORDER BY -Awards LIMIT 15
+    prod: True
+
+  - title: Nombre de nomination pour la FEMIS par festival
+    id: nomination_by_festival
+    chart: pie
+    x: Festival
+    y: Awards
+    table: Awards
+    sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=False GROUP BY Festival ORDER BY -Awards LIMIT 15
+    prod: True
+
+
+  - title: Délai moyen pour travailler sur un long metrage par formation
+    id: delay_towork_onlong
+    #chart: bar
+    x: Profil
+    y: Year
+    table: Work
+    sql: SELECT Formation, AVG(Delay) AS Delay FROM (SELECT profil__id, profil__department AS Formation, MIN(pow__year-profil__degree_year) AS Delay FROM df WHERE pow__nature='Film' GROUP BY profil__id) GROUP BY Formation
+    prod: True
+
 
 
   - title: Répartition des etudiants (formation initiale) par département
@@ -136,6 +166,7 @@ Instant_reports:
       S: Formation initiale
     prod: True
 
+
   - title: Liste des prix gagnés par les films de la FEMIS
     description:
     id: award_by_film
@@ -146,8 +177,38 @@ Instant_reports:
     cols: id,description
     table: Award
     data_cols: id,description
-    sql: SELECT description,count(id) as nb FROM df GROUP BY description ORDER BY nb
+    sql: SELECT description,count(id) as nb FROM df GROUP BY description ORDER BY nb LIMIT 20
+    prod: False
+
+
+  - title: Les films de la FEMIS les plus primés
+    category:
+    description:
+    id: most_award_by_film
+    chart: none
+    x: award
+    y: nb
+    color: description
+    table: Award
+    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df GROUP BY pow__title ORDER BY -Récompenses LIMIT 20
     prod: True
+
+
+  - title: Nombre de films et séries par étudiant / stagiaire
+    category:
+    description:
+    id: avg_work
+    chart: bar
+    x: Annee
+    y: Projets
+    color: Cursus
+    replace:
+      P: Formation pro
+      S: Formation initiale
+    filter: Formation
+    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Année FROM df GROUP BY Cursus, Année
+    prod: True
+
 
 
   - title: Répartition des stagiaires de la formation profesionnelle

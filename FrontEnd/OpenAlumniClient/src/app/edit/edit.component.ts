@@ -108,6 +108,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   //Récupération des experiences;
+  expanded_experience_pnl=false;
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
@@ -311,7 +312,10 @@ export class EditComponent implements OnInit,OnDestroy  {
   analyse() {
     this.message="Analyse en cours des principaux annuaires";
     let handle=setInterval(()=>{this.refresh_works();},10000);
-    this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=2&refresh_delay_profil=0",this.config.values.catalog).subscribe((r:any)=>{
+    this.expanded_experience_pnl=true;
+    this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=2&refresh_delay_profil=0",
+      this.config.values.catalog,600,
+    ).subscribe((r:any)=>{
       this.message="";
       clearInterval(handle);
       showMessage(this,"Analyse terminée. Ajour de "+r.films+" film(s) et "+r.works+" contribution(s)");
@@ -477,6 +481,10 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.api._patch("awards/"+award.id,"",{state:'D'}).subscribe((r:any)=>{
       this.refresh_awards();
     })
+  }
+
+  open_source_award(award: any) {
+    open(award.source,"_blank");
   }
 }
 

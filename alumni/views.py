@@ -913,8 +913,26 @@ def export_all(request):
     :return:
     """
 
-    if request.GET.get("data_cols","")=="":
-        headers=WorksCSVRenderer.header
+    table = request.GET.get("table", "work").lower()
+
+    df=None
+    if table.startswith("award"):
+        awards = Award.objects.all()
+        df: pd.DataFrame = pd.DataFrame.from_records(list(awards.values(
+            "profil__id", "profil__gender", "profil__lastname",
+            "profil__firstname", "profil__department", "profil__cursus",
+            "profil__degree_year", "profil__cp", "profil__town", "profil__dtLastUpdate", "profil__dtLastSearch",
+
+            "pow__id", "pow__title", "pow__nature",
+            "pow__category", "pow__year", "pow__budget",
+            "pow__production",
+
+            "festival__id","festival__title","festival__country","festival__url",
+
+            "id", "description", "winner","year"
+        )))
+
+    if table.startswith("work"):
         works=Work.objects.all()
         df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
             "profil__id","profil__gender","profil__lastname",
@@ -924,26 +942,24 @@ def export_all(request):
             "pow__id","pow__title","pow__nature",
             "pow__category","pow__year","pow__budget",
             "pow__production",
-            "pow__award__festival__title","pow__award__id","pow__award__description","pow__award__year",
 
-            "id","job","comment",
-            "validate","source","state"
+            "id","job","comment","validate","source","state"
         )))
+        #df.columns=WorksCSVRenderer.header
 
-        if len(df)==0:return HttpResponse("Aucune donnée disponible",status=404)
-        df.columns=headers
-    else:
-        values=request.GET.get("data_cols").split(",")
-        table=request.GET.get("table","profil").lower()
-        if table.startswith("profil"):data=Profil.objects.all().values(*values)
-        if table.startswith("pieceofwork"):data=PieceOfWork.objects.all().values(*values)
-        if table.startswith("work"):data=Work.objects.all().values(*values)
-        if table.startswith("award"):data=Award.objects.all().values(*values)
-        if table.startswith("festival"):data=Festival.objects.all().values(*values)
+    if df is None:
+        values = request.GET.get("data_cols").split(",")
+
+        if table.startswith("profil"): data = Profil.objects.all().values(*values)
+        if table.startswith("pieceofwork"): data = PieceOfWork.objects.all().values(*values)
+        if table.startswith("work"): data = Work.objects.all().values(*values)
+        if table.startswith("festival"): data = Festival.objects.all().values(*values)
 
         df=pd.DataFrame.from_records(data)
         if len(data)>0:
             df.columns=list(request.GET.get("cols").split(","))
+
+    if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
 
     title=request.GET.get("title","Reporting FEMIS")
     lib_columns=",".join(list(df.columns))

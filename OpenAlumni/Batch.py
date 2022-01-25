@@ -335,6 +335,60 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     return None
 
 
+def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title="",year="",win=True,url=""):
+    """
+    Ajout un award sur la base d'un titre de festival, titre de film et année de récompense
+    :param festival_title:
+    :param pow_id:
+    :param profil_id:
+    :param film_title:
+    :param year:
+    :return:
+    """
+    if len(film_title)>0 and len(year)>0:
+        pows = PieceOfWork.objects.filter(title__iexact=film_title)
+        pow=None
+        for i in range(0,len(pows)):
+            pow=pows[i]
+            if int(pow.year)<=int(year) and int(pow.year)-int(year)<2:
+                break
+    else:
+        pow=PieceOfWork.objects.get(id=pow_id)
+
+    if pow is None:
+        log("Impossible de trouver le film "+film_title+" dans la base. Annulation de l'award")
+        return None
+
+    f = Festival.objects.filter(title__iexact=festival_title)
+    if f.exists():
+        f = f.first()
+    else:
+        log("Ajout d'un nouveau festival "+festival_title)
+        f = Festival(title=festival_title)
+        f.save()
+
+    desc = desc.replace("\n", "").replace("Winner", "").replace("Nominee", "").strip()
+    if desc.startswith("(") and ")" in desc: desc = desc.split(")")[1]
+    if len(desc)<8:return None
+
+    awards = Award.objects.filter(pow__id=pow.id, year=year, profil__id=profil.id).all()
+    for a in awards:
+        if a.description==desc: return a        #Si on trouve la meme description, on a déjà l'award
+        if a.source[:15]!=url[:15]: return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
+
+    a = Award(description=desc[:249], year=year, pow=pow, festival=f, profil=profil, winner=win,source=url)
+    try:
+        a.save()
+        return a
+    except:
+        log("!!Probleme d'enregistrement de l'award sur " + pow.title)
+
+    return None
+
+
+
+
+
 def extract_awards_from_imdb(profil_url,profil):
     # Recherche des awards
     page = load_page(profil_url + "awards?ref_=nm_awd")
@@ -358,31 +412,17 @@ def extract_awards_from_imdb(profil_url,profil):
 
                     film = tds[2].find("a")
                     if film and award:
-                        win=("Winner" in award)
                         film_title=film.text
                         if "(" in tds[2].text:
                             film_year =tds[2].text.split("(")[1].split(")")[0]
-                            pow=PieceOfWork.objects.filter(title__iexact=film_title,year__iexact=film_year)
-                            if pow.exists():
-                                pow=pow.first()
-                                f = Festival.objects.filter(title__iexact=festival_title)
-                                if f.exists():
-                                    f = f.first()
-                                else:
-                                    f = Festival(title=festival_title)
-                                    f.save()
-
-                                a = Award.objects.filter(pow__id=pow.id, year=year, festival__id=f.id,profil__id=profil.id)
-                                if a.exists():
-                                    a = a.first()
-                                else:
-                                    award=award.replace("\n","").replace("Winner","").replace("Nominee","").strip()
-                                    if award.startswith("(") and ")" in award: award=award.split(")")[1]
-                                    a = Award(description=award, year=year, pow=pow, festival=f,profil=profil,winner=win)
-                                try:
-                                    a.save()
-                                except:
-                                    log("!!Probleme d'enregistrement de l'award sur " + pow.title)
+                            a=add_award(festival_title=festival_title,
+                                        profil=profil,
+                                        desc=award,
+                                        film_title=film_title,
+                                        year=year,
+                                        win=("Winner" in award),
+                                        url=profil_url+"/awards"
+                                        )
 
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
@@ -524,7 +564,9 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                 trs=tables[i].find_all("tr")
 
                 for tr in trs:
+
                     tds=tr.find_all("td")
+
                     if len(tds)>1:
                         findname=tds[0].text.replace("\n","").replace("  "," ").strip()
                         if len(findname) ==0:findname=tds[1].text.replace("\n","").replace("  "," ").strip()
@@ -538,6 +580,13 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                                     else:
                                         job="Actor"
                                 else:
+                                    #Traitement particulier des séries
+                                    years=re.findall(r"[1-2][0-9]{3}", tr.text)
+                                    if len(years)>0:
+                                        rc["year"]=years[0]
+                                        if len(years)>1:
+                                            pass
+
                                     job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
                                     if len(job) == 0 and len(sur_jobs[i].text) > 0:
                                         job = sur_job.replace(" by", "").strip()
@@ -714,36 +763,21 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             except Exception as inst:
                 log("Impossible d'enregistrer le film: "+str(inst.args))
         else:
-            log("Impossible de retrouver le film"+str(film))
+            log("Impossible de retrouver le film: "+str(film))
 
 
         if not pow is None:
             if not film is None and "prix" in film and not film["prix"] is None and len(film["prix"]) > 0:
-                for prix in film["prix"]:
-                    f = Festival.objects.filter(title__iexact=prix["title"])
-                    if f.exists():
-                        f = f.first()
-                    else:
-                        f = Festival(title=prix["title"].strip().lower())
-                        f.save()
-
-                    a=Award.objects.filter(pow__id=pow.id,year=int(prix["year"]),festival__id=f.id)
-                    if a.exists():
-                        a=a.first()
-                    else:
-                        desc=prix["description"][:249]
-                        if desc.startswith("(") and ")" in desc:desc=desc.split(")")[1]
-
-                        a=Award(description=desc,
-                                year=prix["year"],
-                                pow=pow,
-                                festival=f,
-                                profil=None if not "profil" in prix else Profil.objects.filter(name_index__iexact=prix["profil"]).first()
-                                )
-                        try:
-                            a.save()
-                        except:
-                            log("!!Probleme d'enregistrement de l'award sur "+pow.title)
+                for award in film["prix"]:
+                     a=add_award(
+                        festival_title=award["title"],
+                        year=award["year"],
+                        profil=profil,
+                        desc=award["description"],
+                        pow_id=pow.id,
+                        win=True,
+                        url=film["url"]
+                    )
 
 
             if job is None: job = ""
@@ -837,7 +871,6 @@ def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefil
                             if hasChanged:pow.save()
 
     bot.quit()
-    bot=None
 
     return infos
 

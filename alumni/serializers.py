@@ -159,6 +159,21 @@ class WorksCSVRenderer (CSVRenderer):
         "film_id","film_titre", "film_catégorie",
         "film_genre","film_annee","film_budget",
         "film_production",
+
+        "work_id", "work_job","work_comment",
+        "work_validate","work_source","work_state"
+    ]
+
+class AwardsCSVRenderer (CSVRenderer):
+    header = [
+        "profil_id", "profil_genre","profil_nom",
+        "profil_prenom", "profil_formation", "profil_cursus",
+        "profil_promotion","profil_code_postal", "profil_ville","profil_dtlastupdate","profil_dtLastSearch",
+
+
+        "film_id","film_titre", "film_catégorie",
+        "film_genre","film_annee","film_budget",
+        "film_production",
         "film_festival","film_award_id","film_récompense","film_année",
 
         "work_id", "work_job","work_comment",
@@ -229,13 +244,13 @@ class FestivalSerializer(serializers.ModelSerializer):
 class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
-        fields = ["id","festival","description","year","pow","profil","state"]
+        fields = ["id","festival","description","year","pow","profil","state","source"]
 
 class ExtraAwardSerializer(serializers.ModelSerializer):
     festival=FestivalSerializer(many=False,read_only=True)
     class Meta:
         model = Award
-        fields = ["id","festival","description","year","pow","profil","state"]
+        fields = ["id","festival","description","year","pow","profil","state","source"]
 
 
 #Exemple : http://localhost:8000/api/extrapows/9808/

@@ -1,7 +1,5 @@
 import { SocialAuthService } from 'angularx-social-login';
 import { FacebookLoginProvider, GoogleLoginProvider } from 'angularx-social-login';
-
-
 import {$$, showError, showMessage} from '../tools';
 import {ApiService} from '../api.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';

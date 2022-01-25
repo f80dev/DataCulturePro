@@ -397,5 +397,6 @@ class Award(models.Model):
     description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom du festival")
     year = models.IntegerField(null=True, help_text="Date de la remise du prix")
     dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
+    source = models.CharField(null=True, blank=True, max_length=150, help_text="URL de la source")
     state = models.CharField(max_length=1, default="A",
                              help_text="etat du travail entre A=automatiquement creer,E=editer par le profil, D=supprimé par le profil")
