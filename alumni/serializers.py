@@ -92,9 +92,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields=["id","owner","validate","html","dtCreate","dtPublish","tags","to_publish"]
 
 
-    def to_representation(self, instance):
-        self.fields['owner'] = ProfilSerializer(read_only=True)
-        return super(ArticleSerializer, self).to_representation(instance)
+    # def to_representation(self, instance):
+    #     self.fields['owner'] = ProfilSerializer(read_only=True)
+    #     return super(ArticleSerializer, self).to_representation(instance)
 
 
 

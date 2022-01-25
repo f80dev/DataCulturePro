@@ -221,7 +221,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     if "person" in l.attrs["href"] and "profil" not in _prix:
                         _prix["profil"]=index_string(l.text)
 
-                if not "profil" in _prix:
+                if not "profil" in _prix and not job_for is None:
                     log("Attribution du prix à "+job_for)
                     _prix["profil"]=index_string(job_for)
 
@@ -870,7 +870,7 @@ def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefil
                             pow,hasChanged=fusion(pow,pow_2)
                             if hasChanged:pow.save()
 
-    bot.quit()
+    if not bot is None: bot.quit()
 
     return infos
 

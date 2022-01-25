@@ -125,6 +125,7 @@ export class HtmlEditorComponent implements OnInit {
     }
     if(!id || id=="null"){
       this.api._post("articles","",body).subscribe((r:any)=>{
+        debugger
         localStorage.setItem("article_id",r.id);
         showMessage(this,"Nouvel Article enregistré");
         if(func)func(r.id);

@@ -154,7 +154,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,)
-    search_fields = ["autor"]
+    search_fields = ["owner","tags"]
 
 
 

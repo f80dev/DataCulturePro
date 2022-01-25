@@ -3,11 +3,11 @@
   <app-tuto label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction"></app-tuto>
   <app-hourglass [message]="message"></app-hourglass>
   <div class="mat-elevation-z12" style="min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
-    <quill-editor [(ngModel)]="editorContent"></quill-editor>
+    <quill-editor id="htmlEditorZone" [(ngModel)]="editorContent"></quill-editor>
   </div>
   <br><br>
 
-  <mat-form-field class="app-field">
+  <mat-form-field class="app-field" id="tagEditor">
     <mat-label>Thème de votre contenu</mat-label>
     <mat-chip-list #chipList aria-label="Selection des tags">
       <mat-chip

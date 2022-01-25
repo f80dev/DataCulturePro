@@ -92,6 +92,15 @@
                 title="Lui envoyer un message">
           <mat-icon>email</mat-icon>
         </button>
+
+
+        <button mat-button mat-icon-button
+                title="Voir la page publique"
+                name="cmdShareProfil"
+                class="small-icon-button"
+                (click)="open_public_profil($event,profil)">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
         &nbsp;
         <button mat-button mat-icon-button
                 title="Réalisations / Films / Livres"

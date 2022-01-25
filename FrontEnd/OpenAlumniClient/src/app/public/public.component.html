@@ -11,25 +11,31 @@
       <td>
         <div style="font-size: 2em ;font-weight: lighter;">
           {{profil?.firstname+" "+profil?.lastname}}
-          <mat-icon title="Partager ce profil"
-                    (click)="share()"
-                    style="cursor: pointer;">
-            share
-          </mat-icon>
+          <button mat-button mat-icon-button
+                  title="Partager ce profil"
+                  class="icon-button" (click)="share()">
+            <mat-icon style="cursor: pointer;">shareic</mat-icon>
+          </button>
         </div>
         <br>
         <table style="border-spacing: 8px;vertical-align: top;">
           <tr>
-            <td>Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{{profil?.degree_year}}</td>
             <td>
-              <mat-icon style="font-size: small;cursor: pointer;"
+              <mat-icon style="cursor: pointer;"
                         (click)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})"
                         [title]="'Composition de la promotion '+profil.degree_year">help</mat-icon>
             </td>
+            <td>Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>{{profil?.degree_year}}</td>
           </tr>
 
-          <tr><td>Département</td><td>{{profil?.department}}</td><td><mat-icon style="font-size: small;cursor: pointer;"
-                                                                               [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">help</mat-icon></td></tr>
+          <tr>
+            <td><mat-icon style="cursor: pointer;"
+                          (click)="router.navigate(['search'],{queryParams:{query:profil.department}})"
+                          [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">help</mat-icon></td>
+            <td>Département</td>
+            <td>{{profil?.department}}</td>
+          </tr>
 
           <tr *ngIf="profil.works.length>0"><td>Expériences principales</td><td>{{profil.expe}}</td></tr>
           <tr *ngIf="profil.works.length>0"><td></td><td>{{profil.works.length}} expériences référencées<br><br></td></tr>

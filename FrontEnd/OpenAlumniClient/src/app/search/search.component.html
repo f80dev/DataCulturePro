@@ -7,6 +7,7 @@
   </app-tuto>
 
   <app-tuto [delay]="10"
+            id="tutoSideMenu"
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
@@ -43,6 +44,7 @@
         <mat-label>{{i.label}}</mat-label>
         <input matInput matNativeControl
                [title]="i.title"
+               [id]="i.id"
                (keyup)="onQuery($event)"
                placeholder=""
                [(ngModel)]="i.value">
