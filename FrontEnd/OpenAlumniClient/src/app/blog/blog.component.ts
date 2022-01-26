@@ -65,4 +65,8 @@ export class BlogComponent implements OnInit {
       this.refresh();
     })
   }
+
+  notif(article: any) {
+
+  }
 }

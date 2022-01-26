@@ -158,11 +158,14 @@ class Article(models.Model):
     id = models.AutoField(primary_key=True)
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name="Articles",help_text="Auteur de l'article")
     validate=models.BooleanField(default=False,null=False,help_text="Une fois à vrai l'article est visible de tous")
-    html=models.TextField(max_length=5000, blank=True,default="",help_text="Contenu de l'article")
+    html=models.TextField(blank=True,default="",help_text="Contenu de l'article")
+    title=models.CharField(max_length=100,default="",help_text="Titre de l'article")
+    sumary=models.CharField(max_length=250,default="",help_text="Résumé de l'article")
     dtPublish = models.DateField(null=True, help_text="Date de publication de l'article")
     dtCreate = models.DateField(auto_now=True, null=False, help_text="Date de création de l'article")
     tags=models.CharField(max_length=100,default="",help_text="Etiquettes de classification thématique")
     to_publish=models.BooleanField(default=False,null=False,help_text="Demander la publication")
+
 
     class Meta:
         ordering = ["dtCreate"]

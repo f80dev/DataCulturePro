@@ -374,7 +374,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     awards = Award.objects.filter(pow__id=pow.id, year=year, profil__id=profil.id).all()
     for a in awards:
         if a.description==desc: return a        #Si on trouve la meme description, on a déjà l'award
-        if a.source[:15]!=url[:15]: return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
+        if a.source and a.source[:15]!=url[:15]: return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
 
     a = Award(description=desc[:249], year=year, pow=pow, festival=f, profil=profil, winner=win,source=url)
     try:

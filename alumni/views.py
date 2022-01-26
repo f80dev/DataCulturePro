@@ -158,8 +158,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 
 
-
-
 #http://localhost:8000/api/pow
 class POWViewSet(viewsets.ModelViewSet):
     queryset = PieceOfWork.objects.all()

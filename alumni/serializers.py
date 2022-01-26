@@ -89,7 +89,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model=Article
         ordering=["-dtCreate"]
-        fields=["id","owner","validate","html","dtCreate","dtPublish","tags","to_publish"]
+        fields=["id","owner","validate","html","dtCreate","dtPublish","tags","to_publish","title","sumary"]
 
 
     # def to_representation(self, instance):

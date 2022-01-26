@@ -2,6 +2,39 @@
   <h2>Rédigez un article, une annonce</h2>
   <app-tuto label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction"></app-tuto>
   <app-hourglass [message]="message"></app-hourglass>
+  <br>
+
+  <mat-form-field appearance="fill"
+                  style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;text-align: center;" autofocus>
+    <mat-label>Titre de votre article</mat-label>
+    <input matInput matNativeControl
+           id="txtTitle"
+           title="Titre de votre article"
+           [(ngModel)]="title">
+
+    <div matSuffix style="font-size: medium;display: inline-block;">
+      <mat-icon *ngIf="title?.length>0"
+                matSuffix style="cursor: pointer;color:lightgray;"
+                id="cmdCancel"
+                (click)="clearTitle()">cancel
+      </mat-icon>
+    </div>
+  </mat-form-field>
+
+  <br>
+
+  <mat-form-field appearance="fill"
+                  style="max-width:600px;width:60%;display: inline-block;margin:5px;text-align: center;">
+    <mat-label>Résumé</mat-label>
+    <textarea matInput [rows]="3"
+              type="text"
+              [maxlength]="250" [(ngModel)]="resumer" cdkFocusInitial></textarea>
+
+  </mat-form-field>
+  <br>
+
+
+
   <div class="mat-elevation-z12" style="min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
     <quill-editor id="htmlEditorZone" [(ngModel)]="editorContent"></quill-editor>
   </div>
@@ -40,22 +73,22 @@
 </div>
 <div class="bottom-bar">
   <input #csvInput hidden="true"
-       type="file" onclick="this.value=null"
-       (change)="_import($event)"
-       accept=".csv"/>
+         type="file" onclick="this.value=null"
+         (change)="_import($event)"
+         accept=".csv"/>
 
-   <button class="icon-button" mat-button mat-icon-button mat-raised-button
+  <button class="icon-button" mat-button mat-icon-button mat-raised-button
           id="cmdImport"
-           title="Importer"
+          title="Importer"
           (click)="csvInput.click()">
     <mat-icon>publish</mat-icon>
   </button>
 
-   <button class="icon-button" mat-button mat-icon-button mat-raised-button
+  <button class="icon-button" mat-button mat-icon-button mat-raised-button
           id="cmdReset"
-           title="Effacer l'article en cours"
+          title="Effacer l'article en cours"
           (click)="clear_article()">
-     <mat-icon>delete</mat-icon>
+    <mat-icon>delete</mat-icon>
   </button>
 
   <button class="icon-button" mat-button mat-icon-button mat-raised-button
@@ -70,7 +103,7 @@
           [disabled]="!editorContent || editorContent.length==0"
           id="cmdClear" color="primary"
           (click)="publish()">
-    Publiez !
+    <div class="bloc-bouton">Envoyer pour<br>publication</div>
   </button>
 </div>
 

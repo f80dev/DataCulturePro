@@ -35,6 +35,8 @@ export class HtmlEditorComponent implements OnInit {
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
   editorContent: string="";
   message: string="";
+  title="";
+  resumer="";
 
   constructor(
     public api:ApiService,
@@ -118,6 +120,8 @@ export class HtmlEditorComponent implements OnInit {
     let id=localStorage.getItem("article_id");
     let body= {
       html: this.editorContent,
+      title:this.title,
+      sumary:this.resumer,
       owner: this.config.user.id,
       validate: false,
       tags:this.tags.join(" "),
@@ -125,7 +129,6 @@ export class HtmlEditorComponent implements OnInit {
     }
     if(!id || id=="null"){
       this.api._post("articles","",body).subscribe((r:any)=>{
-        debugger
         localStorage.setItem("article_id",r.id);
         showMessage(this,"Nouvel Article enregistré");
         if(func)func(r.id);
@@ -163,5 +166,9 @@ export class HtmlEditorComponent implements OnInit {
       if(result_code=="yes")this.editorContent="";
     });
 
+  }
+
+  clearTitle() {
+    this.title="";
   }
 }

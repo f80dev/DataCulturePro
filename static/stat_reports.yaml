@@ -60,14 +60,24 @@ Instant_reports:
     sql: SELECT * FROM (SELECT festival__title AS Evenements,count(pow__id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
     prod: True
 
-  - title: Nombre de récompenses par département et par promotion
+  - title: Nombre de récompenses ventilées par département et promotions
     id: award_by_promo
     chart: bar
-    x: Formation
-    color: Promotion
+    x: Promotion
+    color: Formation
     y: Awards
     table: Awards
     sql: SELECT profil__department AS Formation,count(id) AS Awards,CAST (profil__degree_year AS text) AS Promotion FROM df GROUP BY Formation,Promotion
+    prod: True
+
+  - title: Nombre de récompenses par an, ventilées par département
+    id: award_by_year
+    chart: bar
+    x: Année
+    color: Formation
+    y: Awards
+    table: Awards
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Formation,Année ORDER BY Année
     prod: True
 
   - title: Nombre de récompenses pour la FEMIS par festival
