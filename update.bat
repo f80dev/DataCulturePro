@@ -1,7 +1,9 @@
 python manage.py makemigrations
 python manage.py migrate --settings OpenAlumni.settings_dev
 python manage.py search_index --settings OpenAlumni.settings_dev --rebuild
-python manage.py archive --settings OpenAlumni.settings_dev
+
+set PYTHONIOENCODING=utf-8
+python manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
 
 echo "Deployer le dev"
 pause 0

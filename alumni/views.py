@@ -723,9 +723,11 @@ def raz(request):
         User.objects.all().delete()
 
     if "pows" in filter  or filter=="all":
-        log("Effacement des oeuvres")
+        log("Effacement des contributions")
         Work.objects.all().delete()
+        log("Effacement des awards")
         Award.objects.all().delete()
+        log("Effacement des oeuvres")
         PieceOfWork.objects.all().delete()
 
     if "work" in filter or filter=="all":
@@ -912,6 +914,7 @@ def export_all(request):
     """
 
     table = request.GET.get("table", "work").lower()
+    log("Chargement de la table "+table)
 
     df=None
     if table.startswith("award"):
@@ -943,7 +946,6 @@ def export_all(request):
 
             "id","job","comment","validate","source","state"
         )))
-        #df.columns=WorksCSVRenderer.header
 
     if df is None:
         values = request.GET.get("data_cols").split(",")
@@ -956,6 +958,8 @@ def export_all(request):
         df=pd.DataFrame.from_records(data)
         if len(data)>0:
             df.columns=list(request.GET.get("cols").split(","))
+
+    log("Chargement des données terminées")
 
     if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
 
@@ -971,6 +975,7 @@ def export_all(request):
 
     sql:str=request.GET.get("sql")
     if not sql is None:
+        log("Chargement de la requete "+sql)
         filter_clause=request.GET.get("filter_value","")
         if len(filter_clause)>0:
             title=title+" ("+request.GET.get("filter")+": "+filter_clause+")"
@@ -1012,6 +1017,7 @@ def export_all(request):
         dictionnary=loads(dictionnary)
         for k in dictionnary.keys():
             df=df.replace(str(k),str(dictionnary[k]))
+        log("Chargement du dictionnaire de substitution")
 
 
     if request.method=="POST":
@@ -1021,6 +1027,7 @@ def export_all(request):
     if len(params_pivot)>0:
         df=pd.pivot_table(df,index=params_pivot[0],columns=params_pivot[1],values=params_pivot[2],aggfunc=params_pivot[3].split("/"))
 
+    log("Exportation en mode "+format)
     if format=="xml":
         d="<root>"+to_xml(df,"record")+"</root>"
         #d="<root>"+xmlify(df.to_,wrap="list-items",indent="  ")+"</root>"
@@ -1058,6 +1065,7 @@ def export_all(request):
             template=request.GET.get("template","seaborn")
         )
         rc = graph.to_html()
+        log("Construction du graph terminée")
 
         filter = request.GET.get("filter")
         if filter:
@@ -1423,7 +1431,7 @@ class ProfilDocumentView(DocumentViewSet):
         DefaultOrderingFilterBackend,
         SearchFilterBackend,
     ]
-    search_fields = ('lastname','firstname','department','promo','school','town','department_category',)
+    search_fields = ('lastname','firstname','department','promo','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description','pow__year',)
 
 
     filter_fields = {
@@ -1468,7 +1476,8 @@ class PowDocumentView(DocumentViewSet):
         SearchFilterBackend,
     ]
 
-    search_fields = ('title','category',"nature","year","works")
+    search_fields = ('title','category',"nature","year","works__job","works__lastname","award__festival__title","award__description",)
+
     filter_fields = {
         'title':{
             'field':'title',

@@ -71,6 +71,7 @@ Instant_reports:
     prod: True
 
   - title: Nombre de récompenses par an, ventilées par département
+    description: Les récompenses sont regroupées par année de sortie des films
     id: award_by_year
     chart: bar
     x: Année
@@ -79,6 +80,16 @@ Instant_reports:
     table: Awards
     sql: SELECT profil__department AS Formation,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Formation,Année ORDER BY Année
     prod: True
+
+  - title: Nombre de récompenses par an, ventilées par métier
+    id: award_by_year
+    chart: bar
+    x: Année
+    color: Metier
+    y: Awards
+    table: Awards
+    sql: SELECT work__job AS Metier,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Metier,Année ORDER BY Année
+    prod: False
 
   - title: Nombre de récompenses pour la FEMIS par festival
     id: award_by_festival

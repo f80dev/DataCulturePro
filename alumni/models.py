@@ -250,10 +250,14 @@ class Work(models.Model):
     def title(self):
         return self.pow.title
 
-
     @property
     def lastname(self):
         return self.profil.lastname.upper()
+
+    @property
+    def firstname(self):
+        return self.profil.firstname
+
 
 
     def __str__(self):

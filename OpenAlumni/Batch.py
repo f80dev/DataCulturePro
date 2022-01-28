@@ -345,15 +345,16 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     :param year:
     :return:
     """
+    pow = None
     if len(film_title)>0 and len(year)>0:
         pows = PieceOfWork.objects.filter(title__iexact=film_title)
-        pow=None
         for i in range(0,len(pows)):
             pow=pows[i]
             if int(pow.year)<=int(year) and int(pow.year)-int(year)<2:
                 break
     else:
-        pow=PieceOfWork.objects.get(id=pow_id)
+        if pow_id:
+            pow=PieceOfWork.objects.get(id=pow_id)
 
     if pow is None:
         log("Impossible de trouver le film "+film_title+" dans la base. Annulation de l'award")

@@ -18,7 +18,7 @@
            id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="nom, métier, promotion ou titre d'une réalisation"
+           placeholder="nom, métier, année de sortie, titre de film ou récompense"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"

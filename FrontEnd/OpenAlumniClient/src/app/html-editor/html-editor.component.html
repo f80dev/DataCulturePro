@@ -36,7 +36,14 @@
 
 
   <div class="mat-elevation-z12" style="min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
-    <quill-editor id="htmlEditorZone" [(ngModel)]="editorContent"></quill-editor>
+    <quill-editor id="htmlEditorZone"
+                  *ngIf="!onlyPreview"
+                  [(ngModel)]="editorContent">
+    </quill-editor>
+
+    <div *ngIf="onlyPreview"
+         [innerHTML]="editorContent"
+         style="width: 100%;height: 100%;padding:10px;"></div>
   </div>
   <br><br>
 
@@ -71,38 +78,41 @@
   <app-tuto label="Les tags vont permettre de filtrer les articles par thème"></app-tuto>
 
 </div>
+
 <div class="bottom-bar">
   <input #csvInput hidden="true"
          type="file" onclick="this.value=null"
          (change)="_import($event)"
-         accept=".csv"/>
+         accept=".html,.htm"/>
 
-  <button class="icon-button" mat-button mat-icon-button mat-raised-button
+  <button class="app-button" mat-button mat-raised-button
           id="cmdImport"
           title="Importer"
           (click)="csvInput.click()">
-    <mat-icon>publish</mat-icon>
-  </button>
-
-  <button class="icon-button" mat-button mat-icon-button mat-raised-button
-          id="cmdReset"
-          title="Effacer l'article en cours"
-          (click)="clear_article()">
-    <mat-icon>delete</mat-icon>
-  </button>
-
-  <button class="icon-button" mat-button mat-icon-button mat-raised-button
-          id="cmdSave"
-          [disabled]="!editorContent || editorContent.length==0"
-          title="Enregistrer un brouillon"
-          (click)="save()">
-    <mat-icon>save</mat-icon>
+    <div class="bloc-bouton">Importer depuis<br>un editeur externe</div>
   </button>
 
   <button class="app-button" mat-button mat-raised-button
-          [disabled]="!editorContent || editorContent.length==0"
-          id="cmdClear" color="primary"
+          id="cmdReset"
+          title="Effacer l'article en cours"
+          (click)="clear_article()">
+    <mat-icon>delete</mat-icon>&nbsp;Supprimer
+  </button>
+
+  <button class="app-button" mat-button mat-raised-button
+          id="cmdSave"
+          [disabled]="!editorContent || editorContent.length==0 || title?.length==0"
+          title="Enregistrer un brouillon"
+          (click)="save()">
+    <mat-icon>save</mat-icon>&nbsp;Enregistrer
+  </button>
+
+  <button class="app-button" mat-button mat-raised-button
+          [disabled]="!editorContent || editorContent.length==0 || title?.length==0"
+          id="cmdClear"
+          color="primary"
           (click)="publish()">
+    <mat-icon>send</mat-icon>&nbsp;
     <div class="bloc-bouton">Envoyer pour<br>publication</div>
   </button>
 </div>

@@ -8,9 +8,7 @@ import {ClipboardService} from "ngx-clipboard";
 import {environment} from "../../environments/environment";
 import {MatAccordion} from "@angular/material/expansion";
 import {Observable} from "rxjs";
-import { map } from 'rxjs/operators';
-import {stringify} from "querystring";
-import set = Reflect.set;
+
 
 @Component({
   selector: 'app-pows',
@@ -20,7 +18,7 @@ import set = Reflect.set;
 export class PowsComponent implements OnInit {
   pows: any[]=[];
   query: any={value:""};
-  limit=500;
+  limit=200;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number;
   filter$: Observable<string>;

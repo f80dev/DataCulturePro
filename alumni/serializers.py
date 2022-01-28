@@ -214,6 +214,7 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "department_category",
                 "address",
                 "town",
+                "works",
                 "promo",
                 "dtLastUpdate",
                 "dtLastSearch")
@@ -223,8 +224,7 @@ class ProfilDocumentSerializer(DocumentSerializer):
 class PowDocumentSerializer(DocumentSerializer):
     class Meta:
         document=PowDocument
-        fields=("id","title","nature","description",'category','year','works','links')
-
+        fields=("id","title","nature","description",'category','year','works','links',"award")
 
 
 class ExtraWorkSerializer(serializers.ModelSerializer):

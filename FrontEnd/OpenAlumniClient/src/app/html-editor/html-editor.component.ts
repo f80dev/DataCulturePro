@@ -37,6 +37,7 @@ export class HtmlEditorComponent implements OnInit {
   message: string="";
   title="";
   resumer="";
+  onlyPreview=false;
 
   constructor(
     public api:ApiService,
@@ -150,6 +151,7 @@ export class HtmlEditorComponent implements OnInit {
       this.editorContent=String(reader.result);
     };
     reader.readAsText(fileInputEvent.target.files[0],"utf-8");
+    this.onlyPreview=true;
   }
 
   clear_article() {
@@ -163,7 +165,12 @@ export class HtmlEditorComponent implements OnInit {
         lbl_cancel: 'Annuler'
       }
     }).afterClosed().subscribe((result_code) => {
-      if(result_code=="yes")this.editorContent="";
+      if(result_code=="yes"){
+        this.editorContent="";
+        this.onlyPreview=false;
+        this.title="";
+        this.resumer="";
+      }
     });
 
   }

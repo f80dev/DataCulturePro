@@ -26,6 +26,13 @@ class PowDocument(Document):
         "job":fields.TextField(),
         "lastname":fields.TextField(),
     })
+    award = fields.ObjectField(properties={
+        "festival": fields.ObjectField(properties={
+            "title": fields.TextField()
+        }),
+        "description": fields.TextField()
+    })
+
     links = fields.NestedField(properties={"url": fields.TextField(), "text": fields.TextField()})
     class Index:
         name='pows'
@@ -38,10 +45,20 @@ class PowDocument(Document):
 
 @registry.register_document
 class ProfilDocument(Document):
-    name = fields.TextField(fielddata=True,attr='lastname',fields={'suggest': fields.Completion(),})
-    works= fields.NestedField(properties={"job":fields.TextField(),"title":fields.TextField()})
-    promo=fields.TextField(attr="promo")
-    links=fields.NestedField(properties={"url":fields.TextField(),"text":fields.TextField()})
+    works = fields.ObjectField(properties={
+        "job":fields.TextField(),
+        "source":fields.TextField(),
+        "pow":fields.ObjectField(properties={
+            "title":fields.TextField()
+        }),
+    })
+
+    award=fields.ObjectField(properties={
+        "festival":fields.ObjectField(properties={
+            "title":fields.TextField()
+        }),
+        "description":fields.TextField()
+    })
 
     class Index:
         name='profils'
@@ -54,11 +71,19 @@ class ProfilDocument(Document):
                 "school",
                 "email",
                 "department","department_category",
-                "cp","cursus","blockchain",
+                "cp","cursus",
                 "mobile","photo","address",
                 "town","degree_year","dtLastUpdate"]
 
     def get_queryset(self):
         return super().get_queryset().select_related('extrauser')
+
+    # def get_instances_from_related(self, related_instance):
+    #     """If related_models is set, define how to retrieve the Car instance(s) from the related model.
+    #     The related_models option should be used with caution because it can lead in the index
+    #     to the updating of a lot of items.
+    #     """
+    #     if isinstance(related_instance, Work):
+    #         return related_instance.pow.works
 
 
