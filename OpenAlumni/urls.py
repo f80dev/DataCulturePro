@@ -13,15 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+
 from django.contrib import admin
-from django.urls import path, include
-from graphene_django.views import GraphQLView
+from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
 from alumni import views
-from alumni.schema import schema
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet,basename="user")
@@ -74,8 +72,8 @@ urlpatterns = [
     path('api/ask_for_update/', views.ask_for_update),
     path('api/show_movies/', views.show_movies),
     path('api/analyse_pow/', views.get_analyse_pow),
-    url(r'^api/movie_importer/$',views.movie_importer),
-    url('^api/api-token-auth/', obtain_auth_token),
+    re_path(r'^api/movie_importer/$',views.movie_importer),
+    re_path('^api/api-token-auth/', obtain_auth_token),
     path("api/",include(router.urls)),
-    url(r'^graphql$', GraphQLView.as_view(graphiql=True,schema=schema))
+ #   re_path(r'^graphql$', GraphQLView.as_view(graphiql=True,schema=schema))
 ]

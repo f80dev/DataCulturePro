@@ -6,12 +6,10 @@ set PYTHONIOENCODING=utf-8
 python manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
 
 echo "Deployer le dev"
-pause 0
 
 c:
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni\frontend\openalumniclient
 start npm run dev
-
 
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni
 copy Dockerfile-dev Dockerfile

@@ -126,5 +126,9 @@ export class ProfilComponent implements OnInit,OnChanges {
     evt.stopPropagation();
     this.onclick.emit(q);
   }
+
+  open_CRM(profil: any) {
+    if(profil.crm)open(profil.crm,"CRM");
+  }
 }
 

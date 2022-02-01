@@ -10,6 +10,7 @@ from urllib.request import urlopen
 import pandasql
 import yaml
 import pandas as pd
+from django.utils.http import urlencode
 from github import Github
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
@@ -18,13 +19,14 @@ from OpenAlumni.analytics import StatGraph
 pd.options.plotting.backend = "plotly"
 
 from django.http import JsonResponse, HttpResponse
-from django.utils.http import urlquote
+
 from django_elasticsearch_dsl import Index
 from django_elasticsearch_dsl_drf.constants import LOOKUP_QUERY_IN, \
     SUGGESTER_COMPLETION, LOOKUP_FILTER_TERMS, \
-    LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE, LOOKUP_FILTER_TERM
+    LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE, LOOKUP_FILTER_TERM, LOOKUP_QUERY_STARTSWITH
 from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, IdsFilterBackend, \
-    OrderingFilterBackend, DefaultOrderingFilterBackend, SearchFilterBackend
+    OrderingFilterBackend, DefaultOrderingFilterBackend, SearchFilterBackend, MultiMatchSearchFilterBackend, \
+    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
 from django_elasticsearch_dsl_drf.pagination import PageNumberPagination, LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -390,9 +392,9 @@ def refresh_jobsites(request):
     job=request.GET.get("job","")
     if len(job)==0:job=profil.job
 
-    text = text.replace("%job%", urlquote(job))
-    text = text.replace("%lastname%", urlquote(profil.lastname))
-    text = text.replace("%firstname%", urlquote(profil.firstname))
+    text = text.replace("%job%", urlencode(job))
+    text = text.replace("%lastname%", urlencode(profil.lastname))
+    text = text.replace("%firstname%", urlencode(profil.firstname))
 
     sites=yaml.load(text)
     return JsonResponse({"sites":sites,"job":profil.job})
@@ -1347,6 +1349,7 @@ def importer(request):
                     cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict,header=header),
                     website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict,header=header)),
                     biography=idx("biographie",row,"",header=header),
+                    crm=idx("crm,oasis",row,header=header),
 
                     facebook=idx("facebook",row,"",header=header),
                     instagram=idx("instagram",row,"",header=header),
@@ -1429,10 +1432,10 @@ class ProfilDocumentView(DocumentViewSet):
         IdsFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
-        SearchFilterBackend,
+        CompoundSearchFilterBackend,
     ]
-    search_fields = ('lastname','firstname','department','promo','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description','pow__year',)
 
+    search_fields = ('lastname','firstname','department','promo','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description','pow__year',)
 
     filter_fields = {
         'name': 'name',
@@ -1459,7 +1462,8 @@ class ProfilDocumentView(DocumentViewSet):
 
 
 
-
+#exemples de requete
+#http://localhost:8000/api/powsdoc/?format=json&limit=200&search_simple_query_string="les%20chansons"
 #http://localhost:8000/api/powsdoc
 @permission_classes([AllowAny])
 class PowDocumentView(DocumentViewSet):
@@ -1469,26 +1473,38 @@ class PowDocumentView(DocumentViewSet):
     lookup_field = "id"
 
     filter_backends = [
-        FilteringFilterBackend,
-        IdsFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
-        SearchFilterBackend,
+        CompoundSearchFilterBackend,
+        SimpleQueryStringSearchFilterBackend
     ]
 
-    search_fields = ('title','category',"nature","year","works__job","works__lastname","award__festival__title","award__description",)
+    search_fields = ("works__job", "works__lastname", "award__festival__title","award__description",)
 
-    filter_fields = {
+    simple_query_string_search_fields  = {
         'title':{
-            'field':'title',
-            'lookups':[LOOKUP_FILTER_TERM,LOOKUP_FILTER_TERMS,LOOKUP_FILTER_PREFIX,LOOKUP_FILTER_WILDCARD,LOOKUP_QUERY_IN,LOOKUP_QUERY_EXCLUDE,]
-        },
-        'category': {
-            'field': 'category',
-            'lookups': [LOOKUP_FILTER_TERM, LOOKUP_FILTER_TERMS, LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD,
-                        LOOKUP_QUERY_IN, LOOKUP_QUERY_EXCLUDE, ]
-        }
+            "default_operator":"and",
+            "analyze_wildcard":True,
+            "flags":"OR|AND|PREFIX",
+            },
+        'category': None,
+        'year':None,
+        'nature':None,
     }
+
+
+    # filter_fields = {
+    #     'title':{
+    #         'field':'title',
+    #         'lookups':[LOOKUP_QUERY_STARTSWITH,LOOKUP_FILTER_TERMS,LOOKUP_FILTER_PREFIX,LOOKUP_FILTER_WILDCARD,]
+    #     },
+    #     'category': {
+    #         'field': 'category',
+    #         'lookups': [LOOKUP_FILTER_TERM, LOOKUP_FILTER_TERMS, LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD,
+    #                     LOOKUP_QUERY_IN, LOOKUP_QUERY_EXCLUDE, ]
+    #     }
+    # }
+
     ordering_fields = {
         'year':'year',
         'title': 'title'

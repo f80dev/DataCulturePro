@@ -233,7 +233,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
 
 
 
-    if not job_for is None:
+    if not job_for is None and page.find("div",{"id":"description"}) and page.find("div",{"id":"description"}).find("p"):
         real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
         if len(real_links)>0 and equal_str(real_links[0].text,job_for):
             rc["job"]=translate("Réalisation")
@@ -676,6 +676,9 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     return rc
 
 def dict_to_pow(film:dict,content=None):
+
+    if not "title" in film:return None
+
     pow = PieceOfWork(title=film["title"],title_index=index_string(film["title"]))
     pow.add_link(url=film["url"], title=film["source"])
     if not content is None and content["senscritique"]:

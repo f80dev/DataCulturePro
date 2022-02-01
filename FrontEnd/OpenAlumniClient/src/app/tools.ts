@@ -17,7 +17,7 @@ export function showError(vm:any,err:any){
 }
 
 
-export function translateQuery(text:string,all_term=false):string {
+export function translateQuery(text:string,all_term=false,query="search_simple_query_string"):string {
   if(text.length==0)return "";
   let dict={
     "nom":"lastname",
@@ -49,7 +49,7 @@ export function translateQuery(text:string,all_term=false):string {
     text=rc.substr(0,rc.length-1);
   }
   else
-    text="search="+text;
+    text=query+"="+text;
 
   return text;
 }

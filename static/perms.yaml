@@ -19,6 +19,9 @@ perms:
   - tag: tutorat
     description: a la possibilité d'être tuteur
 
+  - tag: r_crm
+    description: au CRM du profil
+
   - tag: job_search
     description: aux outils de recherches d'emploi
 

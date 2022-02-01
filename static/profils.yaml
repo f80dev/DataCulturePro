@@ -48,7 +48,7 @@ profils:
     perm:
         r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo export_stats
         r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
-        w_linkedin write_email r_address r_lastname admin_sort job_search
+        w_linkedin write_email r_address r_lastname admin_sort job_search r_crm
         publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
     price: 0
     subscription: secure
@@ -69,7 +69,7 @@ profils:
     description: profil destiné aux organisme en charge de statistique
     perm:
       stats r_cp r_firstname r_promo r_lastname r_works ask_friend add_movies publish validate
-      r_photo r_linkedin w_firstname w_linkedin edit_profil
+      r_photo r_linkedin w_firstname w_linkedin edit_profil r_crm
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
       write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
     price: 0

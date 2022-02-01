@@ -1,10 +1,10 @@
-Django~=3.2
+Django==4.0.2
 markdown
 django-oauth-toolkit
 oauthlib
 requests~=2.25.1
 selenium~=3.141.0
-djangorestframework~=3.12.4
+djangorestframework
 pandas~=1.2.4
 elasticsearch_dsl
 graphene-django

@@ -24,7 +24,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get install libpq-dev
 
-RUN pip3 install Django==3.2
+RUN pip3 install Django==4.0.2
 RUN pip3 install markdown
 RUN pip3 install django-oauth-toolkit
 RUN pip3 install oauthlib

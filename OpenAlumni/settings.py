@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     'django_archive',
     'django_elasticsearch_dsl_drf',
     'django.contrib.staticfiles',
-    'graphene_django'
 ]
 
 

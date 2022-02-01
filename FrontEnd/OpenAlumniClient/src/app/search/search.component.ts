@@ -66,7 +66,7 @@ export class SearchComponent implements OnInit {
 
       this.message="Chargement des profils";
 
-      param=translateQuery(prefixe+this.query.value);
+      param=translateQuery(prefixe+this.query.value,false,"search");
 
       if(this.advanced_search.length>0){
         param="";

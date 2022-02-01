@@ -59,6 +59,8 @@ class Profil(models.Model):
     vimeo=models.URLField(blank=True, null=True,help_text="Adresse de la page vimeo du profil")
     school=models.CharField(blank=True,max_length=30,null=True,default="FEMIS",help_text="Ecole")
 
+    crm=models.URLField(blank=True, null=True,help_text="Lien avec l'outil de CRM")
+
     acceptSponsor = models.BooleanField(null=False, default=False,help_text="Le profil accepte les demandes de mentorat")
     sponsorBy = models.ForeignKey('Profil', null=True,on_delete=CASCADE,help_text="Nom du mentor")
 
