@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "prod": "npm version patch && ng build --configuration production --configuration=production --output-hashing none --baseHref=https://dcp.f80.fr",
-    "dev": "ng build --configuration production --configuration=dev --output-hashing none --baseHref=https://testdcp.f80.fr",
+    "prod": "npm version patch && ng build --configuration production --configuration=production --output-hashing none --baseHref=https://dcp.f80lab.com",
+    "dev": "ng build --configuration production --configuration=dev --output-hashing none --baseHref=https://testdcp.f80lab.com",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
