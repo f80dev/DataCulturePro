@@ -40,7 +40,7 @@ Instant_reports:
 
 
   - title: Liste des métiers les plus exercés par les stagiaires
-    description:
+    description: Cette liste de métier est obtenue indépedemment de leur formation
     id: job_by_formation
     chart: pie
     x: Job
@@ -61,6 +61,7 @@ Instant_reports:
     prod: True
 
   - title: Nombre de récompenses ventilées par département et promotions
+    description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
     id: award_by_promo
     chart: bar
     x: Promotion
@@ -82,6 +83,7 @@ Instant_reports:
     prod: True
 
   - title: Nombre de récompenses par an, ventilées par métier
+    description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
     id: award_by_year
     chart: bar
     x: Année
@@ -111,6 +113,7 @@ Instant_reports:
 
 
   - title: Délai moyen pour travailler sur un long metrage par formation
+    description: Délai ob
     id: delay_towork_onlong
     #chart: bar
     x: Profil

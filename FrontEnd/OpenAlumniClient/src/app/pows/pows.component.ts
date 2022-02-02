@@ -134,7 +134,7 @@ export class PowsComponent implements OnInit {
           if(item.public){
             rc.push({
               job:item.job,
-              name:item.profil.firstname+" "+item.profil.lastname
+              name:item.profil.firstname+" "+item.profil.lastname.toUpperCase()
             })
           }
         }

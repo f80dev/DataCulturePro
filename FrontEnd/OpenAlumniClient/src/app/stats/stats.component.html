@@ -42,21 +42,24 @@
                   *ngIf="sel_filter?.length>0"
                   (click)="cancel_filter()">cancel</mat-icon>
       </div>
+      <mat-icon [title]="sel_report.description" style="cursor: help;" *ngIf="sel_report.description?.length>0">help</mat-icon>
 
 
+      <div style="width: 100%;text-align: center;position: relative;">
+        <div *ngIf="!sel_report?.html_code" style="width:80%;display: inline-block;text-align: center;margin-top: 10%;">
+          Calcul en cours de<br>
+          <strong>{{sel_report.title}}</strong><br>
+          <br>
+          {{sel_report.description}}
+        </div>
 
-      <div style="width: 100%;text-align: center;">
-        <app-hourglass *ngIf="!sel_report?.html_code" message="En cours de calcul"></app-hourglass>
         <iframe *ngIf="sel_report?.html_code"
                 class="mat-elevation-z4"
-                style="padding: 0px;width: 90%;height:69vh;border:None;display: inline-block;"
+                style="padding: 0px;width: 95%;height:69vh;border:None;display: inline-block;margin:0px;"
                 [title]="sel_report.description"
                 [srcdoc]="sel_report.html_code | safe"
                 >
         </iframe>
-        <br>
-        {{sel_report.description}}
-        <br>
       </div>
 
 

@@ -109,6 +109,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   //Récupération des experiences;
   expanded_experience_pnl=false;
+  expanded_internet_pnl=false;
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
@@ -131,7 +132,11 @@ export class EditComponent implements OnInit,OnDestroy  {
     $$("Chargement du profil & des travaux");
     this.api._get("profils/"+id+"/","").subscribe((p:any)=>{
       $$("Profil chargé ",p);
+
       if(p){
+        p.links.push({text:"Google",url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname});
+        p.links.push({text:"Wikipedia",url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname});
+        p.links.push({text:"Allocine",url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname});
         this.profil=p;
         if(this.profil.sponsorBy){
           this.api._get("profils/"+this.profil.sponsorBy+"/","").subscribe((sponsor:any)=>{
@@ -432,8 +437,8 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   }
 
-  open_public_page() {
-    open(this.profil.public_url,"page_public");
+  open_page(url,target="_blank") {
+    open(url,target);
   }
 
   delete_pows() {
@@ -485,6 +490,10 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   open_source_award(award: any) {
     open(award.source,"_blank");
+  }
+
+  open_movie(movie_title) {
+    this.router.navigate(['pows'],{queryParams:{query:"\""+movie_title+"\""}});
   }
 }
 

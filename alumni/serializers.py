@@ -248,6 +248,7 @@ class AwardSerializer(serializers.ModelSerializer):
 
 class ExtraAwardSerializer(serializers.ModelSerializer):
     festival=FestivalSerializer(many=False,read_only=True)
+    pow=POWSerializer(many=False,read_only=True)
     class Meta:
         model = Award
         fields = ["id","festival","description","year","pow","profil","state","source"]
@@ -256,7 +257,7 @@ class ExtraAwardSerializer(serializers.ModelSerializer):
 #Exemple : http://localhost:8000/api/extrapows/9808/
 class ExtraPOWSerializer(serializers.ModelSerializer):
     works =ExtraWorkSerializer(many=True,read_only=True)
-    award=AwardSerializer(many=True, read_only=True)
+    award=ExtraAwardSerializer(many=True, read_only=True)
     class Meta:
         model=PieceOfWork
         fields=["id","title","works","award","url","links","owner","visual","category","year","description","nature"]

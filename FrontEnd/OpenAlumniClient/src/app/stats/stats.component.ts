@@ -30,7 +30,6 @@ export class StatsComponent implements OnInit {
   sel_filter="";
   filter_name="Filtre";
 
-
   constructor(public _location:Location,
               public api:ApiService,
               public router:Router,
@@ -77,6 +76,7 @@ export class StatsComponent implements OnInit {
       } else {
         this.sel_report=this.instant_reports[0];
       }
+
 
       if(func)func();
     });

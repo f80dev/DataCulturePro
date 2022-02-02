@@ -41,7 +41,7 @@ perms:
     description: aux réalisations des profils référencées sur SensCritique
 
   - tag: r_movie_synopsis
-    description: au synopsis des film
+    description: au synopsis des films
 
   - tag: r_movie_picture
     description: a l'affiche des films

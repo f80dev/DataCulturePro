@@ -418,7 +418,9 @@ def fusion(p1: Model, p2: Model,withLog=False):
                 else:
                     if type(p1.__getattribute__(attr)) == list:
                         for it in p1.__getattribute__(attr):
-                            if not it in val:val.append(it)
+                            if not it in val:
+                                val.append(it)
+                                hasChanged=True
                         p1.__setattr__(attr,val)
                     else:
                         if p1.__getattribute__(attr) is None:
@@ -434,7 +436,7 @@ def init_dict():
     if MYDICT is None:
         with open("./static/dictionnary.yaml", 'r', encoding='utf8') as f:
             body = f.read()
-        MYDICT = yaml.load(body.lower())
+        MYDICT = yaml.load(body.lower(), Loader=yaml.Loader)
 
 
 def in_dict(key:str,section="jobs"):
