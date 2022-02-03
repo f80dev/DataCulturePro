@@ -15,21 +15,21 @@ catalog:
 
 support:
   forum: "http://kerberus.les-forums.com/"
-  email: "contact@f80.fr"
+  email: "contact@f80lab.com"
   facebook: "https://www.facebook.com/kerberus/"
   faq: "./faq.html?from=appli"
   website: ""
 
 editor:
   name: "F80"
-  website: "https://f80.fr"
+  website: "https://f80lab.com"
   author:
     - "Hervé HOAREAU"
     - "Jérôme LECANU"
   link_author:
     - "https://www.linkedin.com/in/hhoareau/"
     - "https://www.linkedin.com/in/jlecanu/"
-  contact: "herve.hoareau@f80.fr"
+  contact: "herve.hoareau@f80lab.com"
 
 
 users:

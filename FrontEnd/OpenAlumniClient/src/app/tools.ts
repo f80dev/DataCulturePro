@@ -854,7 +854,7 @@ export function checkLogin(vm, func_success=null,func_abort=null,redirect="searc
   }, 1000);
 }
 
-export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://server.f80.fr"){
+export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://server.f80lab.com"){
   var graph_url=domain_server+":5500/api/getgraph/"+idshop+"/hh4271/gpickle/"+_type;
   var url=domain_server+":5000/graph/b64="
     +btoa(graph_url)+"/fr?algo_comm=self&dir=public&axis=False&notext=True&metrics=True&add_property=False&autorotate=False" +

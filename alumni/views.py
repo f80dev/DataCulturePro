@@ -463,7 +463,7 @@ def rebuild_index(request):
 
 
 #http://localhost:8000/api/batch
-#https://server.f80.fr:8000/api/batch
+#https://server.f80lab.com:8000/api/batch
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def batch(request):
@@ -512,7 +512,7 @@ def api_doc(request):
 
 
 #http://localhost:8000/api/quality_filter
-#https://server.f80.fr:8000/api/quality_filter
+#https://server.f80lab.com:8000/api/quality_filter
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def quality_filter(request):
@@ -1432,8 +1432,14 @@ class ProfilDocumentView(DocumentViewSet):
         IdsFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
-        CompoundSearchFilterBackend,
+        SimpleQueryStringSearchFilterBackend,
+        CompoundSearchFilterBackend
     ]
+
+    simple_query_string_search_fields = {
+        'lastname': {'boost': 4},
+        'firstname': {'boost': 2},
+    }
 
     search_fields = ('lastname','firstname','department','promo','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description','pow__year',)
 

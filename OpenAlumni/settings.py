@@ -39,10 +39,10 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
-    "server.f80.fr",
+    "server.f80lab.com",
     "localhost",
     "127.0.0.1",
-    "dcp.f80.fr"
+    "dcp.f80lab.com"
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -235,7 +235,7 @@ EMAIL_HOST ="smtp.ionos.fr"
 EMAIL_PORT = 587
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER ="reply@f80.fr"
+EMAIL_HOST_USER ="reply@f80lab.com"
 EMAIL_HOST_PASSWORD ="Hh42714280"
 
 
@@ -244,8 +244,8 @@ APPNAME="Data Culture Pro"
 
 #DOMAIN_APPLI="http://localhost:4200"
 #DOMAIN_SERVER="http://localhost:8000"
-DOMAIN_APPLI="https://dcp.f80.fr"
-DOMAIN_SERVER="https://server.f80.fr:8000"
+DOMAIN_APPLI="https://dcp.f80lab.com"
+DOMAIN_SERVER="https://server.f80lab.com:8000"
 
 SOURCES=["unifrance"]
 

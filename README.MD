@@ -16,9 +16,9 @@ Installation pour fedora
 <pre>
 dnf install certbot
 firewall-cmd --zone=public --add-port=8080/tcp
-certbot certonly --standalone --email hhoareau@gmail.com -d server.f80.fr
+certbot certonly --standalone --email hhoareau@gmail.com -d server.f80lab.com
 mkdir /root/certs
-cp /etc/letsencrypt/live/server.f80.fr/* /root/certs
+cp /etc/letsencrypt/live/server.f80lab.com/* /root/certs
 </pre>
 
 
@@ -125,7 +125,7 @@ et l'intégration avec le rest framework : https://django-elasticsearch-dsl-drf.
 
 #Tests
 ##tester en production
-Ouverture via https://dcp.f80.fr/search
+Ouverture via https://dcp.f80lab.com/search
 
 ##tester en local
 Ouverture via http://localhost:4200/admin
@@ -149,7 +149,7 @@ systemctl restart cockpit.socket
 
 ##Configuration des sous domaines
 ###paramaitrage du nom de domaine
-Connexion à https://my.ionos.fr/domain-details/dcp.f80.fr
+Connexion à https://my.ionos.fr/domain-details/dcp.f80lab.com
 Paramétrage du dns : 
     Sous domaine de production:
     - dcp : 185.199.108.153 & 185.199.109.153

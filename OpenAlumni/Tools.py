@@ -274,7 +274,7 @@ def open_html_file(name:str,replace=dict(),domain_appli=DOMAIN_APPLI):
 
 
 
-# def send_mail(body:str,_to="paul.dudule@gmail.com",_from:str="ticketshare@f80.fr",subject=""):
+# def send_mail(body:str,_to="paul.dudule@gmail.com",_from:str="ticketshare@f80lab.com",subject=""):
 #     if _to is None or len(_to)==0:return None
 #     with smtplib.SMTP(SMTP_SERVER, 587) as server:
 #         server.ehlo()
