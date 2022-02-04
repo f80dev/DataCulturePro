@@ -128,6 +128,7 @@ export class ProfilComponent implements OnInit,OnChanges {
   }
 
   open_CRM(profil: any) {
+    //TODO a terminer
     if(profil.crm)open(profil.crm,"CRM");
   }
 }

@@ -832,9 +832,13 @@ def social_graph(request,format="json"):
     degree_filter = filter.split("_")[0]
     department_filter = filter.split("_")[1]
 
-    profils = Profil.objects.filter(department__contains=department_filter)
+    profils = None
     if degree_filter != "0":
         profils = Profil.objects.filter(degree_filter=int(degree_filter), department__contains=department_filter)
+    else:
+        profils = Profil.objects.filter(department__contains=department_filter)
+
+    log("Récupération des profils terminées")
 
     G=SocialGraph()
     G.load(profils,request.GET.get("film")!="false")

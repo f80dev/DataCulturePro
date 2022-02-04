@@ -3,7 +3,7 @@
   <div style="margin:10px;">
     <mat-form-field appearance="legacy"
                     style="max-width:150px;font-size: medium;">
-      <mat-label>Voir les news sur</mat-label>
+      <mat-label>Filtrer sur le thème</mat-label>
       <mat-select name="selOrder" [(ngModel)]="selected_tag" (ngModelChange)="refresh()">
         <mat-option *ngFor="let tag of allTags" [value]="tag">
           {{tag}}
