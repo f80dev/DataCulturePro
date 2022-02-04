@@ -16,7 +16,7 @@ import {ClipboardService} from "ngx-clipboard";
 export class StatsComponent implements OnInit {
   query: string="";
   reports: any[]=[];
-  sel_report: any={}
+  sel_report: any={html_code:"",html_values:""}
   showGraphQL: boolean=false;
   domain_server="";
 
@@ -104,7 +104,6 @@ export class StatsComponent implements OnInit {
 
   openSocialGraph() {
     this.router.navigate(["visgraph"]);
-    //open(environment.domain_server+"/api/social_graph/");
   }
 
 
@@ -134,14 +133,12 @@ export class StatsComponent implements OnInit {
       param=param+"&data_cols="+this.sel_report.data_cols+"&cols="+this.sel_report.cols+"&table="+this.sel_report.table;
     }
 
-    if(!this.sel_report.html_code){
+    if(this.sel_report.html_code=="" || this.sel_report.html_code==""){
       this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9)+"&title="+this.sel_report.title,false,"");
       param=param+"&height="+(window.screen.availHeight*0.6);
-      this.message="Mise a jour du graphique";
       this.api._get("export_all/",param+"&out=graph",6000,"").subscribe((html:any)=>{
-        this.message="";
-        this.sel_report.html_code=html.code;
-        this.sel_report.html_stat=html.values;
+        this.sel_report.html_code=html.code || "";
+        this.sel_report.html_values=html.values || "";
         if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;
       },(err)=>{
         if(err.status==404){
@@ -155,7 +152,8 @@ export class StatsComponent implements OnInit {
 
 
   refresh_stats() {
-    this.sel_report.html_code=null;
+    this.sel_report.html_code="";
+    this.sel_report.html_values="";
     this.eval_stat();
   }
 
@@ -188,6 +186,8 @@ export class StatsComponent implements OnInit {
 
   change_report($event: any) {
     this.sel_filter="";
+    this.sel_report.html_values="";
+    this.sel_report.html_code="";
     this.filter_values=[];
     this.eval_stat($event);
   }

@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1643977102604,
+  "timestamp": 1643987106499,
   "index": "https://testdcp.f80lab.com/index.html",
   "assetGroups": [
     {
@@ -48,6 +48,7 @@
         "https://testdcp.f80lab.com/assets/img/cercle_blanc.png",
         "https://testdcp.f80lab.com/assets/img/charts.jpeg",
         "https://testdcp.f80lab.com/assets/img/extrude.png",
+        "https://testdcp.f80lab.com/assets/img/gears.gif",
         "https://testdcp.f80lab.com/assets/img/girl.png",
         "https://testdcp.f80lab.com/assets/img/hammer_1f528.png",
         "https://testdcp.f80lab.com/assets/img/lafemis.jpg",
@@ -124,6 +125,7 @@
     "https://testdcp.f80lab.com/assets/img/cercle_blanc.png": "9a6303385a785ed3fe3071aa06e5c7f66f14e074",
     "https://testdcp.f80lab.com/assets/img/charts.jpeg": "f005d708eba10115db8b242eab30950f880db6ce",
     "https://testdcp.f80lab.com/assets/img/extrude.png": "c6b705e0f3b620c451db7ad9c05ff34c8b474cb8",
+    "https://testdcp.f80lab.com/assets/img/gears.gif": "bc355afcdcd7c1ab2a1018257b35f10df37c829f",
     "https://testdcp.f80lab.com/assets/img/girl.png": "e8c9f6fc5e44cff0732e4abbc43990102b2b1ad9",
     "https://testdcp.f80lab.com/assets/img/hammer_1f528.png": "4df35a3abee020df341a816929f5d7b807ec8352",
     "https://testdcp.f80lab.com/assets/img/lafemis.jpg": "0116e246057b5ffa42c637cf4016f6ad610474ab",
@@ -135,7 +137,7 @@
     "https://testdcp.f80lab.com/assets/reporting.pbix": "2b95ac35c6fee4fa408666be84d70943d4604ae8",
     "https://testdcp.f80lab.com/favicon.ico": "ac6b2455e4fb868e4013fa4acf6de0aba0dda933",
     "https://testdcp.f80lab.com/index.html": "023892c1ba53b750f5de3b8cc240e1d38d50d5d1",
-    "https://testdcp.f80lab.com/main.js": "82590a2245c9910422eea59c275c9046da6acadb",
+    "https://testdcp.f80lab.com/main.js": "7e3f24390ce507ba7d7fd3563a956d4e7f375423",
     "https://testdcp.f80lab.com/manifest.webmanifest": "5430bb03fa346e338146a0956939e110243e7d40",
     "https://testdcp.f80lab.com/polyfills.js": "40875d3f921c24d91b5d7428bfdbf408c52d792e",
     "https://testdcp.f80lab.com/runtime.js": "e908a65cae93f2badc8382e13a553166c24cd6f6",

@@ -42,6 +42,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
         }
         try {
           let _w=JSON.parse(w);
+          _w.icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png";
           rc.push(_w);
           expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
         } catch (e) {
@@ -63,11 +64,17 @@ export class PublicComponent implements OnInit,AfterViewInit {
           rc.push({
             year:a.year,
             title:a.description,
-            pow:null
+            pow:null,
+            icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png"
           })
         }
       }
 
+      rc.push({
+        year:this.profil.degree_year,
+        title:"FEMIS - département "+this.profil.department,
+        icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/graduation-cap_1f393.png"
+      })
 
       this.items=group_works(rc);
       this.items[0].show_year=true;
@@ -77,17 +84,17 @@ export class PublicComponent implements OnInit,AfterViewInit {
 
       this.data_timeline=[];
       for(let item of this.items){
-        let obj:any={year:""+item.year+"<br>"}
+        let obj:any={
+          year:item.year+"<br>",
+          icon: "<img src='"+item.icon+"' width='30'>"
+        }
         if(item.pow){
-          obj.icon="<img src='https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png' width='30'>";
           obj.label=item.pow.title+"<br><small>"+item.job+"</small>"
         } else {
-          obj.icon="<img src='https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png' width='30'>";
           obj.label=item.title;
         }
         if(!item.show_year)obj["year"]="<br><br>";
         this.data_timeline.push(obj);
-
       }
     });
   }
@@ -95,7 +102,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
   col_style={
     year:'font-size:2em;text-align:right;padding-right:20px;',
     icon:'margin: 0px',
-    label:'text-align:left;'
+    label:'font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:90%;'
   }
 
 

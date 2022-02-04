@@ -24,7 +24,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get install libpq-dev
 
-RUN pip3 install Django==3.2
+RUN pip3 install Django==4.0.2
 RUN pip3 install markdown
 RUN pip3 install django-oauth-toolkit
 RUN pip3 install oauthlib
@@ -63,7 +63,10 @@ RUN pip3 install pandasql
 RUN pip3 install plotly
 RUN pip3 install jellyfish
 RUN pip3 install PyGithub
-RUN pip3 install xlrd
+RUN pip3 install openpyxl
+RUN pip3 install django-archive
+
+
 
 #Création des répertoires
 ENV APP_HOME=/home/app
@@ -79,7 +82,6 @@ COPY ./alumni $APP_HOME/alumni
 COPY ./manage.py $APP_HOME
 #COPY ./Temp $APP_HOME/Temp on ne fait pas la copie sur le serveur
 
-
 # chown all the files to the app user
 #RUN addgroup -S app && adduser -S app -G app
 #RUN chown -R app:app $APP_HOME
@@ -87,8 +89,8 @@ COPY ./manage.py $APP_HOME
 
 EXPOSE 8000
 
-ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings
-ENV DEBUG=False
+ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev
+ENV DEBUG=True
 
 #CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
