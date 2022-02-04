@@ -87,6 +87,7 @@ import { RgpdComponent } from './rgpd/rgpd.component';
 
 import { MglTimelineModule } from 'angular-mgl-timeline';
 import { EditAwardComponent } from './edit-award/edit-award.component';
+import { TimelineComponent } from './timeline/timeline.component';
 
 @NgModule({
   declarations: [
@@ -128,7 +129,8 @@ import { EditAwardComponent } from './edit-award/edit-award.component';
     IssuesComponent,
     SettingsComponent,
     RgpdComponent,
-    EditAwardComponent
+    EditAwardComponent,
+    TimelineComponent
   ],
   imports: [
     BrowserModule,
@@ -188,11 +190,12 @@ import { EditAwardComponent } from './edit-award/edit-award.component';
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
-        autoLogin: false,
+        autoLogin: true,
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('794055474370-qrdn0gb051k774mtetvo7lifcslmlpgg.apps.googleusercontent.com'),
+            //provider: new GoogleLoginProvider('794055474370-qrdn0gb051k774mtetvo7lifcslmlpgg.apps.googleusercontent.com'),
+            provider: new GoogleLoginProvider('167299914377-p8vuf2f6npqnigl5kpqrh34cqjd81eko.apps.googleusercontent.com'),
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,

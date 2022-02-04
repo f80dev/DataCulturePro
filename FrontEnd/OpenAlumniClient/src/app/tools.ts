@@ -99,7 +99,7 @@ export function extract_id(url:string):string {
 export function group_works(wrks) {
   let rc=[];
   for(let w of wrks){
-    if(w.hasOwnProperty("pow")){
+    if(w.hasOwnProperty("pow") && w.pow){
       w.title=w.pow.title;
       w.year=w.pow.year;
     }

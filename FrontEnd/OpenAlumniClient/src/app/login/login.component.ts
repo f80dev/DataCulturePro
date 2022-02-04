@@ -265,7 +265,7 @@ export class LoginComponent implements OnInit {
         this.wait_message = '';
         this.message = '';
         localStorage.setItem("email",socialUser.email);
-        $$('Resultat de l\'authentification ', socialUser);
+        $$("Resultat de l'authentification ", socialUser);
         this.initUser({
           email: socialUser.email,
           first_name: socialUser.firstName,
@@ -278,7 +278,7 @@ export class LoginComponent implements OnInit {
       },
       (err) => {
         this.n_try = this.n_try + 1;
-        $$('Echec de connexion ' + this.n_try + 'eme essai');
+        $$('!Echec de connexion ' + this.n_try + 'eme essai');
         if (this.n_try < 2) {
           setTimeout(() => {this.socialSignIn(socialPlatform); }, 500);
         } else {

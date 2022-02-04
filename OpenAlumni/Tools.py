@@ -225,9 +225,18 @@ def sendmail(subject, _to, template, field):
         if c in EMAIL_TESTER or len(EMAIL_TESTER) == 0:
             _dest.append(c)
 
-    send_mail(subject,message="",from_email=EMAIL_HOST_USER,recipient_list=_dest,
-              auth_user=EMAIL_HOST_USER,html_message=html,
-              auth_password=EMAIL_HOST_PASSWORD + "!!")
+    if len(EMAIL_HOST_USER)>0:
+        rc=send_mail(subject,message="",
+                     from_email=EMAIL_HOST_USER,
+                     recipient_list=_dest,
+                     auth_user=EMAIL_HOST_USER,
+                     html_message=html,
+                     auth_password=EMAIL_HOST_PASSWORD + "!!")
+    else:
+        log("Pas de boite mail paramétrer pour l'instant")
+        rc=True
+
+    return rc
 
 
 def open_html_file(name:str,replace=dict(),domain_appli=DOMAIN_APPLI):

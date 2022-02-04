@@ -20,7 +20,7 @@
         <br>
         <table style="border-spacing: 8px;vertical-align: top;">
           <tr>
-            <td>
+            <td style="width: fit-content">
               <mat-icon style="cursor: pointer;"
                         (click)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})"
                         [title]="'Composition de la promotion '+profil.degree_year">help</mat-icon>
@@ -37,10 +37,18 @@
             <td>{{profil?.department}}</td>
           </tr>
 
-          <tr *ngIf="profil.works.length>0"><td>Expériences principales</td><td>{{profil.expe}}</td></tr>
-          <tr *ngIf="profil.works.length>0"><td></td><td>{{profil.works.length}} expériences référencées<br><br></td></tr>
+          <tr *ngIf="profil.works.length>0">
+            <td></td>
+            <td>Expériences</td>
+            <td>{{profil.expe}}</td></tr>
+          <tr *ngIf="profil.works.length>0">
+            <td></td>
+            <td></td>
+            <td>{{profil.works.length}} expériences référencées<br><br></td>
+          </tr>
           <tr *ngIf="profil.awards?.length>0"><td></td><td>{{profil.awards.length}} disctinctions</td></tr>
           <tr *ngIf="profil?.links?.length>0">
+            <td></td>
             <td>Voir son profil sur</td>
             <td>
               <div *ngFor="let link of profil?.links" style="display: inline-block;">
@@ -58,38 +66,46 @@
 
   <!--  Travaux nouvelle version -->
   <div style="display: inline-block;width:95%;max-width:600px;text-align: center;" *ngIf="message.length==0 && items.length>0">
-    <br>Expériences<br><br>
-    <mgl-timeline [mobileWidthThreshold]="200"
-                  [toggle]="false"
-                  [alternate]="false"
-                  side="right"
-                  style="color:black"
-                  [focusOnOpen]="true">
+    <h3>Filmographie</h3>>
 
-      <mgl-timeline-entry *ngFor="let wrk of items">
+    <div style="margin-left:10%;width:80%;display: inline-block;">
+      <app-timeline [data]="data_timeline" [col_style]="col_style"
+                    row_style="padding-bottom: 30px;vertical-align: top;width:100%;">
+      </app-timeline>
+    </div>
 
-        <mgl-timeline-entry-header>
-          {{wrk.pow.title}}<br>
-          <span style="font-size: x-small">{{wrk.pow.nature}}/{{wrk.pow.category}}</span>
-        </mgl-timeline-entry-header>
-        <mgl-timeline-entry-content style="font-size: small;line-height: 85%;">
-          {{wrk.job}}<br>
-          <small>
-            <a [href]="wrk.pow.link[0].url" target="_blank" class="app-link">
-              {{wrk.pow.link[0].text.replace('auto:','')}}
-            </a>
-          </small>
-        </mgl-timeline-entry-content>
-        <mgl-timeline-entry-dot [size]="40" style="color:red;"
-                                expandAnimationTiming="200ms ease"
-                                collapseAnimationTiming="100ms ease"
-        >
-        </mgl-timeline-entry-dot>
-        <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">
-          <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </mgl-timeline-entry-side>
-      </mgl-timeline-entry>
-    </mgl-timeline>
+
+<!--    <mgl-timeline [mobileWidthThreshold]="200"-->
+<!--                  [toggle]="false"-->
+<!--                  [alternate]="false"-->
+<!--                  side="right"-->
+<!--                  style="color:black"-->
+<!--                  [focusOnOpen]="true">-->
+
+<!--      <mgl-timeline-entry *ngFor="let wrk of items">-->
+
+<!--        <mgl-timeline-entry-header>-->
+<!--          {{wrk.pow.title}}<br>-->
+<!--          <span style="font-size: x-small">{{wrk.pow.nature}}/{{wrk.pow.category}}</span>-->
+<!--        </mgl-timeline-entry-header>-->
+<!--        <mgl-timeline-entry-content style="font-size: small;line-height: 85%;">-->
+<!--          {{wrk.job}}<br>-->
+<!--          <small>-->
+<!--            <a [href]="wrk.pow.link[0].url" target="_blank" class="app-link">-->
+<!--              {{wrk.pow.link[0].text.replace('auto:','')}}-->
+<!--            </a>-->
+<!--          </small>-->
+<!--        </mgl-timeline-entry-content>-->
+<!--        <mgl-timeline-entry-dot [size]="40" style="color:red;"-->
+<!--                                expandAnimationTiming="200ms ease"-->
+<!--                                collapseAnimationTiming="100ms ease"-->
+<!--        >-->
+<!--        </mgl-timeline-entry-dot>-->
+<!--        <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">-->
+<!--          <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--        </mgl-timeline-entry-side>-->
+<!--      </mgl-timeline-entry>-->
+<!--    </mgl-timeline>-->
   </div>
 
 

@@ -134,6 +134,7 @@ export class EditComponent implements OnInit,OnDestroy  {
       $$("Profil chargé ",p);
 
       if(p){
+        if(!p.hasOwnProperty("links") || !p.links)p.links=[];
         p.links.push({text:"Google",url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname});
         p.links.push({text:"Wikipedia",url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname});
         p.links.push({text:"Allocine",url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname});

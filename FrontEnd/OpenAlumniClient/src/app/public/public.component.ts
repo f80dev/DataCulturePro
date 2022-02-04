@@ -17,6 +17,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
   works: any[]=[];
   message: string;
   items: any[]=[];
+  data_timeline: any[]=[];
 
   constructor(public router:Router,
               public config:ConfigService,
@@ -27,6 +28,8 @@ export class PublicComponent implements OnInit,AfterViewInit {
   }
 
 
+
+
   load_items(p){
    let expe={};
     this.api._get("awards","profil="+p.id).subscribe((awards:any)=> {
@@ -34,7 +37,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
 
       let rc=[];
       for(let w of p.works){
-        for(var i=0;i<100;i++){
+        for(var i=0;i<1000;i++){
           w=w.replace("'","\"")
         }
         try {
@@ -46,6 +49,7 @@ export class PublicComponent implements OnInit,AfterViewInit {
         }
       }
       this.profil.expe="";
+
       let lst=Object.values(expe).sort((a,b) => (a<b ? 1 : -1));
       if(lst.length>3)lst=lst.slice(0,3)
 
@@ -54,23 +58,46 @@ export class PublicComponent implements OnInit,AfterViewInit {
           this.profil.expe=this.profil.expe+k+", ";
       }
 
-
       if(awards && awards.count>0){
         for(let a of awards.results){
-          this.items.push({
+          rc.push({
             year:a.year,
-            title:a.festival,
-            comment:a.title,
+            title:a.description,
+            pow:null
           })
         }
       }
+
+
       this.items=group_works(rc);
       this.items[0].show_year=true;
       for(let i=1;i<this.items.length;i++){
         this.items[i].show_year=(this.items[i].year!=this.items[i-1].year);
       }
+
+      this.data_timeline=[];
+      for(let item of this.items){
+        let obj:any={year:""+item.year+"<br>"}
+        if(item.pow){
+          obj.icon="<img src='https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png' width='30'>";
+          obj.label=item.pow.title+"<br><small>"+item.job+"</small>"
+        } else {
+          obj.icon="<img src='https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png' width='30'>";
+          obj.label=item.title;
+        }
+        if(!item.show_year)obj["year"]="<br><br>";
+        this.data_timeline.push(obj);
+
+      }
     });
   }
+
+  col_style={
+    year:'font-size:2em;text-align:right;padding-right:20px;',
+    icon:'margin: 0px',
+    label:'text-align:left;'
+  }
+
 
 
   //test http://localhost:4200/public/?id=3076
