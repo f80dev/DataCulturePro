@@ -183,7 +183,6 @@ export class StatsComponent implements OnInit {
       });
   }
 
-
   change_report($event: any) {
     this.sel_filter="";
     this.sel_report.html_values="";

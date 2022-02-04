@@ -838,12 +838,19 @@ def social_graph(request,format="json"):
     else:
         profils = Profil.objects.filter(department__contains=department_filter)
 
-    log("Récupération des profils terminées")
+    log("Récupération des profils ok")
 
     G=SocialGraph()
+    log("Initialisation du graph ok")
+
     G.load(profils,request.GET.get("film")!="false")
+    log("Chargement des profils dans le graphe ok")
+
     G.eval(request.GET.get("eval"))
+    log("Evaluation du critère ok")
+
     G.filter("pagerank",0.0005)
+    log("Filtrage sur le pagerank")
 
     if format=="json":
         return JsonResponse(G.export(format))

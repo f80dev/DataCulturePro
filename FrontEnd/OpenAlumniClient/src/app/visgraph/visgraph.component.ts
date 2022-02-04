@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {$$} from "../tools";
+import {$$, showError} from "../tools";
 
 @Component({
   selector: 'app-visgraph',
@@ -266,6 +266,9 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
       this.edge_props=data.edge_props;
       this.update_filter(data.graph);
       this.initializeForces(data.graph,this.svg);
+    },(err)=>{
+      showError(this,err);
+      this._location.back();
     });
   }
 
