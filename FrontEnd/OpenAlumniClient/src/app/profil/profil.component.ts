@@ -41,10 +41,12 @@ export class ProfilComponent implements OnInit,OnChanges {
   }
 
   open_public_profil(evt,profil:any){
-    evt.stopPropagation();
-    this.api._get("profils/"+profil.id+"/","").subscribe((profil:any)=>{
-      open(profil.public_url,"page_public");
-    })
+    this.router.navigate(["public"],{queryParams:{id:profil.id,name:profil.firstname+" "+profil.lastname}})
+    // debugger
+    // evt.stopPropagation();
+    // this.api._get("profils/"+profil.id+"/","").subscribe((profil:any)=>{
+    //   open(profil.public_url,"page_public");
+    // })
   }
 
 

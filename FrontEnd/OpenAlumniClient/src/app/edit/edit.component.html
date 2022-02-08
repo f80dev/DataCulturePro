@@ -88,9 +88,11 @@
             <td style="width:90%">
               <mat-form-field appearance="fill" class="app-field" style="width: 100%;">
                 <mat-label>{{social.name}}</mat-label>
-                <input matInput type="text"
+                <input matInput
+                       type="text"
                        [placeholder]="social.input"
-                       max="50" [(ngModel)]="profil[social.name]"
+                       max="50"
+                       [(ngModel)]="profil[social.name]"
                        (focusout)="check_format(social)"
                        (keypress)="mustSave=true">
                 <mat-hint>Cette adresse est visible de {{social.profils}}</mat-hint>
@@ -103,7 +105,6 @@
             </td>
           </tr>
         </table>
-
 
 
         <mat-action-row>
@@ -391,62 +392,62 @@
     </mat-accordion>
 
     <br>
-        <div *ngIf="works.length>0" style="text-align: center;width: 100%;">
-          <p>Partagez votre profil public sur vos réseaux</p>
-          <!--      voir https://ngx-sharebuttons.netlify.app/ -->
-          <share-buttons [theme]="'circles-dark'"
-                         style="text-align: center;"
-                         [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
-                         [show]="8"
-                         [url]="this.profil.public_url"
-                         description="Découvrez mon profil et mes réalisations"
-                         tags="FEMIS"
-                         [title]="title">
-          </share-buttons>
-          <br>
-          <button class="app-button" mat-button mat-raised-button
-                  id="cmdPreview"
-                  title="Permet de voir la page publique qui liste vos expériences"
-                  *ngIf="works?.length>0"
-                  (click)="open_page(profil.public_url,'page_public')">
-            <div class="bloc-bouton">Voir la page<br>publique</div>
-          </button>
-          <br>
+    <div *ngIf="works.length>0" style="text-align: center;width: 100%;">
+      <p>Partagez votre profil public sur vos réseaux</p>
+      <!--      voir https://ngx-sharebuttons.netlify.app/ -->
+      <share-buttons [theme]="'circles-dark'"
+                     style="text-align: center;"
+                     [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
+                     [show]="8"
+                     [url]="url"
+                     description="Découvrez mon profil et mes réalisations"
+                     tags="FEMIS"
+                     [title]="title">
+      </share-buttons>
       <br>
-        </div>
+      <button class="app-button" mat-button mat-raised-button
+              id="cmdPreview"
+              title="Permet de voir la page publique qui liste vos expériences"
+              *ngIf="works?.length>0"
+              (click)="open_page(profil.public_url,'page_public')">
+        <div class="bloc-bouton">Voir la page<br>publique</div>
+      </button>
+      <br>
+      <br>
+    </div>
 
 
-          <button mat-icon-button mat-button
-                  mat-raised-button
-                  class="icon-button"
-                  id="cmdDeletePows"
-                  title="Efface les films"
-                  *ngIf="works?.length>0 && config.hasPerm('add_movies')"
-                  (click)="delete_pows()">
-            <mat-icon>delete</mat-icon>
-          </button>
+    <button mat-icon-button mat-button
+            mat-raised-button
+            class="icon-button"
+            id="cmdDeletePows"
+            title="Efface les films"
+            *ngIf="works?.length>0 && config.hasPerm('add_movies')"
+            (click)="delete_pows()">
+      <mat-icon>delete</mat-icon>
+    </button>
 
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button"
-                  mat-button
-                  id="cmdClear"
-                  title="Sont effacées uniquement les expériences issue des annuaires publiques"
-                  *ngIf="works?.length>0"
-                  (click)="reset_works()">
-            <mat-icon>loop</mat-icon>
-          </button>
+    <button mat-icon-button
+            mat-raised-button
+            class="icon-button"
+            mat-button
+            id="cmdClear"
+            title="Sont effacées uniquement les expériences issue des annuaires publiques"
+            *ngIf="works?.length>0"
+            (click)="reset_works()">
+      <mat-icon>loop</mat-icon>
+    </button>
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button"
-                  mat-button
-                  title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
-                  id="cmdAnalyse"
-                  (click)="analyse()">
-            <mat-icon>search</mat-icon>
-          </button>
+    <button mat-icon-button
+            mat-raised-button
+            class="icon-button"
+            mat-button
+            title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
+            id="cmdAnalyse"
+            (click)="analyse()">
+      <mat-icon>search</mat-icon>
+    </button>
 
 
     <br><br>

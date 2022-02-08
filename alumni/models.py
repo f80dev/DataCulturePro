@@ -261,7 +261,6 @@ class Work(models.Model):
         return self.profil.firstname
 
 
-
     def __str__(self):
         d:dict=dict({
             "name":self.profil.firstname+" "+self.profil.lastname.upper(),

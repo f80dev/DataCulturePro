@@ -49,6 +49,9 @@ perms:
   - tag: nft_write
     description: la création du diplôme sous forme de NFT dans la blockchain
 
+  - tag: r_nft
+    description: Possibilité de consulter les diplômes
+
   - tag: delete_pow
     description: la suppression des oeuvres
 

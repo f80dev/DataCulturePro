@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
@@ -11,6 +11,7 @@ import {ImageSelectorComponent} from "../image-selector/image-selector.component
 import {FormControl} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {EditAwardComponent} from "../edit-award/edit-award.component";
+import {environment} from "../../environments/environment";
 
 export interface Movie {
   title: string;
@@ -48,7 +49,6 @@ export class EditComponent implements OnInit,OnDestroy  {
   message:string="";
   query: string = "";
   title: string="";
-  url:string="";
   awards: any[]=[];
   pows:any[]=[];
 
@@ -75,7 +75,6 @@ export class EditComponent implements OnInit,OnDestroy  {
     checkLogin(this,()=>{
       this.message = "Chargement de votre profil";
       this.loadProfil(() => {
-        this.url = this.profil.public_url;
         this.title = this.profil.firstname + " " + this.profil.lastname;
         this.showAddWork = 0;
         this.message = "";
@@ -110,6 +109,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   //Récupération des experiences;
   expanded_experience_pnl=false;
   expanded_internet_pnl=false;
+  url: any;
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
@@ -134,6 +134,7 @@ export class EditComponent implements OnInit,OnDestroy  {
       $$("Profil chargé ",p);
 
       if(p){
+        this.url=p.public_url.replace("./",environment.domain_appli+"/");
         if(!p.hasOwnProperty("links") || !p.links)p.links=[];
         p.links.push({text:"Google",url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname});
         p.links.push({text:"Wikipedia",url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname});
@@ -441,6 +442,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   open_page(url,target="_blank") {
     open(url,target);
   }
+
 
   delete_pows() {
     for(let w of this.works){

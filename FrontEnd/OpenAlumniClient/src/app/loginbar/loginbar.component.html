@@ -37,9 +37,9 @@
     &nbsp;&nbsp;Actualités
   </a>
 
-  <br>
+
   <a title="Editer votre profil"
-     *ngIf="config.user?.profil"
+     *ngIf="config.user?.profil && config.isLogin()"
      routerLink="edit"
      [queryParams]="{id:this.config.user?.profil}"
      mat-list-item
@@ -48,32 +48,35 @@
     &nbsp;&nbsp;Editer mon profil
   </a>
 
+
   <a title="Rédiger un article"
      *ngIf="config.hasPerm('publish')"
      routerLink="htmledit"
      mat-list-item
      id="cmdPublish">
     <mat-icon>history_edu</mat-icon>
-    &nbsp;&nbsp;Publier un article
+    &nbsp;&nbsp;Publier
   </a>
 
+    <br>
+
   <a title="Ajouter des films dans le catalogue"
-     *ngIf="config.hasPerm('add_movies')"
+     *ngIf="config.hasPerm('add_movies') && config.isLogin()"
      routerLink="addpow"
      [queryParams]="{owner:'public'}"
      mat-list-item
      id="cmdAddMovie">
     <mat-icon>videocam</mat-icon>
-    &nbsp;&nbsp;Gestion des films
+    &nbsp;&nbsp;Catalogue
   </a>
 
   <a title="Accèder à la console de statistiques"
-     *ngIf="config.hasPerm('stats')"
+     *ngIf="config.hasPerm('stats') && config.isLogin()"
      routerLink="stats"
      mat-list-item
      id="cmdOpenStats">
     <mat-icon>leaderboard</mat-icon>
-    &nbsp;&nbsp;Statistiques
+    &nbsp;&nbsp;Data
   </a>
 
   <a title="Accèder à la console developper"
@@ -93,7 +96,7 @@
 
 
   <a title="Modifier vos paramètres"
-     *ngIf="config.user?.user?.email?.length>0"
+     *ngIf="config.isLogin()"
      mat-list-item
      routerLink="settings"
      id="cmdSettings">
@@ -105,7 +108,7 @@
 
 
   <a title="Se déconnecter"
-     *ngIf="config.user?.user?.email?.length>0"
+     *ngIf="config.isLogin()"
      mat-list-item (click)="logout()" id="cmdLogout">
     <mat-icon>logout</mat-icon>
     &nbsp;&nbsp;&nbsp;Se déconnecter
@@ -124,7 +127,9 @@
   <br>
 
   <a title="Voir les NFTs"
-     routerLink="nfts" mat-list-item
+     routerLink="nfts"
+     *ngIf="config.hasPerm('r_nft')"
+     mat-list-item
      id="cmdNFTS">
     <mat-icon>shield</mat-icon>
     &nbsp;Certification

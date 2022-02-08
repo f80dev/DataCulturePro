@@ -9,7 +9,7 @@
                title="Formation dispensée par la FEMIS"
                name="lblDepartementCategorie"
                style="cursor: pointer;"
-               (click)="openQuery($event,profil?.department_category)">
+               (dblclick)="openQuery($event,profil?.department_category)">
             <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
           </div>
         </td>
@@ -20,7 +20,7 @@
             <span style='cursor: pointer'
                   name="lblPromo"
                   title="Rechercher par promotion"
-                  (click)="openQuery($event,profil?.degree_year)">
+                  (dblclick)="openQuery($event,profil?.degree_year)">
               {{profil?.degree_year}}
             </span>
           </div>

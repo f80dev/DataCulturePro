@@ -3,10 +3,8 @@
 import networkx as nx
 from django.db import connection
 
-from alumni.models import Profil
 
 class SocialGraph:
-
     def __init__(self):
         self.G = nx.Graph()
         self.edge_prop=[]
