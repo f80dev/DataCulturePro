@@ -68,15 +68,18 @@ export class StatsComponent implements OnInit {
         if(i.prod)this.instant_reports.push(i);
       }
 
-
       let open=this.routes.snapshot.queryParamMap.get("open");
       if(open){
         for(let r of this.instant_reports)
-          if(r.id==open)this.sel_report=r;
+          if(r.id==open){
+            this.sel_report=r;
+            this.sel_report.html_code="";
+            this.sel_report.html_values="";
+          }
       } else {
+        debugger
         this.sel_report=this.instant_reports[0];
       }
-
 
       if(func)func();
     });

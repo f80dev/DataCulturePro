@@ -17,12 +17,11 @@ import {MatCheckboxChange} from "@angular/material/checkbox";
 export class SearchComponent implements OnInit {
   profils:any[]=[];
   query:any={value:""};
-  order:any;
+
   message: string="";
   limit=250;
   perm: string="";
   dtLastSearch: number=0;
-  //@ViewChild('order', {static: false}) order: MatSelect;
   filter_with_pro: boolean=true;
 
   constructor(public api:ApiService,
@@ -38,7 +37,7 @@ export class SearchComponent implements OnInit {
     if(this.query.value=="")
       this.query.value=this.routes.snapshot.queryParamMap.get("filter") || this.routes.snapshot.queryParamMap.get("query") || "";
 
-    if(localStorage.getItem("ordering"))this.order=localStorage.getItem("ordering");
+    //if(localStorage.hasItem("ordering"))this.order=localStorage.getItem("ordering");
     if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
 
     setTimeout(()=>{
@@ -121,6 +120,8 @@ export class SearchComponent implements OnInit {
             this.router.navigate(["import"]);
           }
 
+          if(search_engine=="search")this.refresh(this.query.value+"*");
+
           if(!this.filter_with_pro){
             this.filter_with_pro=true;
             this.refresh();
@@ -143,9 +144,11 @@ export class SearchComponent implements OnInit {
   handle=null;
   searchInTitle: boolean = false;
   fields=[
-    {field:"Anciennes promos",value:"promo"},
     {field:"Nouvelles Promos",value:"-promo"},
+    {field:"Alphabétique",value:"-lastname"},
+    {field:"Anciennes promos",value:"promo"}
   ]
+  order=this.fields[0].value;
 
   advanced_search=[];
 

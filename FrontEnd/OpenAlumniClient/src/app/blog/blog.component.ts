@@ -18,18 +18,14 @@ import {Router} from "@angular/router";
 export class BlogComponent implements OnInit {
   articles: any[]=[];
 
-  selected_tag: string;
   allTags: string[] = ['News', 'Job','Annonce'];
-
+  selected_tag=this.allTags;
 
   constructor(
     public api:ApiService,
     public config:ConfigService,
     public router:Router,
   ) {}
-
-
-
 
 
   ngOnInit(): void {
@@ -43,8 +39,12 @@ export class BlogComponent implements OnInit {
       this.articles=[];
       for(let a of articles.results){
         if(this.config.hasPerm('validate') || a.validate){
-          if(!this.selected_tag || a.tags.indexOf(this.selected_tag)>-1)
-            this.articles.push(a);
+          for(let tag of this.selected_tag){
+            if(a.tags.indexOf(tag)>-1){
+              this.articles.push(a);
+              break;
+            }
+          }
         }
       }
     });

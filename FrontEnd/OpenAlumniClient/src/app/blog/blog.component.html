@@ -2,9 +2,9 @@
 
   <div style="margin:10px;">
     <mat-form-field appearance="legacy"
-                    style="max-width:150px;font-size: medium;">
-      <mat-label>Filtrer sur le thème</mat-label>
-      <mat-select name="selOrder" [(ngModel)]="selected_tag" (ngModelChange)="refresh()">
+                    style="max-width:250px;font-size: medium;">
+      <mat-label>Afficher les thèmes</mat-label>
+      <mat-select name="selOrder" [(ngModel)]="selected_tag" (ngModelChange)="refresh()" multiple>
         <mat-option *ngFor="let tag of allTags" [value]="tag">
           {{tag}}
         </mat-option>

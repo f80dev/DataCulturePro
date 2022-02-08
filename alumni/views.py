@@ -1449,10 +1449,10 @@ class ProfilDocumentView(DocumentViewSet):
 
     simple_query_string_search_fields = {
         'lastname': {'boost': 4},
-        'firstname': {'boost': 2},
+        'firstname': {'boost': 2}
     }
 
-    search_fields = ('lastname','firstname','department','degree_year','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description',)
+    search_fields = ('lastname','firstname','department','promo','school','town','department_category','works__job','works__pow__title','award__festival__title','award__description')
 
     filter_fields = {
         'name': 'name',
