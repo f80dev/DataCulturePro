@@ -1,5 +1,4 @@
 <div class="mainform">
-  <h2>Rédigez un article, une annonce</h2>
   <app-tuto
     label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction">
   </app-tuto>
@@ -95,30 +94,30 @@
           id="cmdImport"
           title="Importer"
           (click)="csvInput.click()">
-    <div class="bloc-bouton">Importer depuis<br>un editeur externe</div>
+    Importer
   </button>
 
   <button class="app-button" mat-button mat-raised-button
           id="cmdImportImage"
           title="Importer"
           (click)="import_image()">
-    <div class="bloc-bouton">Incorporer<br>des images</div>
+    Images
   </button>
 
 
-  <button class="app-button" mat-button mat-raised-button
+  <button class="icon-button" mat-button mat-raised-button
           id="cmdReset"
           title="Effacer l'article en cours"
           (click)="clear_article()">
-    <mat-icon>delete</mat-icon>&nbsp;Supprimer
+    <mat-icon>delete</mat-icon>
   </button>
 
-  <button class="app-button" mat-button mat-raised-button
+  <button class="icon-button" mat-button mat-raised-button
           id="cmdSave"
           [disabled]="!editorContent || editorContent.length==0 || title?.length==0 || resumer?.length==0"
           title="Enregistrer un brouillon"
           (click)="save()">
-    <mat-icon>save</mat-icon>&nbsp;Enregistrer
+    <mat-icon>save</mat-icon>&nbsp
   </button>
 
   <button class="app-button" mat-button mat-raised-button
