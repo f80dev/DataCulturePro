@@ -122,7 +122,7 @@ class ProfilSerializer(serializers.ModelSerializer):
                 "mobile","email","photo","gender","job","public_photo",
                 "works",
                 "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
-                "linkedin","degree_year","department","department_category",
+                "linkedin","degree_year","promo","department","department_category",
                 "dtLastUpdate","links","str_links","blockchain",
                 "cp","public_url","fullname","cursus",
                 "address","town","promo","dtLastSearch"]

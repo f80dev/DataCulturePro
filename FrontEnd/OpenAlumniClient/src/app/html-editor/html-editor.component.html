@@ -48,7 +48,7 @@
   <br><br>
 
   <mat-form-field class="app-field" id="tagEditor">
-    <mat-label>Thème de votre contenu</mat-label>
+    <mat-label>Thèmes de votre article</mat-label>
     <mat-chip-list #chipList aria-label="Selection des tags">
       <mat-chip
         *ngFor="let tag of tags"
@@ -80,6 +80,8 @@
 </div>
 
 <div class="bottom-bar">
+
+
   <input #csvInput hidden="true"
          type="file" onclick="this.value=null"
          (change)="_import($event)"
@@ -91,6 +93,14 @@
           (click)="csvInput.click()">
     <div class="bloc-bouton">Importer depuis<br>un editeur externe</div>
   </button>
+
+  <button class="app-button" mat-button mat-raised-button
+          id="cmdImportImage"
+          title="Importer"
+          (click)="import_image()">
+    <div class="bloc-bouton">Incorporer<br>des images</div>
+  </button>
+
 
   <button class="app-button" mat-button mat-raised-button
           id="cmdReset"

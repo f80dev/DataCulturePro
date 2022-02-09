@@ -13,6 +13,7 @@ import {Location} from "@angular/common";
 import {Router} from "@angular/router";
 import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ImageSelectorComponent} from "../image-selector/image-selector.component";
 
 
 @Component({
@@ -177,5 +178,25 @@ export class HtmlEditorComponent implements OnInit {
 
   clearTitle() {
     this.title="";
+  }
+
+  import_image() {
+    this.dialog.open(ImageSelectorComponent, {position:{left: '5vw', top: '5vh'},
+      maxWidth: 400, maxHeight: 700, width: '50vw', height: 'fit-content', data:
+                {
+                  result:"",
+                  checkCode: true,
+                  width: 200,
+                  height: 200,
+                  emoji: false,
+                  internet: false,
+                  ratio: 1,
+                  quality:0.7
+                }
+            }).afterClosed().subscribe((result) => {
+      if (result) {
+        this.editorContent=this.editorContent+"<img src=\""+result+"\">";
+      }
+    });
   }
 }

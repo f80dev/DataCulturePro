@@ -125,12 +125,12 @@ class Profil(models.Model):
         return "./public/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname+"&toolbar=false"
 
     @property
-    def promo(self):
-        return str(self.degree_year)
-
-    @property
     def fullname(self):
         return '%s %s' % (self.firstname, self.lastname.upper())
+
+    @property
+    def promo(self):
+        return str(self.degree_year)
 
     @property
     def str_links(self):

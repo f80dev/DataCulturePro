@@ -60,6 +60,8 @@ class ProfilDocument(Document):
         "description":fields.TextField()
     })
 
+    #promo=fields.TextField(attr="degree_year")
+
     class Index:
         name='profils'
         settings={"number_of_shards":1,"number_of_replicas":0}
