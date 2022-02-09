@@ -11,7 +11,7 @@ import {ConfigService} from "../config.service";
   templateUrl: './public.component.html',
   styleUrls: ['./public.component.sass']
 })
-export class PublicComponent implements OnInit,AfterViewInit {
+export class PublicComponent implements OnInit {
 
   profil:any;
   works: any[]=[];
@@ -42,7 +42,12 @@ export class PublicComponent implements OnInit,AfterViewInit {
         }
         try {
           let _w=JSON.parse(w);
+          debugger
           _w.icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png";
+          for(let k of this.config.icons.keys()){
+            if(_w.job.indexOf(k)>-1)_w.icon=this.config.icons[k];
+          }
+
           rc.push(_w);
           expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
         } catch (e) {
@@ -93,7 +98,14 @@ export class PublicComponent implements OnInit,AfterViewInit {
         } else {
           obj.label=item.title;
         }
+
         if(!item.show_year)obj["year"]="<br><br>";
+        if(this.data_timeline.length>0){
+          if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
+            this.data_timeline.push({year:"<br><br>",icon:"",label:""});
+          }
+        }
+
         this.data_timeline.push(obj);
       }
     });
@@ -110,7 +122,6 @@ export class PublicComponent implements OnInit,AfterViewInit {
   //test http://localhost:4200/public/?id=3076
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
-
     if(id){
       this.message="Chargement des expériences";
       this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
@@ -144,6 +155,4 @@ export class PublicComponent implements OnInit,AfterViewInit {
     open(url.replace(" ","+"),"search");
   }
 
-  ngAfterViewInit(): void {
-  }
 }

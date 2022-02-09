@@ -77,7 +77,6 @@ export class StatsComponent implements OnInit {
             this.sel_report.html_values="";
           }
       } else {
-        debugger
         this.sel_report=this.instant_reports[0];
       }
 

@@ -17,7 +17,7 @@ export class ConfigService {
   webcamsAvailable: any;
   width_screen: number;
   ready=false;
-
+  icons:any=null;
   profils:any={};
   jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
@@ -84,6 +84,10 @@ export class ConfigService {
       $$("Chargement des métiers du dictionnaire ok");
       if(!this.abreviations){
         this.abreviations=yaml.abreviations;
+      }
+
+      if(!this.icons){
+        this.icons=yaml.icons;
       }
 
       if(!this.jobs) {
