@@ -32,7 +32,7 @@ export class PublicComponent implements OnInit {
 
   load_items(p){
    let expe={};
-    this.api._get("awards","profil="+p.id).subscribe((awards:any)=> {
+    this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
 
       let rc=[];
@@ -42,10 +42,10 @@ export class PublicComponent implements OnInit {
         }
         try {
           let _w=JSON.parse(w);
-          debugger
-          _w.icon="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png";
-          for(let k of this.config.icons.keys()){
-            if(_w.job.indexOf(k)>-1)_w.icon=this.config.icons[k];
+          _w.icon=this.config.icons["Movie"];
+
+          for(let k of Object.keys(this.config.icons)){
+            if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];
           }
 
           rc.push(_w);
@@ -68,9 +68,10 @@ export class PublicComponent implements OnInit {
         for(let a of awards.results){
           rc.push({
             year:a.year,
-            title:a.description,
-            pow:null,
-            icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png"
+            title:a.description + " - " + a.festival.title,
+            subtitle:"pour "+a.pow.title,
+            icon: this.config.icons["Award"],
+            sources:a.source
           })
         }
       }
@@ -78,7 +79,8 @@ export class PublicComponent implements OnInit {
       rc.push({
         year:this.profil.degree_year,
         title:"FEMIS - département "+this.profil.department,
-        icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/graduation-cap_1f393.png"
+        subtitle:"",
+        icon: this.config.icons["School"]
       })
 
       this.items=group_works(rc);
@@ -89,15 +91,18 @@ export class PublicComponent implements OnInit {
 
       this.data_timeline=[];
       for(let item of this.items){
+        if(item.pow){
+          item.title=item.pow.title
+          item.subtitle=item.job
+        }
+
         let obj:any={
           year:item.year+"<br>",
-          icon: "<img src='"+item.icon+"' width='30'>"
+          icon: "<img src='"+item.icon+"' width='30'>",
+          label:item.title+"<br><small>"+item.subtitle+"</small>"
         }
-        if(item.pow){
-          obj.label=item.pow.title+"<br><small>"+item.job+"</small>"
-        } else {
-          obj.label=item.title;
-        }
+
+
 
         if(!item.show_year)obj["year"]="<br><br>";
         if(this.data_timeline.length>0){

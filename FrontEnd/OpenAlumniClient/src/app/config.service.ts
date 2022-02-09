@@ -85,9 +85,8 @@ export class ConfigService {
       if(!this.abreviations){
         this.abreviations=yaml.abreviations;
       }
-
       if(!this.icons){
-        this.icons=yaml.icons;
+        this.icons=yaml.Icons;
       }
 
       if(!this.jobs) {
