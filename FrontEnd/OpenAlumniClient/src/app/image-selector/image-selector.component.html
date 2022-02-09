@@ -1,50 +1,92 @@
-<h2 mat-dialog-title>{{data.title}}</h2>
+<div class="mat-dialog-title">{{data.title}}</div>
+<div class="mat-dialog-subtitle" *ngIf="data.subtitle">{{data.subtitle}}</div>
+<mat-dialog-content>
 
-<mat-dialog-content style="overflow: hidden;">
+  <div style="display: flex;flex-wrap:wrap; align-items: flex-start;width:100%;">
+    <!--    <div style="display: inline-flex;">-->
+    <!--      <button mat-flat-button mat-button-->
+    <!--              *ngIf="data.internet"-->
+    <!--              class="app-button"-->
+    <!--              (click)="addUrl()">-->
+    <!--        Internet-->
+    <!--      </button>-->
+    <!--    </div>-->
 
-  <div style="width: 100%;text-align: center;margin-bottom: 5px;">
-    <button mat-flat-button mat-button
-            *ngIf="data.internet"
-            (click)="addUrl()">
-      Internet
-    </button>
+    <div style="display: inline-flex;">
+      <button mat-flat-button mat-button
+              *ngIf="data.webcam"
+              style="height:45px"
+              class="app-button"
+              (click)="showWebcam=!showWebcam">
+        Caméra
+      </button>
+    </div>
 
-    <button mat-flat-button mat-button
-            id="cmdShowEmoji"
-            *ngIf="data.emoji"
-            (click)="showEmoji=!showEmoji">Emojis</button>
+    <div style="display: inline-flex;height:50px;">
+      <div class="fake-button">
+        <label for="file">&nbsp;
+          Importer depuis<br>votre ordinateur
+        </label>
+        <input type="file" id="file" style="opacity: 0;"
+               (change)="onSelectFile($event)"
+               accept="image/*" />
+      </div>
+    </div>
 
+    <div *ngIf="data.bank" style="display: inline-flex;width:250px;height:50px;">
+      <div style="display:inline-block;padding: 10px;font-size: large;">/</div>
 
-    <button mat-flat-button mat-button
-            id="cmdFile"
-            style="width:70px;text-align: center;">
-      <label for="file">Photos</label>
-      <input type="file" id="file" style="opacity: 0;"
-             (change)="onSelectFile($event)"
-             accept="image/gif,image/jpeg,image/png" />
+      <mat-form-field appearance="fill" class="app-field" style="font-size: small;width:170px;margin:0px;">
+        <mat-label>Rechercher des images</mat-label>
+        <input matInput [placeholder]="inputSearch" type="text"  [(ngModel)]="query" (keypress)="search($event)" cdkFocusInitial>
+      </mat-form-field>
+      &nbsp;
+      <!--      Gestion du type d'image recherché-->
+      <mat-form-field appearance="fill" style="width:80px;color:white;font-size: small;">
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="selected_type" style="color: white;" (ngModelChange)="search({keyCode:13})">
+          <mat-option *ngFor="let t of types" [value]="t.value">{{t.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="showWebcam" style="width: 100%;text-align: center;">
+    <webcam
+      [width]="300"
+      [trigger]="triggerObservable"
+      [allowCameraSwitch]="false"
+      [imageQuality]="0.85"
+      [captureImageData]="true"
+      imageType="image/jpeg"
+      (click)="takePhoto()"
+      (imageCapture)="handleImage($event)">
+    </webcam><br>
+
+    <button mat-button mat-raised-button
+            class="app-button"
+            title="Déclenche la prise de vue"
+            (click)="takePhoto()">
+      Déclenche
     </button>
 
   </div>
 
 
-  <emoji-mart
-    *ngIf="showEmoji"
-    set="google"
-    style="margin-top:5px;"
-    [showPreview]="false"
-    [emojiSize]="48"
-    (emojiSelect)="selectEmoji($event)"
-    [style]="{ display: 'inline-block', bottom: '20px', right: '20px',width:'95%'}"
-    [emojiTooltip]="true"
-    emoji="point_up">
-  </emoji-mart>
+  <div style="display: inline-block;flex-wrap: wrap;max-height:300px;overflow: scroll;" *ngIf="pictures.length>0">
+    <img *ngFor="let picture of pictures"
+         (click)="selImage(picture)"
+         style="display: inline-block;max-width:75px;max-height:100px;margin:2px;"
+         [src]="picture.preview">
+  </div>
 
-
-  <mat-grid-list *ngIf="pictures?.length>0 && imageBase64==null" style="width:100%;" cols="3" rowHeight="16:9">
-    <mat-grid-tile *ngFor="let tile of pictures">
-      <img [src]="tile" style="width:25vmin;height:25vmin;" (click)="selPicture(tile)">
-    </mat-grid-tile>
-  </mat-grid-list>
+  <!--  <mat-grid-list *ngIf="pictures?.length>0 && imageBase64==null" style="width:100%;" cols="3" rowHeight="16:9">-->
+  <!--    <mat-grid-tile *ngFor="let tile of pictures">-->
+  <!--      <img [src]="tile" style="width:25vmin;height:25vmin;" (click)="selPicture(tile)">-->
+  <!--    </mat-grid-tile>-->
+  <!--  </mat-grid-list>-->
 
   <div *ngIf="showIcons" style="width:100%;">
     <img *ngFor="let icon of icons"
@@ -52,14 +94,16 @@
          style="width:30px;display: inline-block;"
          (click)="selIcon(icon)">
   </div>
-  <div style="width: 100%;min-height:300px;text-align: center;">
-    <div *ngIf="imageBase64 && !showEmoji"
-         style="display: inline-block;width:80%;max-width: 300px;">
+
+  <div style="width: 100%;text-align: center;">
+    <div *ngIf="imageBase64"
+         style="display: inline-block;width:80%;max-width: 500px;">
+<!--   https://www.npmjs.com/package/ngx-image-cropper   -->
       <image-cropper
         [imageBase64]="imageBase64"
-        [maintainAspectRatio]="true"
+        [maintainAspectRatio]="data.square"
         [aspectRatio]="ratio"
-        [resizeToWidth]="200"
+        [resizeToWidth]="400"
         format="png"
         (imageCropped)="imageCropped($event)"
         (imageLoaded)="imageLoaded()"
@@ -71,18 +115,29 @@
   </div>
 
 </mat-dialog-content>
+<br>
 <hr>
-<mat-dialog-actions style="text-align: center;width:100%;">
+<mat-dialog-actions style="text-align: right !important;width:100%;">
 
   <button id="cmdTurn" mat-button mat-raised-button mat-icon-button
+          class="icon-button"
           title="Permet de faire tourner la photo de 90 degrés"
-          *ngIf="data.square && data.result.startsWith('data')"
+          *ngIf="data.square && data.result?.startsWith('data')"
           (click)="rotatePhoto()">
     <mat-icon>refresh</mat-icon>
   </button>
 
-  <button id="cmdCancel" mat-button mat-raised-button (click)="onNoClick()">Annuler</button>
-  <button id="cmdValide" mat-button mat-raised-button [mat-dialog-close]="data.result" >Ok</button>
+  <button id="cmdCancel" class="icon-button"
+          title="Annuler"
+          mat-button mat-icon-button mat-raised-button (click)="onNoClick()">
+    <mat-icon>cancel</mat-icon>
+  </button>
+
+  <button id="cmdValide" class="app-button" mat-button mat-raised-button
+          *ngIf="pictures?.length==0 && data.result?.length>0"
+          [mat-dialog-close]="{img:data.result,original:original,file:originalFile}">
+    Ok
+  </button>
 </mat-dialog-actions>
 
 

@@ -15,6 +15,7 @@ from github import Github
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
 from OpenAlumni.analytics import StatGraph
+from OpenAlumni.giphy_search import ImageSearchEngine
 
 pd.options.plotting.backend = "plotly"
 
@@ -1123,6 +1124,13 @@ def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={}
 
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def image_search(request):
+    rc=ImageSearchEngine().search(request.GET.get("q"),request.GET.get("type"))
+    return JsonResponse(rc,safe=False)
+
+
 
 #tag /importer
 #http://localhost:8000/api/movie_importer/
@@ -1428,6 +1436,7 @@ def oauth(request):
         print(r.status_code)
 
     return redirect("http://localhost:4200")
+
 
 
 

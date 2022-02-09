@@ -1,14 +1,16 @@
 <div class="mainform">
   <h2>Rédigez un article, une annonce</h2>
-  <app-tuto label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction"></app-tuto>
+  <app-tuto
+    label="Après validation de l'article (bouton Publiez), celui-ci est relu par le responsable editorial de la plateforme qui le publie ou vous envoi un message pour correction">
+  </app-tuto>
   <app-hourglass [message]="message"></app-hourglass>
   <br>
 
   <mat-form-field appearance="fill"
                   style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;text-align: center;" autofocus>
-    <mat-label>Titre de votre article</mat-label>
+    <mat-label>Titre</mat-label>
     <input matInput matNativeControl
-           id="txtTitle"
+           id="txtTitle" required
            title="Titre de votre article"
            [(ngModel)]="title">
 
@@ -27,7 +29,7 @@
                   style="max-width:600px;width:60%;display: inline-block;margin:5px;text-align: center;">
     <mat-label>Résumé</mat-label>
     <textarea matInput [rows]="3"
-              type="text"
+              type="text" required
               [maxlength]="250" [(ngModel)]="resumer" cdkFocusInitial></textarea>
 
   </mat-form-field>
@@ -76,6 +78,8 @@
 
   <br>
   <app-tuto label="Les tags vont permettre de filtrer les articles par thème"></app-tuto>
+  <app-tuto [if]="title?.length==0 && resumer?.length==0 && editorContent?.length>0" label="Attention, le titre et le résumé sont obligatoires, ils ne doivent pas être inclus dans le corps de l'article"></app-tuto>
+
 
 </div>
 
@@ -111,14 +115,14 @@
 
   <button class="app-button" mat-button mat-raised-button
           id="cmdSave"
-          [disabled]="!editorContent || editorContent.length==0 || title?.length==0"
+          [disabled]="!editorContent || editorContent.length==0 || title?.length==0 || resumer?.length==0"
           title="Enregistrer un brouillon"
           (click)="save()">
     <mat-icon>save</mat-icon>&nbsp;Enregistrer
   </button>
 
   <button class="app-button" mat-button mat-raised-button
-          [disabled]="!editorContent || editorContent.length==0 || title?.length==0"
+          [disabled]="!editorContent || editorContent.length==0 || title?.length==0  || resumer?.length==0"
           id="cmdClear"
           color="primary"
           (click)="publish()">

@@ -182,20 +182,22 @@ export class HtmlEditorComponent implements OnInit {
 
   import_image() {
     this.dialog.open(ImageSelectorComponent, {position:{left: '5vw', top: '5vh'},
-      maxWidth: 400, maxHeight: 700, width: '50vw', height: 'fit-content', data:
+      maxWidth: 600, maxHeight: 700, width: '90vw', height: 'fit-content', data:
                 {
                   result:"",
                   checkCode: true,
                   width: 200,
                   height: 200,
                   emoji: false,
-                  internet: false,
+                  webcam: true,
+                  internet: true,
                   ratio: 1,
+                  bank:true,
                   quality:0.7
                 }
             }).afterClosed().subscribe((result) => {
       if (result) {
-        this.editorContent=this.editorContent+"<img src=\""+result+"\">";
+        this.editorContent=this.editorContent+"<img src=\""+result.img+"\">";
       }
     });
   }

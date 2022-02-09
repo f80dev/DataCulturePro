@@ -53,7 +53,7 @@
 .sb-circles-light .sb-wrapper .sb-icon {
   background: radial-gradient(ellipse farthest-corner at center, white 30%, #f2f2f2 100%);
 }
-.app-button {
+.app-button, .fake-button {
   margin: 4px !important;
   min-width: 100px !important;
   background-color: #3a293c;
@@ -143,6 +143,17 @@ html, body, app-root {
   padding: 0;
   margin: 0;
   background-color: #747474;
+}
+.fake-button {
+  background-color: #3a293c !important;
+  width: 80px;
+  height: 26px;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+  line-height: 90%;
+  font-size: small;
+  padding: 10px;
 }
 .container {
   width: 100vw;
