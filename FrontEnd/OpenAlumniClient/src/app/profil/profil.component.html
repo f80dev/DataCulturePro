@@ -114,6 +114,7 @@
         <button mat-button mat-icon-button
                 title="Accès au profil via le CRM"
                 name="cmdOpenCRM"
+                *ngIf="config.hasPerm('CRM_acces')"
                 class="small-icon-button"
                 (click)="open_CRM(profil)">
           <mat-icon>school</mat-icon>
