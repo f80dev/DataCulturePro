@@ -94,7 +94,7 @@
           id="cmdImport"
           title="Importer"
           (click)="csvInput.click()">
-    Importer
+    <div class="bloc-bouton">Importer un<br>fichier html</div>
   </button>
 
   <button class="app-button" mat-button mat-raised-button
@@ -105,19 +105,19 @@
   </button>
 
 
-  <button class="icon-button" mat-button mat-raised-button
+  <button class="icon-button" mat-button mat-raised-button mat-icon-button
           id="cmdReset"
           title="Effacer l'article en cours"
           (click)="clear_article()">
     <mat-icon>delete</mat-icon>
   </button>
 
-  <button class="icon-button" mat-button mat-raised-button
+  <button class="icon-button" mat-button mat-raised-button mat-icon-button
           id="cmdSave"
           [disabled]="!editorContent || editorContent.length==0 || title?.length==0 || resumer?.length==0"
           title="Enregistrer un brouillon"
           (click)="save()">
-    <mat-icon>save</mat-icon>&nbsp
+    <mat-icon>save</mat-icon>
   </button>
 
   <button class="app-button" mat-button mat-raised-button

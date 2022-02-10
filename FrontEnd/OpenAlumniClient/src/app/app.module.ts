@@ -88,6 +88,7 @@ import { RgpdComponent } from './rgpd/rgpd.component';
 import { MglTimelineModule } from 'angular-mgl-timeline';
 import { EditAwardComponent } from './edit-award/edit-award.component';
 import { TimelineComponent } from './timeline/timeline.component';
+import {WebcamModule} from "ngx-webcam";
 
 @NgModule({
   declarations: [
@@ -152,6 +153,7 @@ import { TimelineComponent } from './timeline/timeline.component';
     MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     MatCardModule,
+    WebcamModule,
     MatTableModule,
     MatSnackBarModule,
     ImageCropperModule,
