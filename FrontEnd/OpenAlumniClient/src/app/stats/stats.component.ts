@@ -42,9 +42,13 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     checkLogin(this,()=>{
-      this.refresh(()=>this.eval_stat());
       this.api._get("api_doc").subscribe((r:any)=>{
         this.rows=r.content;
+        this.refresh(()=>{
+          setTimeout(()=>{
+            this.eval_stat()
+          },500);
+        });
       })
     });
   }
@@ -68,18 +72,18 @@ export class StatsComponent implements OnInit {
         if(i.prod)this.instant_reports.push(i);
       }
 
+
       let open=this.routes.snapshot.queryParamMap.get("open");
       if(open){
         for(let r of this.instant_reports)
           if(r.id==open){
             this.sel_report=r;
-            this.sel_report.html_code="";
-            this.sel_report.html_values="";
           }
       } else {
         this.sel_report=this.instant_reports[0];
       }
-
+      this.sel_report.html_code="";
+      this.sel_report.html_values="";
       if(func)func();
     });
   }

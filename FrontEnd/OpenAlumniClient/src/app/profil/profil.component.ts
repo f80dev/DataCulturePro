@@ -130,6 +130,7 @@ export class ProfilComponent implements OnInit,OnChanges {
   }
 
   open_CRM(profil: any) {
+    showMessage(this,"Fonctionnalitée en cours de développement")
     //TODO a terminer
     if(profil.crm)open(profil.crm,"CRM");
   }

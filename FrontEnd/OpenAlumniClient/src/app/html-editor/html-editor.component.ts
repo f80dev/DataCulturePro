@@ -182,7 +182,7 @@ export class HtmlEditorComponent implements OnInit {
 
   import_image() {
     this.dialog.open(ImageSelectorComponent, {position:{left: '5vw', top: '5vh'},
-      maxWidth: 600, maxHeight: 700, width: '90vw', height: 'fit-content', data:
+      maxWidth: 600, maxHeight: 900, width: 'fit-content', height: 'fit-content', data:
                 {
                   result:"",
                   checkCode: true,

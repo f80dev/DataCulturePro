@@ -350,7 +350,7 @@
         </mat-expansion-panel-header>
         <br>
         <table style="width: 100%;font-size: small;">
-          <tr *ngFor="let award of awards" style="width:100%;text-align: left;vertical-align: text-top;">
+          <tr *ngFor="let award of awards" style="width:100%;text-align: left;vertical-align: text-top;" [title]="'pour '+award.pow.title">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">{{award?.year}}:</td>
             <td style="line-height: 100%;width: fit-content;">
