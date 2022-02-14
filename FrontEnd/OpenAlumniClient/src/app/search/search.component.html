@@ -6,6 +6,10 @@
             label="Connectez vous pour avoir accès à plus d'information sur les profils">
   </app-tuto>
 
+  <app-tuto [if]="query.value.indexOf('*')>-1"
+            label="Le symbole * permet de faire une recherche sur le début d'un nom, par exemple DUP* retourne tous les noms commençant par DUP">
+  </app-tuto>
+
   <app-tuto [delay]="10"
             id="tutoSideMenu"
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>

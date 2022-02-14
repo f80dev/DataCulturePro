@@ -31,7 +31,7 @@ export class PublicComponent implements OnInit {
 
 
   load_items(p){
-   let expe={};
+    let expe={};
     this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
 
@@ -76,12 +76,15 @@ export class PublicComponent implements OnInit {
         }
       }
 
-      rc.push({
-        year:this.profil.degree_year,
-        title:"FEMIS - département "+this.profil.department,
-        subtitle:"",
-        icon: this.config.icons["School"]
-      })
+      if(this.config.hasPerm("admin")){
+        rc.push({
+          year:this.profil.degree_year,
+          title:"FEMIS - département "+this.profil.department,
+          subtitle:"",
+          icon: this.config.icons["School"]
+        })
+      }
+
 
       this.items=group_works(rc);
       this.items[0].show_year=true;
@@ -101,7 +104,6 @@ export class PublicComponent implements OnInit {
           icon: "<img src='"+item.icon+"' width='30'>",
           label:item.title+"<br><small>"+item.subtitle+"</small>"
         }
-
 
 
         if(!item.show_year)obj["year"]="<br><br>";

@@ -158,7 +158,7 @@ export class SearchComponent implements OnInit {
     this.handle=setTimeout(()=>{
       this._location.replaceState("search?query="+this.query.value);
       this.refresh();
-    },1000);
+    },2000);
   }
 
   clearQuery() {

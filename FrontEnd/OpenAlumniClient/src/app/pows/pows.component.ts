@@ -129,7 +129,7 @@ export class PowsComponent implements OnInit {
       if(r){
         pow.title=r.title;
         pow.visual=r.visual;
-        pow.award=r.award;
+        pow.award=Object.values(r.award).sort((a:any,b:any) => (a.year<b.year ? 1 : -1));
         for(let item of r.works){
           if(item.public){
             rc.push({

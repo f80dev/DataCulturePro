@@ -27,9 +27,9 @@
 
   <div class="div-center" *ngIf="message.length==0">
     <span *ngIf="pows.length==limit">+ de {{pows.length}} films</span>
-    <span *ngIf="pows.length<limit">{{pows.length}} films</span>
+    <span *ngIf="pows.length<limit && pows.length>10">{{pows.length}} films</span>
     <div style="display:inline-block;cursor: pointer;font-style: italic;font-size: small;" (click)="show_all()">
-      - <span *ngIf="limit==50">En voir plus</span>
+      <span *ngIf="limit==50">- En voir plus</span>
     </div>
     <br>
   </div>
