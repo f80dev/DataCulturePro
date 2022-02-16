@@ -1,3 +1,11 @@
+#PyCharm
+##dev
+Configuration en mode django server
+
+Environnement variable: 
+    - dev: PYTHONUNBUFFERED=1;DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev;DEBUG=True;API_SERVER=http://localhost:8000
+    - prod: PYTHONUNBUFFERED=1;DJANGO_SETTINGS_MODULE=OpenAlumni.settings;DEBUG=False 
+
 
 #Configuration de développpement
 
