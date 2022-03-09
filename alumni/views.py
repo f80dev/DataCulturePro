@@ -1,17 +1,21 @@
 import base64
 import csv
+import io
 
 from datetime import datetime, timedelta
 from io import StringIO, BytesIO
 from json import loads
+from urllib.parse import urlencode, quote
 
 from urllib.request import urlopen
 
 import pandasql
 import yaml
 import pandas as pd
-from django.utils.http import urlencode
+
+
 from github import Github
+from numpy import inf
 
 from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
 from OpenAlumni.analytics import StatGraph
@@ -393,9 +397,9 @@ def refresh_jobsites(request):
     job=request.GET.get("job","")
     if len(job)==0:job=profil.job
 
-    text = text.replace("%job%", urlencode(job))
-    text = text.replace("%lastname%", urlencode(profil.lastname))
-    text = text.replace("%firstname%", urlencode(profil.firstname))
+    text = text.replace("%job%", quote(job))
+    text = text.replace("%lastname%", quote(profil.lastname))
+    text = text.replace("%firstname%", quote(profil.firstname))
 
     sites=yaml.load(text)
     return JsonResponse({"sites":sites,"job":profil.job})
@@ -817,6 +821,29 @@ def send_to(request):
     return Response("Message envoyé", status=200)
 
 
+
+#Exemple : http://localhost:8000/api/social_distance/?profil_id=1
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def social_distance(request):
+    profils=Profil.objects.filter(department__iexact=request.GET.get("department","")) if request.GET.get("department","")!="" else Profil.objects.all()
+    if len(profils)>0:
+        G = SocialGraph(profils)
+        matrix=G.distance()
+
+        idx=G.idx_node(request.GET.get("profil_id"))
+        if idx:
+            rc=list()
+            for id in range(1,len(profils)):
+                _d=G.G.nodes[id]
+                _d["distance"]=matrix[idx][id] if matrix[idx][id]!=inf else -1
+                rc.append(_d)
+            return Response(rc)
+
+    return Response("Error")
+
+
+
 #Exemple : http://localhost:8000/api/social_graph/
 @api_view(["GET"])
 @renderer_classes((WorksCSVRenderer,))
@@ -829,13 +856,12 @@ def social_graph(request,format="json"):
     """
 
     log("Extraction des profils")
-    filter=request.GET.get("filter")
+    filter=request.GET.get("filter","0")
     degree_filter = filter.split("_")[0]
-    department_filter = filter.split("_")[1]
+    department_filter = "" if not "_" in filter else filter.split("_")[1]
 
-    profils = None
-    if degree_filter != "0":
-        profils = Profil.objects.filter(degree_filter=int(degree_filter), department__contains=department_filter)
+    if degree_filter != "0" and degree_filter!="null":
+        profils = Profil.objects.filter(degree_year=int(degree_filter), department__contains=department_filter)
     else:
         profils = Profil.objects.filter(department__contains=department_filter)
 
@@ -847,7 +873,7 @@ def social_graph(request,format="json"):
     G.load(profils,request.GET.get("film")!="false")
     log("Chargement des profils dans le graphe ok")
 
-    G.eval(request.GET.get("eval"))
+    G.eval(request.GET.get("eval",""))
     log("Evaluation du critère ok")
 
     G.filter("pagerank",0.0005)

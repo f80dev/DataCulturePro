@@ -13,19 +13,19 @@ import {$$, showError} from "../tools";
 export class VisgraphComponent implements OnInit,AfterViewInit {
   private svg;
 
-  props=["pagerank"]
+
 
   simulation:any;
   forceProperties = {
     center: {
-      x: 0.5,
+      x: 1,
       y: 0.5
     },
     charge: {
       enabled: true,
-      strength: -70,
+      strength: -90,
       distanceMin: 1,
-      distanceMax: 2000
+      distanceMax: 200
     },
     collide: {
       enabled: true,
@@ -53,12 +53,16 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
   name: string="";
   data: any;
   sel_node: any=null;
+
+  props=["pagerank","centrality"]
   filter={
     pagerank:{value:0.0005,min:1000,max:-1000,step:0},
     centrality:{value:0.0005,min:1000,max:-1000,step:0},
     promo:{value:0,values:[1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]},
     department:{value:"Réalisation",values:["Image","Son","Réalisation","Montage","Décor"]}
   };
+  selFilter=this.props[0];
+
   message: string="";
   edge_props: any;
   width=screen.availWidth;
@@ -99,7 +103,9 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
       .enter()
       .append("line")
       .property("edgeid",(d) => {return d.id;})
-      .on("click", (d)=>{this.sel_edge(d);})
+      .property("name",(d)=>{return d.title;})
+       .on("mouseenter", (d)=>{this.mouseenter(d);})
+      .on("mouseleave", (d)=>{this.mouseleave(d);})
       .style("stroke", "#aaa")
 
     var nodeEnter = svg
@@ -117,6 +123,7 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
 
     var node = nodeEnter.append("svg:image")
       .attr("xlink:href",  function(d) { return d.photo;})
+      .attr("title",function (d) {return d.firstname+" "+d.lastname;})
       .attr("x", function(d) { return -25;})
       .attr("y", function(d) { return -25;})
       .attr("height", 50)
@@ -194,7 +201,13 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
 
 
   mouseenter(d){
-    this.sel_node=d.target.__data__;
+    let data=d.target.__data__;
+    if(data.hasOwnProperty("source")){
+      this.sel_node={label:"<strong>"+data.data.title+"</strong> "+data.data.year};
+    }else{
+      this.sel_node={label:"<strong>"+data.label +"</strong><br>"+data.formation+" "+data.promo};
+    }
+
   }
 
   mouseleave(d){
@@ -223,6 +236,7 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
 
 
   //Sélection d'un noeud
+
   sel(d: any) {
     this.router.navigate(["search"],{queryParams:{filter:d.target.__data__.lastname}})
   }
@@ -275,6 +289,12 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
   ngAfterViewInit(): void {
     this.width=this.graph_zone.nativeElement.clientWidth;
     this.height=this.graph_zone.nativeElement.clientHeight;
+    this.refresh(this.filter.promo.value,this.filter.department.value);
+  }
+
+  clear_filter() {
+    this.filter.department.value="";
+    this.filter.promo.value=null;
     this.refresh(this.filter.promo.value,this.filter.department.value);
   }
 }

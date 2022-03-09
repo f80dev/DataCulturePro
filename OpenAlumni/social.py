@@ -1,13 +1,28 @@
 #Analyse des relations
+import io
 
 import networkx as nx
+import scipy.sparse as sp
+from django.core.files import File
+from django.core.files.storage import FileSystemStorage
 from django.db import connection
+from networkx import floyd_warshall_numpy
+from numpy import ndarray, save, load
+from numpy.core.multiarray import fromfile
+
+from OpenAlumni.Tools import log, now
+from alumni.models import Work, PieceOfWork
 
 
 class SocialGraph:
-    def __init__(self):
+
+    fs = FileSystemStorage(location='./temp')
+
+    def __init__(self,profils=None):
         self.G = nx.Graph()
         self.edge_prop=[]
+        if profils:
+            self.load(profils)
 
 
     def filter(self,critere="pagerank",threshold=0):
@@ -21,6 +36,12 @@ class SocialGraph:
     def extract_subgraph(self):
         res=nx.shortest_path(self.G)
 
+    def idx_node(self,profil_id):
+        if profil_id:
+            for i in range(1,self.G.number_of_nodes()+1):
+                if self.G.nodes[i]["id"]==int(profil_id):
+                    return i
+        return None
 
 
     def load(self,profils,with_film=False):
@@ -33,7 +54,8 @@ class SocialGraph:
                             photo=p.photo,
                             lastname=p.lastname,
                             firstname=p.firstname,
-                            promo=str(p.promo)
+                            promo=str(p.promo),
+                            id=p.id
                             )
             ids.append(p.id)
 
@@ -51,18 +73,21 @@ class SocialGraph:
                 else:
                     cursor.execute("""
                            CREATE TABLE Social_Matrix AS
-                           SELECT alumni_work.profil_id AS Profil1, alumni_work1.profil_id AS Profil2, Count(alumni_work.pow_id) AS CountOfFilm
+                           SELECT alumni_work.profil_id AS Profil1, alumni_work1.profil_id AS Profil2, COUNT (alumni_work.pow_id AS powid) AS n_pows,
                            FROM alumni_work INNER JOIN alumni_work AS alumni_work1 ON alumni_work.pow_id = alumni_work1.pow_id
                            GROUP BY alumni_work.profil_id, alumni_work1.profil_id
-                           HAVING (((alumni_work.profil_id)<>alumni_work1.profil_id));
+                           HAVING alumni_work.profil_id<>alumni_work1.profil_id
                        """)
 
                 cursor.execute("SELECT * FROM Social_Matrix")
+
+
+
                 for row in cursor.fetchall():
                     if row[0] in ids and row[1] in ids:
                         if with_film:
-                            self.G.add_edge(row[0], row[1])
-                            self.edge_prop.append(row[2])
+                            _pow = PieceOfWork.objects.get(id=row[2])
+                            self.G.add_edge(row[0], row[1],title=_pow.title,id=_pow.id,year=_pow.year)
                         else:
                             self.G.add_edge(row[0], row[1], weight=row[2])
 
@@ -82,6 +107,20 @@ class SocialGraph:
                 self.G.nodes[k]["centrality"]=props.get(k)
 
 
+    def distance(self,filename="social_distance_matrix",delayInHour=2):
+        if self.fs.exists(filename) and (now()-self.fs.get_modified_time(filename).timestamp())/(60*60)<delayInHour:
+            file:File=self.fs.open(filename)
+            rc=load(file,allow_pickle=True)
+        else:
+            log("Lancement du calcul de la matrice de distance")
+            rc:ndarray=floyd_warshall_numpy(self.G)
+            self.fs.delete(filename)
+            save(self.fs.open(filename,"wb"),rc,allow_pickle=True)
+
+        return rc
+
+
+
     #http://localhost:8000/api/social_graph/
     def export(self,format="graphml"):
         if format=="gxf":
@@ -99,8 +138,8 @@ class SocialGraph:
                 nodes_with_attr.append(n[1])
 
             edges=[]
-            for edge in self.G.edges:
-                edges.append({"source":edge[0],"target":edge[1]})
+            for edge in self.G.edges.data():
+                edges.append({"source":edge[0],"target":edge[1],"data":edge[2]})
 
             rc={"graph":{"nodes":nodes_with_attr,"edges":edges},"edge_props":self.edge_prop}
             return rc

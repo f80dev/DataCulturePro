@@ -83,6 +83,7 @@ export class EditComponent implements OnInit,OnDestroy  {
         this.refresh_students();
         this.refresh_works();
         this.refresh_awards();
+        this.refresh_relations();
       });
     },()=>{this.quit();})
   }
@@ -110,6 +111,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   expanded_experience_pnl=false;
   expanded_internet_pnl=false;
   url: any;
+
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
@@ -125,6 +127,15 @@ export class EditComponent implements OnInit,OnDestroy  {
     });
   }
 
+  relations:any;
+  refresh_relations(){
+    this.api._get("social_distance","profil_id="+this.profil.id,600).subscribe((r:any)=> {
+      this.relations=[];
+      for(let it of r){
+        if(it.distance==1)this.relations.push(it);
+      }
+    });
+  }
 
 
   loadProfil(func=null){
@@ -409,7 +420,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   open_profil(profil: any) {
-    this.router.navigate(["search"],{queryParams:{filter:profil.fullname}})
+    this.router.navigate(["search"],{queryParams:{filter:profil.firstname+" "+profil.lastname}})
   }
 
   refresh_students() {

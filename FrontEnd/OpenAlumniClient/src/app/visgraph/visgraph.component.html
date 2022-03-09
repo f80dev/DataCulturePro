@@ -1,55 +1,51 @@
 <div class="mainform" style="overflow: hidden;">
-  <div id="toolbar" class="toolbar-app"
-       style="font-size:small;position:absolute;display:block;padding:3px;width:fit-content;right:0px;top:0px;z-index:100;background-color: #424242;height:70px;vertical-align: middle;line-height: 90%;">
-    <mat-slider
-      title="Dispersion"
-      color="primary"
-      class="app-slider"
-      style="width: 30px;margin:0;padding:0"
-      [(ngModel)]="forceProperties.link.distance"
-      (valueChange)="updateForces(width,height)"
-      min="5" max="100">
-    </mat-slider>
+  <div id="toolbar"
+       class="toolbar-app"
+       style="vertical-align:center:padding: 2px;position:absolute;text-align:left;display:block;width:fit-content;height:fit-content;right:0px;top:0px;z-index:100;background-color: #424242;">
 
-    <div *ngFor="let p of props" style="display: inline-block;margin:0px;padding: 0px;">
+    <mat-form-field appearance="legacy">
+      <mat-label>Propriétés</mat-label>
+      <mat-select id="selSelFilter" [(ngModel)]="selFilter">
+        <mat-option *ngFor="let p of props" [value]="p">
+          {{p}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
       <mat-slider
-        [title]="p"
+        [title]="selFilter"
         color="primary"
         class="app-slider"
-        style="width: 30px;margin:0;padding:0"
-        [(ngModel)]="filter[p].value"
-        (valueChange)="updateForces()"
-        [min]="filter[p].min" [max]="filter[p].max" [step]="filter[p].step">
+        [(ngModel)]="filter[selFilter].value"
+        (valueChange)="updateForces(width,height)"
+        [min]="filter[selFilter].min" [max]="filter[selFilter].max" [step]="filter[selFilter].step">
       </mat-slider>
 
-      <mat-form-field appearance="legacy" style="max-width:120px;font-size: medium;margin:3px;">
-        <mat-label>Promo</mat-label>
-        <mat-select id="selPromoFilter" [(ngModel)]="filter.promo.value" (selectionChange)="updateData()">
-          <mat-option *ngFor="let y of filter.promo.values" [value]="y">
-            {{y}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
 
+    <mat-form-field appearance="legacy">
+      <mat-select id="selPromoFilter" [(ngModel)]="filter.promo.value" (selectionChange)="updateData()">
+        <mat-option *ngFor="let y of filter.promo.values" [value]="y">
+          {{y}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-      <mat-form-field appearance="legacy" style="max-width:120px;font-size: medium;margin:3px;">
-        <mat-label>Formation</mat-label>
-        <mat-select id="selFormationFilter" [(ngModel)]="filter.department.value" (selectionChange)="updateData()">
-          <mat-option *ngFor="let y of filter.department.values" [value]="y">
-            {{y}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <mat-form-field appearance="legacy">
+      <mat-select id="selFormationFilter" [(ngModel)]="filter.department.value" (selectionChange)="updateData()">
+        <mat-option *ngFor="let y of filter.department.values" [value]="y">
+          {{y}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    </div>
+    <mat-icon (click)="clear_filter()" style="cursor: pointer;">cancel</mat-icon>
 
-    <br>
-    <div *ngIf="sel_node" style="display: inline-block;">
-      {{sel_node.label}} - {{sel_node.formation}} ({{sel_node.promo}})
-    </div>
-
+    <div *ngIf="sel_node" style="display: inline-block;margin:5px;line-height: 90%;" [innerHTML]="sel_node.label"></div>
 
   </div>
+  <br>
+
   <app-hourglass [message]="message"></app-hourglass>
   <figure #graph_zone id="graph" style="width: 95%;height:90vh;overflow: hidden;" class="mat-elevation-z4"></figure>
 </div>

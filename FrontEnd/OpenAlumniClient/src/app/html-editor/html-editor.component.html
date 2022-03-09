@@ -77,6 +77,7 @@
 
   <br>
   <app-tuto label="Les tags vont permettre de filtrer les articles par thème"></app-tuto>
+  <app-tuto [if]="onlyPreview" label="Si la présentation du fichier importer ne convient pas, les modifications doivent être faite depuis l'outil qui a permis sa conception"></app-tuto>
   <app-tuto [if]="title?.length==0 && resumer?.length==0 && editorContent?.length>0" label="Attention, le titre et le résumé sont obligatoires, ils ne doivent pas être inclus dans le corps de l'article"></app-tuto>
 
 
@@ -103,7 +104,6 @@
           (click)="import_image()">
     Images
   </button>
-
 
   <button class="icon-button" mat-button mat-raised-button mat-icon-button
           id="cmdReset"

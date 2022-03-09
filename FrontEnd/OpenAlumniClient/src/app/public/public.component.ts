@@ -64,12 +64,13 @@ export class PublicComponent implements OnInit {
           this.profil.expe=this.profil.expe+k+", ";
       }
 
+
       if(awards && awards.count>0){
         for(let a of awards.results){
           rc.push({
             year:a.year,
             title:a.description + " - " + a.festival.title,
-            subtitle:"pour "+a.pow.title,
+            subtitle:"pour <strong>"+a.pow.title+"</strong>",
             icon: this.config.icons["Award"],
             sources:a.source
           })
@@ -95,8 +96,8 @@ export class PublicComponent implements OnInit {
       this.data_timeline=[];
       for(let item of this.items){
         if(item.pow){
-          item.title=item.pow.title
-          item.subtitle=item.job
+          item.title=item.job;
+          item.subtitle="pour <strong>"+item.pow.title+"</strong>";
         }
 
         let obj:any={
@@ -121,7 +122,7 @@ export class PublicComponent implements OnInit {
   col_style={
     year:'font-size:2em;text-align:right;padding-right:20px;',
     icon:'margin: 0px',
-    label:'font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:90%;'
+    label:'font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
   }
 
 

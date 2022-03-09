@@ -68,7 +68,7 @@ Instant_reports:
     color: Formation
     y: Awards
     table: Awards
-    sql: SELECT profil__department AS Formation,count(id) AS Awards,CAST (profil__degree_year AS text) AS Promotion FROM df GROUP BY Formation,Promotion
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df GROUP BY Formation,Promotion
     prod: True
 
   - title: Nombre de récompenses par an, ventilées par département
@@ -82,7 +82,7 @@ Instant_reports:
     sql: SELECT profil__department AS Formation,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Formation,Année ORDER BY Année
     prod: True
 
-  - title: Nombre de récompenses par an, ventilées par métier
+  - title: Nombre de récompenses obtenues par an, ventilées par métier
     description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
     id: award_by_year
     chart: bar

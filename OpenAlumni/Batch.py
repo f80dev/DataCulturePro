@@ -749,14 +749,18 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             try:
                 result=PieceOfWork.objects.filter(title_index__iexact=pow.title_index)
                 if len(result)>0:
+                    bFindMovie=False
                     for p in result:
                         if abs(int(p.year)-int(pow.year))<=1:
+                            bFindMovie=True
                             log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
                             pow,hasChanged=fusion(p,pow)
                             if hasChanged:
                                 pow.dtLastSearch=datetime.now()
                                 pow.save()
-                else:
+                                break
+
+                if len(result)==0 or (len(result)>0 and not bFindMovie):
                     n_films=n_films+1
                     pow.dtLastSearch = datetime.now()
                     pow.save()

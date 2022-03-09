@@ -1,3 +1,4 @@
+jellyfish
 Django==4.0.2
 markdown
 django-oauth-toolkit
@@ -26,4 +27,10 @@ djangorestframework-xml
 dict2xml
 django-dbbackup
 py7zr
+scipy==1.8.0
 networkx
+pandasql
+PyGithub
+openpyxl
+django-archive
+plotly
