@@ -5,6 +5,7 @@ import {$$, group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {ConfigService} from "../config.service";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-public',
@@ -18,6 +19,8 @@ export class PublicComponent implements OnInit {
   message: string;
   items: any[]=[];
   data_timeline: any[]=[];
+  url: any;
+  title: any;
 
   constructor(public router:Router,
               public config:ConfigService,
@@ -34,6 +37,7 @@ export class PublicComponent implements OnInit {
     let expe={};
     this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
+
 
       let rc=[];
       for(let w of p.works){
@@ -134,6 +138,8 @@ export class PublicComponent implements OnInit {
       this.message="Chargement des expériences";
       this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
         this.profil=p;
+        this.url=p.public_url.replace("./",environment.domain_appli+"/");
+        this.title = p.firstname + " " + p.lastname;
         setTimeout(()=>{
           this.load_items(this.profil);
         },100);

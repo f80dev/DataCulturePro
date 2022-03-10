@@ -48,7 +48,6 @@ export class EditComponent implements OnInit,OnDestroy  {
   acceptSponsor:boolean;
   message:string="";
   query: string = "";
-  title: string="";
   awards: any[]=[];
   pows:any[]=[];
 
@@ -75,7 +74,6 @@ export class EditComponent implements OnInit,OnDestroy  {
     checkLogin(this,()=>{
       this.message = "Chargement de votre profil";
       this.loadProfil(() => {
-        this.title = this.profil.firstname + " " + this.profil.lastname;
         this.showAddWork = 0;
         this.message = "";
         this.autoAddMovie();
@@ -110,7 +108,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   //Récupération des experiences;
   expanded_experience_pnl=false;
   expanded_internet_pnl=false;
-  url: any;
+
 
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
@@ -145,7 +143,7 @@ export class EditComponent implements OnInit,OnDestroy  {
       $$("Profil chargé ",p);
 
       if(p){
-        this.url=p.public_url.replace("./",environment.domain_appli+"/");
+
         if(!p.hasOwnProperty("links") || !p.links)p.links=[];
         p.links.push({text:"Google",url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname});
         p.links.push({text:"Wikipedia",url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname});

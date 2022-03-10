@@ -16,13 +16,13 @@
 
 
   <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
-                  style="max-width:600px;width:60%;font-size: x-large;display: inline-block;margin:5px;" autofocus>
+                  style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;" autofocus>
     <mat-label><mat-icon>person_search</mat-icon>&nbsp;Recherche</mat-label>
     <input matInput matNativeControl
            id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="nom, métier, année de sortie, titre de film ou récompense"
+           placeholder="nom, métier, promotion, titre de film ou de récompense"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"

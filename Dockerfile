@@ -65,6 +65,7 @@ RUN pip3 install jellyfish
 RUN pip3 install PyGithub
 RUN pip3 install openpyxl
 RUN pip3 install django-archive
+RUN pip3 install scipy
 
 
 

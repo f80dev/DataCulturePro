@@ -56,6 +56,7 @@
     </tr>
   </table>
 
+
   <app-hourglass [message]="message"></app-hourglass>
 
   <!--  Travaux nouvelle version -->
@@ -127,5 +128,21 @@
   <!--      </app-work>-->
   <!--    </div>-->
   <!--  </div>-->
+
+  <br>
+  <div style="display: inline-block;margin-top:30px;width:fit-content;text-align: center;">
+    <small>Partagez ce profil public sur vos réseaux</small><br>
+      <!--      voir https://ngx-sharebuttons.netlify.app/ -->
+      <share-buttons [theme]="'circles-dark'"
+                     style="text-align: center;"
+                     [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
+                     [show]="8"
+                     [url]="url"
+                     description="Découvrez mon profil et mes réalisations"
+                     tags="FEMIS"
+                     [title]="title">
+      </share-buttons>
+    </div>
+
 
 </div>

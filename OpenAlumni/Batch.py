@@ -431,7 +431,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
     infos=dict()
     for p in peoples:
         name=remove_accents(remove_ponctuation(p.data["name"].upper()))
-        if firstname.upper() in name and lastname.upper() in name:
+        if remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name:
             if not "nopicture" in p.data["headshot"]:
                 infos["photo"]=p.data["headshot"]
             if not "url" in infos:
