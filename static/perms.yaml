@@ -15,6 +15,7 @@ perms:
 
   - tag: export_stats
     description: à l'exportation des données anonymes de Data Culture
+    commentaire: les données disponible sont anonymes
 
   - tag: tutorat
     description: a la possibilité d'être tuteur

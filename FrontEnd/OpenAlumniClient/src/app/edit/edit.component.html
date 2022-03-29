@@ -393,10 +393,10 @@
 
 
       <!--      Relations -->
-      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlRelations">
+      <mat-expansion-panel class="app-panel" [expanded]="false" id="pnlRelations" *ngIf="relations?.length>0">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Relations
+            Réseau pro
           </mat-panel-title>
         </mat-expansion-panel-header>
         Vous avez travaillé avec:<br>

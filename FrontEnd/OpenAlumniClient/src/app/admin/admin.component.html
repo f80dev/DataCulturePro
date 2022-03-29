@@ -3,10 +3,7 @@
   <h2>Commandes disponibles</h2>
 
 
-
-
   <mat-accordion [multi]="false" style="text-align: left;">
-
 
     <mat-expansion-panel class="app-panel" [expanded]="true">
       <mat-expansion-panel-header>
@@ -78,6 +75,35 @@
       <button mat-raised-button mat-button class="app-button" (click)="raz('works unifrance')">RAZ Unifrance</button>
       <button mat-raised-button mat-button class="app-button" (click)="raz('works')">RAZ total</button>
 
+    </mat-expansion-panel>
+
+
+
+<mat-expansion-panel class="app-panel" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Gestion des utilisateurs
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <table style="font-s0ize: small;line-height: 85%;text-align: center;">
+        <tr>
+          <th>Login</th>
+          <th>Profils</th>
+          <th>Demande</th>
+          <th>Commandes</th>
+        </tr>
+        <tr *ngFor="let u of users" style="width: 100%">
+          <td style="width: 40%;">{{u.user.username}}</td>
+          <td style="width: 15%;">{{u.profil_name}}</td>
+          <td style="width: 15%;">{{u.ask}}</td>
+          <td>
+            <mat-icon title="Supprimer le compte" class="mini-icon-button" (click)="del_user(u)">delete</mat-icon>
+            <mat-icon title="Accepter la demande de profil" style="font-size: 15px;cursor: pointer;" (click)="accept_ask(u)">checkmark</mat-icon>
+            <mat-icon title="Refuser la demande de profil" style="font-size: 15px;cursor: pointer;" (click)="cancel_ask(u)">cancel</mat-icon>
+            <mat-icon style="font-size: 15px;cursor: pointer;" (click)="send_email(u)">email</mat-icon>
+          </td>
+        </tr>
+      </table>
     </mat-expansion-panel>
 
 

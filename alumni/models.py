@@ -59,6 +59,12 @@ class Profil(models.Model):
     vimeo=models.URLField(blank=True, null=True,help_text="Adresse de la page vimeo du profil")
     school=models.CharField(blank=True,max_length=30,null=True,default="FEMIS",help_text="Ecole")
 
+    #Liste des annuaires
+    unifrance = models.URLField(blank=True, null=True, help_text="Adresse de la page sur unifrance")
+    imdb = models.URLField(blank=True, null=True, help_text="Adresse de la page sur imdb")
+    wikipedia = models.URLField(blank=True, null=True, help_text="Adresse de la page sur wikipedia")
+    allocine = models.URLField(blank=True, null=True, help_text="Adresse de la page sur allocine")
+
     crm=models.URLField(blank=True, null=True,help_text="Lien avec l'outil de CRM")
 
     acceptSponsor = models.BooleanField(null=False, default=False,help_text="Le profil accepte les demandes de mentorat")
@@ -120,6 +126,12 @@ class Profil(models.Model):
         return self.links
 
 
+    def get_home(self,site):
+        for l in self.links:
+            if l["text"]==site: return l["url"]
+        return None
+
+
     @property
     def public_url(self):
         return "./public/?id="+str(self.id)+"&name="+self.firstname+" "+self.lastname+"&toolbar=false"
@@ -168,7 +180,6 @@ class Article(models.Model):
     tags=models.CharField(max_length=100,default="",help_text="Etiquettes de classification thématique")
     to_publish=models.BooleanField(default=False,null=False,help_text="Demander la publication")
 
-
     class Meta:
         ordering = ["dtCreate"]
 
@@ -193,6 +204,10 @@ class ExtraUser(models.Model):
     level=models.IntegerField(default=0,help_text="Niveau de l'utilisateur")
     ask=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
     friends=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
+    dtLogin=models.DateField(blank=True,null=True, help_text="Date de la dernière connexion")
+    nbLogin=models.IntegerField(default=0,help_text="Nombre de connexions")
+    dtCreate = models.DateField(auto_now_add=True,null=True, help_text="Date de creation du compte")
+
 
 
 @receiver(post_save, sender=User)
@@ -216,6 +231,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 
         log("Permission par défaut pour les connectés : " + perm)
         ExtraUser.objects.create(user=instance,perm=perm)
+    else:
+        pass
 
 
 @receiver(post_save, sender=User)
@@ -296,6 +313,15 @@ class Festival(models.Model):
     url=models.CharField(null=False,blank=True, default="",max_length=150, help_text="URL de la page d'acceuil du festival")
     dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
 
+
+class Survey(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.TextField(blank=True,max_length=50, help_text="Titre du sondage")
+    description = models.TextField(blank=True,max_length=200, help_text="Description / message d'intro pour les profils")
+    html=models.TextField(blank=True,max_length=200, help_text="Code ou URL du sondage")
+    dtCreate = models.DateField(auto_now_add=True, help_text="Date de création du sondage")
+    dtStart = models.DateField(auto_now_add=True, null=False,blank=False,help_text="Date de début d'apparition du sondage")
+    dtEnd = models.DateField(auto_now_add=True, null=False,blank=False,help_text="Date de fin du sondage")
 
 
 

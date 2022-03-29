@@ -14,13 +14,21 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 export class AdminComponent implements OnInit {
 
   message: string;
+  users:any[];
 
   constructor(private api:ApiService,
               public config:ConfigService,
               public router:Router,
               public toast:MatSnackBar) { }
 
+  refresh(){
+    this.api._get("extrausers").subscribe((r:any)=>{
+      this.users=r.results;
+    })
+  }
+
   ngOnInit(): void {
+    this.refresh();
   }
 
   raz(table:string) {
@@ -121,5 +129,23 @@ export class AdminComponent implements OnInit {
 
   openServer(url: string) {
     open(url,"terminal");
+  }
+
+  del_user(u: any) {
+    this.api._delete("users/"+u.user.id).subscribe((r:any)=>{
+      this.refresh();
+    });
+  }
+
+  cancel_ask(u: any) {
+
+  }
+
+  send_email(u: any) {
+
+  }
+
+  accept_ask(u: any) {
+
   }
 }

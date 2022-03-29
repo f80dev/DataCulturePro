@@ -1,4 +1,3 @@
-from json import loads
 from urllib import parse
 from urllib.parse import urlparse
 
@@ -11,11 +10,9 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str, now, remove_accents, index_string
+    equal_str, remove_accents, index_string
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
-
-#from scipy import pdist
 
 ia=IMDb()
 
@@ -190,16 +187,11 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
         if idx_div==0:
             if not ":" in div.text:rc["nature"]=div.text
 
-        if "Numéro de visa" in div.text:
-            rc["visa"]=div.text.split(" : ")[1].replace(".","")
+        if "Numéro de visa" in div.text: rc["visa"]=div.text.split(" : ")[1].replace(".","")
+        if "Langues de tournage" in div.text: rc["langue"]=div.text.split(" : ")[1]
+        if "Année de production : " in div.text: rc["year"]=div.text.replace("Année de production : ","")
+        if "Genre(s) : " in div.text: rc["category"]=translate(div.text.replace("Genre(s) : ",""))
 
-        if "Langues de tournage" in div.text:
-            rc["langue"]=div.text.split(" : ")[1]
-
-        if "Année de production : " in div.text:
-            rc["year"]=div.text.replace("Année de production : ","")
-        if "Genre(s) : " in div.text:
-            rc["category"]=translate(div.text.replace("Genre(s) : ",""))
         idx_div=idx_div+1
 
     if "category" in rc and len(rc["category"])==0:rc["category"]="inconnue"
@@ -232,16 +224,15 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     log("!Prix non conforme sur "+url)
 
 
-
     if not job_for is None and page.find("div",{"id":"description"}) and page.find("div",{"id":"description"}).find("p"):
         real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
         if len(real_links)>0 and equal_str(real_links[0].text,job_for):
-            rc["job"]=translate("Réalisation")
+            rc["job"]=[translate("Réalisation")]
         else:
             #Recherche en réalisation
             section=page.find("div",{"itemprop":"director"})
             if section and (job_for.lower() in section.text.lower()):
-                rc["job"] = translate("Réalisation")
+                rc["job"] = [translate("Réalisation")]
 
             #Recherche dans le générique détaillé
             section=page.find("section",{"id":"casting"})
@@ -255,28 +246,28 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                         job=jobs[idx].text.replace(":","").strip()
                         if "/personne" in l.get("href"):
                             if (job_for.startswith("http") and l.get("href")==job_for) or equal_str(job_for,l.text):
-                                rc["job"]=job
+                                rc["job"]=[job]
                                 break
                             else:
                                 if all_casting:
                                     #On ajoute l'ensemble du casting au systeme
                                     names = str(l.getText()).split(" ")
                                     lastname =names[len(names)-1]
-                                    rc["casting"].append({
-                                        "lastname":lastname,
-                                        "url":l.attrs["href"],
-                                        "source":"unifrance",
-                                        "firstname":l.getText().replace(lastname,"").strip(),
-                                        "job":job})
+                                    rc["casting"].append(
+                                        {
+                                            "lastname":lastname,
+                                            "url":l.attrs["href"],
+                                            "source":"unifrance",
+                                            "firstname":l.getText().replace(lastname,"").strip(),
+                                            "job":[job]
+                                        }
+                                    )
 
             #Recherche dans les acteurs
             for actor in page.find_all("div",{"itemprop":"actors"}):
                 if "data-title" in actor.attrs:
                     if actor.attrs["data-title"].lower()==job_for.lower():
-                        rc["job"]="actor"
-
-    if not "job" in rc:
-        pass
+                        rc["job"]=["actor"]
 
     _synopsis = page.find("div", attrs={"itemprop": "description"})
     if not _synopsis is None:
@@ -426,40 +417,43 @@ def extract_awards_from_imdb(profil_url,profil):
                                         )
 
 
-def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31):
+def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""):
     peoples=ia.search_person(remove_accents(firstname)+" "+remove_accents(lastname))
-    infos=dict()
+    infos={"links":[]}
     for p in peoples:
-        name=remove_accents(remove_ponctuation(p.data["name"].upper()))
-        if remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name:
-            if not "nopicture" in p.data["headshot"]:
-                infos["photo"]=p.data["headshot"]
-            if not "url" in infos:
-                infos["url"]="https://imdb.com/name/nm"+p.personID+"/"
+        if not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
+        if url=="":
+            name=remove_accents(remove_ponctuation(p.data["name"].upper()))
+            if remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name:
+                infos["url"] = "https://imdb.com/name/nm" + p.personID + "/"
                 log("Ouverture de " + infos["url"])
-                page=load_page(infos["url"],refresh_delay=refresh_delay)
-                film_zone=page.find("div",{"id":"filmography"})
-                if film_zone is None:film_zone=page
+        else:
+            infos["url"]=url
 
-                #Contient l'ensemble des liens qui renvoi vers une oeuvre
-                infos["links"] = []
-                links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
-                for l in links:
-                    if len(l.getText())>3 and l.parent.parent.parent.parent and l.parent.parent.parent.parent["id"]=="filmography":
-                        texts=l.parent.parent.text.split("(")
-                        nature="long"
-                        job:str=l.parent.parent.get("id").split("-")[0]
-                        if job=="miscellaneous" or len(job)==0:
-                            temp=l.parent.parent.text.split("(")
-                            job=temp[len(temp)-1].split(")")[0]
-                            pass
-                        else:
-                            if not in_dict(job,"jobs"):job=""
+        page = load_page(infos["url"], refresh_delay=refresh_delay)
 
-                        url = "https://www.imdb.com" + l.get("href")
-                        url = url.split("?")[0]
+        film_zone=page.find("div",{"id":"filmography"})
+        if film_zone is None:film_zone=page
 
-                        infos["links"].append({"url":url,"text":l.getText(),"job":"","nature":""})
+        #Contient l'ensemble des liens qui renvoi vers une oeuvre
+        links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
+        for l in links:
+            log("Analyse de "+str(l))
+            tmp_obj=l.parent.parent.parent.parent
+            if len(l.getText())>3 and not tmp_obj is None and "id" in tmp_obj.attrs and tmp_obj["id"]=="filmography":
+                job:str=l.parent.parent.get("id").split("-")[0]
+                if job=="miscellaneous" or len(job)==0:
+                    temp=l.parent.parent.text.split("(")
+                    job=temp[len(temp)-1].split(")")[0]
+                    pass
+                else:
+                    if not in_dict(job,"jobs"):job=""
+
+                url = "https://www.imdb.com" + l.get("href")
+                url = url.split("?")[0]
+
+                infos["links"].append({"url":url,"text":l.getText(),"job":"","nature":""})
+
     return infos
 
 
@@ -554,7 +548,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         rc["synopsis"]=divs["plot"].text.replace("Read all","")
 
     #log("Recherche du role sur le film")
-
     credits=load_page(url+"fullcredits",refresh_delay)
     if not credits is None:
         credits=credits.find("div",{"id":"fullcredits_content"})
@@ -574,7 +567,7 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                         if len(findname)>0:
                             #log("Nom identifié "+findname)
                             if equal_str(findname,name):
-                                sur_job=sur_jobs[i].text.replace("\n"," ").strip()
+                                sur_job=sur_jobs[i].text.replace("\n"," ").strip().replace("  "," ")
                                 if "Cast" in sur_job or "Serie Cast" in sur_job:
                                     if len(tds)>3 and "Self" in tds[3].text:
                                         job=""
@@ -592,12 +585,12 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                                     if len(job) == 0 and len(sur_jobs[i].text) > 0:
                                         job = sur_job.replace(" by", "").strip()
 
-                                job=job.split("\n")[0]
-                                rc["job"] = translate(job)
+                                job=translate(job.split("\n")[0])
                                 if len(job)==0:
                                     log("Job non identifié pour "+name+" sur "+url)
                                 else:
-                                    if not all_casting: break
+                                    if not "job" in rc:rc["job"]=[]
+                                    if not job in rc["job"]:rc["job"].append(job)
                             else:
                                 if all_casting:
                                     names=tds[0].split(" ")
@@ -716,14 +709,6 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
         source = "auto"
         film = None
         pow = None
-        job = l["job"] if "job" in l else ""
-        # for p in PieceOfWork.objects.filter(title__iexact=l["text"]):
-        #     #si la source à déjà été analysée on ne fait rien
-        #     for link in p.links:
-        #         if l["url"] == link["url"]:
-        #             pow=p
-        #             break
-
 
         if "unifrance" in l["url"]:
             film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
@@ -742,9 +727,6 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 
             pow=dict_to_pow(film,content)
-
-            job = profil.job
-            if "job" in film: job = film["job"]
 
             try:
                 result=PieceOfWork.objects.filter(title_index__iexact=pow.title_index)
@@ -787,25 +769,29 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                         url=film["url"]
                     )
 
-
-            if job is None: job = ""
-            t_job = translate(job)
-            if len(t_job)==0:
-                if job_for and pow and pow.title: log("!Job non identifié pour "+job_for+" sur "+pow.title)
-                #t_job="Non identifié"
+            if "job" in film:
+                jobs = film["job"]
             else:
-                if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
-                    if len(t_job)>0:
-                        log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
-                        work = Work(pow=pow, profil=profil, job=t_job, source=source)
-                        try:
-                            work.save()
-                        except Exception as inst:
-                            log("Impossible d'enregistrer le travail: " + str(inst.args))
+                jobs = [profil.job]
+                log("Le job n'est pas présent dans le film, par defaut on reprend le job du profil")
 
-                        if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
-                    else:
-                        log("Pas d'enregistrement de la contribution job="+job)
+            for job in jobs:
+                t_job = translate(job)
+                if len(t_job)==0:
+                    if job_for and pow and pow.title: log("!Job non identifié pour "+job_for+" sur "+pow.title)
+                else:
+                    if not Work.objects.filter(pow_id=pow.id, profil_id=profil.id, job=t_job).exists():
+                        if len(t_job)>0:
+                            log("Ajout de l'experience " + job + " traduit en " + t_job + " sur " + pow.title + " à " + profil.lastname)
+                            work = Work(pow=pow, profil=profil, job=t_job, source=source)
+                            try:
+                                work.save()
+                            except Exception as inst:
+                                log("Impossible d'enregistrer le travail: " + str(inst.args))
+
+                            if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
+                        else:
+                            log("Pas d'enregistrement de la contribution job="+job)
 
             # Enregistrement du casting
             if not film is None and "casting" in film:
@@ -923,19 +909,19 @@ def exec_batch(profils,refresh_delay_profil=31,
             #infos = extract_profil_from_bellefaye(firstname=profil.firstname, lastname=profil.lastname)
             #log("Extraction bellefaye " + str(infos))
 
-            try:
-                imdb_profil_url=None
-                if content["imdb"]:
-                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages)
-                    log("Extraction d'imdb " + str(infos))
-                    if "url" in infos:
-                        profil.add_link(infos["url"], "IMDB")
-                        imdb_profil_url = infos["url"]
+            # try:
+            imdb_profil_url=None
+            if content["imdb"]:
+                infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
+                log("Extraction d'imdb " + str(infos))
+                if "url" in infos:
+                    profil.add_link(infos["url"], "IMDB")
+                    imdb_profil_url = infos["url"]
 
-                    if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
-                    if "links" in infos: links=links+infos["links"]
-            except:
-                log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb")
+                if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
+                if "links" in infos: links=links+infos["links"]
+            # except Exception as inst:
+            #     log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 
             try:
                 if content["lefilmfrancais"]:

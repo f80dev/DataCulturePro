@@ -891,7 +891,8 @@ def social_graph(request,format="json"):
 
 
 
-#http://localhost:8000/api/export_profils/
+#http://localhost:8000/api/export_profils/?cursus=P
+#http://localhost:8000/api/export_profils/?cursus=S
 @api_view(["GET"])
 @renderer_classes((ProfilsCSVRenderer,))
 @permission_classes([AllowAny])
@@ -918,9 +919,9 @@ def export_profils(request):
     df["nationality"]=df["nationality"].replace("","France")
     df["source"]="DCP"
 
-    response = HttpResponse(content_type='text/csv; charset=ansi')
-    response["Content-Disposition"]='attachment; filename="profils.csv"'
-    df.to_csv(response,sep=";",encoding="utf8")
+    response = HttpResponse(content_type='application/vnd.ms-excel; charset=utf8')
+    response["Content-Disposition"]='attachment; filename="profils.xlsx"'
+    df.to_excel(response,encoding="utf8")
     return response
 
 def compare(lst,val,ope):
