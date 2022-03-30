@@ -431,6 +431,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""
             infos["url"]=url
 
         page = load_page(infos["url"], refresh_delay=refresh_delay)
+        if page is None:return None
 
         film_zone=page.find("div",{"id":"filmography"})
         if film_zone is None:film_zone=page
@@ -909,19 +910,19 @@ def exec_batch(profils,refresh_delay_profil=31,
             #infos = extract_profil_from_bellefaye(firstname=profil.firstname, lastname=profil.lastname)
             #log("Extraction bellefaye " + str(infos))
 
-            # try:
-            imdb_profil_url=None
-            if content["imdb"]:
-                infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
-                log("Extraction d'imdb " + str(infos))
-                if "url" in infos:
-                    profil.add_link(infos["url"], "IMDB")
-                    imdb_profil_url = infos["url"]
+            try:
+                imdb_profil_url=None
+                if content["imdb"]:
+                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
+                    log("Extraction d'imdb " + str(infos))
+                    if "url" in infos:
+                        profil.add_link(infos["url"], "IMDB")
+                        imdb_profil_url = infos["url"]
 
-                if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
-                if "links" in infos: links=links+infos["links"]
-            # except Exception as inst:
-            #     log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
+                    if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
+                    if "links" in infos: links=links+infos["links"]
+            except Exception as inst:
+                log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 
             try:
                 if content["lefilmfrancais"]:

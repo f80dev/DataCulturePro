@@ -1,6 +1,6 @@
+import erdpy.environments
 from erdpy.accounts import Account
 from erdpy.config import DEFAULT_GAS_PRICE,get_tx_version,get_chain_id
-from erdpy.environments import TestnetEnvironment
 from erdpy.proxy import ElrondProxy
 from erdpy.transactions import Transaction
 
@@ -40,7 +40,7 @@ class NFTservice:
     def __init__(self, proxy=BC_PROXY,pem_file=ADMIN_PEMFILE):
         self._proxy = ElrondProxy(proxy)
         self.chain_id = self._proxy.get_chain_id()
-        self.environment = TestnetEnvironment(proxy)
+        self.environment = erdpy.TestnetEnvironment(proxy)
         log("Initialisation de l'admin avec "+pem_file)
         self._sender=Account(pem_file=pem_file)
 

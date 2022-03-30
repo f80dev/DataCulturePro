@@ -127,8 +127,9 @@ class Profil(models.Model):
 
 
     def get_home(self,site):
-        for l in self.links:
-            if l["text"]==site: return l["url"]
+        if not self.links is None:
+            for l in self.links:
+                if l["text"]==site: return l["url"]
         return None
 
 

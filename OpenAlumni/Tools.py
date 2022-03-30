@@ -542,6 +542,7 @@ def isWindows():
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
 
+    if url is None:return None
     filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
     if isWindows():
