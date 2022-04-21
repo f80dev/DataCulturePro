@@ -60,11 +60,12 @@ def extract_profil_from_lefimlfrancais(firstname,lastname,refresh_delay=31):
         rc["links"]=[]
         for l in page.find_all("a"):
             if l.attrs["href"].startswith("http://www.lefilmfrancais.com/film/"):
-                rc["links"].append({
+                link={
                     "text" :l.text,
                     "url"  :l.attrs["href"],
                     "source":"LeFilmFrancais"
-                })
+                }
+                if not link in rc["links"]:rc["links"].append(link)
     return rc
 
 
@@ -453,7 +454,8 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""
                 url = "https://www.imdb.com" + l.get("href")
                 url = url.split("?")[0]
 
-                infos["links"].append({"url":url,"text":l.getText(),"job":"","nature":""})
+                link={"url":url,"text":l.getText(),"job":"","nature":""}
+                if not link in infos["links"]:infos["links"].append(link)
 
     return infos
 
@@ -629,10 +631,11 @@ def extract_actor_from_wikipedia(lastname,firstname):
                     domain=urlparse(ref).netloc
                     try:
                         idx = save_domains.index(domain)
-                        rc["links"].append({
+                        link={
                             "title":libs[idx],
                             "url":ref
-                        })
+                        }
+                        if not link in rc["links"]:rc["links"].append(link)
                     except:
                         pass
             except:
@@ -920,7 +923,7 @@ def exec_batch(profils,refresh_delay_profil=31,
                         imdb_profil_url = infos["url"]
 
                     if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
-                    if "links" in infos: links=links+infos["links"]
+                    if "links" in infos and not infos["links"] in links: links=links+infos["links"]
             except Exception as inst:
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 

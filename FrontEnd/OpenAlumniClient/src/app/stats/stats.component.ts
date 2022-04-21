@@ -171,6 +171,12 @@ export class StatsComponent implements OnInit {
 
   export_stats() {
     let url=this.sel_report.url.replace("out=graph_html","out=excel");
+    let pos_start=url.indexOf("LIMIT ");
+    if(pos_start>0) {
+      let pos_end = pos_start + 6;
+      while (url[pos_end] != " " && url[pos_end] != "&") pos_end++;
+      url = url.replace(url.substr(pos_start, pos_end - pos_start), "")
+    }
     open(url);
   }
 

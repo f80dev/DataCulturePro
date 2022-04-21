@@ -76,6 +76,7 @@ export class SearchComponent implements OnInit {
           if(i.value && i.value.length>0)
             param=param + i.field + "__wildcard="+i.value+"&";
         }
+        param=param.replace("promo__wildcard","promo"); //Car le champs promo est numérique et n'autorise donc pas le wildcard
         param=param.substr(0,param.length-1);
       }
 
@@ -132,7 +133,7 @@ export class SearchComponent implements OnInit {
           this.config.query_cache=this.profils;
         }
       },(err)=>{
-        showError(this,err);
+        showError(this,"Probléme d'exécution de la requête de recherche");
       });
     }
   }

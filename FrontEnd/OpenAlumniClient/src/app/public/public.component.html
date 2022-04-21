@@ -13,6 +13,7 @@
           {{profil?.firstname+" "+profil?.lastname}}
           <button mat-button mat-icon-button
                   title="Partager ce profil"
+                  *ngIf="!config.isDesktop()"
                   class="icon-button" (click)="share()">
             <mat-icon style="cursor: pointer;">shareic</mat-icon>
           </button>

@@ -1467,7 +1467,7 @@ def oauth(request):
 
 
 
-
+#https://localhost:
 @permission_classes([AllowAny])
 class ProfilDocumentView(DocumentViewSet):
     document=ProfilDocument

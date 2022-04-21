@@ -161,4 +161,12 @@ export class ConfigService {
   isProd() {
     return environment.production;
   }
+
+  isDesktop() {
+    return !this.platform.IOS && !this.platform.ANDROID;
+  }
+
+  isMobile() {
+    return this.platform.IOS || this.platform.ANDROID;
+  }
 }

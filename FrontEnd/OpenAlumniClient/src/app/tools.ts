@@ -335,7 +335,7 @@ export function subscribe_socket(vm:any,event_name:string,func=null){
 
 export function $$(s: string, obj: any= null) {
   if((s!=null && s.startsWith("!")) || localStorage.getItem("debug")=="1"){
-    debugger;
+    //debugger;
   }
   const lg = new Date().getHours() + ':' + new Date().getMinutes() + ' -> ' + s;
   if (obj != null) {

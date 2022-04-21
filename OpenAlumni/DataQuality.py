@@ -17,6 +17,9 @@ def eval_field(s,score=1):
 
 
 class ProfilAnalyzer:
+    """"
+    Classe regroupant l'ensemble des méthodes pour l'analyse des profils
+    """
     log=list()
     codes_postaux=None
 
@@ -53,6 +56,15 @@ class ProfilAnalyzer:
                 if profil.town!=profil.town.upper():
                     profil.town=profil.town.upper()
                     bSave = True
+
+            if profil.links:
+                if len(profil.links)>len(list({v['url']:v for v in profil.links}.values())):
+                    log("Suppression des doublons dans links")
+                    profil.links=list({v['url']:v for v in profil.links}.values())
+                    bSave=True
+            else:
+                profil.links=[]
+                bSave=True
 
             if bSave:
                 log("Enregistrement de " + str(profil))
