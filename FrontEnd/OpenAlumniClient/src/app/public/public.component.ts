@@ -124,9 +124,9 @@ export class PublicComponent implements OnInit {
   }
 
   col_style={
-    year:'font-size:2em;text-align:right;padding-right:20px;',
-    icon:'margin: 0px',
-    label:'font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
+    year:'margin:0px;padding:0px;font-size:2em;text-align:right;padding-right:20px;',
+    icon:'margin:0px;padding:0px;border-left: 2px solid white;padding-left:10px;',
+    label:'margin:0px;padding:0px;font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
   }
 
 

@@ -1,4 +1,4 @@
-<div class="mainform" style="text-align: left !important;margin: 5px;font-size: large;">
+<div class="mainform" style="text-align: left !important;margin: 10px;font-size: medium;">
   <br>
   <table style="padding: 0px;margin:0px;width: 100%;" *ngIf="profil">
     <tr style="width: 100%;">
@@ -9,7 +9,7 @@
       </td>
 
       <td>
-        <div style="font-size: 2em ;font-weight: lighter;">
+        <div style="font-size:2em;font-weight: lighter;">
           {{profil?.firstname+" "+profil?.lastname}}
           <button mat-button mat-icon-button
                   title="Partager ce profil"
@@ -28,7 +28,10 @@
 
           <tr>
             <td></td>
-            <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">Département</td>
+            <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">
+              <span *ngIf="profil.cursus=='S'">Département</span>
+              <span *ngIf="profil.cursus=='P'">Stage</span>
+            </td>
             <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">{{profil?.department}}</td>
           </tr>
 
@@ -66,7 +69,7 @@
 
     <div style="margin-left:10%;width:80%;display: inline-block;">
       <app-timeline [data]="data_timeline" [col_style]="col_style"
-                    row_style="padding-bottom: 30px;vertical-align: top;width:100%;">
+                    row_style="vertical-align: top;width:100%;">
       </app-timeline>
     </div>
 
@@ -131,11 +134,11 @@
   <!--  </div>-->
 
   <br>
-  <div style="display: inline-block;margin-top:30px;width:fit-content;text-align: center;">
+  <div style="display: inline-block;margin-top:50px;width:fit-content;text-align: center;">
     <small>Partagez ce profil public sur vos réseaux</small><br>
       <!--      voir https://ngx-sharebuttons.netlify.app/ -->
       <share-buttons [theme]="'circles-dark'"
-                     style="text-align: center;"
+                     style="text-align: center;font-size: small;"
                      [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                      [show]="8"
                      [url]="url"

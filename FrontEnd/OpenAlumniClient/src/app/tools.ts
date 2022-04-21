@@ -30,7 +30,7 @@ export function translateQuery(text:string,all_term=false,query="search_simple_q
     "job":"works__job"
   }
   for(let k in dict){
-    text=text.replace(k+":",dict[k]+":");
+    text=text.replace(k+":",dict[k]+"__unaccent__lower:");
   }
 
   if(text.indexOf(":")>0){
