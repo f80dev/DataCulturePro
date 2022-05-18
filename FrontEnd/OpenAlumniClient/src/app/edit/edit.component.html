@@ -20,8 +20,9 @@
 
         <mat-checkbox
           (change)="save_profil(null,$event,'public_photo')"
+          title="Cliquez sur cette photo pour la mettre a jour"
           [(ngModel)]="profil.public_photo">
-          Photo publique
+          Photo visible sur ma page publique
         </mat-checkbox><br><br>
 
         <mat-form-field appearance="fill" class="app-field" style="width:30%;margin-right:3%;">

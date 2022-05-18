@@ -121,7 +121,7 @@
 <!--        Liste des commandes disponibles -->
         <mat-action-row>
           <button class="app-button"
-                  *ngIf="config.user?.profil"
+                  *ngIf="config.isLogin()"
                   mat-button mat-raised-button
                   (click)="add_experience(pow)">
             <div class="bloc-bouton">

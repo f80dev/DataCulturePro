@@ -63,23 +63,19 @@
         </iframe>
       </div>
 
-
       <br>
-      <div *ngIf="sel_report?.html_values?.length>0" style="min-width:300px;height: auto;margin:10px;overflow: scroll;">
-        <mat-expansion-panel class="app-panel" style="display: inline-block;"
-                             [expanded]="false" >
+      <div *ngIf="sel_report?.html_values?.length>0" style="width:100%;min-width:300px;height: auto;margin:10px;overflow: scroll;">
+        <mat-expansion-panel class="app-panel" style="display: inline-block;height: fit-content;width:100%;" [expanded]="false" >
           <mat-expansion-panel-header>
             <mat-panel-title>
               Données détaillées
             </mat-panel-title>
           </mat-expansion-panel-header>
-
-          <div style="width: 90%;height:300px;border:None"
+          <div style="width: 90vw;height:60vh;border:None;overflow: scroll;"
                [innerHTML]="sel_report.html_values | safe">
           </div>
         </mat-expansion-panel>
       </div>
-
 
     </mat-tab>
 

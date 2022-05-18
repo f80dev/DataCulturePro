@@ -1,0 +1,8 @@
+<div>
+  <table >
+    <tr style="border: none;" *ngFor="let r of rows" [style]="row_style">
+      <td *ngFor="let c of columns" [innerHTML]="r[c]" [style]="col_style[c]">
+      </td>
+    </tr>
+  </table>
+</div>

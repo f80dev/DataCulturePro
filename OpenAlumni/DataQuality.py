@@ -1,6 +1,6 @@
 import csv
 import jellyfish
-from OpenAlumni.Tools import log
+from OpenAlumni.Tools import log, equal_str
 
 
 def eval_field(s,score=1):
@@ -36,6 +36,18 @@ class ProfilAnalyzer:
         return ""
 
 
+    def find_double(self,profils):
+        rc=[]
+        for p1 in profils:
+            for p2 in profils:
+                if p1.id!=p2.id:
+                    if equal_str(p1.firstname+p1.lastname,p2.firstname+p2.lastname) or (len(p1.email)>10 and equal_str(p1.email,p2.email)):
+                        if p1.quality_score()>p2.quality_score():
+                            rc.append(p2.id)
+                        else:
+                            rc.append(p1.id)
+        return rc
+
 
     def add_bad_profil(self,profil,comment):
         self.log.append({"profil":profil,"commentaire":comment})
@@ -43,7 +55,10 @@ class ProfilAnalyzer:
 
 
     def analyse(self,profils):
+        log("Traitement qualité sur les profils: suppression des doublons dans les links, ajustement des majuscules")
         n_profils=0
+
+
         for profil in profils:
             bSave=False
             if len(profil.town)==0 or profil.town=="0":
@@ -56,6 +71,13 @@ class ProfilAnalyzer:
                 if profil.town!=profil.town.upper():
                     profil.town=profil.town.upper()
                     bSave = True
+
+            if profil.email=="nan":profil.email=""
+            if profil.cursus=="S" and profil.department_category=="":
+                if len(profil.department)>0:
+                    profil.department_category=profil.department
+                else:
+                    log("Profil "+profil.lastname+" incomplet")
 
             if profil.links:
                 if len(profil.links)>len(list({v['url']:v for v in profil.links}.values())):
@@ -70,6 +92,8 @@ class ProfilAnalyzer:
                 log("Enregistrement de " + str(profil))
                 profil.save()
                 n_profils = n_profils + 1
+
+
 
         return n_profils,self.log
 
@@ -102,7 +126,9 @@ class PowAnalyzer:
         for p1 in self.pows:
             for p2 in self.pows:
                 d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
-                if d>0.97 and p1.year==p2.year and p1.id!=p2.id:
+                seuil=0.97
+                if p1.nature=="Série" and p2.nature=="Série": seuil=0.99
+                if d>seuil and p1.year==p2.year and p1.id!=p2.id:
                     log("Suspission de doublon entre "+str(p1)+" et "+str(p2))
                     if with_fusion:
                         if p1.quality_score()>p2.quality_score():

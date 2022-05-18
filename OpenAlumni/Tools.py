@@ -2,6 +2,7 @@
 import hashlib
 import html
 import os
+import re
 from platform import system
 from time import sleep, strptime, struct_time, mktime
 from os import remove, scandir, stat
@@ -457,7 +458,7 @@ def in_dict(key:str,section="jobs"):
 
 
 
-def translate(wrd:str,dictionnary=None):
+def translate(wrd:str,sections=["jobs","categories","abreviations","departements"]):
     """
     Remplacement de certains termes
     :param wrd:
@@ -475,7 +476,7 @@ def translate(wrd:str,dictionnary=None):
         key=key.replace("   "," ").replace("  "," ")
 
     rc = key
-    for section in ["jobs","categories"]:
+    for section in sections:
         if key in MYDICT[section].keys():
             rc = MYDICT[section][key]
             break
@@ -538,6 +539,19 @@ def index_string(s):
 
 def isWindows():
     return system()=="Windows"
+
+
+
+def extract_years(txt:str,index=None):
+    rc=re.findall(r"[1-2][0-9]{3}", txt)
+    if not index is None:
+        if len(rc)>index:
+            return rc[index]
+        else:
+            return None
+    else:
+        return rc
+
 
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):

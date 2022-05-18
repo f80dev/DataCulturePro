@@ -3,7 +3,7 @@
   <h2>Commandes disponibles</h2>
 
 
-  <mat-accordion [multi]="false" style="text-align: left;">
+  <mat-accordion [multi]="false" style="text-align: left;display:inline-block;min-width: 600px;">
 
     <mat-expansion-panel class="app-panel" [expanded]="true">
       <mat-expansion-panel-header>
@@ -59,6 +59,7 @@
           Gestion des profils
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <a routerLink="stats" [queryParams]="{open:'student_by_lastmodification'}">Avancement des mises a jours</a><br><br>
       <button mat-raised-button mat-button class="app-button" (click)="export_profils('S')">Export FI</button>
       <button mat-raised-button mat-button class="app-button" (click)="export_profils('P')">Export FPro</button>
       <button mat-raised-button mat-button class="app-button" (click)="raz('profils')">RAZ profils</button>
@@ -66,7 +67,10 @@
               class="app-button" (click)="router.navigate(['import'])">Importation
       </button>
       <br>
-      <button mat-raised-button mat-button class="app-button" (click)="analyzer('profils')">Traitement Qualite</button>
+      <button mat-raised-button mat-button class="app-button"
+              (click)="analyzer('profils')">
+        Traitement Qualite
+      </button>
 
 
 
@@ -175,6 +179,7 @@
       </button>
 
       <button mat-raised-button mat-button
+              title="Analyse film par film pour éventuel complément via d'autres sources"
               class="app-button" (click)="batch_movies()">Batch Movies
       </button>
 
@@ -184,7 +189,7 @@
       </button>
 
       <button mat-raised-button mat-button
-              title="Traitement des doublons films"
+              title="Traitement des films en doublon"
               class="app-button" (click)="analyzer('films')">Traitement Qualite (doublons)
       </button>
 
@@ -203,7 +208,7 @@
 
   </mat-accordion>
 
-
+  <br>
   <app-hourglass [message]="message"></app-hourglass>
   <br>
 </div>

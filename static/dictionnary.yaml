@@ -19,6 +19,8 @@ abreviations:
   Expertiser: Exp.
   d'exploitation: exp.
 
+departements:
+  Ecriture et création de séries: Séries
 
 #Normalisation des categories
 categories:
@@ -82,8 +84,22 @@ jobs:
   Second assistant camera: Ass. caméra
   Re-recording mixer: Ing. son
   Script supervisor: Scripte
+  Colorist: Post-production
+  Colourist: Post-production
+  Adiditional colorist: Post-production
+  Color grader: Post-production
+  Digital colorist: Post-production
+  Di colorist: Post-production
+  Lustre colorist: Post-production
+  Digital film colorist & Digital colorist: Post-production
+  Adr recordist: Son
+  Foley recordist: Son
+  Music mixer: Son
   Post-production coordinator: Post-production
+  Production manager only nrw: Production
   Boom operator: Assistant son
+  Unit manager: Production
+  First assistant director: Ass. réalisation
   Scénario: Scénario
   Second unit director or assistant director: Ass. réalisation
   Editor: Montage

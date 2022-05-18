@@ -10,7 +10,7 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str, remove_accents, index_string
+    equal_str, remove_accents, index_string, extract_years
 from OpenAlumni.settings import MOVIE_NATURE
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
@@ -534,15 +534,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
     rc["category"]=cat.strip()
 
-
-    try:
-        title=divs["hero-title-block__title"].text
-        year=divs["hero-title-block__metadata"].text
-        if not year is None:rc["year"]=re.search(r"(\d{4})", year).group(1)
-    except:
-        log("Erreur sur title="+title)
-        return None
-
     affiche = divs["hero-media__poster"]
     if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
 
@@ -577,12 +568,25 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                                     else:
                                         job="Actor"
                                 else:
-                                    #Traitement particulier des séries
-                                    years=re.findall(r"[1-2][0-9]{3}", tr.text)
+                                    title=divs["hero-title-block__title"].text
+
+                                    log("On est en présence d'une série")
+                                    infos=divs["hero-title-block__title"].parent.text
+                                    year_from_title=extract_years(divs["hero-title-block__metadata"].text,0)
+
+                                    if title in infos:
+                                        if len(rc["nature"])==0:rc["nature"]="Série"
+                                        sur_title=infos.split(title)[0].strip()
+                                        if len(sur_title)>0: title=title+" - " + sur_title
+
+                                    rc["title"]=title
+                                    years=extract_years(tr.text)
                                     if len(years)>0:
                                         rc["year"]=years[0]
                                         if len(years)>1:
                                             pass
+                                    else:
+                                        rc["year"]=year_from_title
 
                                     job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
                                     if len(job) == 0 and len(sur_jobs[i].text) > 0:
@@ -923,7 +927,10 @@ def exec_batch(profils,refresh_delay_profil=31,
                         imdb_profil_url = infos["url"]
 
                     if "photo" in infos and len(profil.photo)==0:profil.photo=infos["photo"]
-                    if "links" in infos and not infos["links"] in links: links=links+infos["links"]
+                    if "links" in infos:
+                        if not infos["links"] in links: links=links+infos["links"]
+                        if len(infos["links"])==0:
+                            log("Aucune info trouvé pour https://www.imdb.com/find?q="+profil.lastname+"&ref_=nv_sr_sm")
             except Exception as inst:
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 

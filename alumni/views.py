@@ -1,6 +1,5 @@
 import base64
 import csv
-import io
 
 from datetime import datetime, timedelta
 from io import StringIO, BytesIO
@@ -531,6 +530,12 @@ def quality_filter(request):
 
     if "profils" in ope:
         profil_filter = ProfilAnalyzer()
+
+        for id in profil_filter.find_double(profils):
+            _p=Profil.objects.get(id=id)
+            log("Suppression du profil "+_p.name)
+            _p.delete()
+
         n_profils,log=profil_filter.analyse(profils)
 
     if "films" in ope:
@@ -790,7 +795,7 @@ def ask_for_update(request):
     return Response("Message envoyé à "+str(count)+" comptes", status=200)
 
 
-#http://localhost:8000/api/importer/
+#http://localhost:8000/api/send/
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_to(request):
@@ -939,7 +944,6 @@ def compare(lst,val,ope):
     return rc
 
 
-from dict2xml import dict2xml as xmlify
 #http://localhost:8000/api/export_all/?out=json
 #http://localhost:8000/api/export_all/xls/
 #http://localhost:8000/api/export_all/xml/
@@ -949,7 +953,7 @@ from dict2xml import dict2xml as xmlify
 @permission_classes([AllowAny])
 def export_all(request):
     """
-    Exportation statistiques pour consolidation
+    Exportation statistiques pour consolidation /stats /stat
     :param request:
     :return:
     """
@@ -1300,7 +1304,7 @@ def importer_file(request):
 @permission_classes([AllowAny])
 def importer(request):
     """
-    Importation des profils
+    Importation des profils /import
     :param request:
     :param format:
     :return:
@@ -1385,7 +1389,7 @@ def importer(request):
                     nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
                     country=idx("country,pays",row,"France",header=header),
                     birthdate=dt,
-                    department=department,
+                    department=translate(department),
                     job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),
@@ -1406,7 +1410,7 @@ def importer(request):
                     email=email,
                     photo=photo,
 
-                    cursus=idx("cursus",row,default=dictionnary["cursus"],header=header,max_len=1),
+                    cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1),
                 )
 
                 try:

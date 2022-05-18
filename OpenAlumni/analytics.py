@@ -70,7 +70,20 @@ class StatGraph:
         # ])
 
     def to_html(self):
+        """
+        Présentation des données au format HTML
+        documentation: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html
+        :return:
+        """
         code="" if self.fig is None else self.fig.to_html()
-        return {"code": code,"values":self.df.to_html()}
+        #Formatage du tableau voir: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html
+        return {"code": code,"values":self.df.to_html(
+            justify="center",
+            classes="detail_stat_format",
+            render_links=True,
+            border=0,
+            bold_rows=False,
+            col_space=20
+        )}
 
 

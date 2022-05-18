@@ -24,13 +24,12 @@ editor:
   name: "F80"
   website: "https://f80lab.com"
   author:
-    - "Hervé HOAREAU"
-    - "Jérôme LECANU"
+    - "F80 pour la FEMIS"
   link_author:
     - "https://www.linkedin.com/in/hhoareau/"
-    - "https://www.linkedin.com/in/jlecanu/"
   contact: "herve.hoareau@f80lab.com"
 
+licence: "MIT"
 
 users:
   admins:

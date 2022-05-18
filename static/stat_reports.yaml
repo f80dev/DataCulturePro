@@ -39,7 +39,7 @@ Instant_reports:
     prod: True
 
 
-  - title: Liste des métiers les plus exercés par les stagiaires
+  - title: Liste des métiers les plus exercés par les stagiaires (formation pro)
     description: Cette liste de métier est obtenue indépedemment de leur formation
     id: job_by_formation
     chart: pie
@@ -119,7 +119,7 @@ Instant_reports:
     x: Profil
     y: Year
     table: Work
-    sql: SELECT Formation, AVG(Delay) AS Delay FROM (SELECT profil__id, profil__department AS Formation, MIN(pow__year-profil__degree_year) AS Delay FROM df WHERE pow__nature='Film' GROUP BY profil__id) GROUP BY Formation
+    sql: SELECT Formation, AVG(Delay) AS Delay FROM (SELECT profil__id, profil__department AS Formation, MIN(pow__year-profil__degree_year) AS Delay FROM df WHERE pow__nature='Film' AND profil__cursus='S' GROUP BY profil__id) GROUP BY Formation
     prod: True
 
 
@@ -205,7 +205,7 @@ Instant_reports:
     prod: False
 
 
-  - title: Les films de la FEMIS les plus primés
+  - title: Les 50 films (et courts) de la FEMIS les plus primés
     category:
     description:
     id: most_award_by_film
@@ -214,7 +214,19 @@ Instant_reports:
     y: nb
     color: description
     table: Award
-    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df GROUP BY pow__title ORDER BY -Récompenses LIMIT 20
+    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
+    prod: True
+
+  - title: Les 50 longs métrage de la FEMIS les plus primés
+    category:
+    description:
+    id: most_award_by_film
+    chart: none
+    x: award
+    y: nb
+    color: description
+    table: Award
+    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df WHERE pow__nature='Long-métrage' GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
     prod: True
 
 
@@ -223,14 +235,14 @@ Instant_reports:
     description:
     id: avg_work
     chart: bar
-    x: Annee
+    x: Année
     y: Projets
     color: Cursus
     replace:
       P: Formation pro
       S: Formation initiale
     filter: Formation
-    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Année FROM df GROUP BY Cursus, Année
+    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df GROUP BY Cursus, Annee
     prod: True
 
 

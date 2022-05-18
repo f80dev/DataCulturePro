@@ -1,7 +1,5 @@
 import datetime
-
 import os
-
 import yaml
 
 if os.environ.get("DEBUG"):
@@ -88,7 +86,6 @@ class Profil(models.Model):
     auto_updates=models.CharField(max_length=300,null=False, default="0,0,0,0,0,0",help_text="Date de mise a jour")
     advices=JSONField(null=True,default=None,help_text="Conseils pour augmenter la visibilité du profil")
     source=models.CharField(null=True,blank=True,max_length=50,help_text="Source de la fiche")
-
     blockchain=models.CharField(null=False,blank=True,default="",max_length=50,help_text="Adresse elrond du profil")
 
     class Meta(object):
@@ -153,12 +150,25 @@ class Profil(models.Model):
             s=s+l.url+";"
         return s
 
+
     def __str__(self):
         return "{'id':"+str(self.id)+",'email':'"+self.email+"','fullname':'"+self.fullname+"','address':'"+self.address+" "+self.cp+" "+self.town+"'}"
+
 
     @property
     def name_field_indexing(self):
         return {"name":self.lastname.upper()+" "+self.firstname}
+
+
+    def quality_score(self):
+        score=0
+        if len(self.lastname)>0 and len(self.firstname)>0:score=score+20
+        if len(self.email)>0:score=score+30
+        if len(self.department)>0:score=score+10
+        if len(self.department_category)>0:score=score+1
+        if len(self.address)>0:score=score+5
+        return score
+
 
 
 class Company(models.Model):
