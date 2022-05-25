@@ -102,6 +102,15 @@ Instant_reports:
     sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=True GROUP BY Festival ORDER BY -Awards LIMIT 15
     prod: True
 
+  - title: Prix le plus obtenus
+    id: name_award_by_department
+    chart: pie
+    x: Prix
+    y: Awards
+    table: Awards
+    sql: SELECT description AS Prix,count(id) AS Awards FROM df WHERE winner=True GROUP BY Prix ORDER BY -Awards LIMIT 15
+    prod: True
+
   - title: Nombre de nomination pour la FEMIS par festival
     id: nomination_by_festival
     chart: pie
@@ -110,6 +119,18 @@ Instant_reports:
     table: Awards
     sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=False GROUP BY Festival ORDER BY -Awards LIMIT 15
     prod: True
+
+
+  - title: Nombre d'étudiant (formation initiale) primés par département
+    id: award_student_by_department
+    chart: pie
+    x: Departement
+    y: Profils
+    table: Awards
+    sql: SELECT count(profil__id) AS Profils,profil__department AS Departement FROM df WHERE winner=True AND profil__cursus='S' GROUP BY profil__id,Departement
+    prod: True
+
+
 
 
   - title: Délai moyen pour travailler sur un long metrage par formation

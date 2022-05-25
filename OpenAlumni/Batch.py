@@ -11,7 +11,9 @@ from wikipedia import wikipedia, re
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
     equal_str, remove_accents, index_string, extract_years
+
 from OpenAlumni.settings import MOVIE_NATURE
+
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival
 
 ia=IMDb()
@@ -577,7 +579,10 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                                     if title in infos:
                                         if len(rc["nature"])==0:rc["nature"]="Série"
                                         sur_title=infos.split(title)[0].strip()
-                                        if len(sur_title)>0: title=title+" - " + sur_title
+                                        if len(sur_title)>0:
+                                            title=sur_title+" - "+title
+                                        else:
+                                            if rc["nature"]=="Série": break
 
                                     rc["title"]=title
                                     years=extract_years(tr.text)
@@ -840,41 +845,6 @@ def exec_batch_movies(pows,refresh_delay=31):
 
 
 
-def analyse_pows(pows:list,search_with="link",bot=None,cat="unifrance,imdb,lefilmfrancais"):
-    infos=list()
-    for pow in pows:
-
-        pow.dtLastSearch=datetime.now()
-        pow.save()
-
-        if search_with=="link":
-            for l in pow.links:
-                if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
-                if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
-
-            infos.append(info)
-
-        if search_with=="title":
-            title=pow.title
-            year=pow.year
-            if title and year:
-                for source in cat.split(","):
-                    log("Analyse de "+source)
-                    if source=="unifrance":film=extract_film_from_unifrance(title)
-                    if source=="imdb":film=extract_film_from_imdb(title,title=title)
-                    if source=="lefilmfrancais":
-                        if bot is None:bot = connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
-                        film=extract_film_from_leFilmFrancais(title,bot=bot)
-
-                    if film:
-                        pow_2=dict_to_pow(film)
-                        if pow_2.year==year and equal_str(pow_2.title,title):
-                            pow,hasChanged=fusion(pow,pow_2)
-                            if hasChanged:pow.save()
-
-    if not bot is None: bot.quit()
-
-    return infos
 
 
 
@@ -1001,4 +971,46 @@ def exec_batch(profils,refresh_delay_profil=31,
 #     Y=pdist(X,'levinstein')
 
 
+def analyse_pows(pows,search_with="link",bot=None,cat="unifrance,imdb,lefilmfrancais"):
+    """
+	Recherche de nouvelles informations issue d'autres source pour un ensemble de films
+	:param pows:
+	:param search_with:
+	:param bot:
+	:param cat:
+	:return:
+	"""
+    infos=list()
+    for pow in pows:
 
+        pow.dtLastSearch=datetime.now()
+        pow.save()
+
+        if search_with=="link":
+            for l in pow.links:
+                if "auto:IMDB" in l["text"]:info=extract_film_from_imdb(l["url"],pow.title)
+                if "auto:unifrance" in l["text"]:info=extract_film_from_unifrance(l["url"],pow.title)
+
+            infos.append(info)
+
+        if search_with=="title":
+            title=pow.title
+            year=pow.year
+            if title and year:
+                for source in cat.split(","):
+                    log("Analyse de "+source)
+                    if source=="unifrance":film=extract_film_from_unifrance(title)
+                    if source=="imdb":film=extract_film_from_imdb(title,title=title)
+                    if source=="lefilmfrancais":
+                        if bot is None:bot = connect_to_lefilmfrancais("jerome.lecanu@gmail.com", "UALHa")
+                        film=extract_film_from_leFilmFrancais(title,bot=bot)
+
+                    if film:
+                        pow_2=dict_to_pow(film)
+                        if pow_2.year==year and equal_str(pow_2.title,title):
+                            pow,hasChanged=fusion(pow,pow_2)
+                            if hasChanged:pow.save()
+
+    if not bot is None: bot.quit()
+
+    return infos

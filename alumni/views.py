@@ -1,10 +1,10 @@
 import base64
 import csv
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from io import StringIO, BytesIO
 from json import loads
-from urllib.parse import urlencode, quote
+from urllib.parse import  quote
 
 from urllib.request import urlopen
 
@@ -531,16 +531,26 @@ def quality_filter(request):
     if "profils" in ope:
         profil_filter = ProfilAnalyzer()
 
-        for id in profil_filter.find_double(profils):
+        n_profils,log,to_delete=profil_filter.analyse(profils)
+        to_delete=to_delete+profil_filter.find_double(profils)
+
+        for id in to_delete:
             _p=Profil.objects.get(id=id)
             log("Suppression du profil "+_p.name)
             _p.delete()
 
-        n_profils,log=profil_filter.analyse(profils)
-
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
+
+        to_delete=pow_analyzer.quality()
+        for id in to_delete:
+            _p=PieceOfWork.objects.get(id=id)
+            _p.delete()
+
         n_pows=pow_analyzer.find_double()
+
+
+
 
     return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows})
 
@@ -703,7 +713,6 @@ def ask_perms(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_analyse_pow(request):
-
     ids=[]
     if request.GET.get("id",None):ids=[request.GET.get("id")]
     if request.GET.get("ids", None):ids = request.GET.get("ids").split(",")
@@ -999,6 +1008,7 @@ def export_all(request):
         if table.startswith("pieceofwork"): data = PieceOfWork.objects.all().values(*values)
         if table.startswith("work"): data = Work.objects.all().values(*values)
         if table.startswith("festival"): data = Festival.objects.all().values(*values)
+        if table.startswith("award"): data = Award.objects.all().values(*values)
 
         df=pd.DataFrame.from_records(data)
         if len(data)>0:
@@ -1516,6 +1526,7 @@ class ProfilDocumentView(DocumentViewSet):
     }
     ordering_fields = {
         'id':'id',
+        'lastname':'lastname',
         'promo':'degree_year',
         'update':'dtLastUpdate'
     }

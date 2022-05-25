@@ -116,6 +116,7 @@ class WorkSerializer(serializers.ModelSerializer):
 
 #http://localhost:8000/api/profils/?filter{firstname}=Adrien
 class ProfilSerializer(serializers.ModelSerializer):
+    # in_school=serializers.Field()
     class Meta:
         model=Profil
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",

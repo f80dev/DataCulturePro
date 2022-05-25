@@ -33,11 +33,7 @@ export class ProfilesComponent implements OnInit {
 
 
 
-
-
-
   sel_profil(p) {
-    debugger
     if(false && !this.config.isProd()){
       this.config.user.perm = p.perm;
       this.config.user.profil_name = p.id;

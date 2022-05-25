@@ -89,7 +89,7 @@ class Profil(models.Model):
     blockchain=models.CharField(null=False,blank=True,default="",max_length=50,help_text="Adresse elrond du profil")
 
     class Meta(object):
-        ordering=["lastname"]
+        ordering=["lastname","degree_year"]
 
     def delay_update(self,_type,update=False):
         """
@@ -128,6 +128,11 @@ class Profil(models.Model):
             for l in self.links:
                 if l["text"]==site: return l["url"]
         return None
+
+    # @property
+    # def in_school(self):
+    #     dtEndSchool=datetime.datetime(int(self.degree_year),8,1,0,0,0,0).timestamp()
+    #     return now()>dtEndSchool
 
 
     @property
@@ -439,7 +444,7 @@ class Award(models.Model):
     festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant")
     profil = models.ForeignKey('Profil', null=True, on_delete=models.SET_NULL, related_name="award",help_text="Profil destinataire du prix")
     pow = models.ForeignKey('PieceOfWork', null=True, on_delete=models.CASCADE, related_name="award",help_text="Oeuvre récompensé")
-    description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom du festival")
+    description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom de la récompense obtenue")
     year = models.IntegerField(null=True, help_text="Date de la remise du prix")
     dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
     source = models.CharField(null=True, blank=True, max_length=150, help_text="URL de la source")

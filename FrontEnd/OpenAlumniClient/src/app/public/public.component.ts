@@ -39,7 +39,22 @@ export class PublicComponent implements OnInit {
       this.message="";
 
 
+
       let rc=[];
+
+      if(awards && awards.count>0){
+        for(let a of awards.results){
+          rc.push({
+            year:a.year,
+            title:a.description + " - " + a.festival.title,
+            subtitle:"pour <strong>"+a.pow.title+"</strong>",
+            icon: this.config.icons["Award"],
+            sources:a.source,
+            type:"award"
+          })
+        }
+      }
+
       for(let w of p.works){
         for(var i=0;i<1000;i++){
           w=w.replace("'","\"")
@@ -52,6 +67,7 @@ export class PublicComponent implements OnInit {
             if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];
           }
 
+          _w.type="work";
           rc.push(_w);
           expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
         } catch (e) {
@@ -69,24 +85,13 @@ export class PublicComponent implements OnInit {
       }
 
 
-      if(awards && awards.count>0){
-        for(let a of awards.results){
-          rc.push({
-            year:a.year,
-            title:a.description + " - " + a.festival.title,
-            subtitle:"pour <strong>"+a.pow.title+"</strong>",
-            icon: this.config.icons["Award"],
-            sources:a.source
-          })
-        }
-      }
-
       if(this.config.hasPerm("admin")){
         rc.push({
           year:this.profil.degree_year,
           title:"FEMIS - département "+this.profil.department,
           subtitle:"",
-          icon: this.config.icons["School"]
+          icon: this.config.icons["School"],
+          type:"degree"
         })
       }
 
@@ -98,6 +103,7 @@ export class PublicComponent implements OnInit {
       }
 
       this.data_timeline=[];
+
       for(let item of this.items){
         if(item.pow){
           item.title=item.job;

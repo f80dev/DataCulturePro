@@ -1,6 +1,7 @@
 import csv
+from OpenAlumni.Tools import log, equal_str, fusion
+
 import jellyfish
-from OpenAlumni.Tools import log, equal_str
 
 
 def eval_field(s,score=1):
@@ -55,9 +56,14 @@ class ProfilAnalyzer:
 
 
     def analyse(self,profils):
+        """
+        profils_analyzer Analyseur de profil
+        :param profils:
+        :return:
+        """
         log("Traitement qualité sur les profils: suppression des doublons dans les links, ajustement des majuscules")
         n_profils=0
-
+        profils_to_delete=[]
 
         for profil in profils:
             bSave=False
@@ -72,12 +78,23 @@ class ProfilAnalyzer:
                     profil.town=profil.town.upper()
                     bSave = True
 
-            if profil.email=="nan":profil.email=""
+            if len(profil.address)>0 and len(profil.address.replace(" ",""))==0:
+                profil.address=""
+                bSave=True
+
+            if profil.email=="nan":
+                profil.email=""
+                bSave=True
+
             if profil.cursus=="S" and profil.department_category=="":
                 if len(profil.department)>0:
                     profil.department_category=profil.department
                 else:
                     log("Profil "+profil.lastname+" incomplet")
+
+            if str(profil.lastname+profil.firstname).strip()=="":
+                log("Profil "+profil.id+" sans nom ni prénom donc suppression")
+                profils_to_delete.append(profil.id)
 
             if profil.links:
                 if len(profil.links)>len(list({v['url']:v for v in profil.links}.values())):
@@ -92,8 +109,6 @@ class ProfilAnalyzer:
                 log("Enregistrement de " + str(profil))
                 profil.save()
                 n_profils = n_profils + 1
-
-
 
         return n_profils,self.log
 
@@ -140,3 +155,22 @@ class PowAnalyzer:
                             rc = rc + 1
 
         return rc
+
+
+
+    def quality(self):
+        to_delete=[]
+        for p in self.pows:
+            rc=[]
+
+            #traitement des doublons dans les links
+            for l in p.links:
+                if not l in rc:rc.append(l)
+            if len(rc)<len(p.links):
+                p.links=rc
+                p.save()
+
+            if len(list(p.works.all()))==0:
+                to_delete.append(p.id)
+
+        return to_delete

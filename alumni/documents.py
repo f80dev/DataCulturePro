@@ -60,15 +60,14 @@ class ProfilDocument(Document):
         "description":fields.TextField()
     })
 
-    #promo=fields.TextField(attr="degree_year")
-
     class Index:
         name='profils'
         settings={"number_of_shards":1,"number_of_replicas":0}
 
     class Django(object):
         model=Profil
-        fields=["id","firstname","lastname","gender",
+        fields=["id","firstname",
+                "lastname","gender",
                 "acceptSponsor",
                 "school",
                 "email",
@@ -80,12 +79,5 @@ class ProfilDocument(Document):
     def get_queryset(self):
         return super().get_queryset().select_related('extrauser')
 
-    # def get_instances_from_related(self, related_instance):
-    #     """If related_models is set, define how to retrieve the Car instance(s) from the related model.
-    #     The related_models option should be used with caution because it can lead in the index
-    #     to the updating of a lot of items.
-    #     """
-    #     if isinstance(related_instance, Work):
-    #         return related_instance.pow.works
 
 

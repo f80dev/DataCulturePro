@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {$$, abrege, normaliser, showError, showMessage, translateQuery} from "../tools";
+import {$$, abrege, normaliser, now, showError, showMessage, translateQuery} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigService} from "../config.service";
@@ -82,7 +82,11 @@ export class SearchComponent implements OnInit {
 
       //Ajout du tri
       if(this.order)localStorage.setItem("ordering",this.order);
-      if(this.order)param=param+"&ordering="+this.order;
+      if(this.order!="lastname" && this.order!="order_score"){
+        param=param+"&ordering="+this.order;
+      }else{
+        this.limit=500;
+      }
       param=param+"&limit="+this.limit+"&profil__school=FEMIS";
       $$("Appel de la recherche avec param="+param);
       this.api._get("profilsdoc",param).subscribe((r:any) =>{
@@ -90,6 +94,9 @@ export class SearchComponent implements OnInit {
         this.profils=[];
         for(let item of r.results){
           item.filter_tag=normaliser("nom:"+item.lastname+" pre:"+item.firstname+" dep:"+item.department+" promo:"+item.degree_year+" cp:"+item.cp);
+          item.order_score=item.degree_year < new Date().getFullYear() ? item.degree_year : item.degree_year-2000;
+          if(item.order_score==null)
+            item.order_score=0;
 
           if(item.hasOwnProperty("works")){
             for(let _work of item.works){
@@ -97,10 +104,9 @@ export class SearchComponent implements OnInit {
             }
           }
 
-          if(item.cursus=="S")
-            item.backgroundColor="#171732";
-          else
-            item.backgroundColor="#341414";
+          if(item.cursus=="S")item.backgroundColor="#171732";
+          if(item.cursus=="P")item.backgroundColor="#341414";
+          if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#072c00";
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
 
@@ -112,9 +118,6 @@ export class SearchComponent implements OnInit {
           } else {
 
           }
-
-
-
         }
         if(this.profils.length==0){
           if(this.query.value.length==0 && this.advanced_search.length==0){
@@ -130,6 +133,8 @@ export class SearchComponent implements OnInit {
           }
 
         } else {
+          if(this.order=="lastname")this.profils.sort((x:any,y:any)=>{if(x.lastname[0]>y.lastname[0])return 1; else return -1;})
+          if(this.order=="order_score")this.profils.sort((x:any,y:any)=>{if(x.order_score<y.order_score)return 1; else return -1;})
           this.config.query_cache=this.profils;
         }
       },(err)=>{
@@ -146,10 +151,12 @@ export class SearchComponent implements OnInit {
   handle=null;
   searchInTitle: boolean = false;
   fields=[
+    {field:"Pertinance",value:"order_score"},
     {field:"Nouvelles Promos",value:"-promo"},
-    {field:"Alphabétique",value:"-lastname"},
+    {field:"Alphabétique",value:"lastname"},
     {field:"Anciennes promos",value:"promo"}
   ]
+
   order=this.fields[0].value;
 
   advanced_search=[];

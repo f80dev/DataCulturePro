@@ -1,200 +1,196 @@
 
 <div class="flip-card" (click)="select_card($event)">
-  <div [ngStyle]="{backgroundColor:backgroundColor}"
-       [ngClass]="reverseClass">
-    <div class="flip-card-front">
-      <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
-        <td style="text-align: left;">
-          <div *ngIf="config.hasPerm('r_department')"
-               title="Formation dispensée par la FEMIS"
-               name="lblDepartementCategorie"
-               style="cursor: pointer;"
-               (dblclick)="openQuery($event,profil?.department_category)">
-            <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
-          </div>
-        </td>
+    <div [ngStyle]="{backgroundColor:backgroundColor}"
+         [ngClass]="reverseClass">
+        <div class="flip-card-front">
+            <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
+                <td style="text-align: left;">
+                    <div *ngIf="config.hasPerm('r_department')"
+                         title="Formation dispensée par la FEMIS"
+                         name="lblDepartementCategorie"
+                         style="cursor: pointer;"
+                         (dblclick)="openQuery($event,profil?.department_category)">
+                        <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
+                    </div>
+                </td>
 
-        <td style="text-align: right" >
-          <div *ngIf="config.hasPerm('r_promo')">
-<!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
-            <span style='cursor: pointer'
-                  name="lblPromo"
-                  title="Rechercher par promotion"
-                  (dblclick)="openQuery($event,profil?.degree_year)">
+                <td style="text-align: right" >
+                    <div *ngIf="config.hasPerm('r_promo')">
+                        <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
+                        <span style='cursor: pointer'
+                              name="lblPromo"
+                              title="Rechercher par promotion"
+                              (dblclick)="openQuery($event,profil?.degree_year)">
               {{profil?.degree_year}}
             </span>
-          </div>
+                    </div>
 
-        </td>
-      </tr>
-      </table>
+                </td>
+            </tr>
+            </table>
 
-      <div *ngIf="profil?.cursus=='P'"
-           (click)="openQuery($event,profil?.department)"
-           style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;cursor: pointer;">
-        {{profil.department}}
-      </div>
+            <div *ngIf="profil?.cursus=='P'"
+                 (click)="openQuery($event,profil?.department)"
+                 style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;cursor: pointer;">
+                {{profil.department}}
+            </div>
 
-      <div>
-        <div *ngIf="!config.hasPerm('r_photo')"><br></div>
-        <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">
-          <img [src]="profil?.photo"
-               *ngIf="profil.public_photo"
-               style="pointer-events: none;"
-               class="icon-profil avatar-photo">
+            <div>
+                <div *ngIf="!config.hasPerm('r_photo')"><br></div>
+                <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">
+                    <img [src]="profil?.photo"
+                         *ngIf="profil.public_photo"
+                         style="pointer-events: none;"
+                         class="icon-profil avatar-photo">
 
-          <!--          <img src="./assets/img/boy.png"-->
-          <!--               *ngIf="!profil.public_photo && profil.gender=='M'"-->
-          <!--               style="pointer-events: none;"-->
-          <!--               class="icon-profil avatar-photo">-->
+                    <!--          <img src="./assets/img/boy.png"-->
+                    <!--               *ngIf="!profil.public_photo && profil.gender=='M'"-->
+                    <!--               style="pointer-events: none;"-->
+                    <!--               class="icon-profil avatar-photo">-->
 
-          <!--          <img src="./assets/img/girl.png"-->
-          <!--               *ngIf="!profil.public_photo && profil.gender=='F'"-->
-          <!--               style="pointer-events: none;"-->
-          <!--               class="icon-profil avatar-photo">-->
+                    <!--          <img src="./assets/img/girl.png"-->
+                    <!--               *ngIf="!profil.public_photo && profil.gender=='F'"-->
+                    <!--               style="pointer-events: none;"-->
+                    <!--               class="icon-profil avatar-photo">-->
+
+                </div>
+            </div>
+
+            <div class="avatar-name">
+                <button mat-button mat-icon-button
+                        title="Voir la page publique"
+                        name="cmdShareProfil"
+                        class="small-icon-button"
+                        (click)="open_public_profil($event,profil)">
+                    <mat-icon>zoom_in</mat-icon>
+                </button>
+
+                <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
+                <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
+            </div>
+
+
+            <div name="cardContent" style="pointer-events: none;display:inline-block;position:absolute;left:0;top:0;height:100%;width:100%;z-index:100;">
+                <ng-content></ng-content>
+                <app-hourglass [message]="profil?.message"></app-hourglass>
+            </div>
+
 
         </div>
 
-      </div>
+        <div class="flip-card-back" name="cardAction">
+            <div style="margin-top: 5px;">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
+            <div *ngIf="showAction">
+                <button mat-button mat-icon-button
+                        name="cmdContact"
+                        class="small-icon-button"
+                        *ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('write_email')"
+                        (click)="write(profil)"
+                        title="Lui envoyer un message">
+                    <mat-icon>email</mat-icon>
+                </button>
 
 
-      <div class="avatar-name">
-         <button mat-button mat-icon-button
-                title="Voir la page publique"
-                name="cmdShareProfil"
-                class="small-icon-button"
-                (click)="open_public_profil($event,profil)">
-          <mat-icon>zoom_in</mat-icon>
+                <button mat-button mat-icon-button
+                        title="Voir la page publique"
+                        name="cmdShareProfil"
+                        class="small-icon-button"
+                        (click)="open_public_profil($event,profil)">
+                    <mat-icon>zoom_in</mat-icon>
+                </button>
 
-        </button>
+                <!--        <button mat-button mat-icon-button-->
+                <!--                title="Réalisations / Films / Livres"-->
+                <!--                name="cmdOpenWork"-->
+                <!--                class="small-icon-button"-->
+                <!--                *ngIf="profil?.works?.length>0 && config.hasPerm('r_works')"-->
+                <!--                (click)="openWork(profil)">-->
+                <!--          <mat-icon>videocam</mat-icon>-->
+                <!--        </button>-->
 
-        <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
-        <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
-      </div>
+                <button mat-button mat-icon-button
+                        title="Accès au profil via le CRM"
+                        name="cmdOpenCRM"
+                        *ngIf="config.hasPerm('CRM_acces')"
+                        class="small-icon-button"
+                        (click)="open_CRM(profil)">
+                    <mat-icon>school</mat-icon>
+                </button>
 
+                <button mat-button mat-icon-button
+                        class="small-icon-button"
+                        title="Consulter son site web"
+                        name="cmdWebsite"
+                        *ngIf="profil?.website?.length>0"
+                        (click)="openWebSite(profil?.website)">
+                    <mat-icon>public</mat-icon>
+                </button>
 
-      <div name="cardContent" style="pointer-events: none;display:inline-block;position:absolute;left:0;top:0;height:100%;width:100%;z-index:100;">
-        <ng-content></ng-content>
-        <app-hourglass [message]="profil?.message"></app-hourglass>
-      </div>
+                <button mat-button mat-icon-button
+                        class="small-icon-button"
+                        title="Supprimer le profil"
+                        name="cmdDelProfil"
+                        *ngIf="config.hasPerm('delete_profil')"
+                        (click)="deleteProfil(profil)">
+                    <mat-icon>delete</mat-icon>
+                </button>
 
+                <button mat-button mat-icon-button
+                        class="small-icon-button"
+                        title="Générer un NFT"
+                        name="cmdCreateNFT"
+                        *ngIf="config.hasPerm('nft_write') && profil.blockchain?.length==0"
+                        (click)="writeNFT(profil)">
+                    <mat-icon>enhanced_encryption</mat-icon>
+                </button>
 
-    </div>
+                <button mat-button mat-icon-button
+                        class="small-icon-button"
+                        title="Demander en tuteur"
+                        name="cmdAskTutor"
+                        *ngIf="config.hasPerm('ask_tutor') && profil.acceptSponsor && config.user.profil"
+                        (click)="ask_tutor(profil)">
+                    <mat-icon>school</mat-icon>
+                </button>
 
-    <div class="flip-card-back" name="cardAction">
-      <div style="margin-top: 5px;">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
-      <div *ngIf="showAction">
-        <button mat-button mat-icon-button
-                name="cmdContact"
-                class="small-icon-button"
-                *ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('write_email')"
-                (click)="write(profil)"
-                title="Lui envoyer un message">
-          <mat-icon>email</mat-icon>
-        </button>
+                <button mat-button mat-icon-button
+                        title="Editer mon profil"
+                        class="small-icon-button"
+                        name="cmdEditProfil"
+                        *ngIf="writeAccess"
+                        (click)="editProfil(profil)">
+                    <mat-icon>create</mat-icon>
+                </button>
 
+                <!--
+					TODO: a rétablir pour les communications
+					<button mat-button mat-icon-button
+							title="Demander en ami"
+							*ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('ask_friend')"
+							(click)="askFriend(profil)">
+					  <mat-icon>group_add</mat-icon>
+					</button>
 
-        <button mat-button mat-icon-button
-                title="Voir la page publique"
-                name="cmdShareProfil"
-                class="small-icon-button"
-                (click)="open_public_profil($event,profil)">
-          <mat-icon>zoom_in</mat-icon>
-        </button>
-        &nbsp;
-<!--        <button mat-button mat-icon-button-->
-<!--                title="Réalisations / Films / Livres"-->
-<!--                name="cmdOpenWork"-->
-<!--                class="small-icon-button"-->
-<!--                *ngIf="profil?.works?.length>0 && config.hasPerm('r_works')"-->
-<!--                (click)="openWork(profil)">-->
-<!--          <mat-icon>videocam</mat-icon>-->
-<!--        </button>-->
+					-->
 
-        <button mat-button mat-icon-button
-                title="Accès au profil via le CRM"
-                name="cmdOpenCRM"
-                *ngIf="config.hasPerm('CRM_acces')"
-                class="small-icon-button"
-                (click)="open_CRM(profil)">
-          <mat-icon>school</mat-icon>
-        </button>
+                <button mat-button mat-icon-button
+                        title="Voir sa page linkedin"
+                        class="small-icon-button"
+                        *ngIf="profil?.linkedin?.length>0 && config.hasPerm('r_linkedin')"
+                        (click)="openWebSite(profil?.linkedin)">
+                    <img  src="/assets/icons/LinkedIn.png"
+                          class="small-icon-button"
+                          style="background-color: white;">
+                </button>
 
-        <button mat-button mat-icon-button
-                class="small-icon-button"
-                title="Consulter son site web"
-                name="cmdWebsite"
-                *ngIf="profil?.website?.length>0"
-                (click)="openWebSite(profil?.website)">
-          <mat-icon>public</mat-icon>
-        </button>
+                <div *ngIf="profil?.links?.length>0">
+                    <br><br>
+                    <small>Références</small><br>
+                    <a *ngFor="let link of profil?.links" [href]="link.url" target="_blank" style="margin: 5px">{{link.text}}</a>
+                </div>
 
-        <button mat-button mat-icon-button
-                class="small-icon-button"
-                title="Supprimer le profil"
-                name="cmdDelProfil"
-                *ngIf="config.hasPerm('delete_profil')"
-                (click)="deleteProfil(profil)">
-          <mat-icon>delete</mat-icon>
-        </button>
-
-        <button mat-button mat-icon-button
-                class="small-icon-button"
-                title="Générer un NFT"
-                name="cmdCreateNFT"
-                *ngIf="config.hasPerm('nft_write') && profil.blockchain?.length==0"
-                (click)="writeNFT(profil)">
-          <mat-icon>enhanced_encryption</mat-icon>
-        </button>
-
-        <button mat-button mat-icon-button
-                class="small-icon-button"
-                title="Demander en tuteur"
-                name="cmdAskTutor"
-                *ngIf="config.hasPerm('ask_tutor') && profil.acceptSponsor && config.user.profil"
-                (click)="ask_tutor(profil)">
-          <mat-icon>school</mat-icon>
-        </button>
-
-        <button mat-button mat-icon-button
-                title="Editer mon profil"
-                class="small-icon-button"
-                name="cmdEditProfil"
-                *ngIf="writeAccess"
-                (click)="editProfil(profil)">
-          <mat-icon>create</mat-icon>
-        </button>
-
-        <!--
-            TODO: a rétablir pour les communications
-            <button mat-button mat-icon-button
-                    title="Demander en ami"
-                    *ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('ask_friend')"
-                    (click)="askFriend(profil)">
-              <mat-icon>group_add</mat-icon>
-            </button>
-
-            -->
-
-        <button mat-button mat-icon-button
-                title="Voir sa page linkedin"
-                class="small-icon-button"
-                *ngIf="profil?.linkedin?.length>0 && config.hasPerm('r_linkedin')"
-                (click)="openWebSite(profil?.linkedin)">
-          <img  src="/assets/icons/LinkedIn.png"
-                class="small-icon-button"
-                style="background-color: white;">
-        </button>
-
-        <div *ngIf="profil?.links?.length>0">
-          <br><br>
-          <small>Références</small><br>
-          <a *ngFor="let link of profil?.links" [href]="link.url" target="_blank" style="margin: 5px">{{link.text}}</a>
-
+            </div>
         </div>
-
-      </div>
     </div>
-  </div>
 </div>
 
