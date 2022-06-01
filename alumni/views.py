@@ -957,7 +957,6 @@ def compare(lst,val,ope):
 #http://localhost:8000/api/export_all/xls/
 #http://localhost:8000/api/export_all/xml/
 #http://localhost:8000/api/export_all/json/
-#http://localhost:8000/api/export_all/?color=Job&chart=pie&sql=SELECT%20job%20as%20%27Job%27,%20count(id)%20as%20nb,profil__department%20as%20%27Formation%27%20FROM%20df%20WHERE%20profil__cursus=%27S%27%20GROUP%20BY%20Job%20ORDER%20BY%20-nb%20LIMIT%2015&x=Job&y=nb&title=Liste%20des%20m%C3%A9tiers%20les%20plus%20exerc%C3%A9s%20par%20les%20anciens%20%C3%A9tudiants%20et%20stagiaires&filter=Formation&height=427.2&out=graph
 @api_view(["GET","POST"])
 @renderer_classes((WorksCSVRenderer,))
 @permission_classes([AllowAny])
@@ -1111,11 +1110,12 @@ def export_all(request):
 
     if format.startswith("graph"):
         graph=StatGraph(df)
+        height=request.GET.get("height","400").replace(",",".").split(".")[0]
         graph.trace(
             request.GET.get("x",df.columns[0]),
             request.GET.get("y",df.columns[1]),
             request.GET.get("color",None),
-            request.GET.get("height",400),
+            int(height),
             style=request.GET.get("chart","bar"),
             title=title,
             template=request.GET.get("template","seaborn")
