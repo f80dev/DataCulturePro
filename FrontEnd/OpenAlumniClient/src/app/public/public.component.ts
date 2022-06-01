@@ -144,7 +144,7 @@ export class PublicComponent implements OnInit {
       this.message="Chargement des expériences";
       this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
         this.profil=p;
-        this.url=p.public_url.replace("./",environment.domain_appli+"/");
+        this.url=escape(p.public_url.replace("./",environment.domain_appli+"/"));
         this.title = p.firstname + " " + p.lastname;
         setTimeout(()=>{
           this.load_items(this.profil);

@@ -421,11 +421,11 @@ def extract_awards_from_imdb(profil_url,profil):
 
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""):
-    peoples=ia.search_person(remove_accents(firstname)+" "+remove_accents(lastname))
+    peoples=ia.search_person(firstname+" "+lastname)
     infos={"links":[]}
     for p in peoples:
         if not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
-        if url=="":
+        if url is None or url=="":
             name=remove_accents(remove_ponctuation(p.data["name"].upper()))
             if remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name:
                 infos["url"] = "https://imdb.com/name/nm" + p.personID + "/"
@@ -890,7 +890,9 @@ def exec_batch(profils,refresh_delay_profil=31,
             try:
                 imdb_profil_url=None
                 if content["imdb"]:
-                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname,refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
+                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname.lower(),refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
+                    if infos is None:
+                        infos=extract_profil_from_imdb(firstname=remove_accents(profil.firstname), lastname=remove_accents(profil.lastname),refresh_delay=refresh_delay_pages,url=profil.get_home("IMDB"))
                     log("Extraction d'imdb " + str(infos))
                     if "url" in infos:
                         profil.add_link(infos["url"], "IMDB")
