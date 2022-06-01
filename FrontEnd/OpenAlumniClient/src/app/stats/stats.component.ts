@@ -141,9 +141,10 @@ export class StatsComponent implements OnInit {
     }
 
     if(this.sel_report.html_code=="" || this.sel_report.html_code==""){
-      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+(window.screen.availHeight*0.9)+"&title="+this.sel_report.title,false,"");
+      let height=Math.trunc(window.screen.availHeight*0.9)
+      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+height+"&title="+this.sel_report.title,false,"");
       param=param+"&height="+(window.screen.availHeight*0.6);
-      this.api._get("export_all/",param+"&out=graph",60000,"").pipe(retry(3),delay(10000)).subscribe((html:any)=>{
+      this.api._get("export_all/",param+"&out=graph").pipe(retry(3),delay(90000)).subscribe((html:any)=>{
         this.sel_report.html_code=html.code || "";
         this.sel_report.html_values=html.values || "";
         if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;

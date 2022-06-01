@@ -262,7 +262,7 @@ class Work(models.Model):
     Cet objet permet de faire le lien entre les oeuvres et les profils
     Il peut être alimenté en automatique (par scrapping des sources) ou en manuel par le profil
     """
-    id = models.AutoField(primary_key=True,help_text="Clé primaire interne des projets")
+    id = models.AutoField(primary_key=True,help_text="!Clé primaire interne des projets")
     profil = models.ForeignKey('Profil', null=False, on_delete=models.CASCADE,related_name="works",help_text="Profil ayant réalisé le travail")
     pow = models.ForeignKey('PieceOfWork', null=False, on_delete=models.CASCADE, related_name="works",help_text="Oeuvre concernée par le travail")
     status=models.CharField(max_length=200,default="")
@@ -270,16 +270,16 @@ class Work(models.Model):
 
     #creator passera à user si l'utilisateur modifie l'enregistrement
     creator=models.CharField(max_length=5,default="auto",help_text="Désigne qui est le dernier auteur de l'enregistrement du travail dans la base de données")
-    public=models.BooleanField(default=True,help_text="Indique si le projet est publique (visible de ceux qui ont les droits) ou privé")
+    public=models.BooleanField(default=True,help_text="Indique si le projet est public (visible de ceux qui ont les droits) ou privé")
 
-    dtCreate = models.DateField(auto_now_add=True,null=True, help_text="Date d'enregistrement de la contribution")
+    dtCreate = models.DateField(auto_now_add=True,null=True, help_text="!Date d'enregistrement de la contribution")
 
-    job=models.CharField(max_length=200,default="",help_text="Désignation du travail réalisé")
-    duration=models.IntegerField(default=0,null=False,help_text="Durée du travail en heure")
+    job=models.CharField(max_length=200,default="",help_text="Désignation du travail réalisé : production, scénariste ...")
+    duration=models.IntegerField(default=0,null=False,help_text="Durée du travail (exprmimé en heure)")
     comment=models.TextField(max_length=400,null=False,default="",blank=True,help_text="Commentaire libre sur la façon dont s'est passé le travail")
     earning=models.IntegerField(default=None,null=True,help_text="Revenu percu brut pour la durée annoncée")
     source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
-    validate=models.BooleanField(default=False,help_text="Indique si l'expérience est validé ou pas")
+    validate=models.BooleanField(default=False,help_text="!Indique si l'expérience est validé ou pas")
 
     @property
     def title(self):
@@ -353,13 +353,13 @@ class PieceOfWork(models.Model):
     dtStart=models.DateField(auto_now=True,null=False,help_text="Date de début de la réalisation de l'oeuvre")
     dtEnd=models.DateField(auto_now=True,null=False,help_text="Date de fin de la réalisation de l'oeuvre")
     title=models.CharField(null=False,max_length=300,default="sans titre",help_text="Titre de l'oeuvre, même temporaire")
-    title_index=models.CharField(null=False,max_length=300,default="",help_text="Titre de l'oeuvre simplifier pour gestion de la recherche")
+    title_index=models.CharField(null=False,max_length=300,default="",help_text="!Titre de l'oeuvre simplifier pour gestion de la recherche")
 
-    year=models.CharField(null=True,max_length=4,help_text="Année de sortie")
-    nature=models.CharField(null=False,default='MOVIE',max_length=50,help_text="Classification de l'oeuvre")
-    dtCreate = models.DateField(auto_now_add=True,help_text="Date d'enregistrement de l'oeuvre dans DataCulture")
+    year=models.CharField(null=True,max_length=4,help_text="Année de sortie de l'oeuvre")
+    nature=models.CharField(null=False,default='MOVIE',max_length=50,help_text="Nature de l'oeuvre (long, court, docu)")
+    dtCreate = models.DateField(auto_now_add=True,help_text="!Date d'enregistrement de l'oeuvre dans DataCulture")
 
-    reference=models.CharField(null=False,default="",blank=True,max_length=50,help_text="Reference d'oeuvre")
+    reference=models.CharField(null=False,default="",blank=True,max_length=50,help_text="Reference de l'oeuvre")
     budget = models.IntegerField(default=0, help_text="Coût total de réalisation de l'oeuvre")
     production=models.CharField(null=False,default="",blank=True,max_length=100,help_text="Production de l'oeuvre")
 
@@ -377,10 +377,10 @@ class PieceOfWork(models.Model):
     distributer=models.CharField(max_length=150,default="",blank=True,null=True,help_text="Distribution de l'oeuvre")
     minutes=models.IntegerField(default=None,null=True,help_text="Durée de l'oeuvre en minutes")
     copies=models.IntegerField(default=None,null=True,help_text="Nombre de copies distribuée")
-    visa=models.CharField(max_length=10,null=True,help_text="Visa d'exploitation")
+    visa=models.CharField(max_length=10,null=True,help_text="Visa d'exploitation de l'oeuvre")
     financal_partner=JSONField(null=True,help_text="Liste des partenaires financiers")
     first_week_entrances=models.IntegerField(null=True,help_text="Nombre d'entrée la première semaine")
-    prizes=JSONField(null=True,help_text="Liste des prix reçus")
+    prizes=JSONField(null=True,help_text="!Liste des prix reçus")
 
     def __str__(self):
         rc=self.title
@@ -441,12 +441,12 @@ def update_pow(sender, **kwargs):
 class Award(models.Model):
     id = models.AutoField(primary_key=True)
     winner = models.BooleanField(null=False,default=True, help_text="Indique s'il s'agit d'une nomination ou d'une victoire")
-    festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant")
+    festival = models.ForeignKey('Festival', null=True, on_delete=models.CASCADE, related_name="award",help_text="Festival correspondant au prix reçu")
     profil = models.ForeignKey('Profil', null=True, on_delete=models.SET_NULL, related_name="award",help_text="Profil destinataire du prix")
     pow = models.ForeignKey('PieceOfWork', null=True, on_delete=models.CASCADE, related_name="award",help_text="Oeuvre récompensé")
     description = models.CharField(null=False,blank=True, max_length=250, default="sans titre", help_text="Nom de la récompense obtenue")
     year = models.IntegerField(null=True, help_text="Date de la remise du prix")
-    dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de création de l'article")
+    dtCreate = models.DateField(auto_now=True, null=True, help_text="Date de référencement du prix dans DataCulture")
     source = models.CharField(null=True, blank=True, max_length=150, help_text="URL de la source")
     state = models.CharField(max_length=1, default="A",
                              help_text="etat du travail entre A=automatiquement creer,E=editer par le profil, D=supprimé par le profil")

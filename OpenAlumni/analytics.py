@@ -4,6 +4,8 @@ from pandas import DataFrame
 import pandasql as ps
 from plotly.subplots import make_subplots
 
+from OpenAlumni.Tools import log
+
 
 class StatGraph:
 
@@ -18,6 +20,7 @@ class StatGraph:
         self.df=ps.sqldf(sql)
 
     def trace(self,x,y,color,height,style="bar",title="",template="seaborn"):
+        log("Elaboration du graph "+title+" de style "+style)
         if height is not None:height=int(height)
         if style=="none":
             self.fig=None
@@ -59,6 +62,7 @@ class StatGraph:
 
                 self.fig.update_traces(hoverinfo='label+percent+name', textinfo='none')
 
+        log("Elaboration terminée")
 
 
 

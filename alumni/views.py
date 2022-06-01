@@ -504,7 +504,7 @@ def api_doc(request):
     rc=[]
     for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields)+list(Award._meta.fields)+list(Festival._meta.fields):
         help_text=field.help_text
-        if len(help_text)>0 and not help_text.startswith("@"):
+        if len(help_text)>0 and not help_text.startswith("@") and not help_text.startswith("!"):
             rc.append({
                 "field":field.name,
                 "description":help_text,
@@ -957,6 +957,7 @@ def compare(lst,val,ope):
 #http://localhost:8000/api/export_all/xls/
 #http://localhost:8000/api/export_all/xml/
 #http://localhost:8000/api/export_all/json/
+#http://localhost:8000/api/export_all/?color=Job&chart=pie&sql=SELECT%20job%20as%20%27Job%27,%20count(id)%20as%20nb,profil__department%20as%20%27Formation%27%20FROM%20df%20WHERE%20profil__cursus=%27S%27%20GROUP%20BY%20Job%20ORDER%20BY%20-nb%20LIMIT%2015&x=Job&y=nb&title=Liste%20des%20m%C3%A9tiers%20les%20plus%20exerc%C3%A9s%20par%20les%20anciens%20%C3%A9tudiants%20et%20stagiaires&filter=Formation&height=427.2&out=graph
 @api_view(["GET","POST"])
 @renderer_classes((WorksCSVRenderer,))
 @permission_classes([AllowAny])
