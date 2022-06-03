@@ -1,7 +1,6 @@
 <div class="mainform">
   <br>
   <h2>Importer des profils</h2>
-  <br>
   <app-hourglass [message]="message"></app-hourglass>
   <br>
 
@@ -23,11 +22,11 @@
                   style="width:90%;max-width: 300px;">
     <mat-label>Ajouter des colonnes pour compléter les enregistrements</mat-label>
     <textarea matInput
-              [rows]="10"
+              [rows]="3"
               [(ngModel)]="dict">
     </textarea>
     <mat-icon matSuffix style="cursor: pointer"
-              (click)="init_dict()">cancel</mat-icon>
+              (click)="dict='{}'">cancel</mat-icon>
   </mat-form-field>
 
   <br>

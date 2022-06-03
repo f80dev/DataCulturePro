@@ -19,8 +19,19 @@ abreviations:
   Expertiser: Exp.
   d'exploitation: exp.
 
-departements:
+#Permet le regroupement des département sur leur categorie
+department_category:
   Ecriture et création de séries: Séries
+  Initiation à l'adaptation de romans: Scénario
+  Expertiser un scénario de long métrage: Scénario
+  Direction d'exploitation cinématographique: Exploitation
+
+#Permet le regroupement des départements pour la formation professionnelle
+departements:
+  Initiation à l'adaptation de romans: Initiation à l'adaptation de romans
+  Expertiser un scénario de long métrage: Scénario
+  Direction d'exploitation cinématographique: Exploitation
+
 
 #Normalisation des categories
 categories:

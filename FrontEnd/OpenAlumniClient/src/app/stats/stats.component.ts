@@ -114,7 +114,6 @@ export class StatsComponent implements OnInit {
   }
 
 
-
   eval_stat(evt=null) {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;

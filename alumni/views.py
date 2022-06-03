@@ -1310,7 +1310,6 @@ def importer_file(request):
 
 
 #http://localhost:8000/api/importer/
-#Importation des profils
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def importer(request):
@@ -1382,13 +1381,17 @@ def importer(request):
                     promo=dateToTimestamp(promo)
                     if not promo is None:promo=promo.year
 
-                standard_replace_dict={"nan":""}
+                standard_replace_dict={"nan":"","[vide]":""}
+                cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1)
 
-                department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
-                department = idx("CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
-                if department_category is None or len(department_category)==0:
-                    if department.lower() in l_department_category:
-                        department_category=department
+                department = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
+                if cursus=="P":
+                    department_category=translate(department,["department_category"])
+                else:
+                    department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
+                    if department_category is None or len(department_category)==0:
+                        if department.lower() in l_department_category:
+                            department_category=department
 
                 profil=Profil(
                     firstname=firstname,
@@ -1400,7 +1403,7 @@ def importer(request):
                     nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
                     country=idx("country,pays",row,"France",header=header),
                     birthdate=dt,
-                    department=translate(department),
+                    department=translate(department,sections=["departements"]),
                     job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),
@@ -1421,7 +1424,7 @@ def importer(request):
                     email=email,
                     photo=photo,
 
-                    cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1),
+                    cursus=cursus
                 )
 
                 try:
