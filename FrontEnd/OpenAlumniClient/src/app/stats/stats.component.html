@@ -81,6 +81,33 @@
 
     <mat-tab name="tabs" label="Exports" *ngIf="config.hasPerm('export_stats')">
 
+
+
+
+      <br>
+      <mat-form-field appearance="legacy" style="min-width: 300px;width:60%;">
+        <mat-label>Liste des raports</mat-label>
+        <mat-select multiple [(ngModel)]="sel_instant_report_to_copy">
+          <mat-option *ngFor="let report of instant_reports" [value]="report.id">
+            {{report.title}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br>
+
+      <button mat-button mat-raised-button
+              class="app-button"
+              id="cmdCopyReport" color="primary"
+              *ngIf="sel_instant_report_to_copy?.length>0"
+              (click)="copyInstantReports()">
+        Recevoir par mail
+      </button>
+
+
+
+      <br><br><br>
+
+
       <mat-form-field class="app-field" style="font-size: medium;max-width: 300px;" id="lstRapports">
         <mat-label>Rapports statistiques disponibles</mat-label>
         <mat-select [(ngModel)]="sel_report">
@@ -96,6 +123,10 @@
               (click)="openStats()">
         Ouvrir
       </button>
+
+      <br><br>
+
+
 
       <br>
       <table class="mat-elevation-z8" *ngIf="!showGraphQL">
@@ -131,6 +162,9 @@
           </td>
         </tr>
       </table>
+
+
+
     </mat-tab>
 
     <mat-tab name="tabs" label="Documentation">

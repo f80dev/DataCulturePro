@@ -3,7 +3,6 @@ from OpenAlumni.Tools import log, equal_str, fusion
 
 import jellyfish
 
-
 def eval_field(s,score=1):
     """
     Evalue la qualité d'un champs
@@ -165,10 +164,16 @@ class PowAnalyzer:
 
             #traitement des doublons dans les links
             for l in p.links:
-                if not l in rc:rc.append(l)
+                if not l["url"] in [x["url"] for x in rc]:
+                    rc.append(l)
             if len(rc)<len(p.links):
                 p.links=rc
                 p.save()
+
+            #traitement des doublons sur les awards
+            rc=[]
+            for a in p.award.all():
+                 pass
 
             if len(list(p.works.all()))==0:
                 to_delete.append(p.id)

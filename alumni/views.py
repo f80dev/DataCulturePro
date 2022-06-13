@@ -592,6 +592,18 @@ def helloworld(request):
     return Response({"message": "Hello world"})
 
 
+#test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
+#Accepter la demande de changement de status
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def send_report_by_email(request):
+    user_id=int(request.GET.get("userid",None))
+    if not user_id is None:
+        _user=ExtraUser.objects.filter(user_id=user_id).get()
+        sendmail("Vos rapports",_user.user.email,"instant_report",request.data)
+        return Response("ok",200)
+    else:
+        return Response("Utilisateur inconnu",500)
 
 
 #test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
@@ -723,6 +735,8 @@ def get_analyse_pow(request):
         pows = PieceOfWork.objects.order_by("dtLastSearch").all()
     else:
         pows=PieceOfWork.objects.filter(id__in=ids).order_by("dtLastSearch")
+
+    PowAnalyzer(pows).quality()
 
     return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by,cat=cat)})
 

@@ -427,7 +427,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""
         if not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
         if url is None or url=="":
             name=remove_accents(remove_ponctuation(p.data["name"].upper()))
-            if remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name:
+            if (remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name) or equal_str(lastname+firstname,name):
                 infos["url"] = "https://imdb.com/name/nm" + p.personID + "/"
                 log("Ouverture de " + infos["url"])
         else:
@@ -536,8 +536,9 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
     rc["category"]=cat.strip()
 
-    affiche = divs["hero-media__poster"]
-    if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
+    if "hero-media__poster" in divs:
+        affiche = divs["hero-media__poster"]
+        if not affiche is None and not affiche.find("img") is None: rc["visual"] = affiche.find("img").get("src")
 
     rc["synopsis"]=""
     if "plot" in divs:

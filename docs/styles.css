@@ -131,7 +131,7 @@ html, body, app-root {
   height: 110vh;
   z-index: 1;
   display: inline-block;
-  overflow: scroll;
+  overflow: hidden;
   font-size: small;
 }
 .sidenav-content {

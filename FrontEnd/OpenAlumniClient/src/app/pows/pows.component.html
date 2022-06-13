@@ -108,7 +108,7 @@
           <table style="width: 100%;text-align: left;margin-bottom: 7px;padding: 10px;" class="mat-elevation-z2">
             <tr *ngFor="let a of pow.award" style="width:100%;padding: 3px;">
               <td [title]="a.description" style="color:lightgrey;width:80%;">
-                {{a.festival.title}}
+                {{a.festival.title}} / {{a.description}}
               </td>
               <td style="width: 10px;text-align: right;">
                 {{a.year}}

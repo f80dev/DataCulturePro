@@ -30,6 +30,7 @@ export class StatsComponent implements OnInit {
   filter_values=[];
   sel_filter="";
   filter_name="Filtre";
+  sel_instant_report_to_copy: any={};
 
   constructor(public _location:Location,
               public api:ApiService,
@@ -114,36 +115,46 @@ export class StatsComponent implements OnInit {
   }
 
 
+
+  eval_params(inst_report){
+    let param="color="+inst_report.color+"&chart="+inst_report.chart;
+    if(inst_report.cols)param=param+"&cols="+inst_report.cols;
+    if(inst_report.sql)param=param+"&sql="+inst_report.sql;
+    if(inst_report.percent)param=param+"&percent=True";
+    if(inst_report.table)param=param+"&table="+inst_report.table;
+    if(inst_report.x)param=param+"&x="+inst_report.x+"&y="+inst_report.y;
+    if(inst_report.group_by)param=param+"&group_by="+inst_report.group_by;
+    if(inst_report.template)param=param+"&template="+inst_report.template;
+    if(inst_report.replace)param=param+"&replace="+JSON.stringify(inst_report.replace);
+    if(inst_report.func)param=param+"&func="+inst_report.fun;
+    if(inst_report.title)param=param+"&title="+inst_report.title;
+    if(inst_report.filter){
+      param=param+"&filter="+inst_report.filter;
+      this.filter_name="Filtrer par "+inst_report.filter;
+    }
+    if(this.sel_filter)param=param+"&filter_value="+this.sel_filter;
+    //if(inst_report.filter)param=param+"&filter="+inst_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
+    if(inst_report.data_cols){
+      param=param+"&data_cols="+inst_report.data_cols+"&cols="+inst_report.cols+"&table="+inst_report.table;
+    }
+    param=param+"&height="+Math.trunc(window.screen.availHeight*0.6);
+    return {
+      param: param,
+      url: api("export_all", param + "&out=graph_html&height=" + Math.trunc(window.screen.availHeight * 0.9) + "&title=" + this.sel_report.title, false, "")
+    }
+  }
+
+
+
   eval_stat(evt=null) {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
-    let param="color="+this.sel_report.color+"&chart="+this.sel_report.chart;
-    if(this.sel_report.cols)param=param+"&cols="+this.sel_report.cols;
-    if(this.sel_report.sql)param=param+"&sql="+this.sel_report.sql;
-    if(this.sel_report.percent)param=param+"&percent=True";
-    if(this.sel_report.table)param=param+"&table="+this.sel_report.table;
-    if(this.sel_report.x)param=param+"&x="+this.sel_report.x+"&y="+this.sel_report.y;
-    if(this.sel_report.group_by)param=param+"&group_by="+this.sel_report.group_by;
-    if(this.sel_report.template)param=param+"&template="+this.sel_report.template;
-    if(this.sel_report.replace)param=param+"&replace="+JSON.stringify(this.sel_report.replace);
-    if(this.sel_report.func)param=param+"&func="+this.sel_report.fun;
-    if(this.sel_report.title)param=param+"&title="+this.sel_report.title;
-    if(this.sel_report.filter){
-      param=param+"&filter="+this.sel_report.filter;
-      this.filter_name="Filtrer par "+this.sel_report.filter;
-    }
-    if(this.sel_filter)param=param+"&filter_value="+this.sel_filter;
-    //if(this.sel_report.filter)param=param+"&filter="+this.sel_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
-    if(this.sel_report.data_cols){
-      param=param+"&data_cols="+this.sel_report.data_cols+"&cols="+this.sel_report.cols+"&table="+this.sel_report.table;
-    }
-
+    let obj=this.eval_params(this.sel_report)
     if(this.sel_report.html_code=="" || this.sel_report.html_code==""){
-      let height=Math.trunc(window.screen.availHeight*0.9)
-      this.sel_report.url=api("export_all",param+"&out=graph_html&height="+height+"&title="+this.sel_report.title,false,"");
-      param=param+"&height="+Math.trunc(window.screen.availHeight*0.6);
-      this.api._get("export_all/",param+"&out=graph",6000,"").subscribe((html:any)=>{
+      this.sel_report.url=obj.url;
+
+      this.api._get("export_all/",obj.param+"&out=graph",6000,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code || "";
         this.sel_report.html_values=html.values || "";
         if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;
@@ -154,6 +165,26 @@ export class StatsComponent implements OnInit {
         }
       });
     }
+  }
+
+
+  copyInstantReports() {
+    let rc="<table>";
+    for(let ir of this.instant_reports){
+      if(this.sel_instant_report_to_copy.indexOf(ir.id)>-1){
+        let obj=this.eval_params(ir);
+        rc=rc+"<tr>\n";
+        rc=rc+"<td>"+ir.title+"</td>\n";
+        rc=rc+"<td><a href='"+encodeURI(obj.url)+"'>Ouvrir</a></td>\n";
+        rc=rc+"<td>"+ir.description || ""+"</td>\n";
+        rc=rc+"</tr>\n";
+      }
+    }
+    rc=rc+"</table>";
+    this._clipboardService.copyFromContent(rc);
+    this.api._post("send_report_by_email","userid="+this.config.user.id,{html:rc}).subscribe(()=>{
+      showMessage(this,"Rapport complet envoyé sur votre boite mail");
+    })
   }
 
 
@@ -208,4 +239,6 @@ export class StatsComponent implements OnInit {
     this.sel_filter="";
     this.refresh_stats();
   }
+
+
 }
