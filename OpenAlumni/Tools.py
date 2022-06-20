@@ -1,10 +1,9 @@
-
 import hashlib
 import html
 import os
 import re
 from platform import system
-from time import sleep, strptime, struct_time, mktime
+from time import sleep, strptime, struct_time
 from os import remove, scandir, stat
 from os.path import exists
 
@@ -16,13 +15,11 @@ from io import BytesIO
 import yaml
 import PyPDF2
 from django.core.mail import send_mail
-# from linkedin_v2 import linkedin
-# from linkedin_v2.linkedin import LinkedInApplication
-from django.core.serializers import json
 from django.db.models import Model
 from django.forms import model_to_dict
 from requests import get
 
+from OpenAlumni import passwords
 from OpenAlumni.Bot import Bot
 
 if os.environ.get("DEBUG"):
@@ -232,7 +229,7 @@ def sendmail(subject, _to, template, field):
                      recipient_list=_dest,
                      auth_user=EMAIL_HOST_USER,
                      html_message=html,
-                     auth_password=EMAIL_HOST_PASSWORD + "!!")
+                     auth_password=passwords.EMAIL_HOST_PASSWORD)
     else:
         log("Pas de boite mail paramétrer pour l'instant")
         rc=True
@@ -458,7 +455,7 @@ def in_dict(key:str,section="jobs"):
 
 
 
-def translate(wrd:str,sections=["jobs","categories","abreviations","departements"]):
+def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages"]):
     """
     Remplacement de certains termes
     :param wrd:

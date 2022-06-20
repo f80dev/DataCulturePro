@@ -169,14 +169,15 @@ export class StatsComponent implements OnInit {
 
 
   copyInstantReports() {
-    let rc="<table>";
+    let rc="<table style='margin: 10px;padding:10px;background-color: lightgray;border-radius:8px;'>";
+    rc=rc+"<tr style='padding:5px'><th>Titre du rapport</th><th></th><th>Description</th>"
     for(let ir of this.instant_reports){
       if(this.sel_instant_report_to_copy.indexOf(ir.id)>-1){
         let obj=this.eval_params(ir);
         rc=rc+"<tr>\n";
-        rc=rc+"<td>"+ir.title+"</td>\n";
-        rc=rc+"<td><a href='"+encodeURI(obj.url)+"'>Ouvrir</a></td>\n";
-        rc=rc+"<td>"+ir.description || ""+"</td>\n";
+        rc=rc+"<td style='padding:5px'>"+ir.title+"</td>\n";
+        rc=rc+"<td style='padding:5px'><a href='"+encodeURI(obj.url)+"'>Ouvrir</a></td>\n";
+        rc=rc+"<td style='padding:5px'>"+ir.description || ""+"</td>\n";
         rc=rc+"</tr>\n";
       }
     }

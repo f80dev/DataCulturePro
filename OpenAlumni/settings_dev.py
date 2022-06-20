@@ -256,12 +256,12 @@ USE_TZ = True
 
 SOURCES=["auto:unifrance"]
 
-EMAIL_HOST ="smtp.ionos.fr"
+EMAIL_HOST ="smtp-mail.outlook.com"
 EMAIL_PORT = 587
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER =""
-EMAIL_HOST_PASSWORD ="hh42714271"
+EMAIL_HOST_USER ="contact.dcp@femis.fr"
+#EMAIL_HOST_PASSWORD ="" se trouve dans password.py
 
 
 

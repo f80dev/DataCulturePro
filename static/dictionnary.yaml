@@ -105,6 +105,7 @@ jobs:
   Digital film colorist & Digital colorist: Post-production
   Adr recordist: Son
   Foley recordist: Son
+  Cast in credits order: Casting
   Music mixer: Son
   Post-production coordinator: Post-production
   Production manager only nrw: Production
@@ -150,7 +151,7 @@ jobs:
   Attaché de presse (film): Relations presse
   Assistant réalisateur: Ass. Réalisation
   Directeur de production: Direction de production
-  Actress: Acteur(trice)
+  Actress: "Acteur(trice)"
   Attachée de presse (film): Relations presse
   Producer: Production
   Directeur de la photo: Direction Photo
@@ -208,7 +209,7 @@ jobs:
   Producteur associé: Production
   Editorial department: Montage
   Assistante monteuse: Ass. montage
-  Actor: Acteur(trice)
+  Actor: "Acteur(trice)"
   Chef opérateur et réalisateur: Réalisation
   Directrices de la photo: Image
   Monteuse son et assistante mixage: Montage son
@@ -264,7 +265,7 @@ jobs:
   Participantes: Autre
   Post-audio supervisor: Postprod Son
   Assistant set manager - uncredited: Régie
-  Cast: Acteur(Actrice)
+  Cast: "Acteur(trice)"
   Production trainee: Production
   Directed: Réalisation
   Series directed: Réalisation
@@ -295,7 +296,7 @@ jobs:
   Screenplay assistant: scénario ass.
   Costume_designer: Costumes
   Assistant to jean labadie: Production
-  Lui-même: Acteur(trice)
+  Lui-même: "Acteur(trice)"
   Writing Credits (in alphabetical order): Scénario
   assistant production manager: Ass. production
   Writing Credits in alphabetical order: Scénario
@@ -322,7 +323,7 @@ jobs:
   Art direction: Décor
   Series art direction: Décor
   Series camera and electrical department: Caméra
-  Acteurtrice: Acteur(trice)
+  Acteurtrice: "Acteur(trice)"
   Story consultant: Scénario
   Responsables de la post-production: Post-production
   Productrices associées: Production
@@ -397,8 +398,11 @@ jobs:
 
 
 
-
-
+Languages:
+  french: Français
+  english: Anglais
+  spannish: Espagnol
+  england: Angleterre
 
 
 Icons:
@@ -413,7 +417,7 @@ Icons:
   Photographie: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/camera_1f4f7.png"
   Casting: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/person-standing_1f9cd.png"
   Electricien: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/light-bulb_1f4a1.png"
-  Acteur(trice): "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/performing-arts_1f3ad.png"
+  "Acteur(trice)": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/performing-arts_1f3ad.png"
   Award: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png"
   Movie: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png"
   School: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/graduation-cap_1f393.png"

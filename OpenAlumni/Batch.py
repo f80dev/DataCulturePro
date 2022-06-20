@@ -216,9 +216,9 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     if "person" in l.attrs["href"] and "profil" not in _prix:
                         _prix["profil"]=index_string(l.text)
 
-                if not "profil" in _prix and not job_for is None:
-                    log("Attribution du prix à "+job_for)
-                    _prix["profil"]=index_string(job_for)
+                # if not "profil" in _prix and not job_for is None:
+                #     log("Attribution du prix à "+job_for)
+                #     _prix["profil"]=index_string(job_for)
 
                 if "year" in _prix and "title" in _prix:
                     rc["prix"].append(_prix)
@@ -442,7 +442,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""
         #Contient l'ensemble des liens qui renvoi vers une oeuvre
         links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
         for l in links:
-            log("Analyse de "+str(l))
+            #log("Analyse de "+str(l))
             tmp_obj=l.parent.parent.parent.parent
             if len(l.getText())>3 and not tmp_obj is None and "id" in tmp_obj.attrs and tmp_obj["id"]=="filmography":
                 job:str=l.parent.parent.get("id").split("-")[0]
@@ -518,6 +518,20 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         if "data-testid" in div.attrs:
             divs[div.attrs["data-testid"]]=div
 
+    section_detail=page.find("section",{"data-testid":"Details"})
+    if section_detail:
+        for li in section_detail.find_all("li"):
+            if "Release" in li.text: rc["year"]=extract_years(li.text)
+            if "Language" in li.text: rc["lang"]=translate(li.text.replace("Language",""),["Languages"])
+            if "Country" in li.text: rc["pays"]=translate(li.text.replace("Country of origin",""),["Languages"])
+
+
+    if not "year" in rc:
+        for elt in page.find_all("ul",recursive=True):
+            years=extract_years(elt.text)
+            if len(years)>0:
+                rc["year"]=years[0]
+                break
 
     #Recherche de la nature et de la catégorie
     if not "genres" in divs:
@@ -535,6 +549,36 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
             cat=cat.replace(rc["nature"],"").strip()
 
     rc["category"]=cat.strip()
+    if rc["nature"]=="" and not page.find("div",{"data-testid":"hero-subnav-bar-season-episode-numbers-section-xs"}) is None:
+        rc["nature"]="Série"
+
+    if rc["nature"]=="Série":
+        log("On est en présence d'une série")
+        title=divs["hero-title-block__title"].text
+        infos=divs["hero-title-block__title"].parent.text
+        year_from_title=extract_years(divs["hero-title-block__metadata"].text,0)
+
+        if title in infos:
+            log("On cherche a compléter le titre")
+            sur_title=infos.split(title)[0].strip()
+            if len(sur_title)==0:
+                elt=page.find("a",{"data-testid":"hero-title-block__series-link"})
+                if elt:sur_title=elt.text
+            if len(sur_title)>0:
+                title=sur_title+" - "+title
+
+        rc["title"]=title
+        zone=page.find("ul",{"data-testid":"hero-title-block__metadata"})
+        if zone: years=extract_years(zone.text)
+
+        if len(years)>0:
+            rc["year"]=years[0]
+            if len(years)>1:
+                pass
+        else:
+            rc["year"]=year_from_title
+
+
 
     if "hero-media__poster" in divs:
         affiche = divs["hero-media__poster"]
@@ -558,52 +602,30 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
                     tds=tr.find_all("td")
 
+                    # job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
+                    # if len(job) == 0 and len(sur_jobs[i].text) > 0:job = sur_job.replace(" by", "").strip()
+
                     if len(tds)>1:
                         findname=tds[0].text.replace("\n","").replace("  "," ").strip()
                         if len(findname) ==0:findname=tds[1].text.replace("\n","").replace("  "," ").strip()
                         if len(findname)>0:
                             #log("Nom identifié "+findname)
                             if equal_str(findname,name):
-                                sur_job=sur_jobs[i].text.replace("\n"," ").strip().replace("  "," ")
+                                sur_job=sur_jobs[i].text.replace("\n"," ").strip().replace("  "," ").replace(" by","")
                                 if "Cast" in sur_job or "Serie Cast" in sur_job:
                                     if len(tds)>3 and "Self" in tds[3].text:
                                         job=""
                                     else:
                                         job="Actor"
-                                else:
-                                    title=divs["hero-title-block__title"].text
-
-                                    log("On est en présence d'une série")
-                                    infos=divs["hero-title-block__title"].parent.text
-                                    year_from_title=extract_years(divs["hero-title-block__metadata"].text,0)
-
-                                    if title in infos:
-                                        if len(rc["nature"])==0:rc["nature"]="Série"
-                                        sur_title=infos.split(title)[0].strip()
-                                        if len(sur_title)>0:
-                                            title=sur_title+" - "+title
-                                        else:
-                                            if rc["nature"]=="Série": break
-
-                                    rc["title"]=title
-                                    years=extract_years(tr.text)
-                                    if len(years)>0:
-                                        rc["year"]=years[0]
-                                        if len(years)>1:
-                                            pass
-                                    else:
-                                        rc["year"]=year_from_title
-
-                                    job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
-                                    if len(job) == 0 and len(sur_jobs[i].text) > 0:
-                                        job = sur_job.replace(" by", "").strip()
 
                                 job=translate(job.split("\n")[0])
                                 if len(job)==0:
-                                    log("Job non identifié pour "+name+" sur "+url)
-                                else:
-                                    if not "job" in rc:rc["job"]=[]
-                                    if not job in rc["job"]:rc["job"].append(job)
+                                    job=translate(sur_job)
+                                    if len(job)==0:
+                                        log("Job non identifié pour "+name+" sur "+url)
+
+                                if not "job" in rc:rc["job"]=[]
+                                if not job in rc["job"]:rc["job"].append(job)
                             else:
                                 if all_casting:
                                     names=tds[0].split(" ")
@@ -732,7 +754,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
 
         if "imdb" in l["url"]:
             film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
-            if film and (film["category"]=="News" or len(film["nature"])==0):
+            if film and (film["category"]=="News" or len(film["nature"])==0) or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) or film["job"]==["Remerciements"] or film["job"]==["Casting"]:
                 log("Ce type d'événement est exlue :"+str(film))
                 film=None
 
@@ -747,7 +769,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                 if len(result)>0:
                     bFindMovie=False
                     for p in result:
-                        if abs(int(p.year)-int(pow.year))<=1:
+                        if p.year is None or abs(int(p.year)-int(pow.year))<=1:
                             bFindMovie=True
                             log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
                             pow,hasChanged=fusion(p,pow)

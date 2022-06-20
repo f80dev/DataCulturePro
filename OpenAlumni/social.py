@@ -73,7 +73,7 @@ class SocialGraph:
                 else:
                     cursor.execute("""
                            CREATE TABLE Social_Matrix AS
-                           SELECT alumni_work.profil_id AS Profil1, alumni_work1.profil_id AS Profil2, COUNT (alumni_work.pow_id AS powid) AS n_pows,
+                           SELECT alumni_work.profil_id AS Profil1, alumni_work1.profil_id AS Profil2, COUNT (alumni_work.pow_id) AS n_pows,
                            FROM alumni_work INNER JOIN alumni_work AS alumni_work1 ON alumni_work.pow_id = alumni_work1.pow_id
                            GROUP BY alumni_work.profil_id, alumni_work1.profil_id
                            HAVING alumni_work.profil_id<>alumni_work1.profil_id

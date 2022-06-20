@@ -8,6 +8,7 @@ import {ClipboardService} from "ngx-clipboard";
 import {environment} from "../../environments/environment";
 import {MatAccordion} from "@angular/material/expansion";
 import {Observable} from "rxjs";
+import {Location} from "@angular/common";
 
 
 @Component({
@@ -28,6 +29,7 @@ export class PowsComponent implements OnInit {
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
               public router:Router,
+              public _location:Location,
               public routes:ActivatedRoute,
               public config:ConfigService) {
 
@@ -73,6 +75,7 @@ export class PowsComponent implements OnInit {
 
 
   refresh() {
+    if(this.query.value.length>3)this._location.replaceState("pows/?query="+this.query.value);
     let param=translateQuery(this.query.value,false);
     param=param+"&limit="+this.limit;
     this.message="Recherche des films";

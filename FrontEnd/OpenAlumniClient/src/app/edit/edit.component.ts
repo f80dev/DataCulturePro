@@ -354,6 +354,18 @@ export class EditComponent implements OnInit,OnDestroy  {
     }
   }
 
+  reset_awards() {
+    let total=this.awards.length;
+    for(let a of this.awards){
+      if(!a.source.startsWith("man")){
+        this.api._delete("awards/"+a.id+"/","").subscribe(()=>{
+          total=total-1;
+          this.awards.splice(this.awards.indexOf(a),1);
+        });
+      }
+    }
+  }
+
 
   check_format(social: any) {
     if(this.profil[social.name] && this.profil[social.name].length>0){
@@ -506,6 +518,11 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   open_movie(movie_title) {
     this.router.navigate(['pows'],{queryParams:{query:"\""+movie_title+"\""}});
+  }
+
+  reset_contrib_profil() {
+    this.reset_works();
+    this.reset_awards();
   }
 }
 
