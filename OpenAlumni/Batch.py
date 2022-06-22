@@ -213,8 +213,8 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                     if "festivals" in l.attrs["href"]:
                         _prix["title"]=l.text.split("(")[0]
                         _prix["year"] = re.findall(r"[1-2][0-9]{3}", l.text)[0]
-                    if "person" in l.attrs["href"] and "profil" not in _prix:
-                        _prix["profil"]=index_string(l.text)
+                    # if "person" in l.attrs["href"] and "profil" not in _prix:
+                    #     _prix["profil"]=index_string(l.text)
 
                 # if not "profil" in _prix and not job_for is None:
                 #     log("Attribution du prix à "+job_for)
@@ -366,7 +366,10 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     if desc.startswith("(") and ")" in desc: desc = desc.split(")")[1]
     if len(desc)<8:return None
 
-    awards = Award.objects.filter(pow__id=pow.id, year=year, profil__id=profil.id).all()
+    if profil is None:
+        awards = Award.objects.filter(pow__id=pow.id, year=year).all()
+    else:
+        awards = Award.objects.filter(pow__id=pow.id, year=year, profil__id=profil.id).all()
     for a in awards:
         if a.description==desc: return a        #Si on trouve la meme description, on a déjà l'award
         if a.source and a.source[:15]!=url[:15]: return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
@@ -403,7 +406,11 @@ def extract_awards_from_imdb(profil_url,profil):
                     log("Format non conforme "+tr.text)
                 else:
                     year = tds[0].text.replace("\n","").replace(" ","").strip()
-                    award = tds[1].text
+                    award=None
+                    for award in tds[2].text.split("\n"):
+                        if  len(award.strip())>3:
+                            award=award.strip()
+                            break
 
                     film = tds[2].find("a")
                     if film and award:
@@ -518,13 +525,18 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         if "data-testid" in div.attrs:
             divs[div.attrs["data-testid"]]=div
 
-    section_detail=page.find("section",{"data-testid":"Details"})
+    section_detail=page.find("section",{"data-testid":"Details"}).find("ul")
     if section_detail:
-        for li in section_detail.find_all("li"):
-            if "Release" in li.text: rc["year"]=extract_years(li.text)
-            if "Language" in li.text: rc["lang"]=translate(li.text.replace("Language",""),["Languages"])
-            if "Country" in li.text: rc["pays"]=translate(li.text.replace("Country of origin",""),["Languages"])
-
+        for li in section_detail.contents:
+            if li.name=="li":
+                if "Release" in li.text: rc["year"]=extract_years(li.text)
+                if "Language" in li.text: rc["lang"]=translate(li.text.replace("Language",""))
+                if "Country" in li.text: rc["pays"]=translate(li.text.replace("Country of origin",""))
+                if "Production companies" in li.text:
+                    rc["production"]=""
+                    for cie in li.find_all("a"):
+                        rc["production"]=rc["production"]+cie.text+","
+                    if len(rc["production"])>2: rc["production"]=rc["production"][0:len(rc["production"])-2]
 
     if not "year" in rc:
         for elt in page.find_all("ul",recursive=True):
@@ -798,7 +810,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                      a=add_award(
                         festival_title=award["title"],
                         year=award["year"],
-                        profil=profil,
+                        profil=profil if "profil" in award and equal_str(award["profil"],profil.firstname+" "+profil.lastname) else None,
                         desc=award["description"],
                         pow_id=pow.id,
                         win=True,

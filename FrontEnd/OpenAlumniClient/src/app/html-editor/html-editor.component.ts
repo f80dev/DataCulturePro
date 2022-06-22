@@ -10,7 +10,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfigService} from "../config.service";
 import {checkLogin, showError, showMessage} from "../tools";
 import {Location} from "@angular/common";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ImageSelectorComponent} from "../image-selector/image-selector.component";
@@ -46,6 +46,7 @@ export class HtmlEditorComponent implements OnInit {
     public router:Router,
     public dialog:MatDialog,
     public config:ConfigService,
+    public routes:ActivatedRoute,
     public _location:Location
   ) {
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
@@ -57,6 +58,13 @@ export class HtmlEditorComponent implements OnInit {
     checkLogin(this,()=>{
       this.editorContent=localStorage.getItem("article_content");
       if(!this.editorContent || this.editorContent=="null")this.editorContent="";
+      if(this.routes.snapshot.queryParamMap.has("article")){
+        this.api._get("/articles/"+this.routes.snapshot.queryParamMap.get("article")).subscribe((article:any)=>{
+          this.title=article.title;
+          this.editorContent=article.html;
+          this.resumer=article.sumary;
+        })
+      }
     });
   }
 

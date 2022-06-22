@@ -19,7 +19,7 @@
             id="cmdEdit"
             *ngIf="config.hasPerm('publish')"
             (click)="router.navigate(['htmledit'])">
-      Ajouter
+      <div class="bloc-bouton">Proposer<br>un article</div>
     </button>
 
     <div *ngFor="let article of articles" class="mat-elevation-z4"
@@ -34,6 +34,7 @@
       <div style="position: absolute;bottom: 10px;right:10px;width:100%;z-index: 100;text-align: right;" *ngIf="config.hasPerm('validate')">
         <button class="app-button" mat-button mat-raised-button
                 id="cmdPublish" color="primary"
+                title="Cet article deviendra visible dans la rubrique Blog jusqu'a sa déplubication"
                 *ngIf="article.to_publish && !article.validate"
                 (click)="publish(article,true)">
           Publiez
@@ -47,8 +48,16 @@
 
         <button class="app-button" mat-button mat-raised-button
                 id="cmdSendMessage"
+                title="Envoyer un message a l'auteur pour lui expliquer la raison de la non publication"
                 (click)="notif(article)">
           Notifier
+        </button>
+
+        <button class="app-button" mat-button mat-raised-button
+                id="cmdEditMessage"
+                *ngIf="!article.validate && article.owner==config.user.id"
+                (click)="edit(article)">
+          Editer
         </button>
 
         <button class="app-button" mat-button mat-raised-button

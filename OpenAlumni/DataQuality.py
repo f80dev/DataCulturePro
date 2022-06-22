@@ -161,6 +161,7 @@ class PowAnalyzer:
         to_delete=[]
         for p in self.pows:
             rc=[]
+            log("Traitement qualité de "+p.title)
 
             #traitement des doublons dans les links
             for l in p.links:
@@ -171,11 +172,12 @@ class PowAnalyzer:
                 p.save()
 
             #traitement des doublons sur les awards
-            rc=[]
-            for a in p.award.all():
-                 pass
+            # rc=[]
+            # for a in p.award.all():
+            #      pass
 
             if len(list(p.works.all()))==0:
+                log("A supprimer")
                 to_delete.append(p.id)
 
         return to_delete

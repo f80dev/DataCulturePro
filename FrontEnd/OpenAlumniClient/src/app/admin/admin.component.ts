@@ -84,6 +84,7 @@ export class AdminComponent implements OnInit {
   }
 
   batch_movies() {
+    this.message="Analyse film par film pour complément";
     let cat="";
     for(let key of Object.keys(this.config.values.catalog)){
       if(this.config.values.catalog[key])
@@ -91,6 +92,9 @@ export class AdminComponent implements OnInit {
     }
     this.api._get("analyse_pow/","cat="+cat).subscribe(()=>{
       showMessage(this,"traitement terminé")
+      this.message="";
+    },(err)=>{
+      showError(this,err);
     })
   }
 

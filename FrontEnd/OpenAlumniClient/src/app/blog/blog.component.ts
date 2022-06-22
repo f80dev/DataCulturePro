@@ -66,6 +66,10 @@ export class BlogComponent implements OnInit {
     })
   }
 
+  edit(article: any) {
+    this.router.navigate(["htmledit"],{queryParams:{article:article.id}});
+  }
+
   notif(article: any) {
 
   }
