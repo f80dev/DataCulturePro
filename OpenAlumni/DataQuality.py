@@ -160,24 +160,27 @@ class PowAnalyzer:
     def quality(self):
         to_delete=[]
         for p in self.pows:
-            rc=[]
-            log("Traitement qualité de "+p.title)
-
-            #traitement des doublons dans les links
-            for l in p.links:
-                if not l["url"] in [x["url"] for x in rc]:
-                    rc.append(l)
-            if len(rc)<len(p.links):
-                p.links=rc
-                p.save()
-
-            #traitement des doublons sur les awards
-            # rc=[]
-            # for a in p.award.all():
-            #      pass
-
-            if len(list(p.works.all()))==0:
-                log("A supprimer")
+            if p.year is None or int(p.year)<1970 or p.title is None:
                 to_delete.append(p.id)
+            else:
+                rc=[]
+                log("Traitement qualité de "+p.title)
+
+                #traitement des doublons dans les links
+                for l in p.links:
+                    if not l["url"] in [x["url"] for x in rc]:
+                        rc.append(l)
+                if len(rc)<len(p.links):
+                    p.links=rc
+                    p.save()
+
+                #traitement des doublons sur les awards
+                # rc=[]
+                # for a in p.award.all():
+                #      pass
+
+                if len(list(p.works.all()))==0:
+                    log("A supprimer")
+                    to_delete.append(p.id)
 
         return to_delete

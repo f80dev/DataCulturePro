@@ -179,6 +179,8 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #     'NAME': os.path.join(BASE_DIR, 'alumni_db'),
 # },
 
+
+#La procédure d'installation de la base se trouve dans le README root
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -195,7 +197,7 @@ DATABASES = {
 
 }
 
-#Installation d'
+#Installation d'elasticsearch dans README à la racine
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': '161.97.75.165:9210'

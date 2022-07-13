@@ -110,7 +110,8 @@ class WorkSerializer(serializers.ModelSerializer):
         fields=["profil","pow",
                 "duration","comment","job","title",
                 "public","creator","id","validate",
-                "source","year","nature","state"]
+                "score_salary","score_school","score_skill",
+                "source","state"]
 
 
 
@@ -233,7 +234,7 @@ class ExtraWorkSerializer(serializers.ModelSerializer):
     profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model=Work
-        fields=["id","profil","pow","duration","comment","job","source","public"]
+        fields=["id","profil","pow","duration","comment","job","source","public","score_salary","score_school","score_skill"]
 
 
 class FestivalSerializer(serializers.ModelSerializer):

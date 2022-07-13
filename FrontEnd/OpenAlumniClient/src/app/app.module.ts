@@ -89,6 +89,7 @@ import { MglTimelineModule } from 'angular-mgl-timeline';
 import { EditAwardComponent } from './edit-award/edit-award.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import {WebcamModule} from "ngx-webcam";
+import { ScoringComponent } from './scoring/scoring.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +132,8 @@ import {WebcamModule} from "ngx-webcam";
     SettingsComponent,
     RgpdComponent,
     EditAwardComponent,
-    TimelineComponent
+    TimelineComponent,
+    ScoringComponent
   ],
   imports: [
     BrowserModule,

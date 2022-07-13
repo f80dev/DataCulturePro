@@ -81,7 +81,7 @@ export class EditComponent implements OnInit,OnDestroy  {
         this.refresh_students();
         this.refresh_works();
         this.refresh_awards();
-        this.refresh_relations();
+        //this.refresh_relations(); //TODO: a corriger avant de réactiver
       });
     },()=>{this.quit();})
   }
@@ -126,6 +126,10 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   relations:any;
+  score_school: number=0;
+  score_salary: number=0;
+  score_skill: number = 0;
+
   refresh_relations(){
     this.api._get("social_distance","profil_id="+this.profil.id,600).subscribe((r:any)=> {
       this.relations=[];
@@ -192,12 +196,17 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.add_work={
       movie:element.title,
       year:element.year,
-      movie_id:element.pow
+      movie_id:element.pow.id
     };
     if(element.year && Number(element.year)>1900){
       this.dtStart=new Date(Number(element.year),1,1);
       this.dtEnd=new Date(Number(element.year),31,12);
     }
+    this.score_salary=element.score_salary;
+    this.score_school=element.score_school;
+    this.score_skill=element.score_skill;
+    this.earning=element.earning;
+    this.comment=element.comment;
 
     $$("Selection du film ",element);
     this.showAddWork=next_step;
@@ -210,6 +219,9 @@ export class EditComponent implements OnInit,OnDestroy  {
       pow:this.add_work.movie_id,
       job:this.job,
       state:"E",
+      score_shool:this.score_school,
+      score_skill:this.score_skill,
+      score_salary:this.score_salary,
       earning:this.earning,
       comment:this.comment,
       dtStart:this.dtStart.toISOString().split("T")[0],
@@ -218,19 +230,33 @@ export class EditComponent implements OnInit,OnDestroy  {
       source:"man_"+this.config.user.id,
     };
 
-    if(this.showAddWork==3){
-      this.api._delete("works/"+this.current_work.id,"").subscribe(()=>{
-        $$("Suppression de l'ancienne contribution");
+    // if(this.showAddWork==3){
+    //   this.api._delete("works/"+this.current_work.id,"").subscribe(()=>{
+    //     $$("Suppression de l'ancienne contribution");
+    //   })
+    // }
+
+    if(this.current_work.id){
+      $$("Insertion de ",this.add_work);
+      this.api._patch("works/"+this.current_work.id,"",this.add_work).subscribe((r:any)=>{
+        this.showAddWork=0;
+        this.loadProfil();
+        this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
+        showMessage(this,"Travail enregistré");
+      },(err)=>{
+        showError(this,err);
+      })
+    } else {
+      this.api._post("works/","",this.add_work).subscribe((r:any)=>{
+        this.showAddWork=0;
+        this.loadProfil();
+        this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
+        showMessage(this,"Travail enregistré");
+      },(err)=>{
+        showError(this,err);
       })
     }
 
-    $$("Insertion de ",this.add_work);
-    this.api._post("works/","",this.add_work).subscribe((rany)=>{
-      this.showAddWork=0;
-      this.loadProfil();
-      this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
-      showMessage(this,"Travail enregistré");
-    })
   }
 
 
@@ -456,10 +482,6 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.save_user();
   }
 
-  preview() {
-
-  }
-
   open_page(url,target="_blank") {
     open(url,target);
   }
@@ -497,7 +519,6 @@ export class EditComponent implements OnInit,OnDestroy  {
             year: result.year,
             state: 'E'
           }).subscribe((r:any)=>{
-
             this.refresh_awards();
           })
         }

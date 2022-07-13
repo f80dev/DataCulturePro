@@ -19,9 +19,9 @@
              (click)="change_photo()"><br>
 
         <mat-checkbox
-          (change)="save_profil(null,$event,'public_photo')"
-          title="Cliquez sur cette photo pour la mettre a jour"
-          [(ngModel)]="profil.public_photo">
+                (change)="save_profil(null,$event,'public_photo')"
+                title="Cliquez sur cette photo pour la mettre a jour"
+                [(ngModel)]="profil.public_photo">
           Photo visible sur ma page publique
         </mat-checkbox><br><br>
 
@@ -161,8 +161,8 @@
         <br>
 
         <mat-checkbox
-          (change)="save_profil(null,$event,'acceptSponsor');"
-          [checked]="profil.acceptSponsor">
+                (change)="save_profil(null,$event,'acceptSponsor');"
+                [checked]="profil.acceptSponsor">
           Accepte d'être tuteur
         </mat-checkbox>
         &nbsp;
@@ -579,8 +579,25 @@
       <mat-hint>Détailler l'expérience, difficultés rencontrées, bénéfices</mat-hint>
     </mat-form-field>
 
-
     <br>
+
+    <div style="display: inline-block;margin-top: 10px;">
+      <app-scoring [(value)]="score_school">
+        Votre formation à la FEMIS vous a-t'elle aidé pour cette expérience ?
+      </app-scoring><br>
+
+      <app-scoring [(value)]="score_salary">
+        Votre rémunération etait elle au niveau de vos attentes ?
+      </app-scoring><br>
+
+      <app-scoring [(value)]="score_skill">
+        Votre rémunération etait elle au niveau de vos attentes ?
+      </app-scoring>
+
+    </div>
+
+
+
 
     <hr>
     <br>

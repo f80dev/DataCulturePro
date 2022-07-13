@@ -281,6 +281,11 @@ class Work(models.Model):
     source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
     validate=models.BooleanField(default=False,help_text="!Indique si l'expérience est validé ou pas")
 
+    score_salary=models.IntegerField(default=None,null=True,help_text="Votre revenu correspondait t'il à vos attentes (1-4)")
+    score_school=models.IntegerField(default=None,null=True,help_text="La formation à la FEMIS vous a t'elle aidé pour ce travail (1-4)")
+    score_skill=models.IntegerField(default=None,null=True,help_text="Vous sentez vous a l'aise pour ce travail (1-4)")
+
+
     @property
     def title(self):
         return self.pow.title
@@ -298,7 +303,9 @@ class Work(models.Model):
         d:dict=dict({
             "name":self.profil.firstname+" "+self.profil.lastname.upper(),
             "job":self.job,
-            "comment":self.comment
+            "comment":self.comment,
+            "public":self.public,
+            "earning":self.earning
         })
 
         if self.pow is not None:

@@ -543,8 +543,11 @@ def quality_filter(request):
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
 
         to_delete=pow_analyzer.quality()
+        count=0
         for id in to_delete:
+            count=count+1
             _p=PieceOfWork.objects.get(id=id)
+            #log("Destruction de "+str(count)+"/"+str(len(to_delete)))
             _p.delete()
 
         n_pows=pow_analyzer.find_double()

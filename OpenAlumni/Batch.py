@@ -344,8 +344,11 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
         pows = PieceOfWork.objects.filter(title__iexact=film_title)
         for i in range(0,len(pows)):
             pow=pows[i]
-            if int(pow.year)<=int(year) and int(pow.year)-int(year)<2:
-                break
+            if pow is None or pow.year is None or year is None:
+                log("Probléme de date avec le film")
+            else:
+                if int(pow.year)<=int(year) and int(pow.year)-int(year)<2:
+                    break
     else:
         if pow_id:
             pow=PieceOfWork.objects.get(id=pow_id)
@@ -525,8 +528,10 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         if "data-testid" in div.attrs:
             divs[div.attrs["data-testid"]]=div
 
-    section_detail=page.find("section",{"data-testid":"Details"}).find("ul")
+    section_detail=page.find("section",{"data-testid":"Details"})
+
     if section_detail:
+        section_detail=section_detail.find("ul")
         for li in section_detail.contents:
             if li.name=="li":
                 if "Release" in li.text: rc["year"]=extract_years(li.text)
@@ -538,12 +543,21 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                         rc["production"]=rc["production"]+cie.text+","
                     if len(rc["production"])>2: rc["production"]=rc["production"][0:len(rc["production"])-2]
 
+
+
     if not "year" in rc:
-        for elt in page.find_all("ul",recursive=True):
-            years=extract_years(elt.text)
-            if len(years)>0:
-                rc["year"]=years[0]
-                break
+        section=page.find("h1")
+        if section and section.parent:
+            years=section.parent.extract_years(section.text)
+        if len(years)>0: rc["year"]=years[0]
+        if not "year" in rc or rc["year"] is None:
+            for elt in page.find_all("ul",recursive=True):
+                years=extract_years(elt.text)
+                if len(years)>0:
+                    rc["year"]=years[0]
+                    break
+    if not "year" in rc or rc["year"] is None:
+        pass
 
     #Recherche de la nature et de la catégorie
     if not "genres" in divs:
@@ -766,7 +780,10 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
 
         if "imdb" in l["url"]:
             film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
-            if film and (film["category"]=="News" or len(film["nature"])==0) or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) or film["job"]==["Remerciements"] or film["job"]==["Casting"]:
+            if film and (film["category"]=="News" or len(film["nature"])==0) \
+                    or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) \
+                    or film["job"]==["Remerciements"] or film["job"]==["Casting"] \
+                    or (not "year" in film):
                 log("Ce type d'événement est exlue :"+str(film))
                 film=None
 

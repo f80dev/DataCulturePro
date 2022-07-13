@@ -31,14 +31,10 @@ export class PublicComponent implements OnInit {
   }
 
 
-
-
   load_items(p){
     let expe={};
     this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
-
-
 
       let rc=[];
 
@@ -56,6 +52,7 @@ export class PublicComponent implements OnInit {
       }
 
       for(let w of p.works){
+        w=w.replace("True","1").replace("False","0")
         for(var i=0;i<1000;i++){
           w=w.replace("'","\"")
         }
@@ -68,7 +65,7 @@ export class PublicComponent implements OnInit {
           }
 
           _w.type="work";
-          rc.push(_w);
+          if(_w.public==1)rc.push(_w);
           expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
         } catch (e) {
           $$("Probleme de conversion "+w);
@@ -84,7 +81,6 @@ export class PublicComponent implements OnInit {
           this.profil.expe=this.profil.expe+k+", ";
       }
 
-
       if(this.config.hasPerm("admin")){
         rc.push({
           year:this.profil.degree_year,
@@ -94,7 +90,6 @@ export class PublicComponent implements OnInit {
           type:"degree"
         })
       }
-
 
       this.items=group_works(rc);
       this.items[0].show_year=true;
