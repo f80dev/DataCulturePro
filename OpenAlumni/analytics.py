@@ -25,11 +25,14 @@ class StatGraph:
         if style=="none":
             self.fig=None
 
+        if style=="bar100":
+            self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title,text_auto=True)
+
         if style=="bar":
             if color!="undefined":
-                self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title)
+                self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title,text_auto=True)
             else:
-                self.fig = px.bar(self.df, x=x, y=y,  height=height, template=template, title=title)
+                self.fig = px.bar(self.df, x=x, y=y,  height=height, template=template, title=title,text_auto=True)
 
         if style=="line":
             self.fig = px.line(self.df, x=x, y=y, color=color,height=height,template=template,title=title)

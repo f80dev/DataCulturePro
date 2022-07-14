@@ -269,17 +269,17 @@ Instant_reports:
 
 
   - title: Répartition des stagiaires de la formation profesionnelle
-    description:
+    description: Regroupement par année et par atelier
     id: prostudent_by_depyear
-    x: promotion
-    y: stagiaires
-    chart: aera
-    color: formation
-    filter: formation
+    x: Promotion
+    y: Nb de stagiaires
+    chart: bar
+    color: Stage
+    filter: Stage
     table: profil
     data_cols: id,department,cursus,degree_year
-    cols: id,formation,cursus,promotion
-    sql: SELECT formation, promotion,count(id) as stagiaires FROM df WHERE cursus='P' GROUP BY formation,promotion
+    cols: id,formation,cursus,Promotion
+    sql: SELECT formation AS Stage, promotion AS Promotion,count(id) as 'Nb de stagiaires' FROM df WHERE cursus='P' GROUP BY Stage,Promotion
     prod: True
 
 
