@@ -272,7 +272,7 @@ Instant_reports:
     description: Regroupement par année et par atelier
     id: prostudent_by_depyear
     x: Promotion
-    y: Nb de stagiaires
+    y: Nb de stagiair
     chart: bar
     color: Stage
     filter: Stage
@@ -356,6 +356,10 @@ Instant_reports:
 
 
 
+
+
+
+
   - title: Nombre d'oeuvres par genre et categorie
     id: pow_by_category
     chart: bar
@@ -380,5 +384,14 @@ Instant_reports:
     fun: count
     prod: False
 
+
+
+  - title: Liste des expériences pro des anciens stagiaires de la FEMIS
+    description: détail des expériences des anciens stagiaires de la formation professionnelle
+    id: exp_pro
+    chart: none
+    table: work
+    sql: SELECT profil__lastname || ' ' || profil__firstname AS 'fullname',profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title,ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY fullname,profil__degree_year
+    prod: True
 
 

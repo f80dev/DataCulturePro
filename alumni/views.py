@@ -1126,18 +1126,22 @@ def export_all(request):
         return response
 
     if format.startswith("graph"):
-        graph=StatGraph(df)
-        height=request.GET.get("height","400").replace(",",".").split(".")[0]
-        graph.trace(
-            request.GET.get("x",df.columns[0]),
-            request.GET.get("y",df.columns[1]),
-            request.GET.get("color",None),
-            int(height),
-            style=request.GET.get("chart","bar"),
-            title=title,
-            template=request.GET.get("template","seaborn")
-        )
-        rc = graph.to_html()
+        if request.GET.get("chart","bar")=="none":
+            rc={"code":df.to_html()}
+        else:
+            graph=StatGraph(df)
+            height=request.GET.get("height","400").replace(",",".").split(".")[0]
+            graph.trace(
+                request.GET.get("x",df.columns[0]),
+                request.GET.get("y",df.columns[1]),
+                request.GET.get("color",None),
+                int(height),
+                style=request.GET.get("chart","bar"),
+                title=title,
+                template=request.GET.get("template","seaborn")
+            )
+            rc = graph.to_html()
+
         log("Construction du graph terminée")
 
         filter = request.GET.get("filter")

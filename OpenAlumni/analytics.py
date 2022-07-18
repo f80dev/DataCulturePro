@@ -25,6 +25,9 @@ class StatGraph:
         if style=="none":
             self.fig=None
 
+        if style=="none":
+            self.fig=""
+
         if style=="bar100":
             self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title,text_auto=True)
 
@@ -84,7 +87,8 @@ class StatGraph:
         """
         code="" if self.fig is None else self.fig.to_html()
         #Formatage du tableau voir: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html
-        return {"code": code,"values":self.df.to_html(
+        return {"code": code,
+                "values":self.df.to_html(
             justify="center",
             classes="detail_stat_format",
             render_links=True,
