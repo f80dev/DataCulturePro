@@ -77,6 +77,13 @@ from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
     CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer
 
+STYLE_TABLE="""
+                <style>
+                    td {color: lightgray;padding:5px;text-align:center;background-color: darkgray;}
+                    th {color: white;padding:5px;text-align:center;background-color:black;}
+                </style>
+            """
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -1127,7 +1134,8 @@ def export_all(request):
 
     if format.startswith("graph"):
         if request.GET.get("chart","bar")=="none":
-            rc={"code":df.to_html()}
+            code=STYLE_TABLE+df.to_html(index=False,justify="center",border=0,render_links=True,)
+            rc={"code":code,"values":code}
         else:
             graph=StatGraph(df)
             height=request.GET.get("height","400").replace(",",".").split(".")[0]

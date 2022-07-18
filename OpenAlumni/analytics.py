@@ -7,6 +7,7 @@ from plotly.subplots import make_subplots
 from OpenAlumni.Tools import log
 
 
+
 class StatGraph:
 
     #dash= dash.Dash(__name__)
@@ -85,16 +86,15 @@ class StatGraph:
         documentation: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html
         :return:
         """
+        style="""
+                <style>
+                    td {color: lightgray;padding:5px;text-align:center;background-color: darkgray;}
+                    th {color: white;padding:5px;text-align:center;background-color:black;}
+                </style>
+            """
         code="" if self.fig is None else self.fig.to_html()
         #Formatage du tableau voir: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html
         return {"code": code,
-                "values":self.df.to_html(
-            justify="center",
-            classes="detail_stat_format",
-            render_links=True,
-            border=0,
-            bold_rows=False,
-            col_space=20
-        )}
+                "values":style+self.df.to_html(justify="center",index=False,render_links=True,border=0,bold_rows=False,col_space=20)}
 
 

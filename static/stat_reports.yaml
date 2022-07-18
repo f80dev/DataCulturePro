@@ -391,7 +391,7 @@ Instant_reports:
     id: exp_pro
     chart: none
     table: work
-    sql: SELECT profil__lastname || ' ' || profil__firstname AS 'fullname',profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title,ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY fullname,profil__degree_year
+    sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title AS 'Film/Court-métrage/Série',ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY Nom,profil__degree_year
     prod: True
 
 

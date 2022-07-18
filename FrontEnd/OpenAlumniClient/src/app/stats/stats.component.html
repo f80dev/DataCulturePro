@@ -48,10 +48,9 @@
       <div style="width: 100%;text-align: center;position: relative;">
         <div *ngIf="sel_report?.html_values?.length==0"
              style="width:80%;display: inline-block;text-align: center;margin-top: 10%;">
-          Construction en cours<br>
-          <br>
           <img src="/assets/img/gears.gif" width="150">
-          <br><br>
+          <br>
+          Construction en cours<br>
           {{sel_report.description}}
         </div>
 
@@ -64,7 +63,7 @@
       </div>
 
       <br>
-      <div *ngIf="sel_report?.html_values?.length>0" style="width:100%;min-width:300px;height: auto;margin:10px;overflow: scroll;">
+      <div *ngIf="sel_report?.html_values?.length>0" style="width:100%;min-width:350px;height: auto;margin:10px;overflow: scroll;">
         <mat-expansion-panel class="app-panel" style="display: inline-block;height: fit-content;width:100%;" [expanded]="false" >
           <mat-expansion-panel-header>
             <mat-panel-title>
