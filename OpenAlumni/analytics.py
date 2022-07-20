@@ -88,7 +88,8 @@ class StatGraph:
         """
         style="""
                 <style>
-                    td {color: lightgray;padding:5px;text-align:center;background-color: darkgray;}
+                    tr {width: 100%;}
+                    td {color: black;padding:5px;text-align:center;background-color: darkgray;}
                     th {color: white;padding:5px;text-align:center;background-color:black;}
                 </style>
             """

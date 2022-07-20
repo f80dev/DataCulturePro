@@ -272,7 +272,7 @@ Instant_reports:
     description: Regroupement par année et par atelier
     id: prostudent_by_depyear
     x: Promotion
-    y: Nb de stagiair
+    y: Nb de stagiaires
     chart: bar
     color: Stage
     filter: Stage
@@ -385,13 +385,23 @@ Instant_reports:
     prod: False
 
 
-
   - title: Liste des expériences pro des anciens stagiaires de la FEMIS
     description: détail des expériences des anciens stagiaires de la formation professionnelle
     id: exp_pro
     chart: none
     table: work
     sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title AS 'Film/Court-métrage/Série',ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY Nom,profil__degree_year
+    prod: True
+
+
+  - title: Ancien stagiaires de la FEMIS sans expériences professionnelles référencées
+    description:
+    id: noexp_pro
+    chart: none
+    filter: department
+    table: sql
+    cols: ID,Prénom,Nom,department,Categorie
+    sql: SELECT id,firstname, lastname,department,department_category FROM alumni_profil WHERE cursus='P' AND id NOT IN (select profil_id FROM alumni_work)
     prod: True
 
 

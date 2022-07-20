@@ -11,7 +11,7 @@ from urllib.request import urlopen
 import pandasql
 import yaml
 import pandas as pd
-
+from django.db import connection
 
 from github import Github
 from numpy import inf
@@ -79,8 +79,14 @@ from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer
 
 STYLE_TABLE="""
                 <style>
-                    td {color: lightgray;padding:5px;text-align:center;background-color: darkgray;}
-                    th {color: white;padding:5px;text-align:center;background-color:black;}
+                    table {width:100%;}
+                    tr {width:100%;}
+                    td {color: black;padding:7px;text-align:center;background-color: lightgray;}
+                    th {color: white;padding:10px;text-align:center;background-color:black;}
+                    
+                    .mainform {
+                        padding: 5px;
+                    }
                 </style>
             """
 
@@ -992,6 +998,12 @@ def export_all(request):
     """
 
     table = request.GET.get("table", "work").lower()
+    title=request.GET.get("title","Reporting FEMIS")
+    format=request.GET.get("out","json")
+    description=request.GET.get("description","")+"<br>"
+    cols=request.GET.get("cols")
+    sql:str=request.GET.get("sql")
+
     log("Chargement de la table "+table)
 
     df=None
@@ -1025,7 +1037,7 @@ def export_all(request):
             "id","job","comment","validate","source","state"
         )))
 
-    if df is None:
+    if df is None and table!="sql":
         values = request.GET.get("data_cols").split(",")
 
         if table.startswith("profil"): data = Profil.objects.all().values(*values)
@@ -1040,19 +1052,7 @@ def export_all(request):
 
     log("Chargement des données terminées")
 
-    if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
 
-    title=request.GET.get("title","Reporting FEMIS")
-    lib_columns=",".join(list(df.columns))
-
-    format=request.GET.get("out","json")
-
-    cols=request.GET.get("cols")
-    if not cols is None and cols!="undefined":
-        log("On ne conserve que "+cols+" dans "+","+lib_columns)
-        df=df[cols.split(",")].drop_duplicates()
-
-    sql:str=request.GET.get("sql")
     if not sql is None:
         log("Chargement de la requete "+sql)
         filter_clause=request.GET.get("filter_value","")
@@ -1069,6 +1069,20 @@ def export_all(request):
 
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
+        else:
+            cursor=connection.cursor()
+            cursor.execute(sql)
+            rows=cursor.fetchall()
+            df=pd.DataFrame.from_records(rows,columns=cols.split(","))
+
+
+    if not df is None:
+        if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
+        lib_columns=",".join(list(df.columns))
+
+        if not cols is None and cols!="undefined":
+            log("On ne conserve que "+cols+" dans "+","+lib_columns)
+            df=df[cols.split(",")].drop_duplicates()
 
 
     if request.GET.get("percent","False")=="True":
@@ -1134,7 +1148,7 @@ def export_all(request):
 
     if format.startswith("graph"):
         if request.GET.get("chart","bar")=="none":
-            code=STYLE_TABLE+df.to_html(index=False,justify="center",border=0,render_links=True,)
+            code=STYLE_TABLE+"<div class='mainform'><h3>"+title+"</h3><small>"+description+"</small>"+df.to_html(index=False,justify="center",border=0,render_links=True)+"</div>"
             rc={"code":code,"values":code}
         else:
             graph=StatGraph(df)

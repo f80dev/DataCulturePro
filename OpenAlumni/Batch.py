@@ -547,8 +547,8 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
     if not "year" in rc:
         section=page.find("h1")
-        if section and section.parent:
-            years=section.parent.extract_years(section.text)
+        if not section is None and not section.parent is None:
+            years=extract_years(section.text)
         if len(years)>0: rc["year"]=years[0]
         if not "year" in rc or rc["year"] is None:
             for elt in page.find_all("ul",recursive=True):
