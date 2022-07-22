@@ -258,9 +258,20 @@ def getyaml(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def infos_server(request):
+    """
+    tags: /info /server_info
+    voir https://server.f80lab.com:8100/api/infos_server
+    voir http://localhost:8000/api/infos_server
+
+    :param request:
+    :return:
+    """
     rc=dict()
-    rc["films"]["nombre"]=PieceOfWork.objects.count()
-    rc["profils"]["nombre"]=Profil.objects.count()
+    rc["domain"]={"appli":DOMAIN_APPLI,"server":DOMAIN_SERVER}
+    rc["search"]={"server":ELASTICSEARCH_DSL}
+    rc["database"]=DATABASES
+    rc["debug"]=DEBUG
+    rc["content"]={"films":PieceOfWork.objects.count(),"profils":Profil.objects.count()}
     return JsonResponse(rc)
 
 

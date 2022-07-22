@@ -3,7 +3,7 @@
   <h2>Commandes disponibles</h2>
 
 
-  <mat-accordion [multi]="false" style="text-align: left;display:inline-block;min-width: 600px;">
+  <mat-accordion [multi]="false" style="text-align: left;display:inline-block;min-width: 1000px;">
 
     <mat-expansion-panel class="app-panel" [expanded]="true">
       <mat-expansion-panel-header>
@@ -22,8 +22,6 @@
       <button mat-raised-button mat-button class="app-button" (click)="apply_dict()"
               title="Uniformiser la terminologie en réappliquant le dictionnaire">Terminologie</button>
 
-
-
       <hr>
       <button mat-raised-button mat-button class="app-button" (click)="send_update()" color="secondary">Demande de mise a jour</button>
 
@@ -36,6 +34,11 @@
           Serveur
         </mat-panel-title>
       </mat-expansion-panel-header>
+
+   <div style="width: 90%;background-color: #c4c4c4;padding: 10px;margin-left: 5%;min-height: 500px;" class="mat-elevation-z4">
+     <ngx-json-viewer [expanded]="true" [json]="info_server"></ngx-json-viewer>
+   </div>
+
 
        <button mat-raised-button mat-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
 

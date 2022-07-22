@@ -15,6 +15,7 @@ export class AdminComponent implements OnInit {
 
   message: string;
   users:any[];
+  info_server: any;
 
   constructor(private api:ApiService,
               public config:ConfigService,
@@ -29,6 +30,9 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
+    this.api._get("infos_server").subscribe((infos:any)=>{
+      this.info_server=infos;
+    })
   }
 
   raz(table:string) {

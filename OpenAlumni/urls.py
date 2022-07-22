@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/getyaml/', views.getyaml),
     path('api/update_extrauser/', views.update_extrauser),
     path('api/infos_server/', views.infos_server),
+    path('api/server_infos/', views.infos_server),
     path('api/initdb/', views.initdb),
     path('api/helloworld/', views.helloworld),
     path('api/ask_perms/', views.ask_perms),
