@@ -1,5 +1,5 @@
 jellyfish
-Django==4.0.2
+Django==4.0.6
 markdown
 django-oauth-toolkit
 oauthlib

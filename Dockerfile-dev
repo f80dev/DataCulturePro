@@ -24,7 +24,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get install libpq-dev
 
-RUN pip3 install Django==4.0.2
+RUN pip3 install Django==4.0.6
 RUN pip3 install markdown
 RUN pip3 install django-oauth-toolkit
 RUN pip3 install oauthlib
@@ -58,7 +58,7 @@ RUN pip3 install xlsxwriter
 RUN pip3 install docutils
 RUN pip3 install networkx
 RUN pip3 install py7zr
-RUN pip3 install erdpy==1.2.0
+RUN pip3 install erdpy
 RUN pip3 install pandasql
 RUN pip3 install plotly
 RUN pip3 install jellyfish
@@ -90,7 +90,7 @@ COPY ./manage.py $APP_HOME
 
 EXPOSE 8000
 
-ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev
+ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev_server
 ENV DEBUG=True
 
 #CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -265,14 +265,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER ="contact.dcp@femis.fr"
 #EMAIL_HOST_PASSWORD ="" se trouve dans password.py
 
-APPNAME="Data Culture Pro (beta)"
-DOMAIN_APPLI="http://localhost:4200"
-DOMAIN_SERVER="http://localhost:8000"
+APPNAME="Data Culture Pro (beta server)"
+DOMAIN_APPLI="https://testdcp.f80lab.com"
+DOMAIN_SERVER="https://server.f80lab.com:8100"
 
 
 DEBUG = (sys.argv[1] == 'runserver')
-
-
 
 
 #Sécurisation

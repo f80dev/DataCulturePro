@@ -25,13 +25,11 @@ pd.options.plotting.backend = "plotly"
 from django.http import JsonResponse, HttpResponse
 
 from django_elasticsearch_dsl import Index
-from django_elasticsearch_dsl_drf.constants import LOOKUP_QUERY_IN, \
-    SUGGESTER_COMPLETION, LOOKUP_FILTER_TERMS, \
-    LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE, LOOKUP_FILTER_TERM, LOOKUP_QUERY_STARTSWITH
+from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
 from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, IdsFilterBackend, \
-    OrderingFilterBackend, DefaultOrderingFilterBackend, SearchFilterBackend, MultiMatchSearchFilterBackend, \
+    OrderingFilterBackend, DefaultOrderingFilterBackend, \
     SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
-from django_elasticsearch_dsl_drf.pagination import PageNumberPagination, LimitOffsetPagination
+from django_elasticsearch_dsl_drf.pagination import LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from elasticsearch import Elasticsearch
@@ -54,19 +52,21 @@ from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pow
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig, remove_accents, remove_ponctuation, index_string
 from OpenAlumni.nft import NFTservice
+
+
+
 import os
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev_server": from OpenAlumni.settings_dev_server import *
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev": from OpenAlumni.settings_dev import *
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings": from OpenAlumni.settings import *
+
 
 if os.environ.get("DEBUG"):
-    from OpenAlumni.settings_dev import *
-
     import logging
-
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
     # logging.getLogger('engineio.server').setLevel(logging.ERROR)
     # logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
     # logging.getLogger('environments').setLevel(logging.ERROR)
-else:
-    from OpenAlumni.settings import *
 
 
 from OpenAlumni.social import SocialGraph
@@ -147,7 +147,7 @@ class ProfilViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["email"]
-    filter_fields=("school","email","firstname",)
+    filterset_fields=("school","email","firstname",)
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -155,7 +155,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,)
-    filter_fields=("name","siret",)
+    filterset_fields=("name","siret",)
 
 
 class ExtraProfilViewSet(viewsets.ModelViewSet):
@@ -164,7 +164,7 @@ class ExtraProfilViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["lastname","email","degree_year","department","department_category"]
-    filter_fields=("lastname","firstname","email","degree_year","department","department_category",)
+    filterset_fields=("lastname","firstname","email","degree_year","department","department_category",)
 
 
 
@@ -194,7 +194,6 @@ class ExtraWorkViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     permission_classes = [AllowAny]
     filter_fields = ['pow__id','profil__id']
-    #search_fields=["pow__id","profil__id"]
 
 
 class WorkViewSet(viewsets.ModelViewSet):
@@ -202,7 +201,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     serializer_class = WorkSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","job")
+    filterset_fields=("profil","pow","job")
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class AwardViewSet(viewsets.ModelViewSet):
@@ -210,22 +209,28 @@ class AwardViewSet(viewsets.ModelViewSet):
     serializer_class = AwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","festival")
+    filterset_fields=("profil","pow","festival")
+
 
 class ExtraAwardViewSet(viewsets.ModelViewSet):
+    """
+    voir https://server.f80lab.com:8100/api/extraawards/?format=json&profil=3017
+
+    """
     queryset = Award.objects.all().order_by("-year")
     serializer_class = ExtraAwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","festival")
+    filterset_fields=("profil","pow","festival")
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class FestivalViewSet(viewsets.ModelViewSet):
     queryset = Festival.objects.all().order_by("title")
     serializer_class = FestivalSerializer
     permission_classes = [AllowAny]
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields=("title","country",)
+    filter_backends = (DjangoFilterBackend,SearchFilter,)
+    filterset_fields =["title","country","id",]
+    search_fields=["title"]
 
 
 #http://localhost:8000/api/extrapows
@@ -271,7 +276,11 @@ def infos_server(request):
     rc["search"]={"server":ELASTICSEARCH_DSL}
     rc["database"]=DATABASES
     rc["debug"]=DEBUG
-    rc["content"]={"films":PieceOfWork.objects.count(),"profils":Profil.objects.count()}
+    rc["content"]={
+        "films":PieceOfWork.objects.count(),
+        "works":Work.objects.count(),
+        "festivals":Festival.objects.count(),
+        "profils":Profil.objects.count()}
     return JsonResponse(rc)
 
 

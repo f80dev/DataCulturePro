@@ -1,9 +1,8 @@
 python manage.py makemigrations
 python manage.py migrate --settings OpenAlumni.settings_dev
-python manage.py search_index --settings OpenAlumni.settings_dev --rebuild
+
 
 set PYTHONIOENCODING=utf-8
-python manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
 
 echo "Deployer le dev"
 
@@ -17,4 +16,12 @@ docker build -t f80hub/openalumni-dev . & docker push f80hub/openalumni-dev:late
 
 echo "Pousser sur Github et déployer l'image avec "
 echo "docker rm -f openalumni-dev && docker pull f80hub/openalumni-dev:latest && docker run --restart=always -v /root/certs:/certs -p 8100:8000 --name openalumni-dev -d f80hub/openalumni-dev:latest"
+
+
+echo "Backup de la base de données"
+python manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
+
+echo "reconstruction de l'index"
+python manage.py search_index --settings OpenAlumni.settings_dev --rebuild
+
 

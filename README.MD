@@ -106,7 +106,7 @@ démarrer le noeud elasticsearch pour la production
 firewall-cmd --zone=public --add-port=9200/tcp
 firewall-cmd --zone=public --add-port=9300/tcp
 docker rm -f elastic_search_server
-docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>
 
 
@@ -114,7 +114,8 @@ ou avec docker pour l'environnement de dev
 <pre>
 firewall-cmd --zone=public --add-port=9210/tcp
 firewall-cmd --zone=public --add-port=9310/tcp
-docker run -p 9210:9200 -p 9310:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server-dev -d docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+docker rm -f elastic_search_server-dev
+docker run -p 9210:9200 -p 9310:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server-dev -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>
 
 

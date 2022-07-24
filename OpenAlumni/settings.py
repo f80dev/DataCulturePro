@@ -231,27 +231,16 @@ USE_L10N = True
 USE_TZ = True
 
 
-EMAIL_HOST ="smtp.ionos.fr"
+EMAIL_HOST ="smtp-mail.outlook.com"
 EMAIL_PORT = 587
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER ="reply@f80lab.com"
-EMAIL_HOST_PASSWORD ="Hh42714280"
-
-
+EMAIL_HOST_USER ="contact.dcp@femis.fr"
 
 APPNAME="Data Culture Pro"
-
-#DOMAIN_APPLI="http://localhost:4200"
-#DOMAIN_SERVER="http://localhost:8000"
 DOMAIN_APPLI="https://dcp.f80lab.com"
 DOMAIN_SERVER="https://server.f80lab.com:8000"
 
-SOURCES=["unifrance"]
-
-LINKEDIN_API_KEY="86sko2r66j8l8k"
-LINKEDIN_API_SECRET="5daYMxKMEvWvfiuX"
-LINKEDIN_RETURN_URL="http://localhost:8000/api/oauth_callback"
 
 
 #Sécurisation

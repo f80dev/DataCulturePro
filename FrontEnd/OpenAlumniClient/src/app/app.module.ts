@@ -205,7 +205,7 @@ import {NgxJsonViewerModule} from "ngx-json-viewer";
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,
-            provider: new FacebookLoginProvider('1064548794002409'),
+                provider: new FacebookLoginProvider('1064548794002409'),
           },
         ],
       } as SocialAuthServiceConfig,
