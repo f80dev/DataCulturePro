@@ -137,8 +137,9 @@ export class PublicComponent implements OnInit {
     let id=this.route.snapshot.queryParamMap.get("id");
     if(id){
       this.message="Chargement des expériences";
-      this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
-        this.profil=p;
+      this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
+        this.profil=p.results[0];
+        this.works=this.profil.works;
         this.url=escape(p.public_url.replace("./",environment.domain_appli+"/"));
         this.title = p.firstname + " " + p.lastname;
         setTimeout(()=>{

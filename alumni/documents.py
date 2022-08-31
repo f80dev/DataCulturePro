@@ -30,7 +30,8 @@ class PowDocument(Document):
         "festival": fields.ObjectField(properties={
             "title": fields.TextField()
         }),
-        "description": fields.TextField()
+        "description": fields.TextField(),
+        "year":fields.IntegerField()
     })
 
     links = fields.NestedField(properties={"url": fields.TextField(), "text": fields.TextField()})
@@ -49,15 +50,17 @@ class ProfilDocument(Document):
         "job":fields.TextField(),
         "source":fields.TextField(),
         "pow":fields.ObjectField(properties={
-            "title":fields.TextField()
+            "title":fields.TextField(),
+            "year":fields.IntegerField()
         }),
     })
 
-    award=fields.ObjectField(properties={
+    awards=fields.ObjectField(properties={
         "festival":fields.ObjectField(properties={
             "title":fields.TextField()
         }),
-        "description":fields.TextField()
+        "description":fields.TextField(),
+        "year":fields.TextField()
     })
 
     class Index:

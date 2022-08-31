@@ -1581,6 +1581,7 @@ class ProfilDocumentView(DocumentViewSet):
                      )
 
     filter_fields = {
+        'profil':'id',
         'name': 'name',
         'lastname':'lastname',
         'firstname': 'firstname',
