@@ -16,8 +16,9 @@ import os
 import sys
 from OpenAlumni.passwords import DB_PASSWORD
 
-#PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
-PAGEFILE_PATH="c://Temp/"
+PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
+#PAGEFILE_PATH="c://Temp/"
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = ["hhoareau@gmail.com",
                 "paul.dudule@gmail.com",

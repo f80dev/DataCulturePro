@@ -49,6 +49,7 @@ class ProfilDocument(Document):
     works = fields.ObjectField(properties={
         "job":fields.TextField(),
         "source":fields.TextField(),
+        "public":fields.BooleanField(),
         "pow":fields.ObjectField(properties={
             "title":fields.TextField(),
             "year":fields.IntegerField()

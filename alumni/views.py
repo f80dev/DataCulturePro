@@ -1373,6 +1373,7 @@ def importer_file(request):
 
 
 #http://localhost:8000/api/importer/
+#profils importer
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def importer(request):

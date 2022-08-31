@@ -6,6 +6,7 @@ import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-public',
@@ -26,6 +27,7 @@ export class PublicComponent implements OnInit {
               public config:ConfigService,
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
+              public _location:Location,
               public route:ActivatedRoute,
               public api:ApiService) {
   }
@@ -51,13 +53,13 @@ export class PublicComponent implements OnInit {
         }
       }
 
-      for(let w of p.works){
-        w=w.replace("True","1").replace("False","0")
-        for(var i=0;i<1000;i++){
-          w=w.replace("'","\"")
-        }
-        try {
-          let _w=JSON.parse(w);
+      for(let _w of p.works){
+        // w=w.replace("True","1").replace("False","0")
+        // for(var i=0;i<1000;i++){
+        //   w=w.replace("'","\"")
+        // }
+        // try {
+          // let _w=JSON.parse(w);
           _w.icon=this.config.icons["Movie"];
 
           for(let k of Object.keys(this.config.icons)){
@@ -65,11 +67,11 @@ export class PublicComponent implements OnInit {
           }
 
           _w.type="work";
-          if(_w.public==1)rc.push(_w);
+          if(_w.public)rc.push(_w);
           expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
-        } catch (e) {
-          $$("Probleme de conversion "+w);
-        }
+        // } catch (e) {
+        //   $$("Probleme de conversion "+w);
+        // }
       }
       this.profil.expe="";
 
@@ -140,7 +142,7 @@ export class PublicComponent implements OnInit {
       this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
         this.profil=p.results[0];
         this.works=this.profil.works;
-        this.url=escape(p.public_url.replace("./",environment.domain_appli+"/"));
+        this.url=this._location.path();
         this.title = p.firstname + " " + p.lastname;
         setTimeout(()=>{
           this.load_items(this.profil);
@@ -150,6 +152,7 @@ export class PublicComponent implements OnInit {
       this.router.navigate(["search"]);
     }
   }
+
 
   share() {
     showMessage(this,"Lien du profil disponible dans le presse-papier");
@@ -166,9 +169,13 @@ export class PublicComponent implements OnInit {
       });
   }
 
+
+
   open_price(a: any,movie_title) {
     let url="https://www.google.com/search?q="+a.title+" "+movie_title;
     open(url.replace(" ","+"),"search");
   }
+
+
 
 }
