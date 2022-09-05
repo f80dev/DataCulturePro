@@ -749,7 +749,8 @@ def dict_to_pow(film:dict,content=None):
 
     if "category" in film: pow.category = translate(film["category"])
     if "synopsis" in film:pow.description=film["synopsis"]
-
+    if type(pow.year)==list:
+        pow.year=pow.year[0]
 
     return pow
 

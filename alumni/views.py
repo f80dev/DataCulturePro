@@ -1389,7 +1389,7 @@ def importer(request):
 
     d,total_record=importer_file(request)
 
-    l_department_category=[x.lower() for x in Profil.objects.values_list("department_category",flat=True)]
+    l_department_category=[(x.lower() if not x is None else '') for x in Profil.objects.values_list("department_category",flat=True)]
     for row in d:
 
         if i==0:

@@ -93,6 +93,7 @@ export class SearchComponent implements OnInit {
         this.message="";
         this.profils=[];
         for(let item of r.results){
+          item.department=item.department || "";
           item.filter_tag=normaliser("nom:"+item.lastname+" pre:"+item.firstname+" dep:"+item.department+" promo:"+item.degree_year+" cp:"+item.cp);
           item.order_score=item.degree_year < new Date().getFullYear() ? item.degree_year : item.degree_year-2000;
           if(item.order_score==null)
@@ -110,11 +111,11 @@ export class SearchComponent implements OnInit {
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
 
-            if(item.department.length>60){
+            if(item.department && item.department.length>60){
               item.department=abrege(item.department,this.config.abreviations);
             }
 
-            this.profils.push(item);
+            if(item.department)this.profils.push(item);
           } else {
 
           }

@@ -25,12 +25,34 @@ department_category:
   Initiation à l'adaptation de romans: Scénario
   Expertiser un scénario de long métrage: Scénario
   Direction d'exploitation cinématographique: Exploitation
+  Le son direct au cinéma: Son
+  Montage et récit: Montage
+  Archidoc: Documentaire
+  Concevoir un projet documentaire: Documentaire
+  Pitcher, promouvoir son documentaire: Documentaire
+  Atelier réécriture: Scénario
+  Atelier scénario: Scénario
+  Grand Atelier Scénario / Comédie: Scénario
+  parcours personnalisé Direction d'Exploitation Cinématographique - bloc 1: Exploitation
+  Management d'exploitation cinématographique: Exploitation
+  Gestion d'exploitation cinématographique: Exploitation
+  Post-production image: Montage
+  Post-Production Image: Montage
+  Production outils et stratégie: Production
+  Vae scénariste: Scénario
+  Initiation au cinéma: Autres
+  'Initiation au documentaire de création : le point de vue': Documentaire
+  VAE Directeur d'exploitation cinématographique: Exploitation
+  Atelier ludwigsburg-paris: Production
+  Expertiser un projet de série: Séries
+  Réalisation d’un court-métrage de fiction: Réalisation
+  Atelier documentaire: Documentaire
+
 
 #Permet le regroupement des départements pour la formation professionnelle
 departements:
   Initiation à l'adaptation de romans: Initiation à l'adaptation de romans
-  Expertiser un scénario de long métrage: Scénario
-  Direction d'exploitation cinématographique: Exploitation
+
 
 
 #Normalisation des categories
