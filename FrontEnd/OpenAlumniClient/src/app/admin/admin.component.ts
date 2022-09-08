@@ -156,4 +156,8 @@ export class AdminComponent implements OnInit {
   accept_ask(u: any) {
 
   }
+
+  export_dict() {
+    open(environment.domain_server+"/api/export_dict");
+  }
 }

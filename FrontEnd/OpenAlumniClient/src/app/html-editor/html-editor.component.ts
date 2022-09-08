@@ -30,7 +30,7 @@ export class HtmlEditorComponent implements OnInit {
   tagCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = ['Job'];
-  allTags: string[] = ['News', 'Job','Annonce'];
+  allTags: string[] = ['Sortie de film', 'Evénements','Info professionnelle','Offre d\'emploie'];
 
   @ViewChild('fruitInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;

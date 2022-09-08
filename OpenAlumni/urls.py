@@ -69,6 +69,7 @@ urlpatterns = [
     path('api/send_report_by_email/', views.send_report_by_email),
     path('api/get_students/', views.get_students),
     path('api/social_graph/json/', views.social_graph),
+    path('api/export_dict/', views.export_dict),
     path('api/social_distance/', views.social_distance),
     path('api/export_all/', views.export_all),
     path('api/export_profils/', views.export_profils),

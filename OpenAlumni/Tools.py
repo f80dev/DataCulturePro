@@ -444,6 +444,7 @@ def init_dict():
         with open("./static/dictionnary.yaml", 'r', encoding='utf8') as f:
             body = f.read()
         MYDICT = yaml.load(body.lower(), Loader=yaml.Loader)
+    return MYDICT
 
 
 def in_dict(key:str,section="jobs"):

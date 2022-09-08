@@ -50,7 +50,7 @@ from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pows
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
-    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string
+    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
 from OpenAlumni.nft import NFTservice
 
 
@@ -191,9 +191,9 @@ class POWViewSet(viewsets.ModelViewSet):
 class ExtraWorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = ExtraWorkSerializer
-    filter_backends = (DjangoFilterBackend,)
     permission_classes = [AllowAny]
-    filter_fields = ['pow__id','profil__id']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ['pow__id','profil__id',]
 
 
 class WorkViewSet(viewsets.ModelViewSet):
@@ -221,7 +221,7 @@ class ExtraAwardViewSet(viewsets.ModelViewSet):
     serializer_class = ExtraAwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields=("profil","pow","festival")
+    filterset_fields=["profil","pow","festival"]
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class FestivalViewSet(viewsets.ModelViewSet):
@@ -952,6 +952,29 @@ def social_graph(request,format="json"):
         response = HttpResponse(content=file_data,content_type='plain/text')
         response["Content-Disposition"] = 'attachment; filename="femis.'+format+'"'
         return response
+
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def export_dict(request):
+    """
+    test:
+    :param request:
+    :return:
+    """
+    _d=init_dict()
+    df=pd.DataFrame(data=_d["jobs"].values(),index=_d["jobs"].keys(),columns=["dest"])
+
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer,sheet_name="Dictionnaire")
+    writer.save()
+    output.seek(0)
+
+    response = HttpResponse(content=output.getvalue(),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response["Content-Disposition"] = 'attachment; filename=dictionnaire.xlsx'
+    return response
 
 
 
