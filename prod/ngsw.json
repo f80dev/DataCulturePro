@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1655143107387,
+  "timestamp": 1663335682699,
   "index": "https://dcp.f80lab.com/index.html",
   "assetGroups": [
     {
@@ -57,7 +57,8 @@
         "https://dcp.f80lab.com/assets/img/tips.png",
         "https://dcp.f80lab.com/assets/jobs.json",
         "https://dcp.f80lab.com/assets/jobs_old.json",
-        "https://dcp.f80lab.com/assets/reporting.pbix"
+        "https://dcp.f80lab.com/assets/reporting.pbix",
+        "https://dcp.f80lab.com/assets/~$Reporting_local.xlsx"
       ],
       "patterns": []
     }
@@ -107,7 +108,7 @@
   ],
   "hashTable": {
     "https://dcp.f80lab.com/971.js": "7554a5c72b2f08cc97a49f57768b89e72bbc83cc",
-    "https://dcp.f80lab.com/assets/Reporting.xlsx": "fc2a8295b08f3c940cf53fd7f2fe7cf06fed299d",
+    "https://dcp.f80lab.com/assets/Reporting.xlsx": "c1c0d06e32155034ed44631082191f125f0cd8d5",
     "https://dcp.f80lab.com/assets/Reporting_local.xlsx": "84157e5acfeb43a0c03e5a1114f209a4e36db705",
     "https://dcp.f80lab.com/assets/default_jobs.json": "2c564458c2e15d101fadf154cbb3171407ed39c2",
     "https://dcp.f80lab.com/assets/icons/LinkedIn.png": "dec770e0a226b15021d0b80154aa18841097a46e",
@@ -135,13 +136,14 @@
     "https://dcp.f80lab.com/assets/jobs.json": "e6e9d50780d2f6381fddf00f26635b5c9d285bbe",
     "https://dcp.f80lab.com/assets/jobs_old.json": "e6e9d50780d2f6381fddf00f26635b5c9d285bbe",
     "https://dcp.f80lab.com/assets/reporting.pbix": "2b95ac35c6fee4fa408666be84d70943d4604ae8",
+    "https://dcp.f80lab.com/assets/~$Reporting_local.xlsx": "b48ae618d652e658e7c8a49db4eb6fd3253f70a6",
     "https://dcp.f80lab.com/favicon.ico": "ac6b2455e4fb868e4013fa4acf6de0aba0dda933",
-    "https://dcp.f80lab.com/index.html": "037c7a6e9e5e2d068d43b33f7a52918b81d0491a",
-    "https://dcp.f80lab.com/main.js": "782f35e95c221e0da1f91a9fd94ace35d02d84c4",
+    "https://dcp.f80lab.com/index.html": "92dc4dc39c6fc44716cc698502d0bba4ce7671e0",
+    "https://dcp.f80lab.com/main.js": "14af428f3d534133ee3f9138c8d519453d44076a",
     "https://dcp.f80lab.com/manifest.webmanifest": "5430bb03fa346e338146a0956939e110243e7d40",
     "https://dcp.f80lab.com/polyfills.js": "8d78b26ae53508c93a7bb6e40d0150de7a02fcb2",
     "https://dcp.f80lab.com/runtime.js": "82a1a0422e19bb4fe82d2fb96ae78add9e44e453",
-    "https://dcp.f80lab.com/styles.css": "bba7ff1211503cc38f37ffc17f10ffca77309743"
+    "https://dcp.f80lab.com/styles.css": "1caf951acb24d066513dcb5b9ebc2010af21f859"
   },
   "navigationUrls": [
     {

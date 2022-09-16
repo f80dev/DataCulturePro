@@ -1,11 +1,11 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
-import {$$, group_works, showMessage} from "../tools";
+import {group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {ConfigService} from "../config.service";
-import {environment} from "../../environments/environment";
+
 import {Location} from "@angular/common";
 
 @Component({

@@ -5,8 +5,8 @@
           background="./assets/img/charts.jpeg">
 </app-tuto>
 
-<div class="mainform" style="height: 100%;">
 
+<div class="mainform" style="height: 100%;">
   <app-hourglass [message]="message"></app-hourglass>
   <div *ngIf="sel_report=='building'">
     <br>
@@ -21,6 +21,7 @@
     <mat-tab name="tabs" label="Rapports pré-définis">
 
       <br>
+
       <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
         <mat-label>Sélectionner un rapport</mat-label>
         <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
@@ -30,7 +31,7 @@
         </mat-select>
       </mat-form-field>
 
-      &nbsp;
+
       <div *ngIf="filter_values?.length>0" style="display: inline-block;">
         <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >
           <mat-label>{{filter_name}}</mat-label>
@@ -80,11 +81,8 @@
 
     <mat-tab name="tabs" label="Exports" *ngIf="config.hasPerm('export_stats')">
 
-
-
-
       <br>
-      <mat-form-field appearance="legacy" style="min-width: 300px;width:60%;">
+      <mat-form-field appearance="legacy" style="min-width: 300px;width:5%;">
         <mat-label>Liste des raports</mat-label>
         <mat-select multiple [(ngModel)]="sel_instant_report_to_copy">
           <mat-option *ngFor="let report of instant_reports" [value]="report.id">
@@ -92,75 +90,109 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <br>
 
       <button mat-button mat-raised-button
               class="app-button"
-              id="cmdCopyReport" color="primary"
+              id="cmdCopyReport"
               *ngIf="sel_instant_report_to_copy?.length>0"
               (click)="copyInstantReports()">
         Recevoir par mail
       </button>
 
-
-
-      <br><br><br>
-
-
-      <mat-form-field class="app-field" style="font-size: medium;max-width: 300px;" id="lstRapports">
-        <mat-label>Rapports statistiques disponibles</mat-label>
-        <mat-select [(ngModel)]="sel_report">
-          <mat-option *ngFor="let report of reports" [value]="report.url">{{report.title}}</mat-option>
-        </mat-select>
-        <mat-hint>Sélectionner le rapport que vous souhaitez consulter</mat-hint>
-      </mat-form-field>
-
-      <button mat-button mat-raised-button
-              class="app-button"
-              id="cmdOpenStat" color="primary"
-              *ngIf="sel_report?.length>0 && sel_report!='building'"
-              (click)="openStats()">
-        Ouvrir
-      </button>
-
-      <br><br>
-
-
-
       <br>
-      <table class="mat-elevation-z8" *ngIf="!showGraphQL">
-        <tr>
-          <td>Données brutes</td>
-          <td style="text-align: left;">
-            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
-                    (click)="downloadReport('csv')">
-              <mat-icon>download</mat-icon>&nbsp;CSV
-            </button>
-            &nbsp;
-            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
-                    (click)="downloadReport('xml')">
-              <mat-icon>download</mat-icon>&nbsp;XML
-            </button>
-          </td>
-        </tr>
+      <br>
 
-        <tr>
-          <td>Modèle d'analyse</td>
-          <td style="text-align: left;">
-            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
-                    (click)="downloadReport('excel')">
-              <mat-icon>download</mat-icon>
-              Excel
-            </button>
-            &nbsp;
-            <button mat-button mat-raised-button class="app-button" style="width: 120px;"
-                    (click)="downloadReport('powerbi')">
-              <mat-icon>download</mat-icon>
-              PowerBI
-            </button>
-          </td>
-        </tr>
-      </table>
+      <mat-expansion-panel style="display: inline-block;width: fit-content;max-width: 800px;text-align: left;" [expanded]="true">
+        <mat-expansion-panel-header>
+          Travailler sur l'ensemble des données
+        </mat-expansion-panel-header>
+        <div>
+
+          <mat-form-field appearance="fill" style="width: 200px;">
+            <mat-label>Sélectionner une categorie</mat-label>
+            <mat-select [(value)]="sel_table" id="lstTable">
+              <mat-option value="work">Travaux</mat-option>
+              <mat-option value="award">Récompenses</mat-option>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+
+          <mat-checkbox [(ngModel)]="bLimitData" style="margin: 10px;">
+            <div class="bloc-bouton" style="text-align: left;"
+                 title="Voir toutes les données peut significativement alonger le temps de traitement">Voir toutes<br>les données</div>
+          </mat-checkbox>
+        </div>
+
+        <table style="margin: 0px;padding: 20px;width: fit-content;display: inline-block;" *ngIf="!showGraphQL">
+          <tr>
+            <td>Données brutes</td>
+            <td style="text-align: left;">
+              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+                      (click)="downloadReport('csv')">
+                <mat-icon>download</mat-icon>&nbsp;Excel (CSV)
+              </button>
+              &nbsp;
+              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+                      (click)="downloadReport('xml')">
+                <mat-icon>download</mat-icon>&nbsp;XML
+              </button>
+
+              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+                      (click)="downloadReport('json')">
+                <mat-icon>download</mat-icon>&nbsp;JSON
+              </button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Modèle d'analyse</td>
+            <td style="text-align: left;">
+              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+                      (click)="downloadReport('excel')">
+                <mat-icon>download</mat-icon>
+                Excel
+              </button>
+              &nbsp;
+              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+                      (click)="downloadReport('powerbi')">
+                <mat-icon>download</mat-icon>
+                PowerBI
+              </button>
+            </td>
+          </tr>
+        </table>
+
+
+      </mat-expansion-panel>
+
+
+
+
+
+
+
+
+      <!--      <mat-form-field class="app-field" style="font-size: medium;max-width: 300px;" id="lstRapports">-->
+      <!--        <mat-label>Rapports statistiques disponibles</mat-label>-->
+      <!--        <mat-select [(ngModel)]="sel_report">-->
+      <!--          <mat-option *ngFor="let report of reports" [value]="report.url">{{report.title}}</mat-option>-->
+      <!--        </mat-select>-->
+      <!--        <mat-hint>Sélectionner le rapport que vous souhaitez consulter</mat-hint>-->
+      <!--      </mat-form-field>-->
+
+      <!--      <button mat-button mat-raised-button-->
+      <!--              class="app-button"-->
+      <!--              id="cmdOpenStat" color="primary"-->
+      <!--              *ngIf="sel_report?.length>0 && sel_report!='building'"-->
+      <!--              (click)="openStats()">-->
+      <!--        Ouvrir-->
+      <!--      </button>-->
+
+
+
+
+
+
 
 
 
@@ -192,9 +224,9 @@
   <div *ngIf="showGraphQL">
     <app-tuto label="Grâce aux langages GraphQL vous pouvez interroger la base des anciens éleves"></app-tuto>
     <textarea
-      [rows]="10"
-      style="margin:2%;width: 95%;background-color: lightgray;"
-      placeholder="Votre requête ici" [(ngModel)]="query">
+            [rows]="10"
+            style="margin:2%;width: 95%;background-color: lightgray;"
+            placeholder="Votre requête ici" [(ngModel)]="query">
     </textarea>
   </div>
 

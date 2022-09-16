@@ -184,7 +184,7 @@ class POWViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields=["title","category","nature","year"]
-    filter_fields = ("id", "title","owner", "category", "year","nature",)
+    filterset_fields = ["id", "title","owner", "category", "year","nature",]
 
 
 #http://localhost:8000/api/extraworks/
@@ -1041,6 +1041,7 @@ def export_all(request):
     """
 
     table = request.GET.get("table", "work").lower()
+    limit=int(request.GET.get("limit", "0"))
     title=request.GET.get("title","Reporting FEMIS")
     format=request.GET.get("out","json")
     description=request.GET.get("description","")+"<br>"
@@ -1092,6 +1093,9 @@ def export_all(request):
         df=pd.DataFrame.from_records(data)
         if len(data)>0:
             df.columns=list(request.GET.get("cols").split(","))
+
+    if limit>0:
+        df=df[:limit]
 
     log("Chargement des données terminées")
 

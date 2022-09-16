@@ -31,6 +31,8 @@ export class StatsComponent implements OnInit {
   sel_filter="";
   filter_name="Filtre";
   sel_instant_report_to_copy: any={};
+  sel_table: string="work";
+  bLimitData: boolean = true;
 
   constructor(public _location:Location,
               public api:ApiService,
@@ -95,7 +97,7 @@ export class StatsComponent implements OnInit {
   }
 
 
-  downloadReport(tools: string) {
+  downloadReport(tools: string,table:string="work") {
     if(tools=="excel"){
       if(!this.config.isProd()){
         open(environment.domain_appli+"/assets/Reporting_local.xlsx");
@@ -103,9 +105,13 @@ export class StatsComponent implements OnInit {
         open(environment.domain_appli+"/assets/Reporting.xlsx");
       }
     }
-    if(tools=="powerbi")open(environment.domain_appli+"/assets/reporting.pbix");
-    if(tools=="csv")open(api("export_all/","",true,"csv"));
-    if(tools=="xml")open(api("export_all/","",true,"xml"));
+    if(tools=="powerbi"){
+      open(environment.domain_appli+"/assets/reporting.pbix");
+    } else {
+      let param="table="+table+"&out="+tools;
+      if(!this.bLimitData)param=param+"&limit=100";
+      open(api("export_all/",param,true,""));
+    }
   }
 
 
@@ -183,7 +189,7 @@ export class StatsComponent implements OnInit {
     }
     rc=rc+"</table>";
     this._clipboardService.copyFromContent(rc);
-    this.api._post("send_report_by_email","userid="+this.config.user.id,{html:rc}).subscribe(()=>{
+    this.api._post("send_report_by_email","userid="+this.config.user.user.id,{html:rc}).subscribe(()=>{
       showMessage(this,"Rapport complet envoyé sur votre boite mail");
     })
   }

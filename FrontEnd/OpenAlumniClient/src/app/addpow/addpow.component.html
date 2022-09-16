@@ -1,174 +1,163 @@
-<div class="mainform">
-  <app-tuto label="Ici vous gérez les films"></app-tuto>
-  <app-hourglass [message]="message"></app-hourglass>
-  <div class="h-zone" *ngIf="!showDetail">Insérer un nouveau film</div>
-  <div style="min-width:350px;max-width: 500px;text-align: left;display: inline-block;">
-    <mat-form-field appearance="fill" class="app-field" *ngIf="!showDetail">
-      <mat-label>Titre du film</mat-label>
-      <input matInput placeholder="mon titre" id="txtTitle"
-             (ngModelChange)="changeTitle($event)"
-             type="text" max="300" [(ngModel)]="pow.title"
-             required autofocus>
-    </mat-form-field>
+<div class="mainform" style="padding: 10px;">
+    <app-tuto label="Ici vous gérez les films"></app-tuto>
+    <app-hourglass [message]="message"></app-hourglass>
+    <div class="h-zone" *ngIf="!showDetail">Insérer un nouveau film</div>
+    <div style="min-width:350px;max-width: 500px;text-align: left;display: inline-block;">
+        <mat-form-field appearance="fill" class="app-field" *ngIf="!showDetail">
+            <mat-label>Titre du film</mat-label>
+            <input matInput placeholder="mon titre" id="txtTitle"
+                   (ngModelChange)="changeTitle($event)"
+                   type="text" [(ngModel)]="pow.title"
+                   autofocus>
+        </mat-form-field>
 
-    <div *ngIf="showDetail" class="h-zone" style="margin: 10px;">
-      "{{pow.title}}"
-    </div>
+<!--        <div *ngIf="showDetail" class="h-zone" style="margin: 10px;">-->
+<!--            "{{pow.title}}"-->
+<!--        </div>-->
 
-    <div style="display: inline-block" *ngIf="!showDetail">
-      <span *ngIf="pows.length>0">Sélectionner dans la liste ou </span>
+        <mat-selection-list #items *ngIf="!showDetail" class="mat-elevation-z4" style="height: 65vh;width: 95%;overflow: scroll;"
+                            (selectionChange)="select_title(items.selectedOptions.selected[0].value)"
+                            [multiple]="false">
+            <mat-list-option *ngFor="let item of pows" [value]="item" name="films">
+                <mat-icon mat-list-icon>videocam</mat-icon>
+                <div mat-line>{{item.title}} ({{item.year}})</div>
+            </mat-list-option>
+        </mat-selection-list>
 
-      <button class="app-button login-button"
-              *ngIf="pow.title?.length>2"
-              id="cmdAddPow"
-              mat-button mat-raised-button
-              (click)="add_title()">
-        Ajouter ce titre
-      </button>
-    </div>
-
-
-    <mat-selection-list #items *ngIf="!showDetail"
-                        (selectionChange)="select_title(items.selectedOptions.selected[0].value)"
-                        [multiple]="false">
-      <mat-list-option *ngFor="let item of pows" [value]="item" name="films">
-        <mat-icon mat-list-icon>videocam</mat-icon>
-        <div mat-line>{{item.title}} ({{item.year}})</div>
-      </mat-list-option>
-    </mat-selection-list>
-
-
-
-    <div *ngIf="showDetail">
-
-      <mat-accordion [multi]="false" style="text-align: left;">
-        <mat-expansion-panel class="app-panel" [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Informations générales
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-
-         <div style="width: 100%;text-align: center">
-         <img [src]="pow.visual"
-              *ngIf="pow.visual.length>0"
-              style="width:150px;"
-              (click)="change_visual()">
-          <button class="app-button login-button" color="primary"
-                  id="cmdVisual"
-                  *ngIf="pow.visual.length==0"
-                  mat-button mat-raised-button
-                  (click)="change_visual()">
-            Ajouter un visuel
-          </button>
-         <br>
-           <br>
-
-         </div>
-
-
-      <mat-form-field  appearance="fill" class="app-field">
-        <mat-label>Synopsis</mat-label>
-        <input matInput id="txtSynopsis"
-               type="text" max="3000" required
-               [(ngModel)]="pow.description">
-        <mat-hint>Synopsis de l'oeuvre (3000 caractères max)</mat-hint>
-      </mat-form-field> <br>
-
-
-      <mat-form-field  appearance="fill" class="app-field" style="max-width: 175px;">
-        <mat-label>Année de sortie</mat-label>
-        <input matInput required
-               id="txtYear"
-               type="number" min="1900" max="2030"
-               [(ngModel)]="pow.year">
-      </mat-form-field>
-
-      <mat-form-field  appearance="fill" class="app-field" style="max-width: 200px">
-        <mat-label>Budget</mat-label>
-        <input matInput id="txtBudget"
-               type="number" min="0"
-               [(ngModel)]="pow.budget">
-        <span matSuffix>€</span>
-      </mat-form-field>
-
-
-
-         <br>
-
-
-
-
-
-       </mat-expansion-panel>
-        <mat-expansion-panel class="app-panel" id="pnlAddLink">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Ajouter des hyperliens
-          </mat-panel-title>
-          <mat-panel-description class="app-mat-panel-description">
-            Description, Youtube
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <div *ngFor="let link of pow.links" style="width: 80%;display: inline-block;text-align: left;font-size: small;font-weight: lighter;">
-          <mat-icon (click)="remove(link)" style="font-size: small;cursor: pointer;">cancel</mat-icon>
-          <a href="{{link.url}}" target="_blank">{{link.text}}</a>
-          <br>
+        <div style="display: inline-block;margin-top: 15px;" *ngIf="!showDetail">
+            <span *ngIf="pows.length>0">Sélectionner un film ou </span>
+            <button class="app-button login-button"
+                    *ngIf="pow.title?.length>2"
+                    id="cmdAddPow"
+                    mat-button mat-raised-button
+                    (click)="add_title()">
+                <div class="bloc-bouton">Ajouter un<br>nouveau film</div>
+            </button>
         </div>
 
-        <mat-form-field  appearance="fill" class="app-field">
-          <mat-label>Lien internet</mat-label>
-          <input matInput placeholder="https://"
-                 title="Peut être un lien vers une plateforme vidéo, la fiche wikipedia"
-                 type="text" max="300"
-                 [(ngModel)]="link.url">
-          <mat-hint>Adresse internet associé à l'oeuvre</mat-hint>
-        </mat-form-field>
+        <div *ngIf="showDetail">
+            <mat-accordion [multi]="false" style="text-align: left;">
+                <mat-expansion-panel class="app-panel" [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Informations générales
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
 
-        <mat-form-field appearance="fill" class="app-field">
-          <mat-label>Libellé du lien</mat-label>
-          <input matInput type="text" max="300"
-                 [(ngModel)]="link.text">
-        </mat-form-field>
+                    <div style="width: 100%;text-align: center">
+                        <img [src]="pow.visual"
+                             *ngIf="pow.visual.length>0"
+                             style="width:150px;"
+                             (click)="change_visual()">
+                        <button class="app-button login-button" color="primary"
+                                id="cmdVisual"
+                                *ngIf="pow.visual.length==0"
+                                mat-button mat-raised-button
+                                (click)="change_visual()">
+                            Ajouter un visuel
+                        </button>
+                        <br>
+                        <br>
+
+                    </div>
 
 
-        <mat-action-row id="pnlActionAddLink">
-          <button class="app-button login-button"
-                  *ngIf="pow.title.length>0 && link.url.length>0"
-                  mat-button mat-raised-button
-                  (click)="add_link()">
-            Ajouter
-          </button>
-        </mat-action-row>
+                    <mat-form-field  appearance="fill" class="app-field">
+                        <mat-label>Synopsis</mat-label>
+                        <input matInput id="txtSynopsis"
+                               type="text" max="3000" required
+                               [(ngModel)]="pow.description">
+                        <mat-hint>Synopsis de l'oeuvre (3000 caractères max)</mat-hint>
+                    </mat-form-field> <br>
 
-      </mat-expansion-panel>
-      </mat-accordion>
+
+                    <mat-form-field  appearance="fill" class="app-field" style="max-width: 175px;">
+                        <mat-label>Année de sortie</mat-label>
+                        <input matInput required
+                               id="txtYear"
+                               type="number" min="1900" max="2030"
+                               [(ngModel)]="pow.year">
+                    </mat-form-field>
+
+                    <mat-form-field  appearance="fill" class="app-field" style="max-width: 200px">
+                        <mat-label>Budget</mat-label>
+                        <input matInput id="txtBudget"
+                               type="number" min="0"
+                               [(ngModel)]="pow.budget">
+                        <span matSuffix>€</span>
+                    </mat-form-field><br>
+
+
+
+
+                </mat-expansion-panel>
+                <mat-expansion-panel class="app-panel" id="pnlAddLink">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Ajouter des hyperliens
+                        </mat-panel-title>
+                        <mat-panel-description class="app-mat-panel-description">
+                            Description, Youtube
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div *ngFor="let link of pow.links" style="width: 80%;display: inline-block;text-align: left;font-size: small;font-weight: lighter;">
+                        <mat-icon (click)="remove(link)" style="font-size: small;cursor: pointer;">cancel</mat-icon>
+                        <a href="{{link.url}}" target="_blank">{{link.text}}</a>
+                        <br>
+                    </div>
+
+                    <mat-form-field  appearance="fill" class="app-field">
+                        <mat-label>Lien internet</mat-label>
+                        <input matInput placeholder="https://"
+                               title="Peut être un lien vers une plateforme vidéo, la fiche wikipedia"
+                               type="text" max="300"
+                               [(ngModel)]="link.url">
+                        <mat-hint>Adresse internet associé à l'oeuvre</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" class="app-field">
+                        <mat-label>Libellé du lien</mat-label>
+                        <input matInput type="text" max="300"
+                               [(ngModel)]="link.text">
+                    </mat-form-field>
+
+
+                    <mat-action-row id="pnlActionAddLink">
+                        <button class="app-button login-button"
+                                *ngIf="pow.title.length>0 && link.url.length>0"
+                                mat-button mat-raised-button
+                                (click)="add_link()">
+                            Ajouter
+                        </button>
+                    </mat-action-row>
+
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
     </div>
 
-  </div>
-
-
 </div>
- <div class="bottom-bar">
-   <hr>
+<div class="bottom-bar">
+    <hr>
     <input #csvInput hidden="true"
-       type="file" onclick="this.value=null"
-       (change)="_import($event)"
-       accept=".xls,.xlsx"/>
+           type="file" onclick="this.value=null"
+           (change)="_import($event)"
+           accept=".xls,.xlsx"/>
 
     <button class="app-button login-button"
             mat-button mat-raised-button
             *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
             (click)="csvInput.click()">
-      Importer
+        Importer
     </button>
 
-     <button class="app-button login-button"
+    <button class="app-button login-button"
             mat-button mat-raised-button
-             *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
+            *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
             (click)="router.navigate(['profils_scanner'])">
-      Analyse
+        Analyse
     </button>
 
     <button class="app-button login-button"
@@ -176,12 +165,12 @@
             [disabled]="pow?.description.length==0 || pow?.year==0"
             id="cmdSave" color="primary"
             (click)="quit(true)">
-      <div class="bloc-bouton">Ajouter<br>le film</div>
+        <div class="bloc-bouton">Ajouter<br>le film</div>
     </button>
 
     <button class="app-button login-button"
             mat-button mat-raised-button
             (click)="quit(false)">
-      Annuler
+        Annuler
     </button>
-  </div>
+</div>

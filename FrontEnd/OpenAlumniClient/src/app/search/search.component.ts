@@ -8,6 +8,7 @@ import {Location} from "@angular/common"
 import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatCheckboxChange} from "@angular/material/checkbox";
+import {tProfil} from "../types";
 
 @Component({
   selector: 'app-search',
@@ -15,7 +16,7 @@ import {MatCheckboxChange} from "@angular/material/checkbox";
   styleUrls: ['./search.component.sass']
 })
 export class SearchComponent implements OnInit {
-  profils:any[]=[];
+  profils:tProfil[]=[];
   query:any={value:""};
 
   message: string="";
@@ -194,7 +195,7 @@ export class SearchComponent implements OnInit {
   }
 
   askfriend(profil: any) {
-    this.api._get("askfriend","from="+this.config.user.id+"&to="+profil.id).subscribe(()=>{
+    this.api._get("askfriend","from="+this.config.user.user.id+"&to="+profil.id).subscribe(()=>{
       showMessage(this,"Votre demande est envoyée");
     })
   }

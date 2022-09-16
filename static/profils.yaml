@@ -39,7 +39,7 @@ profils:
       r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
     price: 0
-    subscription: email
+    subscription: secure
 
   - id: admin
     title: Administrateur
@@ -98,5 +98,5 @@ profils:
       prof r_works write_email r_department advanced_search dev
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
     price: 0
-    subscription: hidden
+    subscription: secure
 

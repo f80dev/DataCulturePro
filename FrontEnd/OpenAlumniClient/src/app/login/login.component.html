@@ -8,7 +8,7 @@
   <br><br>
   <app-hourglass maxwidth="300px" [message]="wait_message" faq="authent"></app-hourglass>
 
-  <div *ngIf="config.user?.email?.length==0 && wait_message.length==0">
+  <div *ngIf="config.user?.user.email?.length==0 && wait_message.length==0">
     <div style="width: 100%;text-align: center;">
       <div *ngIf="messageCode.length==0">
         <button class="app-button login-button"
@@ -94,13 +94,13 @@
   </div>
 
   <!--Zone d'acceuil-->
-  <div *ngIf="config.user?.email?.length>0">
-    <h1>Bonjour {{config.user?.pseudo}}</h1>
+  <div *ngIf="config.user?.user.email?.length>0">
+    <h1>Bonjour {{config.user?.user.email}}</h1>
     <br>
-    <img *ngIf="config.user?.photo?.length>0"
-         [src]="config.user?.photo" width="150px"
-         height="150px"
-         class="image-photo">
+<!--    <img *ngIf="config.user?.photo?.length>0"-->
+<!--         [src]="config.user?.photo" width="150px"-->
+<!--         height="150px"-->
+<!--         class="image-photo">-->
     <br>
 
     <button class="app-button"

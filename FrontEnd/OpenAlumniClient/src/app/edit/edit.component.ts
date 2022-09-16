@@ -227,7 +227,7 @@ export class EditComponent implements OnInit,OnDestroy  {
       dtStart:this.dtStart.toISOString().split("T")[0],
       dtEnd:this.dtEnd.toISOString().split("T")[0],
       duration:this.duration,
-      source:"man_"+this.config.user.id,
+      source:"man_"+this.config.user.user.id,
     };
 
     // if(this.showAddWork==3){

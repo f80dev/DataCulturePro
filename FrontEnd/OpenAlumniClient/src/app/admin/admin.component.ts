@@ -129,7 +129,7 @@ export class AdminComponent implements OnInit {
   }
 
   analyzer(ope="profils,films") {
-    this.message="Traitement qualite sur les profils";
+    this.message="Traitement qualite sur les "+ope;
     this.api._get("quality_analyzer","ope="+ope).subscribe(()=>{
       this.message="";
     })

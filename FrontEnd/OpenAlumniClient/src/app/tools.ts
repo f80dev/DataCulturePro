@@ -1,5 +1,4 @@
 import {environment} from '../environments/environment';
-import {Router} from '@angular/router';
 import {WebcamUtil} from "ngx-webcam";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {SocialServiceConfig} from "ngx-social-button";

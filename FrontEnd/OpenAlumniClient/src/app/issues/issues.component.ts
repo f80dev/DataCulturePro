@@ -28,7 +28,7 @@ export class IssuesComponent implements OnInit {
   }
 
   send() {
-    let body="De 'user"+this.config.user.id+"'\nLocalisation: "+this.localisation+"\nDescription:"+this.description;
+    let body="De 'user"+this.config.user.user.id+"'\nLocalisation: "+this.localisation+"\nDescription:"+this.description;
     this.api._post("add_issue","",{title:this.title,body:body}).subscribe((r)=>{
       showMessage(this,"Anomalie enregistrée. Celle ci sera traité dés que possible");
     });

@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {Location} from "@angular/common";
 import {showError} from "../tools";
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {FormControl} from "@angular/forms";
-import {Observable} from "rxjs";
-import {MatChipInputEvent} from "@angular/material/chips";
-import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {Router} from "@angular/router";
+import {tArticle} from "../types";
 
 @Component({
   selector: 'app-blog',
@@ -16,9 +11,9 @@ import {Router} from "@angular/router";
   styleUrls: ['./blog.component.sass']
 })
 export class BlogComponent implements OnInit {
-  articles: any[]=[];
+  articles: tArticle[]=[];
 
-  allTags: string[] = ['News', 'Job','Annonce'];
+  allTags: string[] = ['Sortie de film', 'Evénements','Info professionnelle',"Offre d'emploi"];
   selected_tag=this.allTags;
 
   constructor(
@@ -31,7 +26,6 @@ export class BlogComponent implements OnInit {
   ngOnInit(): void {
    this.refresh();
   }
-
 
 
   refresh(){

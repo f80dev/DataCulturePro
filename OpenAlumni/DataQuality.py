@@ -160,6 +160,14 @@ class PowAnalyzer:
     def quality(self):
         to_delete=[]
         for p in self.pows:
+            if p.year=="[]":p.year=None
+            if p.year and type(p.year)==list:
+                if len(p.year)==0:
+                    p.year=None
+                else:
+                    p.year=p.year[0]
+
+
             if p.year is None or int(p.year)<1970 or p.title is None:
                 to_delete.append(p.id)
             else:

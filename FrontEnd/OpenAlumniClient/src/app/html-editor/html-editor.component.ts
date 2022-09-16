@@ -132,7 +132,7 @@ export class HtmlEditorComponent implements OnInit {
       html: this.editorContent,
       title:this.title,
       sumary:this.resumer,
-      owner: this.config.user.id,
+      owner: this.config.user.user.id,
       validate: false,
       tags:this.tags.join(" "),
       to_publish:false

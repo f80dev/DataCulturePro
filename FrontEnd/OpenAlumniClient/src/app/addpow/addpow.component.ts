@@ -22,6 +22,7 @@ export class AddpowComponent implements OnInit {
   pow: any;
   link:any={url:"",text:""};
   message: string="";
+    handle_query: NodeJS.Timeout;
 
   constructor(public _location:Location,
               public dialog:MatDialog,
@@ -84,14 +85,18 @@ export class AddpowComponent implements OnInit {
   }
 
   changeTitle(evt: any) {
+      //http://localhost:8000/api/powsdoc/?format=json&limit=200&search_simple_query_string=%22les%20chiens%22
     if(evt.length>2){
-      this.api._get("pows","search="+evt).subscribe((r:any)=>{
-        this.pows=r.results;
-      })
+        clearTimeout(this.handle_query);
+        this.handle_query=setTimeout(()=>{
+            this.api._get("powsdoc","search_simple_query_string="+evt).subscribe((r:any)=>{
+                this.pows=r.results;
+            })
+        },300);
+
     } else {
       this.pows=[];
     }
-
   }
 
   add_title() {

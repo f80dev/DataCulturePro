@@ -1,9 +1,21 @@
 <div class="mainform" style="text-align: center;width:100%;">
 
   <br>
+
   <mat-accordion style="display: inline-block;width:98%;">
 
-    <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlJob">
+    <mat-expansion-panel class="app-panel" style="text-align: left;" id="pnlGeneral" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Général
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      mail: {{config.user.user.email}}
+      <br>
+      Profil {{config.config.appname}} associé: {{config.user.profil_name}}
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlPerm">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Permissions

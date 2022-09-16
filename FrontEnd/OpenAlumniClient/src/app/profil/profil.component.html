@@ -31,6 +31,7 @@
 
             <div *ngIf="profil?.cursus=='P'"
                  (click)="openQuery($event,profil?.department)"
+                 name="lblCursus"
                  style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;cursor: pointer;">
                 {{profil.department}}
             </div>
@@ -65,8 +66,11 @@
                     <mat-icon>zoom_in</mat-icon>
                 </button>
 
-                <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
-                <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
+                <span name="lblName">
+                    <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
+                    <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
+                </span>
+
             </div>
 
 

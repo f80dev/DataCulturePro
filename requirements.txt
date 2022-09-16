@@ -1,12 +1,12 @@
 jellyfish
-Django==4.0.6
+Django
 markdown
 django-oauth-toolkit
 oauthlib
-requests~=2.25.1
-selenium~=3.141.0
+requests
+selenium
 djangorestframework
-pandas~=1.2.4
+pandas
 elasticsearch_dsl
 graphene-django
 django-cors-headers

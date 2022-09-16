@@ -48,7 +48,7 @@ export class WriteComponent implements OnInit {
         this.profil=p;
         this.api.getyaml("","social").subscribe((r:any)=>{
           if(this.config.user.user){
-            let profil_name=this.config.user.profil_name;
+            let profil_name=this.config.user.profil;
             for(let service of r.services){
               let url=this.profil[service.name];
               if(url && url.length>0 && service.profils.indexOf(profil_name)>-1)
@@ -65,7 +65,8 @@ export class WriteComponent implements OnInit {
 
 
   send() {
-    let fullname=this.config.user.user.first_name+" "+this.config.user.user.last_name;
+    //let fullname=this.config.user.profil.first_name+" "+this.config.user.profil.last_name;
+    let fullname=this.config.user.profil;
     this.api.send(this.profil.id,this.config.user.user.id,this.text,this.social_network,this.send_copy,fullname).subscribe(r=>{
       showMessage(this,"Message envoyé a "+this.profil.firstname+" "+this.profil.lastname);
       this._location.back();

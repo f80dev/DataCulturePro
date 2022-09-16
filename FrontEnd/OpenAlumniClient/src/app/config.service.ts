@@ -5,13 +5,14 @@ import {Platform} from "@angular/cdk/platform";
 import {HttpClient} from "@angular/common/http";
 import { Location } from '@angular/common';
 import {$$, group_works, initAvailableCameras, showMessage} from "./tools";
+import {tUser} from "./types";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
   visibleTuto: Boolean | boolean=false;
-  user: any;
+  user: tUser;
   values: any;
   config:any;
   webcamsAvailable: any;
@@ -150,7 +151,12 @@ export class ConfigService {
 
   public raz_user() {
     $$("Réinitialisation de l'utilisateur courant. Effacement de l'email et des permissions");
-    this.user={email:"",perm:this.profils["anonyme"].perm};
+    this.user={
+      black_list: "", dtCreate: "", dtLogin: "", level: 0, nbLogin: 0, profil_name: "",
+      user:{email:"",id:""},
+      perm:this.profils["anonyme"].perm,
+      profil:""
+    };
   }
 
   isLogin() {

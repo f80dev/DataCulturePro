@@ -1,7 +1,7 @@
 <div style="margin:1%;text-align: center;min-width: 300px;">
 
   <app-tuto icon_button="login"
-            [if]="!config.user?.email"
+            [if]="!config.user?.user.email"
             (click)="router.navigate(['login'])"
             label="Connectez vous pour avoir accès à plus d'information sur les profils">
   </app-tuto>
@@ -15,11 +15,10 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
-  <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
+  <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy" id="txtSearch"
                   style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;" autofocus>
     <mat-label><mat-icon>person_search</mat-icon>&nbsp;Recherche</mat-label>
     <input matInput matNativeControl
-           id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
            placeholder="nom, métier, promotion, titre de film ou de récompense"
@@ -58,14 +57,6 @@
 
   </div>
 
-
-  <!--  <mat-form-field appearance="fill" class="app-field" style="width:15%;max-width:80 px;margin-right:3%;">-->
-  <!--          <mat-label>Genre</mat-label>-->
-  <!--          <mat-select name="gender" [(ngModel)]="profil.gender">-->
-  <!--            <mat-option value="F">Mme</mat-option>-->
-  <!--            <mat-option value="H">M</mat-option>-->
-  <!--          </mat-select>-->
-  <!--        </mat-form-field>-->
 
   <div *ngIf="profils?.length>3 && advanced_search?.length>0"
        style="display: inline-block;text-align: right;margin:5px;" autofocus>

@@ -6,15 +6,16 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {ConfigService} from "../config.service";
 import {ApiService} from "../api.service";
+import {tProfil} from "../types";
 
 @Component({
   selector: 'app-profil',
   templateUrl: './profil.component.html',
   styleUrls: ['./profil.component.sass']
 })
-export class ProfilComponent implements OnInit,OnChanges {
+export class ProfilComponent implements OnChanges {
 
-  @Input("profil") profil:any={};
+  @Input("profil") profil:tProfil;
   @Input("level") level:number=1;
   @Input("height") height="auto";
   @Input("pows") pows:number=1;
@@ -36,9 +37,7 @@ export class ProfilComponent implements OnInit,OnChanges {
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService) { }
 
-  ngOnInit(): void {
 
-  }
 
   open_public_profil(evt,profil:any){
     this.router.navigate(["public"],{queryParams:{id:profil.id,name:profil.firstname+" "+profil.lastname}})
