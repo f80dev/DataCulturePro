@@ -216,6 +216,8 @@ export class LoginComponent implements OnInit {
         this.quit();
       }
     }, (err) => {
+      $$('Problème technique');
+      this.config.raz_user();
       this.wait_message = '';
       this.code = '';
       window.location.reload();

@@ -194,17 +194,15 @@ Instant_reports:
 
 
 
-  - title: Répartition des éleves de la FEMIS entre formation initiale et formation professionnelle
+  - title: Répartition par promotion des éleves de la FEMIS entre formation initiale et formation professionnelle
     description:
     id: student_by_cursus
     chart: bar
     x: promotion
     y: etudiants
     color: cursus
-    cols: id,cursus,promotion
-    table: profil
-    data_cols: id,cursus,degree_year
-    sql: SELECT cursus,promotion,count(id) as etudiants FROM df GROUP BY cursus,promotion
+    cols: promotion,cursus,etudiants
+    sql: SELECT CAST(degree_year as varchar(4)) as promotion,cursus,count(id) as etudiants FROM alumni_profil WHERE degree_year>2000 GROUP BY cursus,promotion ORDER BY promotion
     template: simple_white
     replace:
       P: Formation pro
@@ -251,19 +249,19 @@ Instant_reports:
     prod: True
 
 
-  - title: Nombre de films et séries par étudiant / stagiaire
+  - title: Nombre de films/séries impliquant la FEMIS par cursus depuis 2010
     category:
     description:
     id: avg_work
     chart: bar
-    x: Année
+    x: Annee
     y: Projets
     color: Cursus
     replace:
       P: Formation pro
       S: Formation initiale
     filter: Formation
-    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df GROUP BY Cursus, Annee
+    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df WHERE Annee>=2010 GROUP BY Cursus, Annee
     prod: True
 
 
@@ -339,7 +337,7 @@ Instant_reports:
     color: film_catégorie
     sql: SELECT profil_formation,film_catégorie,count(work_id) AS réalisations FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_formation,film_catégorie
     cols: profil_formation,film_catégorie,work_id,profil_cursus,profil_promotion
-    prod: False
+    prod: True
 
 
   - title: Nombre de production par promotion depuis 2000
@@ -350,11 +348,7 @@ Instant_reports:
     filter: Formation
     color: film_catégorie
     sql: SELECT profil_promotion,film_catégorie,count(film_id) AS réalisations,profil_formation AS 'Formation' FROM df WHERE profil_cursus='S' AND profil_promotion>=2000 GROUP BY profil_promotion,film_catégorie
-    prod: True
-
-
-
-
+    prod: False
 
 
 
@@ -364,9 +358,9 @@ Instant_reports:
     x: catégorie
     y: productions
     color: nature
-    table: pieceofwork
-    sql: SELECT category AS catégorie,nature,count(id) AS productions FROM df GROUP BY catégorie,nature
-    prod: False
+    cols: catégorie,nature,productions
+    sql: SELECT category AS catégorie,nature,count(id) AS productions FROM alumni_pieceofwork GROUP BY category,nature ORDER BY productions DESC LIMIT 20
+    prod: True
 
 
   - title: Films par années et par département

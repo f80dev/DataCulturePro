@@ -17,9 +17,10 @@
 
     <button class="app-button" mat-button mat-raised-button
             id="cmdEdit"
+            title="Rédiger un article et le soumettre à la modération pour publication sur Data Culture"
             *ngIf="config.hasPerm('publish')"
             (click)="router.navigate(['htmledit'])">
-      <div class="bloc-bouton">Proposer<br>un article</div>
+      <div class="bloc-bouton">Soumettre<br>un article</div>
     </button>
 
     <div *ngFor="let article of articles" class="mat-elevation-z4"

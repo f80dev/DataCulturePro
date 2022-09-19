@@ -246,7 +246,7 @@ def create_user_profile(sender, instance, created, **kwargs):
                 break
 
         log("Permission par défaut pour les connectés : " + perm)
-        ExtraUser.objects.create(user=instance,perm=perm)
+        ExtraUser.objects.create(user=instance,perm=perm,profil_name=DEFAULT_PERMS_PROFIL)
     else:
         pass
 

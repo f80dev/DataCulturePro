@@ -12,7 +12,7 @@
       </mat-expansion-panel-header>
       mail: {{config.user.user.email}}
       <br>
-      Profil {{config.config.appname}} associé: {{config.user.profil_name}}
+      Profil {{config.config.appname}} associé: {{config.profils[config.user.profil_name]?.title}}
     </mat-expansion-panel>
 
     <mat-expansion-panel class="app-panel" style="text-align: center;" id="pnlPerm">

@@ -32,7 +32,7 @@ export class AppComponent implements OnInit,AfterViewInit {
               public routes:ActivatedRoute,
               public router:Router){
     this.appVersion=environment.appVersion;
-    config.init(() => {
+    config.init().then(() => {
       this.config.init_user(null,null,localStorage.getItem("email"));
     });
   }

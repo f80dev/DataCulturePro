@@ -94,7 +94,7 @@
           Gestion des utilisateurs
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <table style="font-s0ize: small;line-height: 85%;text-align: center;">
+      <table style="font-s0ize: small;line-height: 85%;text-align: center;width:100%;padding: 10px;" class="mat-elevation-z4">
         <tr>
           <th>Login</th>
           <th>Profils</th>
@@ -103,7 +103,16 @@
         </tr>
         <tr *ngFor="let u of users" style="width: 100%">
           <td style="width: 40%;">{{u.user.username}}</td>
-          <td style="width: 15%;">{{u.profil_name}}</td>
+          <td style="width: 15%;">
+            <mat-form-field appearance="legacy">
+              <mat-select id="selFormationFilter" [(ngModel)]="u.profil_name" (selectionChange)="update_profil(u)">
+                <mat-option *ngFor="let p of profils" [value]="p.id">
+                  {{p.title}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </td>
           <td style="width: 15%;">{{u.ask}}</td>
           <td>
             <mat-icon title="Supprimer le compte" class="mini-icon-button" (click)="del_user(u)">delete</mat-icon>

@@ -4,8 +4,8 @@ import {ApiService} from "./api.service";
 import {Platform} from "@angular/cdk/platform";
 import {HttpClient} from "@angular/common/http";
 import { Location } from '@angular/common';
-import {$$, group_works, initAvailableCameras, showMessage} from "./tools";
-import {tUser} from "./types";
+import {$$, initAvailableCameras, showMessage} from "./tools";
+import {tProfilPerms, tUser} from "./types";
 
 @Injectable({
   providedIn: 'root'
@@ -67,57 +67,59 @@ export class ConfigService {
    * Initialisation des principaux paramètres
    * @param func
    */
-  init(func=null){
+  init(){
+    return new Promise((resolve, reject) => {
+      if(this.values) resolve(this.values);
 
-    if(this.values && func)
-      func(this.values);
+      $$("Initialisation de la configuration");
+      this.width_screen=window.innerWidth;
 
-    $$("Initialisation de la configuration");
-    this.width_screen=window.innerWidth;
+      initAvailableCameras((res)=>{this.webcamsAvailable=res;});
 
-    initAvailableCameras((res)=>{this.webcamsAvailable=res;});
-
-    this.api.getyaml("","perms").subscribe((r:any)=>{
+      this.api.getyaml("","perms").subscribe((r:any)=>{
         this.perms=r.perms;
-    });
+      },(err)=>{reject(err)});
 
-    this.api.getyaml("","dictionnary").subscribe((yaml:any)=>{
-      $$("Chargement des métiers du dictionnaire ok");
-      if(!this.abreviations){
-        this.abreviations=yaml.abreviations;
-      }
-      if(!this.icons){
-        this.icons=yaml.Icons;
-      }
-
-      if(!this.jobs) {
-        let rc=[]
-        this.jobs=[];
-        for (let i of Object.values(yaml.jobs)) {
-          if(rc.indexOf(i)===-1){
-            rc.push(i);
-            this.jobs.push({label:i,value:i});
-          }
+      this.api.getyaml("","dictionnary").subscribe((yaml:any)=>{
+        $$("Chargement des métiers du dictionnaire ok");
+        if(!this.abreviations){
+          this.abreviations=yaml.abreviations;
         }
-        $$(this.jobs.length+" jobs disponibles");
+        if(!this.icons){
+          this.icons=yaml.Icons;
+        }
 
-        this.api.getyaml("", "profils").subscribe((r: any) => {
-          $$("Chargements des profils de permissions Ok");
-          for(let it of r.profils)
-            this.profils[it.id] = it;
+        if(!this.jobs) {
+          let rc=[]
+          this.jobs=[];
+          for (let i of Object.values(yaml.jobs)) {
+            if(rc.indexOf(i)===-1){
+              rc.push(i);
+              this.jobs.push({label:i,value:i});
+            }
+          }
+          this.jobs.sort( (a,b) => a.label.localeCompare(b.label));
+          $$(this.jobs.length+" jobs disponibles");
 
-          //this.raz_user();
-          this.getConfig().then(r => {
-            this.values = r;
-            $$("Chargement du fichier de configuration Ok",r);
-            this.ready = true;
-            if (func) func(this.values);
-          }, () => {
-            $$("Probléme de chargement de la configuration")
-          });
-        })
-      }
+          this.api.getyaml("", "profils").subscribe((r: any) => {
+            $$("Chargements des profils de permissions Ok");
+            for(let it of r.profils)
+              this.profils[it.id] = it;
+
+            //this.raz_user();
+            this.getConfig().then(r => {
+              this.values = r;
+              $$("Chargement du fichier de configuration Ok",r);
+              this.ready = true;
+              resolve(this.values);
+            }, () => {
+              $$("Probléme de chargement de la configuration")
+            }).catch((err)=>{reject(err)});
+          },(err)=>{reject(err)})
+        }
+      },(err)=>{reject(err)});
     });
+
   }
 
 

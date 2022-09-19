@@ -54,7 +54,7 @@ export class SearchComponent implements OnInit {
 
 
 
-  refresh(q=null) {
+  refresh(q=null,limit=100) {
     if(q)this.query.value=q;
 
     if(this.api.token)this.perm="mail";else this.perm="";
@@ -86,10 +86,11 @@ export class SearchComponent implements OnInit {
       if(this.order!="lastname" && this.order!="order_score"){
         param=param+"&ordering="+this.order;
       }else{
-        this.limit=500;
+        this.limit=limit;
       }
       param=param+"&limit="+this.limit+"&profil__school=FEMIS";
       $$("Appel de la recherche avec param="+param);
+
       this.api._get("profilsdoc",param).subscribe((r:any) =>{
         this.message="";
         this.profils=[];

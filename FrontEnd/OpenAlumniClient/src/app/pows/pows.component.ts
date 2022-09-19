@@ -19,7 +19,7 @@ import {Location} from "@angular/common";
 export class PowsComponent implements OnInit {
   pows: any[]=[];
   query: any={value:""};
-  limit=200;
+  limit=100;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number;
   filter$: Observable<string>;
@@ -58,7 +58,7 @@ export class PowsComponent implements OnInit {
 
   clearQuery() {
     this.query.value='';
-    this.refresh();
+    this.refresh(this.limit);
   }
 
 
@@ -69,15 +69,15 @@ export class PowsComponent implements OnInit {
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
     this.handle=setTimeout(()=>{
-      this.refresh();
+      this.refresh(this.limit);
     },1000);
   }
 
 
-  refresh() {
+  refresh(limit=100) {
     if(this.query.value.length>3)this._location.replaceState("pows/?query="+this.query.value);
     let param=translateQuery(this.query.value,false);
-    param=param+"&limit="+this.limit;
+    param=param+"&limit="+limit;
     this.message="Recherche des films";
     this.api._get("powsdoc",param).subscribe((r:any)=>{
       this.message="";
@@ -150,7 +150,7 @@ export class PowsComponent implements OnInit {
   deletePow(pow: any) {
     this.api._delete("/pows/"+pow.id).subscribe(()=>{
       showMessage(this,"film supprimé");
-      this.refresh();
+      this.refresh(this.limit);
     })
   }
 
@@ -158,9 +158,9 @@ export class PowsComponent implements OnInit {
     if(this.limit==50)
       this.limit=500;
     else
-      this.limit=50;
+      this.limit=100;
 
-    this.refresh();
+    this.refresh(this.limit);
   }
 
   openGoogle(pow: any) {

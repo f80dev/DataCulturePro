@@ -29,8 +29,8 @@ export class HtmlEditorComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   tagCtrl = new FormControl();
   filteredTags: Observable<string[]>;
-  tags: string[] = ['Job'];
   allTags: string[] = ['Sortie de film', 'Evénements','Info professionnelle','Offre d\'emploie'];
+  tags: string[] = [this.allTags[0]];
 
   @ViewChild('fruitInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
@@ -71,8 +71,9 @@ export class HtmlEditorComponent implements OnInit {
 
   publish() {
     this.message="En cours de publication";
-    this.save((id)=>{
-      this.api._patch("articles/"+id+"/","", {to_publish:true}).subscribe((r:any)=>{
+    let id=this.routes.snapshot.queryParamMap.get("article");
+    this.save(id,(id)=>{
+      this.api._put("articles/"+id+"/","", this.create_article(true)).subscribe((r:any)=>{
         this.message="";
         showMessage(this,"Article en attente de publication");
         localStorage.setItem("article_id",null);
@@ -124,19 +125,22 @@ export class HtmlEditorComponent implements OnInit {
     return this.allTags.filter(fruit => fruit.toLowerCase().indexOf(filterValue) === 0);
   }
 
-
-  save(func=null) {
-    localStorage.setItem("article_content",this.editorContent);
-    let id=localStorage.getItem("article_id");
-    let body= {
+  create_article(to_publish=false){
+    return {
       html: this.editorContent,
-      title:this.title,
-      sumary:this.resumer,
-      owner: this.config.user.user.id,
-      validate: false,
-      tags:this.tags.join(" "),
-      to_publish:false
+          title:this.title,
+        sumary:this.resumer,
+        owner: this.config.user.user.id,
+        validate: false,
+        tags:this.tags.join(" "),
+        to_publish:to_publish
     }
+  }
+
+
+  save(id=null,func=null) {
+    debugger
+    let body= this.create_article();
     if(!id || id=="null"){
       this.api._post("articles","",body).subscribe((r:any)=>{
         localStorage.setItem("article_id",r.id);

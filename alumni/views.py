@@ -28,7 +28,7 @@ from django_elasticsearch_dsl import Index
 from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
 from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, IdsFilterBackend, \
     OrderingFilterBackend, DefaultOrderingFilterBackend, \
-    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
+    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend, MultiMatchSearchFilterBackend
 from django_elasticsearch_dsl_drf.pagination import LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -101,7 +101,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["email","id"]
-    filter_fields =("email",)
+    filterset_fields =("email",)
 
 
 
@@ -114,7 +114,7 @@ class ExtraUserViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields=["user__email"]
-    filter_fields = ("user__email","id")
+    filterset_fields = ("user__email","id")
 
     def partial_update(self, request, pk=None):
         pass
@@ -1585,28 +1585,43 @@ class ProfilDocumentView(DocumentViewSet):
     lookup_field = "id"
     filter_backends = [
         FilteringFilterBackend,
-        IdsFilterBackend,
+        CompoundSearchFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
         SimpleQueryStringSearchFilterBackend,
-        CompoundSearchFilterBackend
+        # MultiMatchSearchFilterBackend
     ]
+
+    # multi_match_search_fields = {
+    #     'lastname': {'boost': 4},
+    #     'firstname': {'boost': 2},
+    #     'degree_year': {'boost': 3},
+    #     'department_category': {'boost': 3}
+    # }
+
+
+    #voir la documentation : https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.22.2/search_backends.html
 
     simple_query_string_search_fields = {
         'lastname': {'boost': 4},
-        'firstname': {'boost': 2}
+        'firstname': {'boost': 3},
+        'department': {'boost': 3},
+        'department_category': {'boost': 3},
+        'works__job': {'boost': 2},
+        'works__pow__title': {'boost': 2}
     }
 
     search_fields = ('lastname',
                      'firstname',
                      'department',
-                     'town',
+                     'degree_year'
                      'department_category',
                      'works__job',
                      'works__pow__title',
                      'award__festival__title',
                      'award__description'
                      )
+
 
     filter_fields = {
         'profil':'id',
@@ -1620,12 +1635,17 @@ class ProfilDocumentView(DocumentViewSet):
         'town':'town',
         'formation':'department'
     }
+
     ordering_fields = {
-        'id':'id',
         'lastname':'lastname',
         'promo':'degree_year',
         'update':'dtLastUpdate'
     }
+
+    simple_query_string_options = {
+        "default_operator": "or",
+    }
+
     suggester_fields = {
         'name_suggest': {
             'field': 'lastname',

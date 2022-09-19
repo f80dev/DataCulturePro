@@ -24,7 +24,9 @@ export class BlogComponent implements OnInit {
 
 
   ngOnInit(): void {
-   this.refresh();
+   setTimeout(()=>{
+     this.refresh();
+   },1500);
   }
 
 

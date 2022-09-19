@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {tProfilPerms} from "../types";
 
 @Component({
   selector: 'app-admin',
@@ -16,6 +17,7 @@ export class AdminComponent implements OnInit {
   message: string;
   users:any[];
   info_server: any;
+  profils: tProfilPerms[]=[];
 
   constructor(private api:ApiService,
               public config:ConfigService,
@@ -32,7 +34,11 @@ export class AdminComponent implements OnInit {
     this.refresh();
     this.api._get("infos_server").subscribe((infos:any)=>{
       this.info_server=infos;
-    })
+      setTimeout(()=>{
+        this.profils=Object.values(this.config.profils);
+      },2000);
+    });
+
   }
 
   raz(table:string) {
@@ -159,5 +165,13 @@ export class AdminComponent implements OnInit {
 
   export_dict() {
     open(environment.domain_server+"/api/export_dict");
+  }
+
+
+  update_profil(u: any) {
+    u.perm = this.config.profils[u.profil_name].perm;
+    this.api.setuser(u).subscribe(() => {
+      showMessage(this,"Profil mise a jour");
+    });
   }
 }

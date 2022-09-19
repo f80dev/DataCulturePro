@@ -179,6 +179,7 @@ class PowAnalyzer:
                     if not l["url"] in [x["url"] for x in rc]:
                         rc.append(l)
                 if len(rc)<len(p.links):
+                    log("Suppression de doublon dans les liens")
                     p.links=rc
                     p.save()
 
