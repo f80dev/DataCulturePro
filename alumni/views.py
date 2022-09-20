@@ -277,9 +277,12 @@ def infos_server(request):
     rc["database"]=DATABASES
     rc["debug"]=DEBUG
     rc["content"]={
+        "articles":Article.objects.count(),
+        "users":User.objects.count(),
         "films":PieceOfWork.objects.count(),
         "works":Work.objects.count(),
         "festivals":Festival.objects.count(),
+        "awards":Award.objects.count(),
         "profils":Profil.objects.count()}
     return JsonResponse(rc)
 
@@ -534,17 +537,39 @@ def batch(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def api_doc(request):
+    complete=request.GET.get("complete",False)
+    format=request.GET.get("out","json")
     rc=[]
+    old_table=""
     for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields)+list(Award._meta.fields)+list(Festival._meta.fields):
         help_text=field.help_text
         if len(help_text)>0 and not help_text.startswith("@") and not help_text.startswith("!"):
-            rc.append({
-                "field":field.name,
-                "description":help_text,
-                "table":str(field).split(".")[1]
-            })
+            table=str(field).split(".")[1]
+            if old_table==table:
+                if not complete: table=""
+            else:
+                old_table=table
 
-    return JsonResponse({"version":"1","content":rc},safe=False)
+            if format=="json":
+                rc.append({
+                    "field":field.name,
+                    "description":help_text,
+                    "table":table
+                })
+            else:
+                rc.append(field.name+";"+help_text+";"+table)
+
+    if format=="json":
+        return JsonResponse({"version":"1","content":rc},safe=False)
+
+    if format=="csv":
+        output=StringIO()
+        output.write("\r".join(rc))
+        output.seek(0)
+        response = HttpResponse(content=output.getvalue(),content_type='text/csv; charset=utf-8')
+        response["Content-Disposition"] = 'attachment; filename=dictionnaire_data.csv'
+        return response
+
 
 
 
@@ -1006,7 +1031,7 @@ def export_profils(request):
     df["nationality"]=df["nationality"].replace("","France")
     df["source"]="DCP"
 
-    response = HttpResponse(content_type='application/vnd.ms-excel; charset=utf8')
+    response = HttpResponse(content_type='application/vnd.ms-excel; charset=utf-8')
     response["Content-Disposition"]='attachment; filename="profils.xlsx"'
     df.to_excel(response,encoding="utf8")
     return response

@@ -18,9 +18,9 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!--  Ajout pour d3 : https://blog.logrocket.com/data-visualization-angular-d3/-->
-<!--  <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">-->
-<!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">-->
+  <!--  Ajout pour d3 : https://blog.logrocket.com/data-visualization-angular-d3/-->
+  <!--  <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">-->
+  <!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">-->
 
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#1976d2">
@@ -38,7 +38,21 @@
 
 <link rel="stylesheet" href="styles.css"></head>
 <body class="mat-typography" style="margin:0px;background-color: #6e6e6e">
-  <app-root></app-root>
-  <noscript>Please enable JavaScript to continue using this application.</noscript>
+<script>
+  (function () {
+    // Retrieve the URL the user was trying to access when receiving the 404.
+    var redirect = sessionStorage.redirect;
+    // Remove the URL from sessionStorage.
+    delete sessionStorage.redirect;
+    // Check if we actually need to redirect.
+    if (redirect && redirect != location.href) {
+      // We need to redirect to the URL the user was trying to access.
+      history.replaceState(null, null, redirect);
+    }
+  })();
+</script>
+
+<app-root></app-root>
+<noscript>Please enable JavaScript to continue using this application.</noscript>
 <script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="main.js" type="module"></script></body>
 </html>

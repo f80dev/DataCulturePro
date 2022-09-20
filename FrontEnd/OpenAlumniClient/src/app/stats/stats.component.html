@@ -200,19 +200,40 @@
 
     <mat-tab name="tabs" label="Documentation">
       <br>
-      <p>Ci joint la liste des données disponibles via DataCulture pour construire les reportings</p>
+      <p>La liste des données disponibles via DataCulture pour construire les reportings</p>
+
+      <br>
+      <button mat-button mat-raised-button
+              title="Exporter ce tableau au format JSON"
+              class="app-button"
+              (click)="export_doc('json',true)">
+        Exporter en JSON
+      </button>
+
+      <button mat-button mat-raised-button
+              title="Exporter ce tableau au format JSON"
+              class="app-button"
+              (click)="export_doc('csv',false)">
+        Exporter pour Excel
+      </button>
+
+      <br>
+
       <table class="mat-elevation-z4"  *ngIf="rows.length>0" style="padding: 15px;">
         <tr>
+          <th style="text-align: left;">Catégorie</th>
           <th style="text-align: left;">Nom du champs</th>
           <th>Signification</th>
-          <th style="text-align: right;">Catégorie</th>
         </tr>
         <tr *ngFor="let row of rows" style="width: 90% !important;">
+          <td style="width: 20%;text-align: left;">{{row.table}}</td>
           <td style="width: 20%;max-width: 60px;">{{row.field}}</td>
           <td>{{row.description}}</td>
-          <td style="width: 20%;text-align: right;">{{row.table}}</td>
+
         </tr>
       </table>
+
+
     </mat-tab>
 
   </mat-tab-group>

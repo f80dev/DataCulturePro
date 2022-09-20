@@ -248,4 +248,7 @@ export class StatsComponent implements OnInit {
   }
 
 
+  export_doc(format="json",complete=true) {
+    open(api("api_doc","complete="+complete+"&out="+format,false),"export");
+  }
 }
