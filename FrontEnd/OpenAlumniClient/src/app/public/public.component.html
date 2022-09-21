@@ -9,7 +9,7 @@
       </td>
 
       <td>
-        <div style="font-size:2em;font-weight: lighter;">
+        <div style="font-size:2em;font-weight: lighter;" id="lblName">
           {{profil?.firstname+" "+profil?.lastname}}
           <button mat-button mat-icon-button
                   title="Partager ce profil"
@@ -19,7 +19,7 @@
           </button>
         </div>
         <br>
-        <table style="border-spacing: 8px;vertical-align: top;">
+        <table style="border-spacing: 8px;vertical-align: top;" id="tableProperties">
           <tr>
             <td style="width: fit-content"></td>
             <td [title]="'Composition de la promotion '+profil.degree_year">Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -35,7 +35,7 @@
             <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">{{profil?.department}}</td>
           </tr>
 
-          <tr *ngIf="profil.works.length>0">
+          <tr *ngIf="profil.works.length>0" id="rowExperiences">
             <td></td>
             <td>Expériences principales</td>
             <td>{{profil.expe}}</td></tr>

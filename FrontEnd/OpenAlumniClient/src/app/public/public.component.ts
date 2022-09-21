@@ -45,7 +45,7 @@ export class PublicComponent implements OnInit {
           rc.push({
             year:a.year,
             title:a.description + " - " + a.festival.title,
-            subtitle:"pour <strong>"+a.pow.title+"</strong>",
+            subtitle:a.pow.title,
             icon: this.config.icons["Award"],
             sources:a.source,
             type:"award"
