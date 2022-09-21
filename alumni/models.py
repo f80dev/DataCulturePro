@@ -18,8 +18,20 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_elasticsearch_dsl.registries import registry
 
-from OpenAlumni.DataQuality import eval_field
 from OpenAlumni.Tools import now, log
+
+def eval_field(s,score=1):
+    """
+    Evalue la qualité d'un champs
+    :param s:
+    :param score:
+    :return:
+    """
+    if s is None:return 0
+    if type(s)==str and len(s)==0:return 0
+    if (type(s)==int or type(s)==float) and int(s)==0:return 0
+    return score
+
 
 #http://localhost:8000/api/profils/?lastname=ducournau
 class Profil(models.Model):

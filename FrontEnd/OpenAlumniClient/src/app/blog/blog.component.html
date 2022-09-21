@@ -1,9 +1,9 @@
 <div class="mainform" style="overflow: hidden;">
 
-  <div style="margin:10px;">
-    <mat-form-field appearance="legacy"
-                    style="max-width:250px;font-size: medium;">
-      <mat-label>Afficher les thèmes</mat-label>
+  <div style="margin:10px;text-align: left;">
+    <mat-form-field appearance="legacy" color="accent"
+                    style="max-width:600px;width: 80%;font-size: small;">
+      <mat-label style="font-size: medium;">Afficher les articles</mat-label>
       <mat-select name="selOrder" [(ngModel)]="selected_tag" (ngModelChange)="refresh()" multiple>
         <mat-option *ngFor="let tag of allTags" [value]="tag">
           {{tag}}
@@ -11,25 +11,30 @@
       </mat-select>
     </mat-form-field>
 
-    <div *ngIf="articles?.length==0" style="margin: 20px;">
-      Aucun article disponible pour l'instant
-    </div>
-
     <button class="app-button" mat-button mat-raised-button
-            id="cmdEdit"
+            id="cmdEdit" style="margin: 25px;"
             title="Rédiger un article et le soumettre à la modération pour publication sur Data Culture"
             *ngIf="config.hasPerm('publish')"
             (click)="router.navigate(['htmledit'])">
       <div class="bloc-bouton">Soumettre<br>un article</div>
     </button>
 
-    <div *ngFor="let article of articles" class="mat-elevation-z4"
-         style="width:94%;background-color: #817a7a;min-height: 150px;margin:2%;padding:10px;border-radius:17px;text-align: left;position: relative;">
+    <div *ngIf="articles?.length==0" style="margin: 20px;">
+      Aucun article disponible pour l'instant
+    </div>
 
-      <div style="font-size: large;margin-bottom: 3px;">{{article.dtPublish | date:'dd/MM/YY'}} - {{article.title}}</div>
-      <div style="display: inline-block;font-size: small;margin-bottom: 5px;">{{article.sumary}}</div>
+    <mat-expansion-panel *ngFor="let article of articles"
+                         class="mat-elevation-z2"
+                         style="width:90%;background-color: #817a7a;margin:1%;padding:15px;border-radius:6px;text-align: left;position: relative;">
 
-      <br>
+      <mat-expansion-panel-header>
+        <div style="display: inline-block">
+          {{article.dtPublish | date:'dd/MM/YY'}} - {{article.title}}<br>
+          <span style="font-size: small;margin-bottom: 5px;opacity: 0.5;">{{article.sumary}}</span>
+        </div>
+
+      </mat-expansion-panel-header>
+
       <div [innerHTML]="article.html" style="width: 100%;height: 100%;"></div>
 
       <div style="position: absolute;bottom: 10px;right:10px;width:100%;z-index: 100;text-align: right;" *ngIf="config.hasPerm('validate')">
@@ -69,7 +74,8 @@
         </button>
       </div>
 
-    </div>
-    <br><br><br>
+
+    </mat-expansion-panel>
+    <br>
   </div>
 </div>

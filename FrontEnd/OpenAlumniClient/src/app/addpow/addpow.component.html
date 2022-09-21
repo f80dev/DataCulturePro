@@ -2,7 +2,7 @@
     <app-tuto label="Ici vous gérez les films"></app-tuto>
     <app-hourglass [message]="message"></app-hourglass>
     <div class="h-zone" *ngIf="!showDetail">Insérer un nouveau film</div>
-    <div style="min-width:350px;max-width: 500px;text-align: left;display: inline-block;">
+    <div style="width: 50%;min-width:350px;max-width: 600px;text-align: left;display: inline-block;">
         <mat-form-field appearance="fill" class="app-field" *ngIf="!showDetail">
             <mat-label>Titre du film</mat-label>
             <input matInput placeholder="mon titre" id="txtTitle"
@@ -15,7 +15,7 @@
 <!--            "{{pow.title}}"-->
 <!--        </div>-->
 
-        <mat-selection-list #items *ngIf="!showDetail" class="mat-elevation-z4" style="height: 65vh;width: 95%;overflow: scroll;"
+        <mat-selection-list #items *ngIf="!showDetail && pows!.length>0" class="mat-elevation-z4" style="height: 65vh;width: 95%;overflow: scroll;"
                             (selectionChange)="select_title(items.selectedOptions.selected[0].value)"
                             [multiple]="false">
             <mat-list-option *ngFor="let item of pows" [value]="item" name="films">
@@ -162,7 +162,7 @@
 
     <button class="app-button login-button"
             mat-button mat-raised-button
-            [disabled]="pow?.description.length==0 || pow?.year==0"
+            [disabled]="pow?.description?.length==0 || pow?.year==0"
             id="cmdSave" color="primary"
             (click)="quit(true)">
         <div class="bloc-bouton">Ajouter<br>le film</div>

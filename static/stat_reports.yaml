@@ -27,6 +27,47 @@ Reports:
 
 
 Instant_reports:
+
+  - title: Prix obtenus depuis 2000 par département (Formation Initiale)
+    description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
+    id: award_by_department
+    chart: pie
+    x: Formation
+    color: Formation
+    y: Awards
+    table: Awards
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE Promotion>=2000 AND profil__cursus='S' GROUP BY Formation ORDER BY -Awards LIMIT 10
+    prod: True
+
+  - title: Films et séries impliquant des anciens de la FEMIS par cursus (FP et FI) depuis 2010
+    description:
+    id: avg_work
+    chart: bar
+    x: Annee
+    y: Projets
+    color: Cursus
+    replace:
+      P: Formation professionnelle
+      S: Formation initiale
+    filter: Formation
+    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df WHERE Annee>=2010 GROUP BY Cursus, Annee
+    prod: True
+
+
+
+  - title: Récompenses par département et promotions depuis 2000
+    description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
+    id: award_by_promo
+    chart: bar
+    x: Promotion
+    color: Formation
+    y: Awards
+    table: Awards
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE profil__degree_year>=2000 GROUP BY Formation,Promotion ORDER BY -Awards LIMIT 40
+    prod: True
+
+
+
   - title: Liste des métiers les plus exercés par les anciens étudiants et stagiaires
     description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
     id: job_by_formation
@@ -60,16 +101,6 @@ Instant_reports:
     sql: SELECT * FROM (SELECT festival__title AS Evenements,count(pow__id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
     prod: True
 
-  - title: Nombre de récompenses ventilées par département et promotions
-    description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
-    id: award_by_promo
-    chart: bar
-    x: Promotion
-    color: Formation
-    y: Awards
-    table: Awards
-    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df GROUP BY Formation,Promotion
-    prod: True
 
   - title: Nombre de récompenses par an, ventilées par département
     description: Les récompenses sont regroupées par année de sortie des films
@@ -249,20 +280,6 @@ Instant_reports:
     prod: True
 
 
-  - title: Nombre de films/séries impliquant la FEMIS par cursus depuis 2010
-    category:
-    description:
-    id: avg_work
-    chart: bar
-    x: Annee
-    y: Projets
-    color: Cursus
-    replace:
-      P: Formation pro
-      S: Formation initiale
-    filter: Formation
-    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df WHERE Annee>=2010 GROUP BY Cursus, Annee
-    prod: True
 
 
   #http://localhost:4200/stats?open=prostudent_by_depyear

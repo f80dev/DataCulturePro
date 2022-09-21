@@ -101,27 +101,38 @@ export class PublicComponent implements OnInit {
 
       this.data_timeline=[];
 
+      let last_year_to_show="";
       for(let item of this.items){
         if(item.pow){
           item.title=item.job;
-          item.subtitle="pour <strong>"+item.pow.title+"</strong>";
+          item.subtitle=item.pow.title;
         }
 
         let obj:any={
           year:item.year+"<br>",
           icon: "<img src='"+item.icon+"' width='30'>",
-          label:item.title+"<br><small>"+item.subtitle+"</small>"
+          label:item.title+"<br><small style='color:white;'> pour <a href='./pows?query=\""+item.subtitle+"\"'>"+item.subtitle+"</a></small>"
         }
 
 
-        if(!item.show_year)obj["year"]="<br><br>";
+
         if(this.data_timeline.length>0){
-          if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
-            this.data_timeline.push({year:"<br><br>",icon:"",label:""});
-          }
+          if(item.year==last_year_to_show)obj.year="";
+
+          // if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
+          //   this.data_timeline.push({year:"<br><br>",icon:"",label:""});
+          // }
         }
 
+
+        if(obj.year.length>0){
+          if(last_year_to_show!=item.year)this.data_timeline.push({year:"<br><br>",icon:"",label:""});
+          last_year_to_show=item.year;
+        }
         this.data_timeline.push(obj);
+
+
+
       }
     });
   }
@@ -129,7 +140,7 @@ export class PublicComponent implements OnInit {
   col_style={
     year:'margin:0px;padding:0px;font-size:2em;text-align:right;padding-right:20px;',
     icon:'margin:0px;padding:0px;border-left: 2px solid white;padding-left:10px;',
-    label:'margin:0px;padding:0px;font-size:small;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
+    label:'margin:0px;padding:0px;font-size:medium;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
   }
 
 

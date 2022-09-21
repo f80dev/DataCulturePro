@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {$$, normaliser, remove_ponctuation, showError, showMessage, translateQuery} from "../tools";
+import {$$, normaliser, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
@@ -9,6 +9,7 @@ import {environment} from "../../environments/environment";
 import {MatAccordion} from "@angular/material/expansion";
 import {Observable} from "rxjs";
 import {Location} from "@angular/common";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -29,6 +30,7 @@ export class PowsComponent implements OnInit {
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
               public router:Router,
+              public toast:MatSnackBar,
               public _location:Location,
               public routes:ActivatedRoute,
               public config:ConfigService) {
@@ -83,6 +85,7 @@ export class PowsComponent implements OnInit {
       this.message="";
       this.pows=[];
       for(let i of r.results){
+        if(i.hasOwnProperty("links"))i.links=uniq(i.links);
         if(!this.filter_id || this.filter_id==i.id){
           let origin=i.links.length>0 ? i.links[0].text.split(":")[1] : "*";
           if(origin){

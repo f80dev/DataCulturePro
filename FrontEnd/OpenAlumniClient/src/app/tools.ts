@@ -863,7 +863,10 @@ export function openGraphForShop(idshop:string,_type="coupon",domain_server="htt
   return url;
 }
 
-
+//Supprimer les doublons
+export function uniq<T>(array: T[]) {
+  return [...new Map(array.map(v => [JSON.stringify(v), v])).values()]
+}
 
 export function arrayRemove(arr, value) {
   return arr.filter((ele)=>{

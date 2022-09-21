@@ -16,7 +16,7 @@ from django.db import connection
 from github import Github
 from numpy import inf
 
-from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
+from OpenAlumni.DataQuality import ProfilAnalyzer, PowAnalyzer, AwardAnalyzer
 from OpenAlumni.analytics import StatGraph
 from OpenAlumni.giphy_search import ImageSearchEngine
 
@@ -586,6 +586,13 @@ def quality_filter(request):
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
+    if "awards" in ope:
+        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
+        to_delete=award_analyzer.find_double()
+        for a in to_delete:
+            a.delete()
+
+
     if "profils" in ope:
         profil_filter = ProfilAnalyzer()
 
@@ -599,6 +606,7 @@ def quality_filter(request):
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
+        n_pows=pow_analyzer.find_double()
 
         to_delete=pow_analyzer.quality()
         count=0
@@ -608,7 +616,7 @@ def quality_filter(request):
             #log("Destruction de "+str(count)+"/"+str(len(to_delete)))
             _p.delete()
 
-        n_pows=pow_analyzer.find_double()
+
 
 
 

@@ -44,7 +44,9 @@
             <td></td>
             <td>{{profil.works.length}} expériences référencées<br><br></td>
           </tr>
-          <tr *ngIf="profil.awards?.length>0"><td></td><td>{{profil.awards.length}} disctinctions</td></tr>
+          <tr *ngIf="profil.awards?.length>0">
+            <td></td>
+            <td>{{profil.awards.length}} disctinctions</td></tr>
           <tr *ngIf="profil?.links?.length>0">
             <td></td>
             <td>Voir son profil sur</td>
@@ -138,7 +140,7 @@
     <small>Partagez ce profil public sur vos réseaux</small><br>
       <!--      voir https://ngx-sharebuttons.netlify.app/ -->
       <share-buttons [theme]="'circles-dark'"
-                     style="text-align: center;font-size: small;"
+                     style="text-align: center;font-size: x-small;"
                      [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                      [show]="8"
                      [url]="url"

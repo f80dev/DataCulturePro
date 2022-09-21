@@ -96,8 +96,6 @@
                        [(ngModel)]="profil[social.name]"
                        (focusout)="check_format(social)"
                        (keypress)="mustSave=true">
-                <mat-hint>Cette adresse est visible de {{social.profils}}</mat-hint>
-
               </mat-form-field><br>
             </td>
             <td style="font-size: small;vertical-align: text-top;text-align: center;line-height: 90%;">
@@ -111,7 +109,7 @@
         <mat-action-row>
           <button color="primary" class="icon-button"
                   [disabled]="!mustSave"
-                  mat-button mat-icon-button mat-raised-button (click)="quit(true)">
+                  mat-button mat-icon-button mat-raised-button (click)="quit()">
             <mat-icon>save</mat-icon>
           </button>
         </mat-action-row>

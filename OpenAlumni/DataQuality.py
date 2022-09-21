@@ -1,19 +1,8 @@
 import csv
-from OpenAlumni.Tools import log, equal_str, fusion
-
+from OpenAlumni.Tools import log, equal_str
 import jellyfish
 
-def eval_field(s,score=1):
-    """
-    Evalue la qualité d'un champs
-    :param s:
-    :param score:
-    :return:
-    """
-    if s is None:return 0
-    if type(s)==str and len(s)==0:return 0
-    if (type(s)==int or type(s)==float) and int(s)==0:return 0
-    return score
+from alumni.models import Award, PieceOfWork
 
 
 class ProfilAnalyzer:
@@ -37,6 +26,11 @@ class ProfilAnalyzer:
 
 
     def find_double(self,profils):
+        """
+        Recherche de profils en double
+        :param profils:
+        :return:
+        """
         rc=[]
         for p1 in profils:
             for p2 in profils:
@@ -60,7 +54,7 @@ class ProfilAnalyzer:
         :param profils:
         :return:
         """
-        log("Traitement qualité sur les profils: suppression des doublons dans les links, ajustement des majuscules")
+        log("Traitement qualité sur les profils: suppression des doublons dans les links, ajustement des majuscules, suppression des prix en doubles")
         n_profils=0
         profils_to_delete=[]
 
@@ -116,7 +110,7 @@ class PowAnalyzer:
     log=list()
     pows=list()
 
-    def __init__(self,pows):
+    def __init__(self,pows:[PieceOfWork]):
         self.pows=pows
 
     def fusion(self,p_old,p_new):
@@ -137,13 +131,16 @@ class PowAnalyzer:
     def find_double(self,with_fusion=True):
         log("Recherche des doublons sur les films")
         rc=0
+        total=len(self.pows)
         for p1 in self.pows:
+            total=total-1
+            log(str(total)+" - Recherche sur "+str(p1))
             for p2 in self.pows:
                 d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
                 seuil=0.97
-                if p1.nature=="Série" and p2.nature=="Série": seuil=0.99
-                if d>seuil and p1.year==p2.year and p1.id!=p2.id:
-                    log("Suspission de doublon entre "+str(p1)+" et "+str(p2))
+                if p1.nature=="Série" and p2.nature=="Série": seuil=0.995
+                if not p1.year is None and not p2.year is None and  d>seuil and abs(int(p1.year)-int(p2.year))<2 and p1.id!=p2.id:
+                    log("Suspission de doublon entre avec "+str(p2))
                     if with_fusion:
                         if p1.quality_score()>p2.quality_score():
                             b=self.fusion(p2,p1)
@@ -152,6 +149,7 @@ class PowAnalyzer:
                         if b:
                             log("Fusion réalisée")
                             rc = rc + 1
+                            break
 
         return rc
 
@@ -176,7 +174,8 @@ class PowAnalyzer:
 
                 #traitement des doublons dans les links
                 for l in p.links:
-                    if not l["url"] in [x["url"] for x in rc]:
+                    l["url"]=l["url"].split("?")[0]
+                    if not l in rc:
                         rc.append(l)
                 if len(rc)<len(p.links):
                     log("Suppression de doublon dans les liens")
@@ -193,3 +192,23 @@ class PowAnalyzer:
                     to_delete.append(p.id)
 
         return to_delete
+
+
+class AwardAnalyzer():
+    def __init__(self,awards:[Award]):
+        self.awards=awards
+
+    def find_double(self):
+        to_delete:[Award]=[]
+        a:Award
+        for a in self.awards:
+            doublons=Award.objects.filter(pow__id=a.pow_id,festival__id=a.festival_id,year=a.year,description=a.description).all()
+            if len(doublons)>1:
+                if a.profil is None:
+                    log(a.description + " pour "+a.pow.title+" est en doublon, on le supprime")
+                    to_delete.append(a)
+        log("Traitement terminé")
+        return to_delete
+
+
+

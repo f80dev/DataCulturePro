@@ -13,8 +13,6 @@ import {$$, showError} from "../tools";
 export class VisgraphComponent implements OnInit,AfterViewInit {
   private svg;
 
-
-
   simulation:any;
   forceProperties = {
     center: {
@@ -23,9 +21,9 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
     },
     charge: {
       enabled: true,
-      strength: -90,
+      strength: -500,
       distanceMin: 1,
-      distanceMax: 200
+      distanceMax: 300
     },
     collide: {
       enabled: true,
@@ -58,8 +56,8 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
   filter={
     pagerank:{value:0.0005,min:1000,max:-1000,step:0},
     centrality:{value:0.0005,min:1000,max:-1000,step:0},
-    promo:{value:0,values:[1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]},
-    department:{value:"Réalisation",values:["Image","Son","Réalisation","Montage","Décor"]}
+    promo:{value:2005,values:[1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]},
+    department:{value:"",values:["Image","Son","Réalisation","Montage","Décor"]}
   };
   selFilter=this.props[0];
 
@@ -265,7 +263,7 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
     if(this.filter.department.value)query=query+"&formation="+this.filter.department.value;
     if(this.filter.promo.value)query=query+"&promo="+this.filter.promo.value;
     if(query.length>0){
-      this._location.replaceState("stats",query);
+      this._location.replaceState("/visgraph?"+query);
     }
     this.resetGraph(this.svg);
     this.refresh(this.filter.promo.value,this.filter.department.value);
@@ -273,6 +271,7 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
 
   refresh(promo_filter=2021,department_filter="") {
     let filter=promo_filter+"_"+department_filter;
+
     this.message="Chargement du graphe";
     this.api._get("social_graph/json/","film&eval="+this.props.join(",")+"&filter="+filter,120,"").subscribe((data:any)=>{
       this.message="";
@@ -289,13 +288,13 @@ export class VisgraphComponent implements OnInit,AfterViewInit {
   ngAfterViewInit(): void {
     this.width=this.graph_zone.nativeElement.clientWidth;
     this.height=this.graph_zone.nativeElement.clientHeight;
-    this.refresh(this.filter.promo.value,this.filter.department.value);
+    this.updateData();
   }
 
   clear_filter() {
     this.filter.department.value="";
     this.filter.promo.value=null;
-    this.refresh(this.filter.promo.value,this.filter.department.value);
+    this.updateData();
   }
 }
 

@@ -3,7 +3,7 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {$$, checkLogin, group_works, now, showError, showMessage, stringDistance} from "../tools";
+import {$$, checkLogin, group_works, now, showError, showMessage, stringDistance, uniq} from "../tools";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {PromptComponent} from "../prompt/prompt.component";
@@ -147,11 +147,14 @@ export class EditComponent implements OnInit,OnDestroy  {
       $$("Profil chargé ",p);
 
       if(p){
-
         if(!p.hasOwnProperty("links") || !p.links)p.links=[];
-        p.links.push({text:"Google",url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname});
-        p.links.push({text:"Wikipedia",url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname});
-        p.links.push({text:"Allocine",url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname});
+        p.links.push({url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname,text:"Google"});
+        p.links.push({url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname,text:"Wikipedia"});
+        p.links.push({url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname,text:"Allocine"});
+
+        //Suppression des doublons sur la présence sur internet
+        p.links=uniq(p.links);
+
         this.profil=p;
         if(this.profil.sponsorBy){
           this.api._get("profils/"+this.profil.sponsorBy+"/","").subscribe((sponsor:any)=>{
