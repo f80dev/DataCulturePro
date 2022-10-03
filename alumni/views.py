@@ -586,12 +586,6 @@ def quality_filter(request):
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
-    if "awards" in ope:
-        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
-        to_delete=award_analyzer.find_double()
-        for a in to_delete:
-            a.delete()
-
 
     if "profils" in ope:
         profil_filter = ProfilAnalyzer()
@@ -603,6 +597,13 @@ def quality_filter(request):
             _p=Profil.objects.get(id=id)
             log("Suppression du profil "+_p.name)
             _p.delete()
+
+
+    if "awards" in ope:
+        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
+        to_delete=award_analyzer.find_double()
+        for a in to_delete:
+            a.delete()
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())

@@ -89,6 +89,10 @@ class ProfilAnalyzer:
                 log("Profil "+profil.id+" sans nom ni prénom donc suppression")
                 profils_to_delete.append(profil.id)
 
+            if profil.lastname!=str(profil.lastname).upper():
+                bSave=True
+                profil.lastname=profil.lastname.upper()
+
             if profil.links:
                 if len(profil.links)>len(list({v['url']:v for v in profil.links}.values())):
                     log("Suppression des doublons dans links")
@@ -199,6 +203,7 @@ class AwardAnalyzer():
         self.awards=awards
 
     def find_double(self):
+        log("Recherche de doublon sur les récompenses")
         to_delete:[Award]=[]
         a:Award
         for a in self.awards:

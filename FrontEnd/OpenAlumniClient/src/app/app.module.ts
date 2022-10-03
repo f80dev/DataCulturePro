@@ -91,6 +91,7 @@ import { TimelineComponent } from './timeline/timeline.component';
 import {WebcamModule} from "ngx-webcam";
 import { ScoringComponent } from './scoring/scoring.component';
 import {NgxJsonViewerModule} from "ngx-json-viewer";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -188,7 +189,8 @@ import {NgxJsonViewerModule} from "ngx-json-viewer";
         GoogleChartsModule,
         ShareButtonsModule,
         ShareIconsModule,
-        NgxJsonViewerModule
+        NgxJsonViewerModule,
+        MatSlideToggleModule
     ],
   providers: [
     ApiService,

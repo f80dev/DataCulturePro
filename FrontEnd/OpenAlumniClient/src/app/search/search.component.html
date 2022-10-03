@@ -15,13 +15,17 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
+  <div *ngIf="profils.length==0 && query.value.length<3" style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom: 5%;font-size: large;">
+    Rechercher des anciens élève de la FEMIS par nom, métier, promotion, titre de film ou récompense
+  </div>
+
   <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
                   style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;" autofocus>
-    <mat-label><mat-icon>person_search</mat-icon>&nbsp;Recherche</mat-label>
+    <mat-label><mat-icon>person_search</mat-icon>&nbsp;Votre requête</mat-label>
     <input matInput matNativeControl id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="nom, métier, promotion, titre de film ou de récompense"
+           placeholder=""
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"
@@ -41,22 +45,34 @@
 
   </mat-form-field>
 
+
   <div *ngIf="advanced_search?.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
+
       <mat-form-field [ngStyle]="{width:i.width}" style="margin: 3px;">
         <mat-label>{{i.label}}</mat-label>
         <input matInput matNativeControl
+               *ngIf="i.type=='text'"
                [title]="i.title"
                [id]="i.id"
                (keyup)="onQuery($event)"
                placeholder=""
                [(ngModel)]="i.value">
+
+        <mat-select *ngIf="i.type=='list'" [(ngModel)]="i.value">
+          <mat-option *ngFor="let opt of i.options" [value]="opt">{{opt}}</mat-option>
+        </mat-select>
+
       </mat-form-field>
 
     </div>
 
   </div>
 
+
+  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 10%;" >
+    <mat-slide-toggle color="primary">Inclure la formation professionnelle</mat-slide-toggle>
+  </div>
 
   <div *ngIf="profils?.length>3 && advanced_search?.length>0"
        style="display: inline-block;text-align: right;margin:5px;" autofocus>
@@ -94,11 +110,7 @@
       </mat-icon>
     </div>
     &nbsp;
-    <mat-checkbox id="chkPro" [(ngModel)]="filter_with_pro"
-                  title="Ajouter la formation professionnelle aux résultats"
-                  (change)="with_pro($event)" labelPosition="Before">
-      <div style="line-height: 85%;text-align: left;">Inclure la Formation<br>professionnelle</div>
-    </mat-checkbox>
+
   </div>
 
 </div>
@@ -115,7 +127,7 @@
 
 
 <!-- Affichage des profils-->
-<div class="wrap-list" *ngIf="message.length==0 && config.ready">
+<div class="wrap-list" *ngIf="message.length==0 && config.ready && query.value.length>0 && profils.length>0">
   <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
   <app-profil
     name="profils" class="app-card"
