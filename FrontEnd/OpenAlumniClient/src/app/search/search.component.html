@@ -18,6 +18,7 @@
   <div *ngIf="profils.length==0 && query.value.length<3" style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom: 5%;font-size: large;">
     Rechercher des anciens élève de la FEMIS par nom, métier, promotion, titre de film ou récompense
   </div>
+  <br>
 
   <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
                   style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;" autofocus>
@@ -45,7 +46,6 @@
 
   </mat-form-field>
 
-
   <div *ngIf="advanced_search?.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
 
@@ -59,7 +59,7 @@
                placeholder=""
                [(ngModel)]="i.value">
 
-        <mat-select *ngIf="i.type=='list'" [(ngModel)]="i.value">
+        <mat-select *ngIf="i.type=='list'" [(ngModel)]="i.value" (selectionChange)="refresh()">
           <mat-option *ngFor="let opt of i.options" [value]="opt">{{opt}}</mat-option>
         </mat-select>
 
@@ -70,9 +70,6 @@
   </div>
 
 
-  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 10%;" >
-    <mat-slide-toggle color="primary">Inclure la formation professionnelle</mat-slide-toggle>
-  </div>
 
   <div *ngIf="profils?.length>3 && advanced_search?.length>0"
        style="display: inline-block;text-align: right;margin:5px;" autofocus>
@@ -98,6 +95,11 @@
       (click)="switch_motor()">remove_circle</mat-icon>
 
   <br>
+
+  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 1%;" >
+    <mat-slide-toggle color="primary">Inclure la formation professionnelle</mat-slide-toggle>
+  </div>
+
 
 
   <!--Toolbar de recherche avancée -->

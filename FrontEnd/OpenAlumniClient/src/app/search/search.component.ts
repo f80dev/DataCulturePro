@@ -58,7 +58,7 @@ export class SearchComponent implements OnInit {
     if(q)this.query.value=q;
 
     if(this.api.token)this.perm="mail";else this.perm="";
-    if(this.query.value.length>3){
+    if(this.query.value.length>3 || this.advanced_search.length>0){
       let param="/";
       let prefixe="";
 
