@@ -35,12 +35,13 @@ export class PublicComponent implements OnInit {
 
   load_items(p){
     let expe={};
+    this.message="Chargement des expériences";
     this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
       this.message="";
 
       let rc=[];
 
-      if(awards && awards.count>0){
+      if(awards && awards.count>0 && this.join_awards){
         for(let a of awards.results){
           rc.push({
             year:a.year,
@@ -146,10 +147,10 @@ export class PublicComponent implements OnInit {
 
 
   //test http://localhost:4200/public/?id=3076
+  join_awards: boolean = false;
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
     if(id){
-      this.message="Chargement des expériences";
       this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
         this.profil=p.results[0];
         this.works=this.profil.works;
@@ -188,5 +189,7 @@ export class PublicComponent implements OnInit {
   }
 
 
-
+  refresh() {
+    this.load_items(this.profil)
+  }
 }

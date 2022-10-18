@@ -21,6 +21,7 @@ PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = ["hhoareau@gmail.com",
+                "juan.neardesign@gmail.com"
                 "paul.dudule@gmail.com",
                 "roger.legumes@gmail.com",
                 "j.lecanu@femis.fr",

@@ -61,13 +61,18 @@
       </td>
     </tr>
   </table>
+  <br>
 
+  <mat-checkbox [(ngModel)]="join_awards" (ngModelChange)="refresh()">Ajouter les récompenses</mat-checkbox>
+  <br>
 
   <app-hourglass [message]="message"></app-hourglass>
+  <br>
 
   <!--  Travaux nouvelle version -->
-  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;" *ngIf="message.length==0 && items.length>0">
-    <h3>Filmographie</h3>
+  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;margin: 20px;" *ngIf="message.length==0 && items.length>0">
+    <h3 *ngIf="!join_awards">Filmographie</h3>
+    <h3 *ngIf="join_awards">Filmographie et récompenses</h3>
 
     <div style="margin-left:10%;width:80%;display: inline-block;">
       <app-timeline [data]="data_timeline" [col_style]="col_style"
