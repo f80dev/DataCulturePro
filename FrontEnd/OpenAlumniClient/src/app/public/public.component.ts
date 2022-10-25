@@ -111,9 +111,11 @@ export class PublicComponent implements OnInit {
 
         let obj:any={
           year:item.year+"<br>",
-          icon: "<img src='"+item.icon+"' width='30'>",
+
           label:item.title+"<br><small style='color:white;'> pour <a href='./pows?query=\""+item.subtitle+"\"'>"+item.subtitle+"</a></small>"
         }
+
+        //icon: "<img src='"+item.icon+"' width='30'>",
 
 
 

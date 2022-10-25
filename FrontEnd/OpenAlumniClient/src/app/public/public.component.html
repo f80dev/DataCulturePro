@@ -35,18 +35,19 @@
             <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">{{profil?.department}}</td>
           </tr>
 
+          <tr></tr>
           <tr *ngIf="profil.works.length>0" id="rowExperiences">
             <td></td>
-            <td>Expériences principales</td>
+            <td>Domaine d'activité</td>
             <td>{{profil.expe}}</td></tr>
           <tr *ngIf="profil.works.length>0">
             <td></td>
             <td></td>
-            <td>{{profil.works.length}} expériences référencées<br><br></td>
+            <td>
+              <span *ngIf="profil.works?.length>0">{{profil.works.length}} films</span><br>
+              <span *ngIf="profil.awards?.length>0">{{profil.awards.length}} récompenses</span>
+            </td>
           </tr>
-          <tr *ngIf="profil.awards?.length>0">
-            <td></td>
-            <td>{{profil.awards.length}} disctinctions</td></tr>
           <tr *ngIf="profil?.links?.length>0">
             <td></td>
             <td>Voir son profil sur</td>
@@ -141,11 +142,11 @@
   <!--  </div>-->
 
   <br>
-  <div style="display: inline-block;margin-top:50px;width:fit-content;text-align: center;">
+  <div style="display: inline-block;margin-top:50px;width:fit-content;text-align: center;filter: grayscale(0.9);">
     <small>Partagez ce profil public sur vos réseaux</small><br>
       <!--      voir https://ngx-sharebuttons.netlify.app/ -->
       <share-buttons [theme]="'circles-dark'"
-                     style="text-align: center;font-size: x-small;"
+                     style="text-align: center;"
                      [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                      [show]="8"
                      [url]="url"
