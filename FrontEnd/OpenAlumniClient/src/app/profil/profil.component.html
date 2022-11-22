@@ -1,9 +1,8 @@
-
 <div class="flip-card" (click)="select_card($event)">
-    <div [ngStyle]="{backgroundColor:backgroundColor}"
-         [ngClass]="reverseClass">
+    <div [ngClass]="reverseClass">
         <div class="flip-card-front">
-            <table style="width:94%;margin:3%;margin-bottom: 0px;color: white;"><tr>
+            <table style="width:100%;color: white;margin: 0px;">
+                <tr style="vertical-align: text-bottom;">
                 <td style="text-align: left;">
                     <div *ngIf="config.hasPerm('r_department')"
                          title="Formation dispensée par la FEMIS"
@@ -12,67 +11,64 @@
                          (dblclick)="openQuery($event,profil?.department_category)">
                         <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
                     </div>
-                </td>
 
-                <td style="text-align: right" >
-                    <div *ngIf="config.hasPerm('r_promo')">
-                        <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
-                        <span style='cursor: pointer'
-                              name="lblPromo"
-                              title="Rechercher par promotion"
-                              (dblclick)="openQuery($event,profil?.degree_year)">
-              {{profil?.degree_year}}
-            </span>
+                    <div *ngIf="profil?.cursus=='P'"
+                         (click)="openQuery($event,profil?.department)"
+                         name="lblCursus"
+                         style="font-size: x-small;color: white;line-height: 95%;cursor: pointer;">
+                        {{profil.department}}
                     </div>
 
                 </td>
+
+                <td style="text-align: right;width: min-content;" >
+                    <div *ngIf="config.hasPerm('r_promo')">
+                        <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
+                        <span style='cursor: pointer' name="lblPromo"
+                              [title]="'Toute la promotion '+profil?.degree_year"
+                              (dblclick)="openQuery($event,profil?.degree_year)">
+                            {{profil?.degree_year}}
+                        </span>
+                    </div>
+                </td>
+                <td [style.color]="backgroundColor" style="width: 10px">
+                    <mat-icon style="font-size: small;">circle</mat-icon>
+                </td>
             </tr>
             </table>
+            <hr class="dark_separator">
 
-            <div *ngIf="profil?.cursus=='P'"
-                 (click)="openQuery($event,profil?.department)"
-                 name="lblCursus"
-                 style="font-size: x-small;color: white;margin-left:12px;line-height: 95%;cursor: pointer;">
-                {{profil.department}}
-            </div>
+<!--            A voir si l'on supprime la présentation de la photo-->
+<!--            <div>-->
+<!--                <div *ngIf="!config.hasPerm('r_photo')"><br></div>-->
+<!--                <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">-->
+<!--                    <img [src]="profil?.photo"-->
+<!--                         *ngIf="profil.public_photo"-->
+<!--                         style="pointer-events: none;"-->
+<!--                         class="icon-profil avatar-photo">-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <div>
-                <div *ngIf="!config.hasPerm('r_photo')"><br></div>
-                <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">
-                    <img [src]="profil?.photo"
-                         *ngIf="profil.public_photo"
-                         style="pointer-events: none;"
-                         class="icon-profil avatar-photo">
 
-                    <!--          <img src="./assets/img/boy.png"-->
-                    <!--               *ngIf="!profil.public_photo && profil.gender=='M'"-->
-                    <!--               style="pointer-events: none;"-->
-                    <!--               class="icon-profil avatar-photo">-->
-
-                    <!--          <img src="./assets/img/girl.png"-->
-                    <!--               *ngIf="!profil.public_photo && profil.gender=='F'"-->
-                    <!--               style="pointer-events: none;"-->
-                    <!--               class="icon-profil avatar-photo">-->
-
-                </div>
-            </div>
-
-            <div class="avatar-name">
-                <button mat-button mat-icon-button
-                        title="Voir la page publique"
-                        name="cmdShareProfil"
-                        class="small-icon-button"
-                        (click)="open_public_profil($event,profil)">
-                    <mat-icon>zoom_in</mat-icon>
-                </button>
-
-                <span name="lblName">
-                    <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
-                    <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
-                </span>
-
-            </div>
-
+            <table style="width:100%;">
+                <tr>
+                    <td style="text-align: left" class="avatar-name">
+                        <span name="lblName">
+                            <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
+                            <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
+                        </span>
+                    </td>
+                    <td style="text-align: right;width:fit-content;color:gray;">
+                        <button mat-button mat-icon-button
+                                title="Voir la page publique"
+                                name="cmdShareProfil"
+                                class="small-icon-button"
+                                (click)="open_public_profil($event,profil)">
+                            <mat-icon>visibility</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </table>
 
             <div name="cardContent" style="pointer-events: none;display:inline-block;position:absolute;left:0;top:0;height:100%;width:100%;z-index:100;">
                 <ng-content></ng-content>

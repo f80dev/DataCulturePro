@@ -1,19 +1,16 @@
 div
   color: white
 
-
 mat-card
   background-color: transparent
 
 .flip-card
-  margin: 10px
   max-width: 400px
   width: 100%
   text-align: left
   position: relative
   display: inline-block
   height: 150px
-  background-color: transparent
   perspective: 1000px
 
 
@@ -30,7 +27,6 @@ mat-card
   width: 100%
 
 
-
 .flip-card-inner
   position: relative
   color: white !important
@@ -39,24 +35,23 @@ mat-card
   transition: transform 0.6s
   transform-style: preserve-3d
 
+
 .flip-card-inner-rotate
   position: relative
   color: white !important
-  width: 100%
-  height: 100%
   text-align: center
   transition: transform 0.6s
   transform-style: preserve-3d
   transform: rotateY(180deg)
 
-//.flip-card:hover .flip-card-inner
-//  transform: rotateY(180deg)
-
 
 .flip-card-front, .flip-card-back
   position: absolute
-  width: 100%
-  height: 100%
+  border-radius: 10px 10px
+  background-color: #444444
+  padding: 10%
+  width: 80%
+  height: 100px
   -webkit-backface-visibility: hidden
   backface-visibility: hidden
   overflow: hidden
@@ -67,14 +62,12 @@ mat-card
 .flip-card-front
   color: black
 
-
 .flip-card-back
   color: white
   position: relative
-  width: 100%
-  height: 100%
   transform: rotateY(180deg)
   background-color: #555555
+
 
 
 
@@ -91,10 +84,7 @@ mat-card
 
 
 .avatar-name
-  position: absolute
-  display: block
-  z-index: 100
-  width: 90%
-  top: 60%
-  text-align: right
+  text-align: left
+  width: 70%
+  color: white
 

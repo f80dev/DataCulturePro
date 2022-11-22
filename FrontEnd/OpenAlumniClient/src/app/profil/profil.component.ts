@@ -28,7 +28,7 @@ export class ProfilComponent implements OnChanges {
   @Output('onclick') onclick: EventEmitter<any>=new EventEmitter();
 
   isOpen=false;
-  reverseClass="flip-card-inner mat-elevation-z8";
+  reverseClass="flip-card-inner";
 
   constructor(public toast:MatSnackBar,
               public router:Router,
@@ -115,10 +115,10 @@ export class ProfilComponent implements OnChanges {
   }
 
   select_card($event: MouseEvent) {
-    if(this.reverseClass=="flip-card-inner mat-elevation-z8"){
-      this.reverseClass="flip-card-inner-rotate mat-elevation-z8";
+    if(this.reverseClass=="flip-card-inner"){
+      this.reverseClass="flip-card-inner-rotate";
     } else {
-      this.reverseClass="flip-card-inner mat-elevation-z8";
+      this.reverseClass="flip-card-inner";
     }
 
   }

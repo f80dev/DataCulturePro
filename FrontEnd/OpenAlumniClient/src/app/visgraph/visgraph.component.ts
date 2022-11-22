@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import * as d3 from 'd3';
 import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {$$, showError} from "../tools";
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-visgraph',

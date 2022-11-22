@@ -5,17 +5,19 @@
             background="./assets/img/anciens.jpg">
 </app-tuto>
 
-<mat-toolbar class="mat-elevation-z2 toolbar-app" (mousedown)="closeMenu()">
+<mat-toolbar class="toolbar-app" (mousedown)="closeMenu()">
   <mat-icon
     id="cmdMenu"
     (click)="drawer.toggle()"
-    style="cursor: pointer;">
+    style="cursor: pointer;margin: 10px">
     menu
   </mat-icon>
 
-  <span>
+  <img src="./assets/icons/icon-72x72.png" style="width: 32px;margin: 10px;">
+
+  <span class="appli-title">
     {{config.values?.appname}}
-    <div style="font-size: x-small;display: inline" routerLink="about">&nbsp;v{{appVersion}}</div>
+    <div style="font-size: x-small;display: inline;margin: 5px;" routerLink="about">&nbsp;v{{appVersion}}</div>
   </span>
 
   <span class="fill-remaining-space"></span>

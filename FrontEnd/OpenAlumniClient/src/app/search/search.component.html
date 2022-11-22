@@ -16,35 +16,32 @@
 
 
   <div *ngIf="profils.length==0 && query.value.length<3" style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom: 5%;font-size: large;">
-    Rechercher des anciens élève de la FEMIS par nom, métier, promotion, titre de film ou récompense
+    Rechercher des anciens élève de la FEMIS
   </div>
   <br>
 
-  <mat-form-field *ngIf="advanced_search?.length==0" appearance="legacy"
-                  style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;" autofocus>
-    <mat-label><mat-icon>person_search</mat-icon>&nbsp;Votre requête</mat-label>
+  <mat-form-field *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" autofocus>
+    <mat-icon matPrefix style="margin-right: 10px;">person_search</mat-icon>
     <input matInput matNativeControl id="txtSearch"
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder=""
+           placeholder="Rechercher par nom, métier, promotion, titre de film ou récompense"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"
-                matSuffix style="cursor: pointer;color:lightgray;"
+                matSuffix
                 id="cmdCancel"
                 (click)="clearQuery()">cancel</mat-icon>
-      <mat-icon *ngIf="query.value?.length==0"
-                matSuffix style="cursor: pointer;color:lightgray;"
-                id="cmdHelp"
-                (click)="help()">help</mat-icon>
-      <mat-icon *ngIf="advanced_search?.length==0"
-                matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
-                id="cmdExpertMode"
-                (click)="switch_motor()">add_circle</mat-icon>
-
     </div>
-
   </mat-form-field>
+
+
+  <mat-icon *ngIf="query.value?.length==0"
+            id="cmdHelp"
+            (click)="help()">help</mat-icon>
+  <mat-icon *ngIf="advanced_search?.length==0"
+            id="cmdExpertMode"
+            (click)="switch_motor()">add_circle</mat-icon>
 
   <div *ngIf="advanced_search?.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
@@ -96,7 +93,7 @@
 
   <br>
 
-  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 1%;" >
+  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 5%;" >
     <mat-slide-toggle color="primary">Inclure la formation professionnelle</mat-slide-toggle>
   </div>
 
@@ -139,6 +136,7 @@
     [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
     (askfriend)="askfriend(profil)"
     (onclick)="openQuery($event)"
+    style="margin: 20px;"
     [profil]="profil">
   </app-profil>
   <!--  </cdk-virtual-scroll-viewport>-->

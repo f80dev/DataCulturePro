@@ -9,21 +9,22 @@
 
   <app-tuto label="Vous pouvez également consulter la liste des élèves de la FEMIS (anciens et actuels), via le menu latéral"></app-tuto>
 
-  <mat-form-field appearance="legacy" style="max-width:600px;width:90%;font-size: large;" autofocus>
-    <mat-label>Rechercher un film</mat-label>
+  <br><br>
+  <mat-form-field appearance="standard" class="search_zone" autofocus>
     <input matInput matNativeControl
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
-           (keyup)="onQuery($event)"
-           placeholder="Un ou plusieurs mots du titre du films, une année" [(ngModel)]="query.value">
+           (keyup)="onQuery($event)" [(ngModel)]="query.value"
+           placeholder="Rechercher un film par mots du titre du films, une année">
     <mat-icon *ngIf="query.value?.length>0"
               matSuffix style="cursor: pointer"
               (click)="clearQuery()">cancel</mat-icon>
   </mat-form-field>
-  &nbsp;&nbsp;
+
+
   <mat-icon (click)="advanced=true" *ngIf="!advanced" style="cursor: pointer" title="Recherche en mode avancée">add_circle</mat-icon>
   <mat-checkbox *ngIf="advanced" [(ngModel)]="all" ><div class="bloc-bouton">Tous les<br>termes</div></mat-checkbox>
 
-  <br>
+  <br><br>
 
   <div class="div-center" *ngIf="message.length==0">
     <span *ngIf="pows.length==limit">+ de {{pows.length}} films</span>
@@ -42,15 +43,31 @@
   <mat-accordion #powAccordion="matAccordion" [multi]="true">
     <div class="wrap-list" style="margin: 5px;">
       <mat-expansion-panel *ngFor="let pow of pows"
-                           class="app-card-panel mat-elevation-z4"
+                           class="app-card-panel"
                            (afterExpand)="get_pow(pow)"
                            [expanded]="pow.expanded">
-        <mat-expansion-panel-header style="height:60px;">
-          <div style="color:white;text-align: left;width:100%;margin:0px;">
-            <div style="">{{pow.title}}&nbsp;</div>
-            <div style="color:lightgrey;font-size:x-small">{{pow.nature}}/{{pow.category}} - {{pow.year}}</div>
+
+        <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
+          <div style="padding: 15px;width: 100%;text-align: left;">
+            {{pow.title}}<br>
+            <hr class="dark_separator">
+
+            <table style="color:white;text-align: left;width:100%;">
+              <tr>
+                <td>
+                  <div style="color:lightgrey;font-size:x-small">{{pow.nature}}/{{pow.category}} - {{pow.year}}</div>
+                </td>
+                <td style="text-align: right;">
+                  <span *ngIf="pow.expanded">-</span>
+                  <span *ngIf="!pow.expanded">+</span>
+                </td>
+              </tr>
+            </table>
           </div>
+
         </mat-expansion-panel-header>
+
+        <hr class="dark_separator">
 
         <div style="text-align: center;">
           <table style="width: 100%;padding: 3px;">
@@ -89,15 +106,15 @@
 
         <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;">
           <br>
-          <table style="width: 100%;text-align: left;padding: 5px;font-size: small;" class="mat-elevation-z2">
+          <table style="width: 100%;text-align: left;padding: 5px;font-size: small;">
             <tr *ngFor="let work of pow.works"
                 style="cursor: pointer;min-width: 400px;"
                 (click)="open_search(work)">
-              <td style="width: 45%;"><span style="color:lightgrey">{{work.job}}</span></td>
+              <td style="width: 45%;"><span style="color:lightgrey;font-variant-caps: all-petite-caps;">{{work.job}}</span></td>
               <td style="width: 45%;">{{work.name}}</td>
               <td style="width: 10px;text-align: right;">
                 <mat-icon style="font-size: small;padding:0px;margin:0px;height: 17px;"
-                          title="Cliquer pour consulter le profil">account_circle</mat-icon>
+                          title="Cliquer pour consulter le profil">visibility</mat-icon>
               </td>
             </tr>
           </table>
@@ -105,7 +122,7 @@
 
         <div *ngIf="pow.award?.length>0" style="line-height: 95%;font-size: x-small;">
           <br>
-          <table style="width: 100%;text-align: left;margin-bottom: 7px;padding: 10px;" class="mat-elevation-z2">
+          <table style="width: 100%;text-align: left;margin-bottom: 7px;padding: 10px;">
             <tr *ngFor="let a of pow.award" style="width:100%;padding: 3px;">
               <td [title]="a.description" style="color:lightgrey;width:80%;">
                 {{a.festival.title}} / {{a.description}}
@@ -120,58 +137,56 @@
 
 <!--        Liste des commandes disponibles -->
         <mat-action-row>
-          <button class="app-button"
-                  *ngIf="config.isLogin() && config.user.profil?.length>0"
-                  mat-button mat-raised-button
-                  (click)="add_experience(pow)">
-            <div class="bloc-bouton">
-              Ajouter en<br>expérience
-            </div>
+          <div style="width: 100%;text-align: center">
+            <button class="app-button"
+                    *ngIf="config.isLogin() && config.user.profil?.length>0"
+                    mat-button
+                    (click)="add_experience(pow)">
+              <div class="bloc-bouton">
+                Ajouter en<br>expérience
+              </div>
 
-          </button>
+            </button>
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button"
-                  mat-button title="Partager la fiche de ce film"
-                  *ngIf="config.hasPerm('share')"
-                  (click)="share(pow)">
-            <mat-icon>share</mat-icon>
-          </button>
+            <button mat-icon-button
+                    class="icon-button"
+                    mat-button title="Partager la fiche de ce film"
+                    *ngIf="config.hasPerm('share')"
+                    (click)="share(pow)">
+              <mat-icon>share</mat-icon>
+            </button>
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button"
-                  mat-button title="Réanalyse du film"
-                  *ngIf="config.hasPerm('add_movies')"
-                  (click)="analyse(pow)">
-            <mat-icon>build</mat-icon>
-          </button>
+            <button mat-icon-button
+                    class="icon-button"
+                    mat-button title="Réanalyse du film"
+                    *ngIf="config.hasPerm('add_movies')"
+                    (click)="analyse(pow)">
+              <mat-icon>build</mat-icon>
+            </button>
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button"
-                  mat-button title="Rechercher avec Google"
-                  (click)="openGoogle(pow)">
-            <mat-icon>search</mat-icon>
-          </button>
+            <button mat-icon-button
+                    class="icon-button"
+                    mat-button title="Rechercher avec Google"
+                    (click)="openGoogle(pow)">
+              <mat-icon>search</mat-icon>
+            </button>
 
 
-          <button mat-icon-button
-                  mat-raised-button mat-button
-                  class="icon-button"
-                  title="Enlever le film"
-                  *ngIf="config.hasPerm('delete_pow')"
-                  (click)="deletePow(pow)">
-            <mat-icon>delete</mat-icon>
-          </button>
+            <button mat-icon-button mat-button
+                    class="icon-button"
+                    title="Enlever le film"
+                    *ngIf="config.hasPerm('delete_pow')"
+                    (click)="deletePow(pow)">
+              <mat-icon>delete</mat-icon>
+            </button>
 
-          <button mat-icon-button
-                  mat-raised-button
-                  class="icon-button" mat-button
-                  (click)="router.navigate(['faqs'],{queryParams:{open:'fiche_film'}})">
-            <mat-icon>help</mat-icon>
-          </button>
+            <button mat-icon-button
+                    class="icon-button" mat-button
+                    (click)="router.navigate(['faqs'],{queryParams:{open:'fiche_film'}})">
+              <mat-icon>help</mat-icon>
+            </button>
+          </div>
+
 
         </mat-action-row>
 

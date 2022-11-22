@@ -1,23 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~ngx-sharebuttons/themes/circles'
 @import '~angular-mgl-timeline/theme'
-
-$darkgray: #303030
-$darkdarkgray: #1c1a1a
-$grayinput: #303030
-$mediumgray: #747474
-$button-color: #3a293c
-$primary-color: #ff059b
-$secondary-color: #c1c1c1
+@import './dataculture'
 
 
 .app-button
   margin: 4px !important
   min-width: 100px !important
-  background-color: $button-color
 
-h2
-  color: white
 
 .app-card
   max-width: 500px
@@ -37,7 +27,6 @@ h2
   margin: 3px !important
   display: inline-block
   cursor: pointer
-  background-color: $button-color
 
 .small-icon-button
   margin: 0px !important
@@ -60,15 +49,6 @@ h2
   justify-content: center
   align-items: flex-start
 
-
-html, body, app-root
-  margin: 0 !important
-  padding: 0 !important
-  color: white
-  background-color: $mediumgray !important
-  font-family: Roboto, "Helvetica Neue", sans-serif
-  font-weight: lighter
-
 ::-webkit-scrollbar
     width: 0px
     background: transparent
@@ -78,9 +58,8 @@ html, body, app-root
 
 
 .toolbar-app
-  height: 38px
+  height: 60px
   padding: 0px
-  background-color: black
   position: fixed
   top: 0px
   left: 0px
@@ -88,13 +67,11 @@ html, body, app-root
 
 
 .sidemenu
-  background-color: $darkdarkgray
   padding: 10px !important
   height: 110vh
   z-index: 1
   display: inline-block
   overflow: hidden
-  font-size: small
 
 
 .sidenav-content
@@ -105,12 +82,10 @@ html, body, app-root
   text-align: center
   padding: 0
   margin: 0
-  background-color: $mediumgray
 
 
 .fake-button
   @extend .app-button
-  background-color: $button-color !important
   width: 80px
   height: 26px
   text-align: center
@@ -128,12 +103,10 @@ html, body, app-root
   left: 0px
   top: 38px
   overflow: scroll
-  background: transparent
   padding: 0
   margin: 0
 
 .sidenav
-  background-color: $darkgray
   padding: 0px
 
 
@@ -158,7 +131,6 @@ h3
 .bottom-bar
   width: 100%
   z-index: 100
-  background-color: $mediumgray
   padding-top: 5px
   padding-right: 5px
   text-align: right
@@ -234,7 +206,6 @@ mat-card-title
 
 
 mat-panel-title
-  color: $secondary-color !important
   font-weight: normal
   font-size: small
 
@@ -261,12 +232,12 @@ mat-expansion-panel-content
 
 mat-action-row
   padding: 5px !important
+  text-align: center
 
 
 .removeBackground
   filter: blur(15px)
   cursor: pointer !important
-  background-color: black
   opacity: 0.7 !important
   pointer-events: none !important
 
@@ -280,3 +251,22 @@ mat-action-row
   cursor: pointer
   margin: 2px
   display: inline
+
+
+.dark_separator
+  border: 1px solid black
+  width: 80%
+  margin-left: 10%
+  margin-top: 20px
+  margin-bottom: 10px
+
+
+.search_zone
+  max-width: 600px
+  width: 60%
+  font-size: large
+  display: inline-block
+  padding-left: 20px
+  padding-right: 20px
+  border: white solid 1px
+  border-radius: 45px 45px

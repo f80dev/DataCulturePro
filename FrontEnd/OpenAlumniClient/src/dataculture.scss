@@ -1,0 +1,119 @@
+@use 'sass:map';
+@use './node_modules/@angular/material' as mat;
+
+$dataculture-typography: mat.define-typography-config(
+        $display-4: mat.define-typography-level(4.2rem, 4.2rem, 600, Roboto, $letter-spacing: 0.01em),
+        $display-3: mat.define-typography-level(3.8rem, 3.8rem, 500, Roboto, $letter-spacing: 0.03em),       //H2
+        $display-2: mat.define-typography-level(2.8rem, 3rem, 700, Roboto, $letter-spacing: 0.03em), //H3
+        $display-1: mat.define-typography-level(2.5rem, 2.5rem, 600,Roboto, $letter-spacing: 0.03em),
+        $headline:  mat.define-typography-level(2rem, 2rem, 500,Roboto, $letter-spacing: 0.03em),
+        $title:  mat.define-typography-level(1.8rem, 1.8rem, 300,  Roboto, $letter-spacing: 0.03em),
+        $subheading-2:  mat.define-typography-level(1.6rem, 1.6rem, 600, Roboto,$letter-spacing: -0.01em),
+        $subheading-1:  mat.define-typography-level(1.2rem, 1.2rem, 500,Roboto,$letter-spacing: -0.01em),
+        $body-2: mat.define-typography-level(12px, 12px, 700, Roboto,$letter-spacing: -0.03em),
+        $body-1: mat.define-typography-level(12px, 12px, 400, Roboto,$letter-spacing: -0.03em),
+        $button: mat.define-typography-level(12px, 12px, 400, Roboto, $letter-spacing: -0.03em),
+        $caption: mat.define-typography-level(12px, 12px, 300, Roboto, $letter-spacing: -0.03em),
+);
+
+
+//voir https://material.angular.io/guide/theming#palettes
+$dataculture-red-palette :(
+        50: #feecee,
+        100: #fcd0d3,
+        200: #ea9f9d,
+        300: #df7b78,
+        400: #e85f56,
+        500: #ec533e,
+        600: #de4a3d,
+        700: #cc4137,
+        800: #bf3b31,
+        900: #af3326,
+        contrast: (
+                50: rgba(black,0.87),
+                100: rgba(black,0.87),
+                200: rgba(black,0.87),
+                300: rgba(black,0.87),
+                400: rgba(black,0.87),
+                500: white,
+                600: white,
+                700: white,
+                800: white,
+                900: white
+        )
+);
+
+$dataculture-grey-palette :(
+        50: #f8f9fc,
+        100: #f1f2f5,
+        200: #e8e9ec,
+        300: #d8d9dc,
+        400: #b4b6b8,
+        500: #949698,
+        600: #6c6d70,
+        700: #595a5c,
+        800: #3a3b3e,
+        900: #1a1b1d,
+        contrast: (
+                50: rgba(black,0.87),
+                100: rgba(black,0.87),
+                200: rgba(black,0.87),
+                300: rgba(black,0.87),
+                400: rgba(black,0.87),
+                500: rgba(black,0.87),
+                600: rgba(black,0.87),
+                700: white,
+                800: white,
+                900: white
+        )
+);
+
+
+//Définition des couleurs principales utilisé dans Data Culture
+
+$dataculture-primary-color: mat.define-palette($dataculture-red-palette, 700);
+$dataculture-accent-color:mat.define-palette($dataculture-red-palette, 700);
+$dataculture-warn-color: #E4983C;
+$dataculture-green: #81C784;
+$dataculture-blue: #5471D2;
+$dataculture-background: mat.define-palette($dataculture-grey-palette,900);
+$dataculture-foreground: mat.define-palette($dataculture-grey-palette,50);
+
+$dataculture-theme:mat.define-dark-theme((
+        color: (
+                primary: $dataculture-primary-color,
+                accent: $dataculture-accent-color,
+                warn:  $dataculture-accent-color,
+                foreground: $dataculture-foreground,
+                background: $dataculture-background,
+        ),
+
+        typography: $dataculture-typography,
+));
+
+@include mat.all-component-themes($dataculture-theme);
+
+
+
+
+.student-name {
+        @include mat.typography-level($dataculture-typography,"body-2");
+}
+
+.student-promo {
+        @include mat.typography-level($dataculture-typography,"body-1");
+}
+
+.student-department {
+        @include mat.typography-level($dataculture-typography,"body-1");
+}
+
+.appli-title {
+        @include mat.typography-level($dataculture-typography,"subheading-2");
+        font-variant-caps: all-small-caps;
+        margin: 10px;
+}
+
+
+
+
