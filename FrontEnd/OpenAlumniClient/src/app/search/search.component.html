@@ -18,6 +18,19 @@
   <div *ngIf="profils.length==0 && query.value.length<3" style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom: 5%;font-size: large;">
     Rechercher des anciens élève de la FEMIS
   </div>
+
+  <div id="legende" style="width:100%;text-align: center;">
+    <table style="display: inline-block;width:fit-content;">
+      <tr>
+        <td class="material-icon fi-color"><mat-icon>circle</mat-icon></td>
+        <td>Formation intiale</td>
+        <td style="width:10%"></td>
+        <td class="material-icon fc-color"><mat-icon>circle</mat-icon></td>
+        <td>Formation intiale</td>
+      </tr>
+    </table>
+
+  </div>
   <br>
 
   <mat-form-field *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" autofocus>

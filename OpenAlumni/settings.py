@@ -21,7 +21,7 @@ import datetime
 
 from django.contrib import admindocs
 
-
+PAGEFILE_PATH="c://Temp/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = []
 

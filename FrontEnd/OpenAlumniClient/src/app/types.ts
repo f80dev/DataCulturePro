@@ -63,6 +63,7 @@ export interface tProfil {
     cp :string | null
     country :string | null
 
+    backgroundColor: string
     website :string | null
     dtLastUpdate :string | null
     dtLastSearch :string | null
