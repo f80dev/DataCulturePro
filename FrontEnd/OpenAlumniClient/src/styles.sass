@@ -1,8 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+@use "sass:map"
+@use './node_modules/@angular/material' as mat
+
 @import '~ngx-sharebuttons/themes/circles'
-@import '~angular-mgl-timeline/theme'
 @import './dataculture'
 
+body,html
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+
+mat-drawer-container
+  background: none !important
 
 .app-button
   margin: 4px !important
@@ -48,40 +55,51 @@
   flex-wrap: wrap
   justify-content: center
   align-items: flex-start
+  min-height: 600px
 
 ::-webkit-scrollbar
-    width: 0px
+    width: 0
     background: transparent
 
 ::-webkit-scrollbar-thumb
     background: transparent
 
 
+//Le container contient le side-menu et le sidenavcontent
 .toolbar-app
-  height: 60px
-  padding: 0px
-  position: fixed
-  top: 0px
-  left: 0px
-  z-index: 10
+  height: 5vh
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
 
+.container
+  width: 100vw
+  height: 95vh
+  overflow: scroll
 
 .sidemenu
-  padding: 10px !important
-  height: 110vh
-  z-index: 1
-  display: inline-block
+  height: 95vh
+  padding: 0
+  display: flex
+  flex-direction: column
+
   overflow: hidden
+  border: none
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
 
 
 .sidenav-content
   width: 100%
-  height: 100vh
+  height: 100%
   overflow: scroll
   justify-content: center
   text-align: center
-  padding: 0
-  margin: 0
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,900)
+
+.mainform
+  width: 100%
+  text-align: center !important
+  height: 100%
+  background: none
+
 
 
 .fake-button
@@ -96,25 +114,9 @@
   padding: 10px
 
 
-.container
-  width: 100vw
-  min-height: 100vh
-  position: fixed
-  left: 0px
-  top: 38px
-  overflow: scroll
-  padding: 0
-  margin: 0
-
 .sidenav
-  padding: 0px
+  padding: 0
 
-
-
-.mainform
-  width: 100%
-  text-align: center !important
-  margin-top: 5px
 
 
 .app-field
@@ -153,6 +155,8 @@ h3
 .fill-remaining-space
   flex: 1 1 auto
 
+
+
 .app-panel
   width: 100% !important
 
@@ -166,13 +170,14 @@ h3
 
 
 .bloc-bouton
-  margin: 0px
-  padding: 0px
+  margin: 0
+  padding: 0
   text-align: center
   display: inline-block
   font-size: small
   font-weight: 400
   line-height: 96%
+
 
 
 mat-dialog-title
@@ -193,26 +198,18 @@ mat-dialog-title
   font-size: small
   display: inline-block
 
-
+mat-icon
+  color: mat.get-color-from-palette($dataculture-grey-palette,600)
 
 a
-  color: lightblue
   text-decoration: none
 
-mat-card-title
-  font-size: large
 
-
-
-
-mat-panel-title
-  font-weight: normal
-  font-size: small
-
+mat-body-2 > mat-card-title
+mat-body-1 > mat-panel-title
 
 .app-mat-panel-description
   font-weight: lighter
-  color: darkgray
   text-align: left
   font-size: small
   vertical-align: center
@@ -241,10 +238,6 @@ mat-action-row
   opacity: 0.7 !important
   pointer-events: none !important
 
-.app-link
-  color: darkblue
-  font-style: normal
-
 
 .mini-icon-button
   font-size: 20px
@@ -255,8 +248,7 @@ mat-action-row
 
 .dark_separator
   border: 1px solid black
-  width: 80%
-  margin-left: 10%
+  width: 100%
   margin-top: 20px
   margin-bottom: 10px
 
@@ -268,5 +260,71 @@ mat-action-row
   display: inline-block
   padding-left: 20px
   padding-right: 20px
-  border: white solid 1px
+  margin-right: 10px
+  border: mat.get-color-from-palette($dataculture-grey-palette,700) solid 1px
   border-radius: 45px 45px
+
+
+.fi-color
+  color: $dataculture-blue
+
+.material-icon.fi-color
+  color: $dataculture-blue
+
+.material-icon.fc-color
+  color: $dataculture-green
+
+.fc-color
+  color: $dataculture-green
+
+
+.flip-card
+  max-width: 400px
+  width: 100%
+  text-align: left
+  position: relative
+  display: inline-block
+  height: 150px
+  perspective: 1000px
+
+
+.flip-card-inner
+  position: relative
+  color: white !important
+  width: 100%
+  height: 100%
+  transition: transform 0.6s
+  transform-style: preserve-3d
+
+
+.flip-card-inner-rotate
+  position: relative
+  color: white !important
+  text-align: center
+  transition: transform 0.6s
+  transform-style: preserve-3d
+  transform: rotateY(180deg)
+
+
+.flip-card-front, .flip-card-back
+  position: absolute
+  border-radius: 10px 10px
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
+  padding: 10%
+  width: 80%
+  height: 100px
+  -webkit-backface-visibility: hidden
+  backface-visibility: hidden
+  overflow: hidden
+  transform: rotateX(0deg)
+
+//https://stackoverflow.com/questions/9604982/backface-visibility-not-working-properly-in-firefox-works-in-safari
+
+.flip-card-front
+  color: black
+
+.flip-card-back
+  color: white
+  position: relative
+  transform: rotateY(180deg)
+

@@ -4,7 +4,7 @@ import {ApiService} from "./api.service";
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../environments/environment";
-import {MatSidenav} from "@angular/material/sidenav";
+import {MatDrawerMode, MatSidenav} from "@angular/material/sidenav";
 import {ChatAdapter} from "ng-chat";
 import { MyAdapter } from './MyAdapter';
 import {$$} from "./tools";
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit,AfterViewInit {
   @ViewChild('drawer', {static: false}) drawer: MatSidenav;
   public adapter: ChatAdapter = new MyAdapter();
   innerWidth: number=400;
-  sidemenu_mode: string="over";
+  sidemenu_mode: MatDrawerMode="over";
 
   constructor(public config: ConfigService,
               public api:ApiService,

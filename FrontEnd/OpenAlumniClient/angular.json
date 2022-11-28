@@ -31,10 +31,8 @@
               "src/CNAME"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/dataculture.scss",
               "src/styles.sass",
-              "src/dataculture.sass",
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill/dist/quill.core.css"
             ],
@@ -168,7 +166,7 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.sass",
-              "src/dataculture.sass"
+              "src/dataculture.scss"
             ],
             "scripts": []
           }

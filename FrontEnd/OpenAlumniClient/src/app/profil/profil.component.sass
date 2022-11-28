@@ -1,17 +1,11 @@
+
+
 div
   color: white
 
 mat-card
   background-color: transparent
 
-.flip-card
-  max-width: 400px
-  width: 100%
-  text-align: left
-  position: relative
-  display: inline-block
-  height: 150px
-  perspective: 1000px
 
 
 .tag
@@ -25,49 +19,6 @@ mat-card
   display: inline-block
   height: 100%
   width: 100%
-
-
-.flip-card-inner
-  position: relative
-  color: white !important
-  width: 100%
-  height: 100%
-  transition: transform 0.6s
-  transform-style: preserve-3d
-
-
-.flip-card-inner-rotate
-  position: relative
-  color: white !important
-  text-align: center
-  transition: transform 0.6s
-  transform-style: preserve-3d
-  transform: rotateY(180deg)
-
-
-.flip-card-front, .flip-card-back
-  position: absolute
-  border-radius: 10px 10px
-  background-color: #444444
-  padding: 10%
-  width: 80%
-  height: 100px
-  -webkit-backface-visibility: hidden
-  backface-visibility: hidden
-  overflow: hidden
-  transform: rotateX(0deg)
-
-//https://stackoverflow.com/questions/9604982/backface-visibility-not-working-properly-in-firefox-works-in-safari
-
-.flip-card-front
-  color: black
-
-.flip-card-back
-  color: white
-  position: relative
-  transform: rotateY(180deg)
-  background-color: #555555
-
 
 
 

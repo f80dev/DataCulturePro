@@ -22,6 +22,8 @@
 
   <span class="fill-remaining-space"></span>
 
+  <img src="./assets/logo_femis_menu@2x.png" style="width: 100px;margin-right: 15px;">
+
   <mat-icon style="font-size: x-large;cursor: pointer;"
             title="Revenir à l'écran précédent"
             id="cmdBack"
@@ -29,7 +31,7 @@
 </mat-toolbar>
 
 
-<mat-drawer-container class="container" autosize>
+<mat-drawer-container class="container">
   <mat-drawer #drawer class="sidenav" [mode]="sidemenu_mode">
     <app-loginbar (click)="closeMenu()" (logout)="logout()">
     </app-loginbar>

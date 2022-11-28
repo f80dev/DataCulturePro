@@ -1,162 +1,166 @@
-<mat-nav-list class="sidemenu">
-  <br>
-  <div *ngIf="!config.user?.user?.email || config.user?.user?.email?.length==0" style="width:100%;text-align:center;">
-    Identifiez vous pour accèder<br>
-    aux fonctionalités avancées
-  </div>
+<mat-nav-list>
+  <div class="sidemenu">
 
-  <div *ngIf="config.user?.user?.email.length>0" style="margin: 10px;">
-    <div style="color:lightgray;font-size: x-small">Bonjour,</div>
-    {{config.user?.user?.email}}
-    <br><br>
-  </div>
-  <br>
+  <header style="height:200px">
+    <div *ngIf="!config.user?.user?.email || config.user?.user?.email?.length==0" style="width:100%;text-align:center;">
+      Identifiez vous pour accèder<br>
+      aux fonctionalités avancées
+    </div>
 
-  <a title="Consultation de l'annuaire"
-     routerLink="search"
-     mat-list-item
-     id="cmdSearch">
-    <mat-icon>people_alt</mat-icon>
-      &nbsp;Annuaire
-  </a>
+    <div *ngIf="config.user?.user?.email.length>0" style="margin: 10px;">
+      <div style="color:lightgray;font-size: x-small">Bonjour,</div>
+      {{config.user?.user?.email}}
+      <br><br>
+    </div>
+    <br>
 
-  <a title="Voir les oeuvres des anciens"
-     routerLink="pows"
-     mat-list-item
-     id="cmdShowMovies">
-    <mat-icon>theaters</mat-icon>
-    &nbsp;Films
-  </a>
+    <a title="Consultation de l'annuaire"
+       routerLink="search"
+       mat-list-item
+       id="cmdSearch">
+      <mat-icon color="semigrey">people_alt</mat-icon>
+      Annuaire
+    </a>
 
-  <a title="Voir le blog"
-     routerLink="blog"
-     mat-list-item
-     id="cmdBlog">
-    <mat-icon>rss_feed</mat-icon>
-    &nbsp;&nbsp;Actualités
-  </a>
+    <a title="Voir les oeuvres des anciens"
+       routerLink="pows"
+       mat-list-item
+       id="cmdShowMovies">
+      <mat-icon>theaters</mat-icon>
+      Films
+    </a>
 
-
-  <a title="Editer votre profil"
-     *ngIf="config.user?.profil && config.isLogin()"
-     routerLink="edit"
-     [queryParams]="{id:this.config.user?.profil}"
-     mat-list-item
-     id="cmdEditMyProfil">
-    <mat-icon>build</mat-icon>
-    &nbsp;&nbsp;Editer mon profil
-  </a>
+    <a title="Voir le blog"
+       routerLink="blog"
+       mat-list-item
+       id="cmdBlog">
+      <mat-icon>rss_feed</mat-icon>
+      Actualités
+    </a>
 
 
-  <a title="Rédiger un article"
-     *ngIf="config.hasPerm('publish')"
-     routerLink="htmledit"
-     mat-list-item
-     id="cmdPublish">
-    <mat-icon>history_edu</mat-icon>
-    &nbsp;&nbsp;Publier
-  </a>
+    <a title="Editer votre profil"
+       *ngIf="config.user?.profil && config.isLogin()"
+       routerLink="edit"
+       [queryParams]="{id:this.config.user?.profil}"
+       mat-list-item
+       id="cmdEditMyProfil">
+      <mat-icon>build</mat-icon>
+      Editer mon profil
+    </a>
+
+
+    <a title="Rédiger un article"
+       *ngIf="config.hasPerm('publish')"
+       routerLink="htmledit"
+       mat-list-item
+       id="cmdPublish">
+      <mat-icon>history_edu</mat-icon>
+      Publier
+    </a>
 
     <br>
 
-  <a title="Ajouter des films dans le catalogue"
-     *ngIf="config.hasPerm('add_movies') && config.isLogin()"
-     routerLink="addpow"
-     [queryParams]="{owner:'public'}"
-     mat-list-item
-     id="cmdAddMovie">
-    <mat-icon>videocam</mat-icon>
-    &nbsp;&nbsp;Catalogue
-  </a>
+    <a title="Ajouter des films dans le catalogue"
+       *ngIf="config.hasPerm('add_movies') && config.isLogin()"
+       routerLink="addpow"
+       [queryParams]="{owner:'public'}"
+       mat-list-item
+       id="cmdAddMovie">
+      <mat-icon>videocam</mat-icon>
+      Catalogue
+    </a>
 
-  <a title="Accèder à la console de statistiques"
-     *ngIf="config.hasPerm('stats') && config.isLogin()"
-     routerLink="stats"
-     mat-list-item
-     id="cmdOpenStats">
-    <mat-icon>leaderboard</mat-icon>
-    &nbsp;&nbsp;Datas
-  </a>
+    <a title="Accèder à la console de statistiques"
+       *ngIf="config.hasPerm('stats') && config.isLogin()"
+       routerLink="stats"
+       mat-list-item
+       id="cmdOpenStats">
+      <mat-icon>leaderboard</mat-icon>
+      Datas
+    </a>
+  </header>
 
-  <a title="Accèder à la console developper"
-     *ngIf="config.hasPerm('dev')"
-     routerLink="dev"
-     mat-list-item
-     id="cmdOpenDev">
-    <mat-icon>build</mat-icon>
-    &nbsp;&nbsp;Développeurs
-  </a>
+  <content style="flex:auto;"></content>
 
-
-  <br>
-
-
-
-
-
-  <a title="Modifier vos paramètres"
-     *ngIf="config.isLogin()"
-     mat-list-item
-     routerLink="settings"
-     id="cmdSettings">
-    <mat-icon>person</mat-icon>
-    &nbsp;&nbsp;Mon compte
-  </a>
+  <footer style="height:200px">
+    <a title="Accèder à la console developper"
+       *ngIf="config.hasPerm('dev')"
+       routerLink="dev"
+       mat-list-item
+       id="cmdOpenDev">
+      <mat-icon>build</mat-icon>
+      Développeurs
+    </a>
+    <br>
+    <a title="Modifier vos paramètres"
+       *ngIf="config.isLogin()"
+       mat-list-item
+       routerLink="settings"
+       id="cmdSettings">
+      <mat-icon>person</mat-icon>
+      Mon compte
+    </a>
 
 
 
 
-  <a title="Se déconnecter"
-     *ngIf="config.isLogin()"
-     mat-list-item (click)="logout()" id="cmdLogout">
-    <mat-icon>logout</mat-icon>
-    &nbsp;&nbsp;&nbsp;Se déconnecter
-  </a>
+    <a title="Se déconnecter"
+       *ngIf="config.isLogin()"
+       mat-list-item (click)="logout()" id="cmdLogout">
+      <mat-icon>logout</mat-icon>
+      Se déconnecter
+    </a>
 
 
-  <a title="Se connecter"
-     *ngIf="!config.user?.user || config.user?.user?.email?.length==0"
-     mat-list-item
-     (click)="router.navigate(['login'])"
-     id="cmdLogin">
-    <mat-icon>login</mat-icon>
-    &nbsp;&nbsp;Se Connecter
-  </a>
-  <br>
-  <br>
+    <a title="Se connecter"
+       *ngIf="!config.user?.user || config.user?.user?.email?.length==0"
+       mat-list-item
+       (click)="router.navigate(['login'])"
+       id="cmdLogin">
+      <mat-icon>login</mat-icon>
+      Se Connecter
+    </a>
+    <br>
+    <br>
 
-  <a title="Voir les NFTs"
-     routerLink="nfts"
-     *ngIf="config.hasPerm('r_nft')"
-     mat-list-item
-     id="cmdNFTS">
-    <mat-icon>shield</mat-icon>
-    &nbsp;Certification
-  </a>
+    <a title="Voir les NFTs"
+       routerLink="nfts"
+       *ngIf="config.hasPerm('r_nft')"
+       mat-list-item
+       id="cmdNFTS">
+      <mat-icon>shield</mat-icon>
+      Certification
+    </a>
 
-  <a title="Aide" routerLink="faqs"
-     mat-list-item
-     id="cmdHelp">
-    <mat-icon>help</mat-icon>
-    &nbsp;&nbsp;Aide
-  </a>
+    <a title="Aide" routerLink="faqs"
+       mat-list-item
+       id="cmdHelp">
+      <mat-icon>help</mat-icon>
+      Aide
+    </a>
 
-  <a title="A propos" routerLink="about"
-     mat-list-item
-     id="cmdAbout">
-    <mat-icon>article</mat-icon>
-    &nbsp;&nbsp;A propos
-  </a>
 
-  <br>
-  <br>
-  <a title="Administration"
-     *ngIf="isLocal || config.hasPerm('admin')"
-     mat-list-item routerLink="admin"
-     id="cmdAdmin">
-    <mat-icon style="margin-right: 8px;">settings</mat-icon>
-    Console<br>d'administration
-  </a>
+    <br>
+    <a title="A propos" routerLink="about"
+       mat-list-item
+       id="cmdAbout">
+      <mat-icon>article</mat-icon>
+      A propos
+    </a>
 
+    <br>
+
+    <a title="Administration"
+       *ngIf="isLocal || config.hasPerm('admin')"
+       mat-list-item routerLink="admin"
+       id="cmdAdmin">
+      <mat-icon style="margin-right: 8px;">settings</mat-icon>
+      Console<br>d'administration
+    </a>
+
+  </footer>
+
+  </div>
 </mat-nav-list>
 

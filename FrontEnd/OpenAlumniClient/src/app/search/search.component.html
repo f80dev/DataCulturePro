@@ -1,4 +1,4 @@
-<div style="margin:1%;text-align: center;min-width: 300px;">
+<div class="mainform">
 
   <app-tuto icon_button="login"
             [if]="!config.user?.user.email"
@@ -19,23 +19,23 @@
     Rechercher des anciens élève de la FEMIS
   </div>
 
-  <div id="legende" style="width:100%;text-align: center;">
+  <div id="legende" style="width:100%;text-align: center;margin-top: 20px;" *ngIf="profils.length>0">
     <table style="display: inline-block;width:fit-content;">
       <tr>
-        <td class="material-icon fi-color"><mat-icon>circle</mat-icon></td>
+        <td class="material-icon"><mat-icon class="fi-color">circle</mat-icon></td>
         <td>Formation intiale</td>
         <td style="width:10%"></td>
-        <td class="material-icon fc-color"><mat-icon>circle</mat-icon></td>
-        <td>Formation intiale</td>
+        <td class="material-icon"><mat-icon class="fc-color">circle</mat-icon></td>
+        <td>Formation professionnelle</td>
       </tr>
     </table>
 
   </div>
   <br>
 
-  <mat-form-field *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" autofocus>
+  <mat-form-field  *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" >
     <mat-icon matPrefix style="margin-right: 10px;">person_search</mat-icon>
-    <input matInput matNativeControl id="txtSearch"
+    <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
            placeholder="Rechercher par nom, métier, promotion, titre de film ou récompense"
@@ -56,6 +56,7 @@
             id="cmdExpertMode"
             (click)="switch_motor()">add_circle</mat-icon>
 
+  <!--  Critère de la recherche avancée -->
   <div *ngIf="advanced_search?.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
 
@@ -81,6 +82,7 @@
 
 
 
+  <!--  gestion du tri-->
   <div *ngIf="profils?.length>3 && advanced_search?.length>0"
        style="display: inline-block;text-align: right;margin:5px;" autofocus>
 
@@ -99,15 +101,16 @@
     </mat-icon>
 
   </div>
-   <mat-icon *ngIf="advanced_search?.length>0"
-      matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
-      id="cmdSimpleMode"
-      (click)="switch_motor()">remove_circle</mat-icon>
+  <mat-icon *ngIf="advanced_search?.length>0"
+            matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
+            id="cmdSimpleMode"
+            (click)="switch_motor()">remove_circle</mat-icon>
 
   <br>
 
-  <div *ngIf="profils.length==0 && query.value.length<3" style="width: 100%;text-align: center;margin-top: 5%;" >
-    <mat-slide-toggle color="primary">Inclure la formation professionnelle</mat-slide-toggle>
+  <div *ngIf="query.value.length<3"
+       style="width: 100%;text-align: center;margin-top: 10px;" >
+    <mat-slide-toggle [(ngModel)]="add_pro">Inclure la formation professionnelle</mat-slide-toggle>
   </div>
 
 
@@ -125,33 +128,33 @@
 
   </div>
 
-</div>
 
 
-<div class="div-center">
-  <app-hourglass [message]="message"></app-hourglass>
-</div>
+  <div class="div-center">
+    <app-hourglass [message]="message"></app-hourglass>
+  </div>
 
-<span *ngIf="profils?.length==0 && message.length==0 && (query.value?.length>0 || this.advanced_search?.length>0)">
+  <span *ngIf="profils?.length==0 && message.length==0 && (query.value?.length>0 || this.advanced_search?.length>0)">
   Aucun profil ne correspond à cette recherche
 </span>
 
 
+  <!-- Affichage des profils-->
+  <div class="wrap-list">
+    <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
+    <app-profil *ngFor="let profil of profils"
+            name="profils" class="app-card"
+            [backgroundColor]="profil.backgroundColor"
+            (delete)="deleteProfil(profil)"
+            [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
+            (askfriend)="askfriend(profil)"
+            (onclick)="openQuery($event)"
+            style="margin: 20px;"
+            [profil]="profil">
+    </app-profil>
 
-<!-- Affichage des profils-->
-<div class="wrap-list" *ngIf="message.length==0 && config.ready && query.value.length>0 && profils.length>0">
-  <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
-  <app-profil
-    name="profils" class="app-card"
-    *ngFor="let profil of profils"
-    (delete)="deleteProfil(profil)"
-    [backgroundColor]="profil.backgroundColor"
-    [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
-    (askfriend)="askfriend(profil)"
-    (onclick)="openQuery($event)"
-    style="margin: 20px;"
-    [profil]="profil">
-  </app-profil>
+  </div>
+
   <!--  </cdk-virtual-scroll-viewport>-->
 </div>
 

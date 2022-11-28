@@ -1,6 +1,8 @@
 @use 'sass:map';
 @use './node_modules/@angular/material' as mat;
 
+
+
 $dataculture-typography: mat.define-typography-config(
         $display-4: mat.define-typography-level(4.2rem, 4.2rem, 600, Roboto, $letter-spacing: 0.01em),
         $display-3: mat.define-typography-level(3.8rem, 3.8rem, 500, Roboto, $letter-spacing: 0.03em),       //H2
@@ -51,8 +53,8 @@ $dataculture-grey-palette :(
         400: #b4b6b8,
         500: #949698,
         600: #6c6d70,
-        700: #595a5c,
-        800: #3a3b3e,
+        700: #3a3b3e,
+        800: #232429,
         900: #1a1b1d,
         contrast: (
                 50: rgba(black,0.87),
@@ -71,19 +73,38 @@ $dataculture-grey-palette :(
 
 //Définition des couleurs principales utilisé dans Data Culture
 
+//Background page : #1A1B1D
+//Background menu et blocs : #232429
+//
+//Pictos gris : #72737C
+//
+//Rouge : #CC4137
+//Orange : #E4983C
+//Vert : #81C784
+//Bleu : #5471D2
+//
+//Texte blanc : #ffffff
+//Texte gris : ##8B8C93
+
+
+
 $dataculture-primary-color: mat.define-palette($dataculture-red-palette, 700);
 $dataculture-accent-color:mat.define-palette($dataculture-red-palette, 700);
-$dataculture-warn-color: #E4983C;
+$dataculture-warn-color: mat.define-palette($dataculture-red-palette, 900);
 $dataculture-green: #81C784;
 $dataculture-blue: #5471D2;
+$dataculture-red: #CC4137;
+$dataculture-orange: #E4983C;
 $dataculture-background: mat.define-palette($dataculture-grey-palette,900);
 $dataculture-foreground: mat.define-palette($dataculture-grey-palette,50);
+$dataculture-semigrey: mat.define-palette($dataculture-grey-palette,50);
+
 
 $dataculture-theme:mat.define-dark-theme((
         color: (
                 primary: $dataculture-primary-color,
                 accent: $dataculture-accent-color,
-                warn:  $dataculture-accent-color,
+                warn:  $dataculture-warn-color,
                 foreground: $dataculture-foreground,
                 background: $dataculture-background,
         ),
@@ -91,9 +112,10 @@ $dataculture-theme:mat.define-dark-theme((
         typography: $dataculture-typography,
 ));
 
+
 @include mat.all-component-themes($dataculture-theme);
-
-
+@include mat.typography-hierarchy($dataculture-theme);
+@include mat.all-component-typographies($dataculture-typography);
 
 
 .student-name {
@@ -114,6 +136,8 @@ $dataculture-theme:mat.define-dark-theme((
         margin: 10px;
 }
 
-
+.film-title {
+        @include mat.typography-level($dataculture-typography,"body-1");
+}
 
 

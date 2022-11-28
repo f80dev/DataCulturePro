@@ -1,12 +1,10 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
 import {Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {ApiService} from "../api.service";
-import {extract_id, showMessage} from "../tools";
 import {ConfigService} from "../config.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../environments/environment";
-import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 
 @Component({

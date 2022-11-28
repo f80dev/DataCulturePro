@@ -107,8 +107,8 @@ export class SearchComponent implements OnInit {
             }
           }
 
-          if(item.cursus=="S")item.backgroundColor="#171732";
-          if(item.cursus=="P")item.backgroundColor="#341414";
+          if(item.cursus=="S")item.backgroundColor="#5471D2";
+          if(item.cursus=="P")item.backgroundColor="#81C784";
           if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#072c00";
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
@@ -163,6 +163,7 @@ export class SearchComponent implements OnInit {
   order=this.fields[0].value;
 
   advanced_search=[];
+  add_pro: boolean = false;
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
@@ -174,6 +175,7 @@ export class SearchComponent implements OnInit {
 
   clearQuery() {
     this.query.value='';
+    this.profils=[];
     this.refresh();
   }
 
