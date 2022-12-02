@@ -1,18 +1,30 @@
+@use "sass:map"
+@use './node_modules/@angular/material' as mat
+@import '../../dataculture'
+
+
 mat-icon
   font-size: medium
   margin-right: 5px
 
-a
-  font-size: medium !important
+.sidemenu
+  height: 95vh
+  display: flex
+  flex-direction: column
+  border: none
+  background: none
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
 
 header
   height: fit-content
 
 footer
   height: fit-content
+  margin-bottom: 20px
 
 content
   flex: auto
 
-mat-nav-list
-  padding: 0
+a
+  opacity: 0.8
+  font-size: medium !important

@@ -41,11 +41,16 @@ python manage.py search_index --rebuild
 ##Installation
 Après avoir récupérer le code, on installe une version locale de postgres
 puis on execute
-<pre>python manage.py makemigrations</pre>
-<pre>python manage.py flush</pre>
-<pre>python manage.py migrate</pre><br>
+<pre>
+python manage.py makemigrations --settings OpenAlumni.settings_dev
+python manage.py flush
+python manage.py migrate --settings OpenAlumni.settings_dev 
+python manage.py search_index --rebuild --settings OpenAlumni.settings_dev
+</pre><br>
 
-##Création du compte admin
+##Création de la base de données et du compte admin
+###Création de la base de données
+
 Le compte de super utilisateur permet une gestion fine de la plateforme d'exposition des API
 
 voir https://docs.djangoproject.com/fr/1.8/intro/tutorial02/
@@ -55,8 +60,6 @@ python manage.py createsuperuser --settings OpenAlumni.settings
 Pour l'environnement de développement on utilisera
 python manage.py createsuperuser --settings OpenAlumni.settings_dev
  
-
-
 
 
 
@@ -115,14 +118,19 @@ ou avec docker pour l'environnement de dev
 firewall-cmd --zone=public --add-port=9210/tcp
 firewall-cmd --zone=public --add-port=9310/tcp
 docker rm -f elastic_search_server-dev
-docker run -p 9210:9200 -p 9310:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server-dev -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+docker run -p 9210:9200 -p 9310:9300 -e "xpack.security.enabled=false" --restart=always -e "discovery.type=single-node" --name elastic_search_server-dev -ti docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>
 
+l'option xpack.security.enabled=false permet de faire la connexion sans SSL
+l'activation de la sécurité se fait pas https://www.elastic.co/guide/en/elasticsearch/reference/7.17/configuring-tls-docker.html
+
+
+Vérifier l'installation en ouvrant le serveur : http://<server>:9210
 
 
 puis reconstruire l'index par 
 <pre>
-python manage.py search_index --rebuild
+python manage.py search_index --rebuild 
 </pre>
 
 

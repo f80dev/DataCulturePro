@@ -56,11 +56,11 @@
 
         <img *ngIf="image?.length>0"
              [src]="image"
-             style="max-width:300px;max-height:300px;width:40vmin;height:40vmin;margin-bottom:2vh;display: inline-block;">
+             style="max-width:100px;max-height:100px;width:40vmin;height:40vmin;margin-bottom:2vh;display: inline-block;">
 
         <div *ngIf="image?.length==0" style="height:5vh"></div>
 
-        <div [ngStyle]='{width:"90%","margin-left":"5%","margin-top":"4vh","text-align":text_align,"font-size": "medium","margin-bottom": "5vh"}'
+        <div [ngStyle]='{width:"90%","margin-left":"5%","margin-top":"20vh","text-align":text_align,"font-size": "medium","margin-bottom": "5vh"}'
              [innerHTML]="subtitle"></div>
 
         <button class="app-button"

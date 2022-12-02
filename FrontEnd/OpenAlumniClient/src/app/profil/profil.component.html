@@ -1,53 +1,52 @@
 <div class="flip-card" (click)="select_card($event)">
     <div [ngClass]="reverseClass">
         <div class="flip-card-front">
-            <table style="width:100%;color: white;margin: 0px;">
-                <tr style="vertical-align: text-bottom;">
-                <td style="text-align: left;">
-                    <div *ngIf="config.hasPerm('r_department')"
-                         title="Formation dispensée par la FEMIS"
-                         name="lblDepartementCategorie"
-                         style="cursor: pointer;"
-                         (dblclick)="openQuery($event,profil?.department_category)">
-                        <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
-                    </div>
+            <table style="width:100%;">
+                <tr class="mat-subheading-1">
+                    <td style="text-align: left;">
+                        <div *ngIf="config.hasPerm('r_department')"
+                             title="Formation dispensée par la FEMIS"
+                             name="lblDepartementCategorie"
+                             style="cursor: pointer;"
+                             (dblclick)="openQuery($event,profil?.department_category)">
+                            <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
+                        </div>
 
-                    <div *ngIf="profil?.cursus=='P'"
-                         (click)="openQuery($event,profil?.department)"
-                         name="lblCursus"
-                         style="font-size: x-small;color: white;line-height: 95%;cursor: pointer;">
-                        {{profil.department}}
-                    </div>
+                        <div *ngIf="profil?.cursus=='P'"
+                             (click)="openQuery($event,profil?.department)"
+                             name="lblCursus"
+                             style="font-size: x-small;color: white;line-height: 95%;cursor: pointer;">
+                            {{profil.department}}
+                        </div>
+                    </td>
 
-                </td>
-
-                <td style="text-align: right;width: min-content;" >
-                    <div *ngIf="config.hasPerm('r_promo')">
-                        <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
-                        <span style='cursor: pointer' name="lblPromo"
-                              [title]="'Toute la promotion '+profil?.degree_year"
-                              (dblclick)="openQuery($event,profil?.degree_year)">
+                    <td style="text-align: right;width: min-content;" >
+                        <div *ngIf="config.hasPerm('r_promo')">
+                            <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
+                            <span style='cursor: pointer' name="lblPromo"
+                                  [title]="'Toute la promotion '+profil?.degree_year"
+                                  (dblclick)="openQuery($event,profil?.degree_year)">
                             {{profil?.degree_year}}
                         </span>
-                    </div>
-                </td>
-                <td style="width: 10px">
-                    <mat-icon [style.color]="backgroundColor" style="font-size: small;">circle</mat-icon>
-                </td>
-            </tr>
+                        </div>
+                    </td>
+                    <td style="width: 15px">
+                        <mat-icon [style.color]="backgroundColor" style="font-size: small;">circle</mat-icon>
+                    </td>
+                </tr>
             </table>
             <hr class="dark_separator">
 
-<!--            A voir si l'on supprime la présentation de la photo-->
-<!--            <div>-->
-<!--                <div *ngIf="!config.hasPerm('r_photo')"><br></div>-->
-<!--                <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">-->
-<!--                    <img [src]="profil?.photo"-->
-<!--                         *ngIf="profil.public_photo"-->
-<!--                         style="pointer-events: none;"-->
-<!--                         class="icon-profil avatar-photo">-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--            A voir si l'on supprime la présentation de la photo-->
+            <!--            <div>-->
+            <!--                <div *ngIf="!config.hasPerm('r_photo')"><br></div>-->
+            <!--                <div *ngIf="config.hasPerm('r_photo') && profil?.photo.indexOf('anonymous')==-1">-->
+            <!--                    <img [src]="profil?.photo"-->
+            <!--                         *ngIf="profil.public_photo"-->
+            <!--                         style="pointer-events: none;"-->
+            <!--                         class="icon-profil avatar-photo">-->
+            <!--                </div>-->
+            <!--            </div>-->
 
 
             <table style="width:100%;">

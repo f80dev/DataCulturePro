@@ -1,10 +1,10 @@
-<mat-nav-list>
-  <div class="sidemenu">
-
-  <header style="height:200px">
-    <div *ngIf="!config.user?.user?.email || config.user?.user?.email?.length==0" style="width:100%;text-align:center;">
-      Identifiez vous pour accèder<br>
-      aux fonctionalités avancées
+<mat-nav-list class="sidemenu">
+  <br>
+  <header>
+    <div *ngIf="!config.user?.user?.email || config.user?.user?.email?.length==0"
+         style="width:100%;text-align:center;opacity: 0.2;" >
+      Connectez-vous pour utiliser<br>
+      les fonctionalités avancées
     </div>
 
     <div *ngIf="config.user?.user?.email.length>0" style="margin: 10px;">
@@ -15,8 +15,8 @@
     <br>
 
     <a title="Consultation de l'annuaire"
-       routerLink="search"
        mat-list-item
+       routerLink="search"
        id="cmdSearch">
       <mat-icon color="semigrey">people_alt</mat-icon>
       Annuaire
@@ -81,9 +81,11 @@
     </a>
   </header>
 
+
   <content style="flex:auto;"></content>
 
-  <footer style="height:200px">
+
+  <footer>
     <a title="Accèder à la console developper"
        *ngIf="config.hasPerm('dev')"
        routerLink="dev"
@@ -92,6 +94,7 @@
       <mat-icon>build</mat-icon>
       Développeurs
     </a>
+
     <br>
     <a title="Modifier vos paramètres"
        *ngIf="config.isLogin()"
@@ -155,12 +158,10 @@
        *ngIf="isLocal || config.hasPerm('admin')"
        mat-list-item routerLink="admin"
        id="cmdAdmin">
-      <mat-icon style="margin-right: 8px;">settings</mat-icon>
+      <mat-icon>settings</mat-icon>
       Console<br>d'administration
     </a>
 
   </footer>
-
-  </div>
 </mat-nav-list>
 

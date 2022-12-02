@@ -163,6 +163,28 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #                 'options': '-c statement_timeout=5000'
 #             }
 #         }
+# "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "NAME": "test_alumni_db",
+#     "USER": "hhoareau",
+#     "PASSWORD": DB_PASSWORD,
+#     'HOST': '161.97.75.165',
+#     'PORT': '5432',
+#     'OPTIONS': {
+#         'options': '-c statement_timeout=5000'
+#     }
+# },
+# "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "NAME": "dataculture",
+#     "USER": "femis",
+#     "PASSWORD": DB_PASSWORD,
+#     'HOST': 'europlot.provider.eu',
+#     'PORT': '30573',
+#     'OPTIONS': {
+#         'options': '-c statement_timeout=5000'
+#     }
+# },
 # "dev": {
 #         "ENGINE": "django.db.backends.postgresql_psycopg2",
 #         "NAME": "alumni_db",
@@ -184,11 +206,11 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "test_alumni_db",
-        "USER": "hhoareau",
+        "NAME": "dataculture",
+        "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': '161.97.75.165',
-        'PORT': '5432',
+        'HOST': 'provider.europlots.com',
+        'PORT': '30573',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }
@@ -198,9 +220,10 @@ DATABASES = {
 }
 
 #Installation d'elasticsearch dans README à la racine
+#Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '161.97.75.165:9210'
+        'hosts': '75.119.159.46:9210'
     },
 }
 

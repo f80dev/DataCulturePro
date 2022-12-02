@@ -15,7 +15,8 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
-  <div *ngIf="profils.length==0 && query.value.length<3" style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom: 5%;font-size: large;">
+  <div *ngIf="profils.length==0"
+       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:20px;font-size: large;opacity: 0.8;">
     Rechercher des anciens élève de la FEMIS
   </div>
 
@@ -81,7 +82,6 @@
   </div>
 
 
-
   <!--  gestion du tri-->
   <div *ngIf="profils?.length>3 && advanced_search?.length>0"
        style="display: inline-block;text-align: right;margin:5px;" autofocus>
@@ -109,7 +109,7 @@
   <br>
 
   <div *ngIf="query.value.length<3"
-       style="width: 100%;text-align: center;margin-top: 10px;" >
+       style="width: 100%;text-align: center;margin-top: 20px;" >
     <mat-slide-toggle [(ngModel)]="add_pro">Inclure la formation professionnelle</mat-slide-toggle>
   </div>
 
@@ -130,13 +130,14 @@
 
 
 
-  <div class="div-center">
+  <div class="div-center" style="margin-top: 20px;">
     <app-hourglass [message]="message"></app-hourglass>
   </div>
 
-  <span *ngIf="profils?.length==0 && message.length==0 && (query.value?.length>0 || this.advanced_search?.length>0)">
+  <div style="margin-top: 20px"
+       *ngIf="profils?.length==0 && message.length==0 && (query.value?.length>0 || this.advanced_search?.length>0)">
   Aucun profil ne correspond à cette recherche
-</span>
+  </div>
 
 
   <!-- Affichage des profils-->

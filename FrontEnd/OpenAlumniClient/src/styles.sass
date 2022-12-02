@@ -1,25 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 @use "sass:map"
 @use './node_modules/@angular/material' as mat
-
-@import '~ngx-sharebuttons/themes/circles'
 @import './dataculture'
 
-body,html
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+//body,html
+//  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
 
 mat-drawer-container
-  background: none !important
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,900) !important
 
 .app-button
   margin: 4px !important
   min-width: 100px !important
 
+.cdk-visually-hidden
+  display: none
 
 .app-card
   max-width: 500px
   min-width: 300px
-  margin-left: 0px
+  margin-left: 0
   margin-right: 10px
   display: inline-block
 
@@ -75,30 +75,24 @@ mat-drawer-container
   height: 95vh
   overflow: scroll
 
-.sidemenu
-  height: 95vh
-  padding: 0
-  display: flex
-  flex-direction: column
 
-  overflow: hidden
-  border: none
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
 
 
 .sidenav-content
   width: 100%
-  height: 100%
-  overflow: scroll
+  overflow: hidden
   justify-content: center
   text-align: center
+  border: none
   background-color: mat.get-color-from-palette($dataculture-grey-palette,900)
+
 
 .mainform
   width: 100%
   text-align: center !important
   height: 100%
   background: none
+  padding: 10px
 
 
 
@@ -125,10 +119,10 @@ mat-drawer-container
   margin: 3px
   height: min-content
 
-h3
-  width: 100%
-  text-align: center
-  font-size: x-large
+//h3
+//  width: 100%
+//  text-align: center
+//  font-size: x-large
 
 .bottom-bar
   width: 100%
@@ -152,14 +146,10 @@ h3
   text-align: center
   margin-bottom: 10px
 
+
+
 .fill-remaining-space
   flex: 1 1 auto
-
-
-
-.app-panel
-  width: 100% !important
-
 
 
 .faq-content
@@ -174,8 +164,6 @@ h3
   padding: 0
   text-align: center
   display: inline-block
-  font-size: small
-  font-weight: 400
   line-height: 96%
 
 
@@ -185,11 +173,6 @@ mat-dialog-title
   font-weight: lighter
   font-size: medium
 
-.app-mat-panel-title
-  text-align: left
-  font-weight: bold
-
-
 
 .app-card-panel
   max-width: 500px
@@ -198,6 +181,8 @@ mat-dialog-title
   font-size: small
   display: inline-block
 
+
+
 mat-icon
   color: mat.get-color-from-palette($dataculture-grey-palette,600)
 
@@ -205,8 +190,11 @@ a
   text-decoration: none
 
 
-mat-body-2 > mat-card-title
-mat-body-1 > mat-panel-title
+.app-mat-panel-title
+  text-align: left
+  font-weight: bold
+  font-size: small
+
 
 .app-mat-panel-description
   font-weight: lighter
@@ -214,17 +202,23 @@ mat-body-1 > mat-panel-title
   font-size: small
   vertical-align: center
 
+mat-expansion-panel
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+  opacity: 0.8
+  margin: 5px
 
 mat-expansion-panel-header
   height: 45px !important
   padding-left: 10px !important
   font-weight: lighter !important
+  font-size: small !important
   width: 100%  !important
 
 mat-expansion-panel-content
   padding: 2px !important
   margin: 0px !important
   width: 100%  !important
+
 
 
 mat-action-row
@@ -278,6 +272,8 @@ mat-action-row
   color: $dataculture-green
 
 
+
+
 .flip-card
   max-width: 400px
   width: 100%
@@ -290,7 +286,6 @@ mat-action-row
 
 .flip-card-inner
   position: relative
-  color: white !important
   width: 100%
   height: 100%
   transition: transform 0.6s
@@ -299,7 +294,6 @@ mat-action-row
 
 .flip-card-inner-rotate
   position: relative
-  color: white !important
   text-align: center
   transition: transform 0.6s
   transform-style: preserve-3d
@@ -320,11 +314,8 @@ mat-action-row
 
 //https://stackoverflow.com/questions/9604982/backface-visibility-not-working-properly-in-firefox-works-in-safari
 
-.flip-card-front
-  color: black
 
 .flip-card-back
-  color: white
   position: relative
   transform: rotateY(180deg)
 
