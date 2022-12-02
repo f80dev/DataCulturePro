@@ -50,14 +50,14 @@
 
 
             <table style="width:100%;">
-                <tr>
-                    <td style="text-align: left" class="avatar-name">
+                <tr class="mat-subheading-1">
+                    <td style="text-align: left">
                         <span name="lblName">
                             <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
                             <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
                         </span>
                     </td>
-                    <td style="text-align: right;width:fit-content;color:gray;">
+                    <td style="text-align: right;width:fit-content;">
                         <button mat-button mat-icon-button
                                 title="Voir la page publique"
                                 name="cmdShareProfil"
