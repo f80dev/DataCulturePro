@@ -4993,8 +4993,8 @@ mat-drawer-container {
   cursor: pointer;
 }
 .small-icon-button {
-  margin: 0px !important;
-  padding: 0px;
+  margin: 0 !important;
+  padding: 0;
   display: inline-block;
   cursor: pointer;
 }
@@ -5071,8 +5071,8 @@ mat-drawer-container {
   text-align: right;
   position: fixed;
   display: block;
-  bottom: 0px;
-  right: 0px;
+  bottom: 0;
+  right: 0;
   height: 50px;
 }
 .h-zone {
@@ -5143,7 +5143,7 @@ mat-expansion-panel-header {
 }
 mat-expansion-panel-content {
   padding: 2px !important;
-  margin: 0px !important;
+  margin: 0 !important;
   width: 100% !important;
 }
 mat-action-row {
@@ -5229,6 +5229,15 @@ mat-action-row {
 .flip-card-back {
   position: relative;
   transform: rotateY(180deg);
+}
+.primary-color {
+  color: #ec533e;
+}
+mat-card {
+  background-color: #232429 !important;
+}
+.label {
+  color: #949698 !important;
 }
 /*!********************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[2]!./node_modules/quill/dist/quill.snow.css ***!
