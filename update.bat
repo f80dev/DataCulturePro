@@ -18,7 +18,7 @@ echo "Pousser sur Github et déployer l'image avec "
 echo "docker rm -f openalumni-dev && docker pull f80hub/openalumni-dev:latest && docker run --restart=always -v /root/certs:/certs -p 8100:8000 --name openalumni-dev -d f80hub/openalumni-dev:latest"
 
 echo "Backup de la base de données"
-python manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
+python -Xutf8 manage.py dumpdata --settings OpenAlumni.settings_dev > db_backup.json
 
 echo "reconstruction de l'index"
 python manage.py search_index --settings OpenAlumni.settings_dev --rebuild

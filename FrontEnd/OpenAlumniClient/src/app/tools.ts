@@ -94,17 +94,13 @@ export function extract_id(url:string):string {
   return url.substr(lastPos+1);
 }
 
-
+//Permet de regrouper les travaux lorsque sur un meme film
 export function group_works(wrks) {
   let rc=[];
   for(let w of wrks){
-    if(w.hasOwnProperty("pow") && w.pow){
-      w.title=w.pow.title;
-      w.year=w.pow.year;
-    }
     let new_work=w;
     for(let tmp of wrks){
-      if(tmp.title==w.title){
+      if(tmp.job==w.job){
         let idx=rc.indexOf(tmp);
         if(idx>-1){
           rc[idx].job=rc[idx].job +" & "+w.job

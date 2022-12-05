@@ -1,6 +1,7 @@
 from urllib import parse
 from urllib.parse import urlparse
 
+from django.core import management
 from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
@@ -25,6 +26,11 @@ def extract_movie_from_cnca(title:str):
     }
     #page=wikipedia.BeautifulSoup(wikipedia.requests.post("http://www.cnc-rca.fr/Pages/Page.aspx?view=RecOeuvre",),headers={'User-Agent': 'Mozilla/5.0'}).text, "html5lib")
     return title
+
+
+def reindex():
+    log("Ré-indexage de la base")
+    return management.call_command("search_index","--rebuild","-f")
 
 
 def extract_movie_from_bdfci(pow:PieceOfWork,refresh_delay=31):

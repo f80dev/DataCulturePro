@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
-import {group_works, showMessage} from "../tools";
+import {$$, group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {ConfigService} from "../config.service";
@@ -19,7 +19,9 @@ export class PublicComponent implements OnInit {
   works: any[]=[];
   message: string;
   items: any[]=[];
-  data_timeline: any[]=[];
+  works_timeline:any[]=[];
+  awards_timeline:any[]=[];
+
   url: any;
   title: any;
 
@@ -33,123 +35,154 @@ export class PublicComponent implements OnInit {
   }
 
 
+  create_awards_timeline(profil_id){
+    return new Promise((resolve, reject) => {
+      this.api._get("extraawards","profil="+profil_id).subscribe((awards:any)=> {
+        this.message="";
+        let awards_timeline=[];
+        if(awards && awards.count>0){
+          for(let a of awards.results){
+            awards_timeline.push({
+              year:a.year,
+              title:a.description + " - " + a.festival.title,
+              subtitle:a.pow.title,
+              icon: this.config.icons["Award"],
+              sources:a.source,
+              type:"award",
+              label:a.description + " - " + a.festival.title
+            })
+          }
+        }
+
+        $$("Ajout du diplome");
+        if(this.config.hasPerm("admin")){
+          awards_timeline.push({
+            year:this.profil.degree_year,
+            title:"FEMIS - département "+this.profil.department,
+            subtitle:"",
+            icon: this.config.icons["School"],
+            type:"degree"
+          })
+        }
+
+        resolve(awards_timeline);
+      },(err:any)=>{reject(err);});
+    });
+  }
+
+
+  create_works_timeline(p:any){
+    let rc=[];
+    let old_year=null;
+    for(let _w of p.works){
+      _w.icon=this.config.icons["Movie"];
+      for(let k of Object.keys(this.config.icons)){
+        if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];
+      }
+
+      _w.type="work";
+      _w.title=_w.job;
+      _w.subtitle=_w.pow.title;
+      _w.label=_w.job+"<br>pour <a class='primary-color' href='./pows?query=\""+_w.pow.title+"\"'>"+_w.pow.title+"</a>"
+      if(_w.pow.year!=old_year){
+        _w.year=_w.pow.year;
+        old_year=_w.year;
+      }
+      if(_w.public)rc.push(_w);
+
+      //expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
+
+    }
+    return rc;
+  }
+
+
+  group_items(rc){
+    rc=group_works(rc);
+    if(rc.length==0)return rc;
+    // rc[0].show_year=true;
+    // for(let i=1;i<this.items.length;i++){
+    //   rc[i].show_year=(rc[i].year!=rc[i-1].year);
+    // }
+    return rc;
+  }
+
+  convert_to_html(items){
+    let rc=[];
+    let last_year_to_show=0;
+    for(let item of items){
+      let obj:any={
+        year:item.year+"<br>",
+
+      }
+
+      // if(obj.year.length>0){
+      //   if(last_year_to_show!=item.year)rc.push({year:"<br><br>",icon:"",label:""});
+      //   last_year_to_show=item.year;
+      // }
+      // if(item.year==last_year_to_show)obj.year="";
+
+      rc.push(obj);
+    }
+    return rc;
+  }
+
+
   load_items(p){
     let expe={};
     this.message="Chargement des expériences";
-    this.api._get("extraawards","profil="+p.id).subscribe((awards:any)=> {
-      this.message="";
 
-      let rc=[];
+    this.create_awards_timeline(p.id).then((lst_awards:any[])=>{
+      this.awards_timeline=lst_awards;
+      let rc=this.create_works_timeline(p);
+      this.works_timeline=this.group_items(rc);
+    })
 
-      if(awards && awards.count>0 && this.join_awards){
-        for(let a of awards.results){
-          rc.push({
-            year:a.year,
-            title:a.description + " - " + a.festival.title,
-            subtitle:a.pow.title,
-            icon: this.config.icons["Award"],
-            sources:a.source,
-            type:"award"
-          })
-        }
-      }
-
-      for(let _w of p.works){
-        // w=w.replace("True","1").replace("False","0")
-        // for(var i=0;i<1000;i++){
-        //   w=w.replace("'","\"")
-        // }
-        // try {
-          // let _w=JSON.parse(w);
-          _w.icon=this.config.icons["Movie"];
-
-          for(let k of Object.keys(this.config.icons)){
-            if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];
-          }
-
-          _w.type="work";
-          if(_w.public)rc.push(_w);
-          expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
-        // } catch (e) {
-        //   $$("Probleme de conversion "+w);
-        // }
-      }
       this.profil.expe="";
 
-      let lst=Object.values(expe).sort((a,b) => (a<b ? 1 : -1));
-      if(lst.length>3)lst=lst.slice(0,3)
+      //let lst=Object.values(expe).sort((a,b) => (a<b ? 1 : -1));
+      //if(lst.length>3)lst=lst.slice(0,3)
 
-      for(let k of Object.keys(expe)){
-        if(lst.indexOf(expe[k])>-1)
-          this.profil.expe=this.profil.expe+k+", ";
-      }
+      // for(let k of Object.keys(expe)){
+      //   if(lst.indexOf(expe[k])>-1)
+      //     this.profil.expe=this.profil.expe+k+", ";
+      // }
 
-      if(this.config.hasPerm("admin")){
-        rc.push({
-          year:this.profil.degree_year,
-          title:"FEMIS - département "+this.profil.department,
-          subtitle:"",
-          icon: this.config.icons["School"],
-          type:"degree"
-        })
-      }
+      // let last_year_to_show="";
+      // for(let item of this.items){
+      //   if(item.pow){
+      //     item.title=item.job;
+      //     item.subtitle=item.pow.title;
+      //   }
 
-      this.items=group_works(rc);
-      this.items[0].show_year=true;
-      for(let i=1;i<this.items.length;i++){
-        this.items[i].show_year=(this.items[i].year!=this.items[i-1].year);
-      }
-
-      this.data_timeline=[];
-
-      let last_year_to_show="";
-      for(let item of this.items){
-        if(item.pow){
-          item.title=item.job;
-          item.subtitle=item.pow.title;
-        }
-
-        let obj:any={
-          year:item.year+"<br>",
-
-          label:item.title+"<br><small style='color:white;'> pour <a href='./pows?query=\""+item.subtitle+"\"'>"+item.subtitle+"</a></small>"
-        }
 
         //icon: "<img src='"+item.icon+"' width='30'>",
 
 
 
-        if(this.data_timeline.length>0){
-          if(item.year==last_year_to_show)obj.year="";
-
-          // if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
-          //   this.data_timeline.push({year:"<br><br>",icon:"",label:""});
-          // }
-        }
-
-
-        if(obj.year.length>0){
-          if(last_year_to_show!=item.year)this.data_timeline.push({year:"<br><br>",icon:"",label:""});
-          last_year_to_show=item.year;
-        }
-        this.data_timeline.push(obj);
+        // if(this.works_timeline.length>0){
+        //   // if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
+        //   //   this.data_timeline.push({year:"<br><br>",icon:"",label:""});
+        //   // }
+        // }
+        //
 
 
-
-      }
-    });
   }
 
-  col_style={
-    year:'margin:0px;padding:0px;font-size:2em;text-align:right;padding-right:20px;',
-    icon:'margin:0px;padding:0px;border-left: 2px solid white;padding-left:10px;',
-    label:'margin:0px;padding:0px;font-size:medium;text-align:left;padding-left:5px;padding-bottom:10px;width:80%;line-height:100%;'
+  field_style={
+    year:{margin:0,padding:0,'font-size':'2em',color: 'grey','margin-top':'30px','margin-bottom':'15px'},
+    label:{margin:0,padding:0,'font-size':'1em',color: 'white','margin-bottom':'15px'}
+  }
+
+  field_class={
+    year: "label mat-body-2"
   }
 
 
 
   //test http://localhost:4200/public/?id=3076
-  join_awards: boolean = false;
+
   ngOnInit(): void {
     let id=this.route.snapshot.queryParamMap.get("id");
     if(id){

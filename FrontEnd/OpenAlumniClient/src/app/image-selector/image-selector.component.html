@@ -36,7 +36,7 @@
     <div *ngIf="data.bank" style="display: inline-flex;width:250px;height:50px;">
       <div style="display:inline-block;padding: 10px;font-size: large;">/</div>
 
-      <mat-form-field appearance="fill" class="app-field" style="font-size: small;width:170px;margin:0px;">
+      <mat-form-field appearance="fill" class="app-field" style="font-size: small;width:170px;margin:0;">
         <mat-label>Rechercher des images</mat-label>
         <input matInput [placeholder]="inputSearch" type="text"  [(ngModel)]="query" (keypress)="search($event)" cdkFocusInitial>
       </mat-form-field>

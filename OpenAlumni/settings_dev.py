@@ -74,12 +74,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'sslserver',
-    'alumni.apps.AlumniConfig',
     'django_elasticsearch_dsl',
     'django_filters',
     'django_archive',
     'django_elasticsearch_dsl_drf',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'alumni.apps.AlumniConfig'
 ]
 
 

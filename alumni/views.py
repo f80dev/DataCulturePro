@@ -1,5 +1,6 @@
 import base64
 import csv
+import sys
 
 from datetime import datetime
 from io import StringIO, BytesIO
@@ -11,6 +12,7 @@ from urllib.request import urlopen
 import pandasql
 import yaml
 import pandas as pd
+from django.core import management
 from django.db import connection
 
 from github import Github
@@ -48,7 +50,7 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
-from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pows
+from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
 from OpenAlumni.nft import NFTservice
@@ -257,6 +259,34 @@ def getyaml(request):
         f=urlopen(url)
     result=yaml.safe_load(f.read())
     return JsonResponse(result,safe=False)
+
+
+
+#http://localhost:8000/api/backup?command=save
+#http://localhost:8000/api/backup?command=load
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def run_backup(request):
+    command=request.GET.get("command","save")
+    backup_file=request.GET.get("file","db_backup.json")
+    url=request.build_absolute_uri('/')
+    exclude_table=["auth.permission","contenttypes"]
+    if command=="save":
+        log("Enregistrement de la base dans "+backup_file)
+        with open(backup_file, 'w') as f:
+            management.call_command("dumpdata","alumni",stdout=f,exclude=exclude_table)
+
+        return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
+
+    if command=="load":
+        log("Effacement de la base")
+        management.call_command("flush",interactive=False)
+        log("Lecture du backup")
+        management.call_command("loaddata",backup_file,verbosity=3,app_label="alumni")
+
+        return redirect(url+"api/reindex/")
+
+
 
 
 
@@ -487,16 +517,11 @@ def search(request):
 def rebuild_index(request):
     """
     Relance l'indexation d'elasticsearch
-    TODO: en chantier
+    TODO: mettre en place un échéancier pour déclenchement régulier
     :param request:
     :return:
     """
-    p=ProfilDocument()
-    p.init("profils")
-
-    m=PowDocument()
-    m.init("pows")
-
+    reindex()
     return JsonResponse({"message":"Re-indexage terminé"})
 
 
@@ -1573,6 +1598,8 @@ def importer(request):
                 log("Le profil "+str(row)+" ne peut être importée")
                 non_import.append(str(profil))
         i=i+1
+
+    if record>0: reindex()
 
     return JsonResponse({"imports":str(record),"abort":non_import})
 

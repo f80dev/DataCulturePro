@@ -51,11 +51,11 @@
 
             <table style="width:100%;">
                 <tr class="mat-subheading-1">
-                    <td style="text-align: left">
-                        <span name="lblName">
+                    <td style="text-align: left;overflow: hidden;">
+                        <div name="lblName" style="margin-top: 10px" class="mat-subheading-1">
                             <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
                             <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
-                        </span>
+                        </div>
                     </td>
                     <td style="text-align: right;width:fit-content;">
                         <button mat-button mat-icon-button

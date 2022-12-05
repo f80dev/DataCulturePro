@@ -1,123 +1,168 @@
-<div class="mainform" style="text-align: left !important;margin: 10px;font-size: medium;">
+<div class="mainform" style="text-align: left !important;">
   <br>
-  <table style="padding: 0px;margin:0px;width: 100%;" *ngIf="profil">
-    <tr style="width: 100%;">
-      <td *ngIf="profil?.public_photo" style="width: 150px;">
-        <div style=";text-align: center;object-fit: cover;" >
-          <img [src]="profil?.photo" style="max-width:120px;height:100%;border-radius: 10px;" class="mat-elevation-z8">
+  <mat-card style="width: 90%;margin: 3%;">
+    <table style="padding: 0;margin-left:0;width: 100%;border: none;border-spacing: 0;" *ngIf="profil">
+      <tr style="width: 100%;margin:0;">
+        <td *ngIf="profil?.public_photo" style="width: 150px;">
+          <div style=";text-align: center;object-fit: cover;" >
+            <img [src]="profil?.photo" style="max-width:120px;height:100%;border-radius: 10px;" class="mat-elevation-z4">
+          </div>
+        </td>
+
+        <td>
+          <div class="mat-body-2" id="lblName">
+            {{profil?.firstname+" "+profil?.lastname?.toUpperCase()}}
+          </div>
+
+          <hr class="dark_separator">
+          <br>
+
+          <table style="margin:0;padding:0;;border-spacing: 0;vertical-align: top;" id="tableProperties">
+            <tr>
+              <td [title]="'Composition de la promotion '+profil.degree_year" class="label mat-body-2" style="min-width: 200px;">Promotion<br></td>
+              <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})" style="cursor: pointer;">{{profil?.degree_year}}</td>
+            </tr>
+
+            <tr>
+              <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'" class="label mat-body-2">
+                <span *ngIf="profil.cursus=='S'">Département</span>
+                <span *ngIf="profil.cursus=='P'">Stage</span>
+              </td>
+              <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">{{profil?.department}}</td>
+            </tr>
+
+            <tr></tr>
+            <tr *ngIf="profil.works.length>0" id="rowExperiences">
+              <td class="label mat-body-2">Domaine d'activité</td>
+              <td>{{profil.expe}}</td></tr>
+            <tr *ngIf="profil.works.length>0">
+              <td></td>
+              <td></td>
+              <td>
+                <span *ngIf="profil.works?.length>0">{{profil.works.length}} films</span><br>
+                <span *ngIf="profil.awards?.length>0">{{profil.awards.length}} récompenses</span>
+              </td>
+            </tr>
+            <tr *ngIf="profil?.links?.length>0">
+              <td></td>
+              <td>Voir son profil sur</td>
+              <td>
+                <div *ngFor="let link of profil?.links" style="display: inline-block;">
+                  <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <hr class="dark_separator">
+    <br>
+
+    <app-hourglass [message]="message"></app-hourglass>
+    <br>
+
+    <div style="width:95%;line-height:120%;max-width:600px;text-align: left;" *ngIf="message.length==0">
+
+      <div style="width:100%;" class="row">
+
+        <div class="column">
+          <div class="mat-body-2 label">FILMOGRAPHIE</div>
+          <br>
+          <app-timeline
+                  style="margin-top: 20px;"
+                  [data]="works_timeline"
+                  [field_style]="field_style"
+                  [field_class]="field_class"
+                  row_style="vertical-align: top;width:100%;">
+          </app-timeline>
+
         </div>
-      </td>
 
-      <td>
-        <div style="font-size:2em;font-weight: lighter;" id="lblName">
-          {{profil?.firstname+" "+profil?.lastname}}
-          <button mat-button mat-icon-button
-                  title="Partager ce profil"
-                  *ngIf="!config.isDesktop()"
-                  class="icon-button" (click)="share()">
-            <mat-icon style="cursor: pointer;">shareic</mat-icon>
-          </button>
+        <div class="column">
+          <div class="mat-body-2 label">RECOMPENSES</div>
+          <br>
+          <app-timeline class="column"
+                        style="margin-top: 20px;"
+                        [data]="awards_timeline"
+                        [field_style]="field_style"
+                        [field_class]="field_class"
+                        row_style="vertical-align: top;width:100%;">
+          </app-timeline>
+
         </div>
-        <br>
-        <table style="border-spacing: 8px;vertical-align: top;" id="tableProperties">
-          <tr>
-            <td style="width: fit-content"></td>
-            <td [title]="'Composition de la promotion '+profil.degree_year">Promotion&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})" style="cursor: pointer;">{{profil?.degree_year}}</td>
-          </tr>
 
-          <tr>
-            <td></td>
-            <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'">
-              <span *ngIf="profil.cursus=='S'">Département</span>
-              <span *ngIf="profil.cursus=='P'">Stage</span>
-            </td>
-            <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">{{profil?.department}}</td>
-          </tr>
 
-          <tr></tr>
-          <tr *ngIf="profil.works.length>0" id="rowExperiences">
-            <td></td>
-            <td>Domaine d'activité</td>
-            <td>{{profil.expe}}</td></tr>
-          <tr *ngIf="profil.works.length>0">
-            <td></td>
-            <td></td>
-            <td>
-              <span *ngIf="profil.works?.length>0">{{profil.works.length}} films</span><br>
-              <span *ngIf="profil.awards?.length>0">{{profil.awards.length}} récompenses</span>
-            </td>
-          </tr>
-          <tr *ngIf="profil?.links?.length>0">
-            <td></td>
-            <td>Voir son profil sur</td>
-            <td>
-              <div *ngFor="let link of profil?.links" style="display: inline-block;">
-                <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
-              </div>
-            </td>
-          </tr>
-        </table>
-        <br>
-      </td>
-    </tr>
-  </table>
-  <br>
+      </div>
 
-  <mat-checkbox [(ngModel)]="join_awards" (ngModelChange)="refresh()">Ajouter les récompenses</mat-checkbox>
-  <br>
+      <br>
+      <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);">
+        <button mat-button mat-icon-button
+                title="Partager ce profil"
+                *ngIf="!config.isDesktop()"
+                class="icon-button" (click)="share()">
+          <mat-icon style="cursor: pointer;">shareic</mat-icon>
+        </button>
 
-  <app-hourglass [message]="message"></app-hourglass>
-  <br>
+        <span class="label mat-body-1">Partagez ce profil public sur vos réseaux</span><br>
+        <!--      voir https://ngx-sharebuttons.netlify.app/ -->
+        <share-buttons [theme]="'circles-dark'"
+                       style="text-align: center;"
+                       [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
+                       [show]="8"
+                       [url]="url"
+                       description="Découvrez mon profil et mes réalisations"
+                       tags="FEMIS"
+                       [title]="title">
+        </share-buttons>
+      </div>
 
-  <!--  Travaux nouvelle version -->
-  <div style="display: inline-block;width:95%;max-width:600px;text-align: center;margin: 20px;" *ngIf="message.length==0 && items.length>0">
-    <h3 *ngIf="!join_awards">Filmographie</h3>
-    <h3 *ngIf="join_awards">Filmographie et récompenses</h3>
-
-    <div style="margin-left:10%;width:80%;display: inline-block;">
-      <app-timeline [data]="data_timeline" [col_style]="col_style"
-                    row_style="vertical-align: top;width:100%;">
-      </app-timeline>
     </div>
 
 
-<!--    <mgl-timeline [mobileWidthThreshold]="200"-->
-<!--                  [toggle]="false"-->
-<!--                  [alternate]="false"-->
-<!--                  side="right"-->
-<!--                  style="color:black"-->
-<!--                  [focusOnOpen]="true">-->
 
-<!--      <mgl-timeline-entry *ngFor="let wrk of items">-->
 
-<!--        <mgl-timeline-entry-header>-->
-<!--          {{wrk.pow.title}}<br>-->
-<!--          <span style="font-size: x-small">{{wrk.pow.nature}}/{{wrk.pow.category}}</span>-->
-<!--        </mgl-timeline-entry-header>-->
-<!--        <mgl-timeline-entry-content style="font-size: small;line-height: 85%;">-->
-<!--          {{wrk.job}}<br>-->
-<!--          <small>-->
-<!--            <a [href]="wrk.pow.link[0].url" target="_blank" class="app-link">-->
-<!--              {{wrk.pow.link[0].text.replace('auto:','')}}-->
-<!--            </a>-->
-<!--          </small>-->
-<!--        </mgl-timeline-entry-content>-->
-<!--        <mgl-timeline-entry-dot [size]="40" style="color:red;"-->
-<!--                                expandAnimationTiming="200ms ease"-->
-<!--                                collapseAnimationTiming="100ms ease"-->
-<!--        >-->
-<!--        </mgl-timeline-entry-dot>-->
-<!--        <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">-->
-<!--          <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-<!--        </mgl-timeline-entry-side>-->
-<!--      </mgl-timeline-entry>-->
-<!--    </mgl-timeline>-->
-  </div>
+
+  </mat-card>
+
+
+  <!--    <mgl-timeline [mobileWidthThreshold]="200"-->
+  <!--                  [toggle]="false"-->
+  <!--                  [alternate]="false"-->
+  <!--                  side="right"-->
+  <!--                  style="color:black"-->
+  <!--                  [focusOnOpen]="true">-->
+
+  <!--      <mgl-timeline-entry *ngFor="let wrk of items">-->
+
+  <!--        <mgl-timeline-entry-header>-->
+  <!--          {{wrk.pow.title}}<br>-->
+  <!--          <span style="font-size: x-small">{{wrk.pow.nature}}/{{wrk.pow.category}}</span>-->
+  <!--        </mgl-timeline-entry-header>-->
+  <!--        <mgl-timeline-entry-content style="font-size: small;line-height: 85%;">-->
+  <!--          {{wrk.job}}<br>-->
+  <!--          <small>-->
+  <!--            <a [href]="wrk.pow.link[0].url" target="_blank" class="app-link">-->
+  <!--              {{wrk.pow.link[0].text.replace('auto:','')}}-->
+  <!--            </a>-->
+  <!--          </small>-->
+  <!--        </mgl-timeline-entry-content>-->
+  <!--        <mgl-timeline-entry-dot [size]="40" style="color:red;"-->
+  <!--                                expandAnimationTiming="200ms ease"-->
+  <!--                                collapseAnimationTiming="100ms ease"-->
+  <!--        >-->
+  <!--        </mgl-timeline-entry-dot>-->
+  <!--        <mgl-timeline-entry-side *ngIf="wrk.show_year" style="font-size: 1.8em;text-align: right;color: white;">-->
+  <!--          <br>{{wrk.pow.year}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+  <!--        </mgl-timeline-entry-side>-->
+  <!--      </mgl-timeline-entry>-->
+  <!--    </mgl-timeline>-->
+
 
 
   <!--  Travaux old version -->
-  <!--  <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0px;">-->
+  <!--  <div *ngIf="profil?.works?.length>0" style="width: 100%;text-align: center;margin:0;">-->
   <!--    <br><br>Expériences<br><br>-->
   <!--    <div class="wrap-list" style="width: 100%;">-->
   <!--      <app-work *ngFor="let wrk of works"-->
@@ -140,21 +185,6 @@
   <!--      </app-work>-->
   <!--    </div>-->
   <!--  </div>-->
-
-  <br>
-  <div style="display: inline-block;margin-top:50px;width:fit-content;text-align: center;filter: grayscale(0.9);">
-    <small>Partagez ce profil public sur vos réseaux</small><br>
-      <!--      voir https://ngx-sharebuttons.netlify.app/ -->
-      <share-buttons [theme]="'circles-dark'"
-                     style="text-align: center;"
-                     [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
-                     [show]="8"
-                     [url]="url"
-                     description="Découvrez mon profil et mes réalisations"
-                     tags="FEMIS"
-                     [title]="title">
-      </share-buttons>
-    </div>
 
 
 </div>

@@ -36,8 +36,8 @@ mat-drawer-container
   cursor: pointer
 
 .small-icon-button
-  margin: 0px !important
-  padding: 0px
+  margin: 0 !important
+  padding: 0
   display: inline-block
   cursor: pointer
 
@@ -132,8 +132,8 @@ mat-drawer-container
   text-align: right
   position: fixed
   display: block
-  bottom: 0px
-  right: 0px
+  bottom: 0
+  right: 0
   height: 50px
 
 
@@ -216,7 +216,7 @@ mat-expansion-panel-header
 
 mat-expansion-panel-content
   padding: 2px !important
-  margin: 0px !important
+  margin: 0 !important
   width: 100%  !important
 
 
@@ -319,3 +319,14 @@ mat-action-row
   position: relative
   transform: rotateY(180deg)
 
+
+.primary-color
+  color: mat.get-color-from-palette($dataculture-red-palette,500)
+
+
+mat-card
+  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+
+
+.label
+  color: mat.get-color-from-palette($dataculture-grey-palette,500) !important
