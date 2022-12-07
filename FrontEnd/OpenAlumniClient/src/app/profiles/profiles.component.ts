@@ -5,7 +5,6 @@ import {checkLogin, detailPerm, showError, showMessage} from "../tools";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Location} from "@angular/common";
-import {DialogData, PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {tProfilPerms} from "../types";
 
@@ -31,7 +30,6 @@ export class ProfilesComponent implements OnInit {
       this.profils=Object.values(this.config.profils);
     });
   }
-
 
 
   sel_profil(p) {

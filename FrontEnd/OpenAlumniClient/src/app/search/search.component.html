@@ -150,7 +150,7 @@
             [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
             (askfriend)="askfriend(profil)"
             (onclick)="openQuery($event)"
-            style="margin: 20px;"
+            style="margin: 20px;max-width: 500px;"
             [profil]="profil">
     </app-profil>
 

@@ -21,6 +21,7 @@ export class PublicComponent implements OnInit {
   items: any[]=[];
   works_timeline:any[]=[];
   awards_timeline:any[]=[];
+  expe="";
 
   url: any;
   title: any;
@@ -72,6 +73,7 @@ export class PublicComponent implements OnInit {
 
 
   create_works_timeline(p:any){
+    p.expe={};
     let rc=[];
     let old_year=null;
     for(let _w of p.works){
@@ -90,7 +92,7 @@ export class PublicComponent implements OnInit {
       }
       if(_w.public)rc.push(_w);
 
-      //expe[_w.job]=expe.hasOwnProperty(_w.job) ? expe[_w.job]+1 : 1;
+      p.expe[_w.job]=p.expe.hasOwnProperty(_w.job) ? p.expe[_w.job]+1 : 1;
 
     }
     return rc;
@@ -129,24 +131,23 @@ export class PublicComponent implements OnInit {
 
 
   load_items(p){
-    let expe={};
     this.message="Chargement des expériences";
 
     this.create_awards_timeline(p.id).then((lst_awards:any[])=>{
       this.awards_timeline=lst_awards;
       let rc=this.create_works_timeline(p);
       this.works_timeline=this.group_items(rc);
+
+      let lst=Object.values(this.profil.expe).sort((a,b) => (a<b ? 1 : -1));
+      if(lst.length>3)lst=lst.slice(0,3)
+
+      for(let k of Object.keys(this.profil.expe)){
+        if(lst.indexOf(this.profil.expe[k])>-1)
+          this.expe=this.expe+k+" ";
+      }
     })
 
-      this.profil.expe="";
 
-      //let lst=Object.values(expe).sort((a,b) => (a<b ? 1 : -1));
-      //if(lst.length>3)lst=lst.slice(0,3)
-
-      // for(let k of Object.keys(expe)){
-      //   if(lst.indexOf(expe[k])>-1)
-      //     this.profil.expe=this.profil.expe+k+", ";
-      // }
 
       // let last_year_to_show="";
       // for(let item of this.items){
@@ -171,8 +172,8 @@ export class PublicComponent implements OnInit {
   }
 
   field_style={
-    year:{margin:0,padding:0,'font-size':'2em',color: 'grey','margin-top':'30px','margin-bottom':'15px'},
-    label:{margin:0,padding:0,'font-size':'1em',color: 'white','margin-bottom':'15px'}
+    year:{margin:0,padding:0,'font-size':'3em',color: 'grey','margin-top':'30px','margin-bottom':'15px'},
+    label:{margin:0,padding:0,'font-size':'1.5em',color: 'white','margin-bottom':'15px'}
   }
 
   field_class={

@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {$$, abrege, normaliser, now, showError, showMessage, translateQuery} from "../tools";
+import {$$, abrege, getParams, normaliser, now, showError, showMessage, translateQuery} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigService} from "../config.service";
@@ -31,31 +31,29 @@ export class SearchComponent implements OnInit {
               public _location:Location,
               public routes:ActivatedRoute,
               public router: Router,
-              public config:ConfigService) {}
+              public config:ConfigService) {
+    this.config.user_update.subscribe(()=>{this.refresh()});
+  }
 
 
   ngOnInit(): void {
-    if(this.query.value=="")
-      this.query.value=this.routes.snapshot.queryParamMap.get("filter") || this.routes.snapshot.queryParamMap.get("query") || "";
-
-    //if(localStorage.hasItem("ordering"))this.order=localStorage.getItem("ordering");
-    if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
-
-    setTimeout(()=>{
-      this.refresh();
-      if(this.config.isLogin()){
-        if(this.config.hasPerm("admin_sort")){
-          this.fields.push({field:"Profil mis a jour",value:"-update"});
-          this.fields.push({field:"Nouveau profil",value:"-id"});
-        }
-      }
-    },1000);
+    getParams(this.routes).then((params:any)=>{
+      this.query.value=params.filter || params.query || "";
+      if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
+    })
   }
 
 
 
   refresh(q=null,limit=100) {
     if(q)this.query.value=q;
+
+    if(this.config.isLogin() && this.fields.length==0){
+      if(this.config.hasPerm("admin_sort")){
+        this.fields.push({field:"Profil mis a jour",value:"-update"});
+        this.fields.push({field:"Nouveau profil",value:"-id"});
+      }
+    }
 
     if(this.api.token)this.perm="mail";else this.perm="";
     if(this.query.value.length>3 || this.advanced_search.length>0){

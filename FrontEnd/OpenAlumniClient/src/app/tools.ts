@@ -2,6 +2,7 @@ import {environment} from '../environments/environment';
 import {WebcamUtil} from "ngx-webcam";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {SocialServiceConfig} from "ngx-social-button";
+import {ActivatedRoute} from "@angular/router";
 
 declare var EXIF: any;
 export const ADMIN_PASSWORD="hh4271";
@@ -82,6 +83,82 @@ export function remove_ponctuation(s:string):string {
   return s.trim();
 }
 
+export function decrypt(s:string | any) : string {
+  if(s)
+    return atob(s);
+
+  return "";
+}
+
+
+export function encrypt(s:string) : string {
+  return btoa(s);
+}
+
+
+export function setParams(_d:any,prefix="") : string {
+  let rc=[];
+  for(let k of Object.keys(_d)){
+    if(typeof(_d[k])=="object")_d[k]="b64:"+btoa(JSON.stringify(_d[k]));
+    rc.push(k+"="+encodeURIComponent(_d[k]));
+  }
+  let url=encrypt(prefix+rc.join("&"));
+  return encodeURIComponent(url);
+}
+
+
+function analyse_params(params:string):any {
+  let _params=decrypt(decodeURIComponent(params)).split("&");
+  $$("Les paramètres à analyser sont "+_params);
+  let rc:any={};
+  for(let _param of _params) {
+    let key = _param.split("=")[0];
+    let value: any = decodeURIComponent(_param.split("=")[1]);
+
+    $$("Récupération de " + _param);
+    if (value.startsWith("b64:")) {
+      try {
+        value = JSON.parse(atob(value.replace("b64:", "")));
+      } catch (e) {
+        $$("!Impossible de parser le paramétrage");
+      }
+    }
+    if (value == "false") value = false;
+    if (value == "true") value = true;
+    rc[key] = value;
+  }
+  return rc;
+}
+
+export function getParams(routes:ActivatedRoute,local_setting_params="") {
+  return new Promise((resolve, reject) => {
+    routes.queryParams.subscribe((params:any) => {
+      if(params.hasOwnProperty("param")){
+        let rc=analyse_params(decodeURIComponent(params["param"]));
+        if(local_setting_params.length>0)localStorage.setItem(local_setting_params,params["param"]);
+        resolve(rc);
+      } else {
+        if(local_setting_params.length>0){
+          params=localStorage.getItem(local_setting_params)
+          if(params){
+            let rc=analyse_params(params);
+            resolve(rc);
+          }
+        }
+
+        $$("Param n'est pas présent dans les parametres, on fait une analyse standard")
+        if(params){
+          resolve(params);
+        }else{
+          reject();
+        }
+      }
+    },(err)=>{
+      $$("!Impossible d'analyser les parametres de l'url");
+      reject(err);
+    })
+  });
+}
 
 
 

@@ -17,12 +17,12 @@
 
   <span class="appli-title">
     {{config.values?.appname}}
-    <div style="font-size: x-small;display: inline;margin: 5px;" routerLink="about">&nbsp;v{{appVersion}}</div>
+    <div style="font-size: x-small;display: inline;margin: 5px;" routerLink="about" *ngIf="!simple_screen">&nbsp;v{{appVersion}}</div>
   </span>
 
   <span class="fill-remaining-space"></span>
 
-  <a href="https://www.femis.fr/" target="_blank">
+  <a href="https://www.femis.fr/" target="_blank" *ngIf="!simple_screen">
     <img src="./assets/logo_femis_menu@2x.png" style="width: 80px;margin-right: 15px;">
   </a>
 

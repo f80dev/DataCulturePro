@@ -40,7 +40,7 @@
 
 .mat-option {
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 
 .mat-optgroup-label {
@@ -446,7 +446,7 @@
 }
 
 .mat-bottom-sheet-container {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 
@@ -581,7 +581,7 @@
 .mat-flat-button, .mat-fab, .mat-mini-fab {
   font-family: Roboto;
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 
 .mat-button-toggle-standalone:not([class*=mat-elevation-z]),
@@ -693,7 +693,7 @@
 
 .mat-card-subtitle,
 .mat-card-content {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-checkbox-frame {
@@ -875,7 +875,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-cell, .mat-footer-cell {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-calendar-arrow {
@@ -1119,12 +1119,12 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 .mat-calendar-body-label,
 .mat-calendar-period-button {
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 
 .mat-calendar-table-header th {
   font-size: 11px;
-  font-weight: 200;
+  font-weight: 300;
 }
 
 .mat-dialog-container {
@@ -1202,7 +1202,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-expansion-panel-content {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 
@@ -1513,7 +1513,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 
 .mat-grid-tile-header,
 .mat-grid-tile-footer {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-grid-tile-header .mat-line,
@@ -1634,7 +1634,7 @@ input.mat-input-element {
 }
 
 .mat-list-base .mat-list-item {
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 
 .mat-list-base .mat-list-item .mat-line {
@@ -1646,11 +1646,11 @@ input.mat-input-element {
 }
 
 .mat-list-base .mat-list-item .mat-line:nth-child(n+2) {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-list-base .mat-list-option {
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 
 .mat-list-base .mat-list-option .mat-line {
@@ -1662,7 +1662,7 @@ input.mat-input-element {
 }
 
 .mat-list-base .mat-list-option .mat-line:nth-child(n+2) {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-list-base .mat-subheader {
@@ -1742,8 +1742,8 @@ input.mat-input-element {
 
 .mat-menu-item {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 
 .mat-paginator {
@@ -2248,8 +2248,8 @@ input.mat-input-element {
 }
 
 .mat-step-label {
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 
 .mat-step-sub-label-error {
@@ -2495,7 +2495,7 @@ input.mat-input-element {
 .mat-tab-label, .mat-tab-link {
   font-family: Roboto;
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 
 .mat-toolbar {
@@ -2601,8 +2601,8 @@ input.mat-input-element {
 
 .mat-tree-node,
 .mat-nested-tree-node {
-  font-weight: 200;
-  font-size: 10px;
+  font-weight: 300;
+  font-size: 11px;
 }
 
 .mat-snack-bar-container {
@@ -2617,14 +2617,14 @@ input.mat-input-element {
 
 .mat-simple-snackbar {
   font-family: Roboto;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .mat-simple-snackbar-action {
   line-height: 1;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 300;
+  font-weight: 200;
 }
 
 .mat-h1,
@@ -2652,7 +2652,7 @@ input.mat-input-element {
 .mat-typography .mat-h3,
 .mat-typography .mat-subheading-2,
 .mat-typography h3 {
-  font: 600 1.6rem / 1.6rem Roboto;
+  font: 400 16px / 16px Roboto;
   letter-spacing: -0.01em;
   margin: 0 0 16px;
 }
@@ -2670,14 +2670,14 @@ input.mat-input-element {
 .mat-h5,
 .mat-typography .mat-h5,
 .mat-typography h5 {
-  font: 200 calc(10px * 0.83) / 10px Roboto;
+  font: 300 calc(11px * 0.83) / 11px Roboto;
   margin: 0 0 12px;
 }
 
 .mat-h6,
 .mat-typography .mat-h6,
 .mat-typography h6 {
-  font: 200 calc(10px * 0.67) / 10px Roboto;
+  font: 300 calc(11px * 0.67) / 11px Roboto;
   margin: 0 0 12px;
 }
 
@@ -2694,7 +2694,7 @@ input.mat-input-element {
 .mat-typography .mat-body,
 .mat-typography .mat-body-1,
 .mat-typography {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 
@@ -2748,26 +2748,37 @@ input.mat-input-element {
 }
 
 .student-promo {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 
 .student-department {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
+}
+
+.expanded-plus {
+  font: 300 1.8rem / 1.8rem Roboto;
+  letter-spacing: 0.03em;
+  color: #E4983C;
 }
 
 .appli-title {
-  font: 600 1.6rem / 1.6rem Roboto;
+  font: 400 16px / 16px Roboto;
   letter-spacing: -0.01em;
+  font-size: calc(13px + 0.8vw);
   font-feature-settings: "smcp", "c2sc";
   font-variant-caps: all-small-caps;
-  margin: 10px;
+  margin: 8px;
 }
 
 .film-title {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
+}
+
+.blur {
+  filter: blur(0.4px);
 }
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[7].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[7].rules[0].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[7].rules[1].use[0]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[7].rules[1].use[1]!./src/styles.sass ***!
@@ -2803,7 +2814,7 @@ input.mat-input-element {
 }
 .mat-option {
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 .mat-optgroup-label {
   color: rgba(255, 255, 255, 0.7);
@@ -3119,7 +3130,7 @@ input.mat-input-element {
   color: white;
 }
 .mat-bottom-sheet-container {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 .mat-button, .mat-icon-button, .mat-stroked-button {
@@ -3222,7 +3233,7 @@ input.mat-input-element {
 .mat-flat-button, .mat-fab, .mat-mini-fab {
   font-family: Roboto;
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 .mat-button-toggle-standalone:not([class*=mat-elevation-z]),
 .mat-button-toggle-group:not([class*=mat-elevation-z]) {
@@ -3309,7 +3320,7 @@ input.mat-input-element {
 }
 .mat-card-subtitle,
 .mat-card-content {
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-checkbox-frame {
   border-color: rgba(255, 255, 255, 0.7);
@@ -3450,7 +3461,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   font-weight: 400;
 }
 .mat-cell, .mat-footer-cell {
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-calendar-arrow {
   fill: white;
@@ -3642,11 +3653,11 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 .mat-calendar-body-label,
 .mat-calendar-period-button {
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 .mat-calendar-table-header th {
   font-size: 11px;
-  font-weight: 200;
+  font-weight: 300;
 }
 .mat-dialog-container {
   box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
@@ -3707,7 +3718,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   font-weight: 400;
 }
 .mat-expansion-panel-content {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 .mat-form-field-label {
@@ -3952,7 +3963,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 .mat-grid-tile-header,
 .mat-grid-tile-footer {
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-grid-tile-header .mat-line,
 .mat-grid-tile-footer .mat-line {
@@ -4046,7 +4057,7 @@ input.mat-input-element {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 .mat-list-base .mat-list-item {
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 .mat-list-base .mat-list-item .mat-line {
   white-space: nowrap;
@@ -4056,10 +4067,10 @@ input.mat-input-element {
   box-sizing: border-box;
 }
 .mat-list-base .mat-list-item .mat-line:nth-child(n+2) {
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-list-base .mat-list-option {
-  font-size: 1.6rem;
+  font-size: 16px;
 }
 .mat-list-base .mat-list-option .mat-line {
   white-space: nowrap;
@@ -4069,7 +4080,7 @@ input.mat-input-element {
   box-sizing: border-box;
 }
 .mat-list-base .mat-list-option .mat-line:nth-child(n+2) {
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-list-base .mat-subheader {
   font-family: Roboto;
@@ -4134,8 +4145,8 @@ input.mat-input-element {
 }
 .mat-menu-item {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 .mat-paginator {
   background: #424242;
@@ -4527,8 +4538,8 @@ input.mat-input-element {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 .mat-step-label {
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 .mat-step-sub-label-error {
   font-weight: normal;
@@ -4731,7 +4742,7 @@ input.mat-input-element {
 .mat-tab-label, .mat-tab-link {
   font-family: Roboto;
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 200;
 }
 .mat-toolbar {
   background: #212121;
@@ -4818,8 +4829,8 @@ input.mat-input-element {
 }
 .mat-tree-node,
 .mat-nested-tree-node {
-  font-weight: 200;
-  font-size: 10px;
+  font-weight: 300;
+  font-size: 11px;
 }
 .mat-snack-bar-container {
   color: rgba(0, 0, 0, 0.87);
@@ -4831,13 +4842,13 @@ input.mat-input-element {
 }
 .mat-simple-snackbar {
   font-family: Roboto;
-  font-size: 10px;
+  font-size: 11px;
 }
 .mat-simple-snackbar-action {
   line-height: 1;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 300;
+  font-weight: 200;
 }
 .mat-h1,
 .mat-headline,
@@ -4862,7 +4873,7 @@ input.mat-input-element {
 .mat-typography .mat-h3,
 .mat-typography .mat-subheading-2,
 .mat-typography h3 {
-  font: 600 1.6rem / 1.6rem Roboto;
+  font: 400 16px / 16px Roboto;
   letter-spacing: -0.01em;
   margin: 0 0 16px;
 }
@@ -4878,13 +4889,13 @@ input.mat-input-element {
 .mat-h5,
 .mat-typography .mat-h5,
 .mat-typography h5 {
-  font: 200 calc(10px * 0.83) / 10px Roboto;
+  font: 300 calc(11px * 0.83) / 11px Roboto;
   margin: 0 0 12px;
 }
 .mat-h6,
 .mat-typography .mat-h6,
 .mat-typography h6 {
-  font: 200 calc(10px * 0.67) / 10px Roboto;
+  font: 300 calc(11px * 0.67) / 11px Roboto;
   margin: 0 0 12px;
 }
 .mat-body-strong,
@@ -4899,7 +4910,7 @@ input.mat-input-element {
 .mat-typography .mat-body,
 .mat-typography .mat-body-1,
 .mat-typography {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 .mat-body p,
@@ -4945,23 +4956,32 @@ input.mat-input-element {
   letter-spacing: -0.03em;
 }
 .student-promo {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
 }
 .student-department {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
+}
+.expanded-plus {
+  font: 300 1.8rem / 1.8rem Roboto;
+  letter-spacing: 0.03em;
+  color: #E4983C;
 }
 .appli-title {
-  font: 600 1.6rem / 1.6rem Roboto;
+  font: 400 16px / 16px Roboto;
   letter-spacing: -0.01em;
+  font-size: calc(13px + 0.8vw);
   font-feature-settings: "smcp", "c2sc";
   font-variant-caps: all-small-caps;
-  margin: 10px;
+  margin: 8px;
 }
 .film-title {
-  font: 200 10px / 10px Roboto;
+  font: 300 11px / 11px Roboto;
   letter-spacing: -0.03em;
+}
+.blur {
+  filter: blur(0.4px);
 }
 mat-drawer-container {
   background-color: #1a1b1d !important;
@@ -4974,7 +4994,6 @@ mat-drawer-container {
   display: none;
 }
 .app-card {
-  max-width: 500px;
   min-width: 300px;
   margin-left: 0;
   margin-right: 10px;
@@ -5107,10 +5126,14 @@ mat-dialog-title {
 }
 .app-card-panel {
   max-width: 500px;
-  width: 90%;
-  margin: 7px !important;
+  padding: 10px;
+  width: 100%;
   font-size: small;
   display: inline-block;
+}
+.mat-expansion-panel-body {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 mat-icon {
   color: #6c6d70;
@@ -5165,8 +5188,8 @@ mat-action-row {
 .dark_separator {
   border: 1px solid black;
   width: 100%;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 .search_zone {
   max-width: 600px;

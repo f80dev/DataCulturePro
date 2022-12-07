@@ -43,36 +43,33 @@
   <mat-accordion #powAccordion="matAccordion" [multi]="true">
     <div class="wrap-list" style="margin: 5px;">
       <mat-expansion-panel *ngFor="let pow of pows"
-                           class="app-card-panel"
+                           class="app-card-panel" hideToggle
                            (afterExpand)="get_pow(pow)"
                            [expanded]="pow.expanded">
 
-        <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
-          <div style="padding: 15px;width: 100%;text-align: left;">
-            <div class="mat-body-1">{{pow.title}}</div>
+        <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*" style="padding: 0">
+          <div style="padding: 5px;width: 100%;text-align: left;">
+            <span class="mat-subheading-1">{{pow.title}}</span>
             <hr class="dark_separator">
-
             <table style="color:white;text-align: left;width:100%;">
               <tr>
-                <td>
-                  <div style="color:lightgrey;font-size:x-small">{{pow.nature}}/{{pow.category}} - {{pow.year}}</div>
+                <td class="mat-body-1 label">
+                    {{pow.nature}}/{{pow.category}} - {{pow.year}}
                 </td>
-                <td style="text-align: right;">
+                <td style="text-align: right;" class="expanded-plus">
                   <span *ngIf="pow.expanded">-</span>
                   <span *ngIf="!pow.expanded">+</span>
                 </td>
               </tr>
             </table>
           </div>
-
         </mat-expansion-panel-header>
 
-        <hr class="dark_separator">
-
-        <div style="text-align: center;">
-          <table style="width: 100%;padding: 3px;">
+<!--        Affichage du visuel et du resumé-->
+        <div style="text-align: center;" *ngIf="config.hasPerm('r_movie_picture')">
+          <table style="width: 100%;">
             <tr>
-              <td *ngIf="pow.visual?.length>0 && config.hasPerm('r_movie_picture')" style="width: min-content;">
+              <td *ngIf="pow.visual?.length>0" style="width: min-content;">
                 <img [src]="pow.visual"
                      class="image-photo"
                      style="width: 100px;"
@@ -88,30 +85,35 @@
               </td>
             </tr>
           </table>
-
         </div>
 
-        <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')" style="height:20px;vertical-align:middle;width: 100%;text-align: left;">
-          <div *ngFor="let link of pow.links" style="font-size:small;font-weight: lighter;display: inline-block;">
+
+        <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')"
+             style="height:20px;vertical-align:middle;width: 100%;text-align: left;">
+
+          <div *ngFor="let link of pow.links"
+               style="font-size:small;font-weight: lighter;display: inline-block;">
+
             <div *ngIf="link.url?.length>0" style="display: inline-block;margin:2px;margin-left:5px;">
               <a href="{{link.url}}" target="_blank">{{link.text.replace("auto:","").toUpperCase()}}</a>
             </div>
             <div *ngIf="link.url?.length==0" style="display: inline-block;">
               {{link.text.replace("auto:","")}}
             </div>
+
           </div>
-          <br>
+
         </div>
 
 
         <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;">
-          <br>
-          <table style="width: 100%;text-align: left;padding: 5px;font-size: small;">
+          <hr class="dark_separator">
+          <table style="width: 100%;">
             <tr *ngFor="let work of pow.works"
                 style="cursor: pointer;min-width: 400px;"
                 (click)="open_search(work)">
-              <td style="width: 45%;"><span style="color:lightgrey;font-variant-caps: all-petite-caps;">{{work.job}}</span></td>
-              <td style="width: 45%;">{{work.name}}</td>
+              <td style="width: 45%;text-align: left;" class="mat-body-2 label">{{work.job.toUpperCase()}}</td>
+              <td style="width: 45%;" class="mat-body-2">{{work.name}}</td>
               <td style="width: 10px;text-align: right;">
                 <mat-icon style="font-size: small;padding:0px;margin:0;height: 17px;"
                           title="Cliquer pour consulter le profil">visibility</mat-icon>

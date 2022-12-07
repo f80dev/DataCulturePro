@@ -10,6 +10,7 @@ import { MyAdapter } from './MyAdapter';
 import {$$} from "./tools";
 import {PromptComponent} from "./prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
+import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 
 @Component({
   selector: 'app-root',
@@ -21,22 +22,27 @@ export class AppComponent implements OnInit,AfterViewInit {
   message: string="";
   appVersion: any;
   @ViewChild('drawer', {static: false}) drawer: MatSidenav;
+
   public adapter: ChatAdapter = new MyAdapter();
+
   innerWidth: number=400;
   sidemenu_mode: MatDrawerMode="over";
+  simple_screen=false;
 
   constructor(public config: ConfigService,
               public api:ApiService,
               public dialog:MatDialog,
               public _location:Location,
+              public responsive: BreakpointObserver,
               public routes:ActivatedRoute,
               public router:Router){
     this.appVersion=environment.appVersion;
     config.init().then(() => {
       this.config.init_user(null,null,localStorage.getItem("email"));
     });
-  }
+    this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{this.simple_screen=result.matches;})
 
+  }
 
   closeMenu() {
     if (this.innerWidth < 800)

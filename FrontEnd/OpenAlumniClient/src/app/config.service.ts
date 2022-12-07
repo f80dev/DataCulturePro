@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import { Location } from '@angular/common';
 import {$$, initAvailableCameras, showMessage} from "./tools";
 import {tProfilPerms, tUser} from "./types";
+import {Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class ConfigService {
   query_cache: any[]; //Conserve le contenu de la dernière requete
   perms: any;
   abreviations: any;
+  user_update=new Subject<tUser>();
 
   constructor(private location: Location,
               private http: HttpClient,
@@ -47,6 +49,7 @@ export class ConfigService {
     }
     return true;
   }
+
 
   public load_awards(p,vm=null){
 
@@ -129,6 +132,7 @@ export class ConfigService {
       if(r.count>0){
         $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
         this.user=r.results[0];
+        this.user_update.next(this.user);
         if(!this.user.profil){
           $$("Si l'utilisateur n'existe pas dans les profils des anciens");
           this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
@@ -145,6 +149,7 @@ export class ConfigService {
         }
         this.raz_user();
         this.user.profil="Anonyme";
+        this.user_update.next(this.user);
         if(func_anonyme)func_anonyme();
       }
     });

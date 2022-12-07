@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {$$, normaliser, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
+import {$$, getParams, normaliser, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
@@ -22,7 +22,7 @@ export class PowsComponent implements OnInit {
   query: any={value:""};
   limit=100;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
-  filter_id: number;
+  filter_id: number=0;
   filter$: Observable<string>;
   advanced=false;
 
@@ -34,21 +34,14 @@ export class PowsComponent implements OnInit {
               public _location:Location,
               public routes:ActivatedRoute,
               public config:ConfigService) {
-
+    this.config.user_update.subscribe((new_user)=>{this.refresh();})
   }
 
   ngOnInit(): void {
-    if(this.routes.snapshot.queryParamMap.has("filter")){
-      this.query.value=remove_ponctuation(this.routes.snapshot.queryParamMap.get("filter"));
-    } else {
-      //exemple : http://localhost:4200/pows?query=grave
-      if(this.routes.snapshot.queryParamMap.has("query")){
-        this.query.value=remove_ponctuation(this.routes.snapshot.queryParamMap.get("query"));
-      }
-    }
-
-    if(this.routes.snapshot.queryParamMap.has("id"))this.filter_id=Number(this.routes.snapshot.queryParamMap.get("id"));
-    setTimeout(()=>{this.refresh();},1000);
+    getParams(this.routes).then((params:any)=>{
+      this.query.value=params.hasOwnProperty("filter") ? remove_ponctuation(params.filter) : remove_ponctuation(params.query);
+      this.filter_id=params.hasOwnProperty("id") ? Number(this.routes.snapshot.queryParamMap.get("id")) : 0;
+    })
   }
 
   open_search(work: any) {
