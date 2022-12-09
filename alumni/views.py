@@ -306,14 +306,19 @@ def infos_server(request):
     rc["search"]={"server":ELASTICSEARCH_DSL}
     rc["database"]=DATABASES
     rc["debug"]=DEBUG
-    rc["content"]={
-        "articles":Article.objects.count(),
-        "users":User.objects.count(),
-        "films":PieceOfWork.objects.count(),
-        "works":Work.objects.count(),
-        "festivals":Festival.objects.count(),
-        "awards":Award.objects.count(),
-        "profils":Profil.objects.count()}
+    try:
+        rc["content"]={
+            "articles":Article.objects.count(),
+            "users":User.objects.count(),
+            "films":PieceOfWork.objects.count(),
+            "works":Work.objects.count(),
+            "festivals":Festival.objects.count(),
+            "awards":Award.objects.count(),
+            "profils":Profil.objects.count()}
+        rc["message"]="Tout est ok"
+    except:
+        rc["message"]="Connexion impossible à la base de données "+rc["database"]
+
     return JsonResponse(rc)
 
 

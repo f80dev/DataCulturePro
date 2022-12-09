@@ -97,6 +97,7 @@ categories:
 
 #Normalisation des métiers
 jobs:
+  Written: Scénario
   Camera_department: Caméra
   Production_manager: Production
   Music_department: Musique
@@ -134,7 +135,6 @@ jobs:
   Boom operator: Assistant son
   Unit manager: Production
   First assistant director: Ass. réalisation
-  Scénario: Scénario
   Second unit director or assistant director: Ass. réalisation
   Editor: Montage
   Monteur: Montage
@@ -150,6 +150,16 @@ jobs:
   Additional editor: Montage
   Writer: Scénario
   Monitor technician: Caméra
+  Writing consultant: Scénario
+  co-producer: Production
+  Edited: Production
+  casting children: Casting
+  producer produced: Production
+  Special makeup effects artist: Maquillage
+  Key hair stylist: Maquillage
+  sound trainee: Son
+  third assistant director: Réalisation
+  post-production supervisor: Production
   Set_decorator: Décor
   Production_designer: Production
   Head writer: Scénario
@@ -170,11 +180,10 @@ jobs:
   Assistante à la réalisation: Ass. Réalisation
   Assistant à la réalisation: Ass. Réalisation
   Auteurs de la musique: Compositeur
-  Attaché de presse (film): Relations presse
+  Attaché de presse film: Relations presse
   Assistant réalisateur: Ass. Réalisation
   Directeur de production: Direction de production
   Actress: "Acteur(trice)"
-  Attachée de presse (film): Relations presse
   Producer: Production
   Directeur de la photo: Direction Photo
   Directrice de la photo: Direction Photo
@@ -191,8 +200,8 @@ jobs:
   Additional crew: Assistant
   Scénariste: Scénario
   Mixeur monteur son: Mixeur
-  Attachées de presse (film): Relations presse
-  Attachés de presse (film): Relations presse
+  Attachées de presse film: Relations presse
+  Attachés de presse film: Relations presse
   Chef opérateur du son et monteur son: Ing. son
   Directrice de production: Production
   Production designer: Production

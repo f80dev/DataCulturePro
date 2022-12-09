@@ -157,10 +157,63 @@ def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refr
 
 
 
+def extract_casting_from_unifrance(url:str,refresh_delay=31):
+    rc=dict()
+    page=load_page(url,refresh_delay=refresh_delay)
+    if page.find("div",{"id":"description"}) and page.find("div",{"id":"description"}).find("p"):
+        real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
+        name=None
+        if len(real_links)>0:
+            name=real_links[0].text
+        else:
+            if page.find("div",{"itemprop":"director"}):
+                name=page.find("div",{"itemprop":"director"}).text.lower()
+        if name:
+            rc[translate("Réalisation")]=[{"name":name,"source":"unifrance"}]
 
-def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_delay=30):
+        #Recherche dans le générique détaillé
+        section=page.find("section",{"id":"casting"})
+        if not section is None:
+            jobs = section.findAll("h2")
+            paras = section.findAll("p")
+            #if not "personne" in links[0].href:links.remove(0)
+            for idx in range(len(paras)):
+                links=paras[idx].findAll("a")
+                for l in links:
+                    job=translate(clean_line(jobs[idx].text),["jobs"],True)
+                    if job:
+                        #On ajoute l'ensemble du casting au systeme
+                        names = str(l.getText()).split(" ")
+                        lastname =names[len(names)-1]
+                        if not job in rc:rc[job]=[]
+                        rc[job].append(
+                            {
+                                "name":l.getText().replace(lastname,"").strip()+" "+lastname,
+                                "url":l.attrs["href"],
+                                "source":"unifrance",
+                            }
+                        )
+                    else:
+                        job=clean_line(jobs[idx].text)
+                        log(job+" non présent dans le référentiel")
+
+        #Recherche dans les acteurs
+        for actor in page.find_all("div",{"itemprop":"actors"}):
+            if "data-title" in actor.attrs:
+                if not "actor" in rc:rc["actor"]=[]
+                rc["actor"].append({
+                    "name":actor.attrs["data-title"].lower(),
+                    "source":"unifrance"
+                })
+
+    return rc
+
+
+
+def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
     rc = dict({"casting": [], "source": "auto:unifrance", "url": url})
     if not url.startswith("http"):
+        if len(url)==0:url=title
         log("On passe par la page de recherche pour retrouver le titre")
         page=load_page("https://unifrance.org/recherche?q="+parse.quote(url),refresh_delay=refresh_delay)
         _link=page.find("a",attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]")})
@@ -232,51 +285,7 @@ def extract_film_from_unifrance(url:str,job_for=None,all_casting=False,refresh_d
                 else:
                     log("!Prix non conforme sur "+url)
 
-
-    if not job_for is None and page.find("div",{"id":"description"}) and page.find("div",{"id":"description"}).find("p"):
-        real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
-        if len(real_links)>0 and equal_str(real_links[0].text,job_for):
-            rc["job"]=[translate("Réalisation")]
-        else:
-            #Recherche en réalisation
-            section=page.find("div",{"itemprop":"director"})
-            if section and (job_for.lower() in section.text.lower()):
-                rc["job"] = [translate("Réalisation")]
-
-            #Recherche dans le générique détaillé
-            section=page.find("section",{"id":"casting"})
-            if not section is None:
-                jobs = section.findAll("h2")
-                paras = section.findAll("p")
-                #if not "personne" in links[0].href:links.remove(0)
-                for idx in range(len(paras)):
-                    links=paras[idx].findAll("a")
-                    for l in links:
-                        job=jobs[idx].text.replace(":","").strip()
-                        if "/personne" in l.get("href"):
-                            if (job_for.startswith("http") and l.get("href")==job_for) or equal_str(job_for,l.text):
-                                rc["job"]=[job]
-                                break
-                            else:
-                                if all_casting:
-                                    #On ajoute l'ensemble du casting au systeme
-                                    names = str(l.getText()).split(" ")
-                                    lastname =names[len(names)-1]
-                                    rc["casting"].append(
-                                        {
-                                            "lastname":lastname,
-                                            "url":l.attrs["href"],
-                                            "source":"unifrance",
-                                            "firstname":l.getText().replace(lastname,"").strip(),
-                                            "job":[job]
-                                        }
-                                    )
-
-            #Recherche dans les acteurs
-            for actor in page.find_all("div",{"itemprop":"actors"}):
-                if "data-title" in actor.attrs:
-                    if actor.attrs["data-title"].lower()==job_for.lower():
-                        rc["job"]=["actor"]
+    rc["casting"]=extract_casting_from_unifrance(url)
 
     _synopsis = page.find("div", attrs={"itemprop": "description"})
     if not _synopsis is None:
@@ -328,7 +337,9 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
 
             links_film=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]*/")})
             for l in links_film:
-                rc.append({"url":l.get("href"),"text":l.get("text"),"nature":""})
+                url=l.get("href")
+                if not url in [x["url"] for x in rc]:
+                    rc.append({"url":url,"text":l.get("text"),"nature":""})
 
             return {"links": rc, "photo": photo, "url": u}
 
@@ -438,9 +449,10 @@ def extract_awards_from_imdb(profil_url,profil):
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""):
     peoples=ia.search_person(firstname+" "+lastname)
+    if len(peoples)==0: log(lastname+" inconnu sur IMDB")
     infos={"links":[]}
     for p in peoples:
-        if not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
+        if "headshot" in p.data and not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
         if url is None or url=="":
             name=remove_accents(remove_ponctuation(p.data["name"].upper()))
             if (remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name) or equal_str(lastname+firstname,name):
@@ -449,37 +461,44 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url=""
         else:
             infos["url"]=url
 
-        page = load_page(infos["url"], refresh_delay=refresh_delay)
+        page = load_page(infos["url"], refresh_delay=refresh_delay) if "url" in infos else None
         if page is None:return None
 
-        film_zone=page.find("div",{"id":"filmography"})
+        film_zone=page.find("section",{"class":"ipc-page-section ipc-page-section--base"})
         if film_zone is None:film_zone=page
 
         #Contient l'ensemble des liens qui renvoi vers une oeuvre
         links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
         for l in links:
             #log("Analyse de "+str(l))
-            tmp_obj=l.parent.parent.parent.parent
-            if len(l.getText())>3 and not tmp_obj is None and "id" in tmp_obj.attrs and tmp_obj["id"]=="filmography":
-                job:str=l.parent.parent.get("id").split("-")[0]
-                if job=="miscellaneous" or len(job)==0:
-                    temp=l.parent.parent.text.split("(")
-                    job=temp[len(temp)-1].split(")")[0]
-                    pass
-                else:
-                    if not in_dict(job,"jobs"):job=""
+            #tmp_obj=l.parent.parent.parent.parent
 
-                url = "https://www.imdb.com" + l.get("href")
-                url = url.split("?")[0]
+                # job:str=l.parent.parent.get("id").split("-")[0]
+                # if job=="miscellaneous" or len(job)==0:
+                #     temp=l.parent.parent.text.split("(")
+                #     job=temp[len(temp)-1].split(")")[0]
+                #     pass
+                # else:
+                #     if not in_dict(job,"jobs"):job=""
 
-                link={"url":url,"text":l.getText(),"job":"","nature":""}
-                if not link in infos["links"]:infos["links"].append(link)
+            url = "https://www.imdb.com" + l.get("href")
+            url = url.split("?")[0]
+
+            text=l.attrs["aria-label"] if 'aria-label' in l.attrs else l.get_text()
+            title:str=text.split("(")[0]
+            title=title.replace("View title page for ","")
+            years=extract_years(text)
+
+            link={"url":url,"text":title.strip(),"job":"","nature":"","year":"" if len(years)==0 else years[0]}
+            if not link["url"] in [x["url"] for x in infos["links"]]:
+                infos["links"].append(link)
 
     return infos
 
 
 def extract_film_from_senscritique(title:str,refresh_delay=31):
     url="https://www.senscritique.com/search?q="+urlencode(title.lower())
+
     log("Recherche sur sens-critique : "+url)
     pages=load_page(url,save=False)
     pages=pages.find_all("div",{"data-qa":"hits"})
@@ -496,18 +515,75 @@ def extract_film_from_senscritique(title:str,refresh_delay=31):
     return None
 
 
+def clean_line(text:str) -> str:
+    text=text.replace(" by","").replace("...","").replace("(","").replace(")","").replace("\n","").replace("&","")
+    text=text.replace("  "," ").replace(":","").strip()
+    return text
+
+
+def extract_casting_from_imdb(url:str,refresh_delay=31):
+    rc=dict()
+    url=url.split("?")[0]+"fullcredits/"
+    page=load_page(url,refresh_delay)
+    if not page is None:
+        page=page.find("div",attrs={"id":"fullcredits_content"})
+        credits=page.find_all("a",attrs={'href': wikipedia.re.compile("^/name/nm")})
+        for credit in credits:
+            name=clean_line(credit.text)
+            if len(name)>0:
+                tr=credit.parent
+                job=None
+                while not tr is None:
+                    tr=tr.parent
+                    result=clean_line(tr.text)
+                    if result!=name:
+                        job=result.replace(name,"").strip()
+                        break
+
+                _job=translate(job,["jobs"],must_be_in_dict=True)
+                if _job:
+                    if not _job in rc: rc[_job]=[]
+                    rc[_job].append({"name":name,"source":"imdb"})
+                else:
+                    log(job+" est absent du dictionnaire")
+
+    return rc
+
+
+# findname=tds[0].text.replace("\n","").replace("  "," ").strip()
+# if len(findname) ==0:findname=tds[1].text.replace("\n","").replace("  "," ").strip()
+# if len(findname)>0:
+#     #log("Nom identifié "+findname)
+#     if equal_str(findname,name):
+#         sur_job=sur_jobs[i].text.replace("\n"," ").strip().replace("  "," ").replace(" by","")
+#         if "Cast" in sur_job or "Serie Cast" in sur_job:
+#             if len(tds)>3 and "Self" in tds[3].text:
+#                 job=""
+#             else:
+#                 job="Actor"
+#
+#         job=translate(job.split("\n")[0])
+#         if len(job)==0:
+#             job=translate(sur_job)
+#             if len(job)==0:
+#                 log("Job non identifié pour "+name+" sur "+url)
+#
+#         if not "job" in rc:rc["job"]=[]
+#         if not job in rc["job"]:rc["job"].append(job)
+
+
 
 #http://localhost:8000/api/batch
-def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,refresh_delay=31):
+def extract_film_from_imdb(url:str,title:str,job="",refresh_delay=31):
     """
-
     :return:
     """
     if not url.startswith("http"):
-        page=load_page("https://www.imdb.com/find?s=tt&q="+parse.quote(url))
+        page=load_page("https://www.imdb.com/find?s=tt&q="+parse.quote(title))
         bFind=False
-        for link in page.find_all("a"):
-            if link and equal_str(link.text,url) and link["href"].startswith("/title/tt"):
+        links=page.find_all("a")
+        for link in links:
+            if (len(url)==0 or equal_str(link.text,url)) and "/title/tt" in link["href"]:
                 url="https://www.imdb.com"+link["href"]
                 bFind=True
                 break
@@ -515,11 +591,8 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
             log(url+" introuvable sur IMDB")
             return None
 
-
     page=load_page(url,refresh_delay)
-
     title=remove_ponctuation(title)
-
     rc = dict({"title": title,"nature":"","casting":list(),"url":url,"source":"auto:IMDB"})
 
     divs=dict()
@@ -535,7 +608,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
             divs[div.attrs["data-testid"]]=div
 
     section_detail=page.find("section",{"data-testid":"Details"})
-
     if section_detail:
         section_detail=section_detail.find("ul")
         for li in section_detail.contents:
@@ -548,8 +620,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                     for cie in li.find_all("a"):
                         rc["production"]=rc["production"]+cie.text+","
                     if len(rc["production"])>2: rc["production"]=rc["production"][0:len(rc["production"])-2]
-
-
 
     if not "year" in rc:
         section=page.find("h1")
@@ -584,11 +654,22 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
     if rc["nature"]=="" and not page.find("div",{"data-testid":"hero-subnav-bar-season-episode-numbers-section-xs"}) is None:
         rc["nature"]="Série"
 
+    episodes=[]
     if rc["nature"]=="Série":
+        uls=page.find_all("ul",{"data-testid":"hero-title-block__metadata"})
+        if len(uls)>0:
+            rc["year"]=extract_years(uls[0].text)[:2]
+        for saison in range(1,20):
+            url_season=url.split("?")[0]+"episodes?season="+str(saison)
+            page_episodes=load_page(url_season,refresh_delay)
+            for link_episode in [x.attrs["href"] for x in page_episodes.find_all("a",attrs={'href': wikipedia.re.compile("^/title/tt")})]:
+                if link_episode not in episodes:
+                    episodes.append(link_episode)
+        rc["episodes"]=episodes
+
         log("On est en présence d'une série")
         title=divs["hero-title-block__title"].text
         infos=divs["hero-title-block__title"].parent.text
-        year_from_title=extract_years(divs["hero-title-block__metadata"].text,0)
 
         if title in infos:
             log("On cherche a compléter le titre")
@@ -600,17 +681,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
                 title=sur_title+" - "+title
 
         rc["title"]=title
-        zone=page.find("ul",{"data-testid":"hero-title-block__metadata"})
-        if zone: years=extract_years(zone.text)
-
-        if len(years)>0:
-            rc["year"]=years[0]
-            if len(years)>1:
-                pass
-        else:
-            rc["year"]=year_from_title
-
-
 
     if "hero-media__poster" in divs:
         affiche = divs["hero-media__poster"]
@@ -621,53 +691,9 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
         rc["synopsis"]=divs["plot"].text.replace("Read all","")
 
     #log("Recherche du role sur le film")
-    credits=load_page(url+"fullcredits",refresh_delay)
-    if not credits is None:
-        credits=credits.find("div",{"id":"fullcredits_content"})
-        if not credits is None:
-            sur_jobs = credits.find_all("h4")
-            tables=credits.find_all("table")
-            for i in range(0,len(tables)):
-                trs=tables[i].find_all("tr")
-
-                for tr in trs:
-
-                    tds=tr.find_all("td")
-
-                    # job = tds[len(tds)-1].text.split("(")[0].split("/")[0].strip()
-                    # if len(job) == 0 and len(sur_jobs[i].text) > 0:job = sur_job.replace(" by", "").strip()
-
-                    if len(tds)>1:
-                        findname=tds[0].text.replace("\n","").replace("  "," ").strip()
-                        if len(findname) ==0:findname=tds[1].text.replace("\n","").replace("  "," ").strip()
-                        if len(findname)>0:
-                            #log("Nom identifié "+findname)
-                            if equal_str(findname,name):
-                                sur_job=sur_jobs[i].text.replace("\n"," ").strip().replace("  "," ").replace(" by","")
-                                if "Cast" in sur_job or "Serie Cast" in sur_job:
-                                    if len(tds)>3 and "Self" in tds[3].text:
-                                        job=""
-                                    else:
-                                        job="Actor"
-
-                                job=translate(job.split("\n")[0])
-                                if len(job)==0:
-                                    job=translate(sur_job)
-                                    if len(job)==0:
-                                        log("Job non identifié pour "+name+" sur "+url)
-
-                                if not "job" in rc:rc["job"]=[]
-                                if not job in rc["job"]:rc["job"].append(job)
-                            else:
-                                if all_casting:
-                                    names=tds[0].split(" ")
-                                    rc["casting"].append({
-                                        "name":" ".join(names),
-                                        "source":"imdb",
-                                        "job":job})
-
-
     if not "job" in rc: rc["job"]=job
+
+    rc["casting"]=extract_casting_from_imdb(url,refresh_delay=refresh_delay)
 
     return rc
 
@@ -676,7 +702,6 @@ def extract_film_from_imdb(url:str,title:str,name="",job="",all_casting=False,re
 
 def extract_actor_from_wikipedia(lastname,firstname):
     wikipedia.set_lang("fr")
-
     searchs=wikipedia.search(lastname+" "+firstname)
 
     for search in searchs:
@@ -721,6 +746,7 @@ def extract_actor_from_wikipedia(lastname,firstname):
     return None
 
 
+
 def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
     rc=template["code"]
     fields=rc.split("{{")[1:]
@@ -735,6 +761,8 @@ def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
             rc=rc.replace("{{"+model+"."+field+"}}",value)
 
     return rc
+
+
 
 def dict_to_pow(film:dict,content=None):
 
@@ -780,21 +808,29 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
         pow = None
 
         if "unifrance" in l["url"]:
-            film = extract_film_from_unifrance(l["url"], job_for=job_for,refresh_delay=refresh_delay_page)
+            film = extract_film_from_unifrance(l["url"],refresh_delay=refresh_delay_page)
 
         if "source" in l and "LeFilmFrancais" in l["source"]:
             film = extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot)
 
         if "imdb" in l["url"]:
-            film = extract_film_from_imdb(l["url"], l["text"], name=profil.firstname + " " + profil.lastname,job=l["job"],refresh_delay=refresh_delay_page)
+            film = extract_film_from_imdb(l["url"], l["text"],job=l["job"],refresh_delay=refresh_delay_page)
             if film and (film["category"]=="News" or len(film["nature"])==0) \
                     or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) \
                     or film["job"]==["Remerciements"] or film["job"]==["Casting"] \
                     or (not "year" in film):
-                log("Ce type d'événement est exlue :"+str(film))
+                log("Ce type d'événement est exclue :"+str(film))
                 film=None
 
+        jobs=[]
         if not film is None:
+            #Recherche les métiers qu'a exercé la personne sur le film
+            for k in film["casting"].keys():
+                for c in film["casting"][k]:
+                    if equal_str(c["name"],profil.firstname+" "+profil.lastname):
+                        jobs.append(k)
+
+        if not film is None and len(jobs)>0:
             if not "nature" in film: film["nature"] = l["nature"]
             if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 

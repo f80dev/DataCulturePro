@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
-from OpenAlumni.passwords import DB_PASSWORD
+from OpenAlumni.passwords import DB_PASSWORD,_SECRET_KEY
 
 PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 #PAGEFILE_PATH="c://Temp/"
@@ -41,8 +41,8 @@ GRAPH_MODELS = {
   'group_models': True,
 }
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')0p@7b_kew8_w+jjuv=(zbn!sp!bm2*=7$s7#%@bvkwy0i--0p'
+SECRET_KEY=_SECRET_KEY
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -57,7 +57,7 @@ ALLOWED_HOSTS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 STATIC_URL  = "/static/"
-STATIC_ROOT=os.path.join(BASE_DIR, "static")
+STATIC_ROOT=os.path.join(BASE_DIR, "static").replace("//","/")
 DEFAULT_PERMS_PROFIL="standard"
 
 # Application definition
@@ -206,7 +206,7 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "dataculture",
+        "NAME": "dataculture_test",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
         'HOST': 'provider.europlots.com',
@@ -215,8 +215,6 @@ DATABASES = {
             'options': '-c statement_timeout=5000'
         }
     },
-
-
 }
 
 #Installation d'elasticsearch dans README à la racine

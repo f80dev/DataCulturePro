@@ -23,7 +23,7 @@ firewall-cmd --zone=public --add-port=9090/tcp
 Installation pour fedora
 <pre>
 dnf install certbot
-firewall-cmd --zone=public --add-port=8080/tcp
+désactiver le firewall
 certbot certonly --standalone --email hhoareau@gmail.com -d server.f80lab.com
 mkdir /root/certs
 cp /etc/letsencrypt/live/server.f80lab.com/* /root/certs

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-from OpenAlumni.passwords import DB_PASSWORD
+from OpenAlumni.passwords import DB_PASSWORD,_SECRET_KEY
 
 import os
 
@@ -21,7 +21,7 @@ import datetime
 
 from django.contrib import admindocs
 
-PAGEFILE_PATH="c://Temp/"
+PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = []
 
@@ -31,8 +31,8 @@ LOCAL_FEDORA_SERVER='172.30.11.56'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')0p@7b_kew8_w+jjuv=(zbn!sp!bm2*=7$s7#%@bvkwy0i--0p'
+
+SECRET_KEY=_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -136,6 +136,21 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #             'options': '-c statement_timeout=5000'
 #         }
 #     }
+
+# "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "NAME": "alumni_db",
+#     "USER": "hhoareau",
+#     "PASSWORD": DB_PASSWORD,
+#     'HOST': '161.97.75.165',
+#     'PORT': '5432',
+#     'OPTIONS': {
+#         'options': '-c statement_timeout=5000'
+#     }
+# },
+
+
+
 # 'sqllite': {
 #     'ENGINE': 'django.db.backends.sqlite3',
 #     'NAME': os.path.join(BASE_DIR, 'alumni_db'),
@@ -145,32 +160,20 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "alumni_db",
-        "USER": "hhoareau",
+        "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': '161.97.75.165',
-        'PORT': '5432',
+        'HOST': 'provider.europlots.com',
+        'PORT': '30573',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }
-    },
-
-    "dev": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "test_alumni_db",
-        "USER": "hhoareau",
-        "PASSWORD": DB_PASSWORD,
-        'HOST': '161.97.75.165',
-        'PORT': '5432',
-        'OPTIONS': {
-            'options': '-c statement_timeout=5000'
-        }
-    },
+    }
 }
 
 #Installation d'
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '161.97.75.165:9200'
+        'hosts': '0.0.0.0:9210'
     },
     'dev': {
         'hosts': '161.97.75.165:9210'

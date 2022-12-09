@@ -178,21 +178,20 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 # },
 
 
+
 #La procédure d'installation de la base se trouve dans le README root
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "test_alumni_db",
-        "USER": "hhoareau",
+        "NAME": "dataculture",
+        "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': '161.97.75.165',
-        'PORT': '5432',
+        'HOST': 'provider.europlots.com',
+        'PORT': '30573',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }
     },
-
-
 }
 
 #Installation d'elasticsearch dans README à la racine

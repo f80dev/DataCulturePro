@@ -3,19 +3,26 @@
   <br>
 
   <mat-accordion style="display: inline-block;width:98%;">
-
     <mat-expansion-panel  style="text-align: left;" id="pnlGeneral" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Général
         </mat-panel-title>
       </mat-expansion-panel-header>
-      mail: {{config.user.user.email}}
-      <br>
-      Profil {{config.config.appname}} associé: {{config.profils[config.user.profil_name]?.title}}
+      <table>
+        <tr>
+          <th>Votre email </th>
+          <td>{{config.user.user.email}}</td>
+        </tr>
+        <tr>
+          <th>Profil </th>
+          <td>{{config.config.appname}} associé: {{config.profils[config.user.profil_name]?.title}}</td>
+        </tr>
+      </table>
+
     </mat-expansion-panel>
 
-    <mat-expansion-panel  style="text-align: center;" id="pnlPerm">
+    <mat-expansion-panel  style="text-align: left;" id="pnlPerm">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Permissions
@@ -23,8 +30,8 @@
       </mat-expansion-panel-header>
       <div style="width: 96%;margin:2%;">
         <br>
-        <h2>Actuellement vous avez accès:</h2>
-        <div style="font-size: small;text-align: left;" [innerHTML]="show_perm"></div>
+        Actuellement vous avez accès
+        <div style="text-align: left;line-height: 120%;" class="mat-body-1" [innerHTML]="show_perm"></div>
         <br>
         <br>
 
@@ -35,7 +42,6 @@
         </button>
 
         <app-tuto label="Certaines données de Data Culture sont en accès restreint. Pour y avoir accès il peut être nécéssaire d'en faire la demande à la FEMIS"></app-tuto>
-
 
       </div>
     </mat-expansion-panel>
@@ -48,7 +54,7 @@
       </mat-expansion-panel-header>
 
       <br>
-      <a href="./rgpd">En savoir plus sur la conformité RGPD</a>
+      <a class="mat-body-2 primary-color" href="./rgpd">En savoir plus sur la conformité RGPD</a>
       <br>
       <br>
 

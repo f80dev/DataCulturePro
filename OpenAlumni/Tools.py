@@ -441,7 +441,7 @@ def fusion(p1: Model, p2: Model,withLog=False):
 def init_dict():
     global MYDICT
     if MYDICT is None:
-        with open("./static/dictionnary.yaml", 'r', encoding='utf8') as f:
+        with open(STATIC_ROOT+"/dictionnary.yaml", 'r', encoding='utf8') as f:
             body = f.read()
         MYDICT = yaml.load(body.lower(), Loader=yaml.Loader)
     return MYDICT
@@ -456,7 +456,7 @@ def in_dict(key:str,section="jobs"):
 
 
 
-def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages"]):
+def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages"],must_be_in_dict=False):
     """
     Remplacement de certains termes
     :param wrd:
@@ -474,10 +474,16 @@ def translate(wrd:str,sections=["jobs","categories","abreviations","departements
         key=key.replace("   "," ").replace("  "," ")
 
     rc = key
+    find=False
     for section in sections:
         if key in MYDICT[section].keys():
             rc = MYDICT[section][key]
+            find=True
             break
+
+    if must_be_in_dict and not find:
+        if not key in MYDICT[section].values():
+            return None
 
     if not rc is None and len(rc)>1:
         return (rc[0].upper()+rc[1:].lower()).strip()
@@ -520,7 +526,7 @@ def remove_html(text):
 
 def remove_accents(s:str):
     if s is None:return None
-    for p in ["ée","àa","èe","âa","îi","ôo","êe","àa","ïi","öo","äa","ëe"]:
+    for p in ["ée","àa","èe","âa","îi","ôo","êe","àa","ïi","öo","äa","ëe","çc"]:
         s=s.replace(p[0],p[1]).replace(p[0].upper(),p[1].upper())
     return s
 
@@ -550,6 +556,17 @@ def extract_years(txt:str,index=None):
     else:
         return rc
 
+def clean_page(code:str,balises=["script","style","svg"]):
+    if type(code)!=str:code=str(code)
+    if "<body" in code:
+        code="<body" + code.split("<body")[1]
+
+    for balise in balises:
+        while "<"+balise in code:
+            r=extract(code,"<"+balise,"</"+balise+">")
+            code=code.replace("<"+balise+r+"</"+balise+">","")
+
+    return code
 
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
@@ -578,6 +595,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
             os.remove(PAGEFILE_PATH + filename)
             return load_page(url)
 
+        html=clean_page(html)
         page=wikipedia.BeautifulSoup(html)
         if len(page.contents)==0:
             log("Le fichier ./Temp/"+filename+" est corrompu")
@@ -603,7 +621,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
             path=PAGEFILE_PATH + filename
             log("Enregistrement sur  " + path)
             with open(path, 'w', encoding='utf8') as f:
-                f.write(str(rc))
+                f.write(clean_page(rc))
                 f.close()
 
             if exists(PAGEFILE_PATH + "html.7z"):
