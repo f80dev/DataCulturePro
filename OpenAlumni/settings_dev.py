@@ -32,6 +32,8 @@ EMAIL_TESTER = ["hhoareau@gmail.com",
 
 EMAIL_PERM_VALIDATOR="paul.dudule@gmail.com"
 LOCAL_FEDORA_SERVER='172.30.11.56'
+SETTINGS_FILENAME="settings_dev.py"
+VERSION="0.1"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -221,7 +223,7 @@ DATABASES = {
 #Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '75.119.159.46:9210'
+        'hosts': '173.249.41.158:9210'
     },
 }
 

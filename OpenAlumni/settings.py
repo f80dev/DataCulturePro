@@ -27,6 +27,8 @@ EMAIL_TESTER = []
 
 EMAIL_PERM_VALIDATOR="hhoareau@gmail.com"
 LOCAL_FEDORA_SERVER='172.30.11.56'
+VERSION="0.1"
+SETTINGS_FILENAME="settings.py"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -170,14 +172,11 @@ DATABASES = {
     }
 }
 
-#Installation d'
+#Pour l'installation d'delastic search voir le README
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '0.0.0.0:9210'
-    },
-    'dev': {
-        'hosts': '161.97.75.165:9210'
-    },
+        'hosts': '173.249.41.158:9200'
+    }
 }
 
 REST_FRAMEWORK = {

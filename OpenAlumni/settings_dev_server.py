@@ -15,6 +15,7 @@ import os
 import sys
 from OpenAlumni.passwords import DB_PASSWORD
 
+VERSION="0.1"
 
 PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,6 +31,8 @@ EMAIL_TESTER = ["hhoareau@gmail.com",
 
 EMAIL_PERM_VALIDATOR="paul.dudule@gmail.com"
 LOCAL_FEDORA_SERVER='172.30.11.56'
+SETTINGS_FILENAME="settings_dev_server.py"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -197,7 +200,7 @@ DATABASES = {
 #Installation d'elasticsearch dans README à la racine
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '161.97.75.165:9210'
+        'hosts': '173.249.41.158:9210'
     },
 }
 

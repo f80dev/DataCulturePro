@@ -90,7 +90,7 @@ COPY ./manage.py $APP_HOME
 
 EXPOSE 8000
 
-ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev_server
+ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev
 ENV DEBUG=True
 
 #CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

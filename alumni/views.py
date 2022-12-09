@@ -304,6 +304,8 @@ def infos_server(request):
     rc=dict()
     rc["domain"]={"appli":DOMAIN_APPLI,"server":DOMAIN_SERVER}
     rc["search"]={"server":ELASTICSEARCH_DSL}
+    rc["settings_file"]=SETTINGS_FILENAME
+    rc["server_version"]=VERSION
     rc["database"]=DATABASES
     rc["debug"]=DEBUG
     try:
