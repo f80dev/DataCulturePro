@@ -248,22 +248,23 @@
             </td>
           </tr>
         </table>
-
-
       </mat-expansion-panel>
 
+
       <!--      Présence sur Internet -->
-      <mat-expansion-panel  [expanded]="expanded_internet_pnl" id="pnlInternet">
+      <mat-expansion-panel [expanded]="expanded_internet_pnl" id="pnlInternet">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Présence internet
           </mat-panel-title>
         </mat-expansion-panel-header>
+        <div class="mat-body-1 label">Voir et optimiser sa présence sur Internet</div>
         <table style="width:100%;">
           <tr *ngFor="let ref of profil.links" style="text-align: left;">
             <td>{{ref.text}}</td>
-            <td style="width:30px;text-align: right;">
-              <mat-icon style="font-size: medium;cursor: pointer;" (click)="open_page(ref.url,'ref')">visibility</mat-icon>
+            <td style="width:50px;text-align: right;">
+              <mat-icon style="font-size: medium;cursor: pointer;" (click)="open_page(ref.url,'ref')">search</mat-icon>
+              <mat-icon style="font-size: medium;cursor: pointer;" (click)="open_faqs(ref.text)" [title]="'Optimiser sa présence sur '+ref.text">help</mat-icon>
             </td>
           </tr>
         </table>

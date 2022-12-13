@@ -1,6 +1,8 @@
 @use 'sass:map';
 @use './node_modules/@angular/material' as mat;
 
+@include mat.core();
+
 
 $dataculture-typography: mat.define-typography-config(
         $display-4: mat.define-typography-level(4.2rem, 4.2rem, 600, Roboto, $letter-spacing: 0.01em),
@@ -105,7 +107,6 @@ $dataculture-theme:mat.define-dark-theme((
                 accent: $dataculture-accent-color,
                 warn:  $dataculture-warn-color,
         ),
-
         typography: $dataculture-typography,
 ));
 

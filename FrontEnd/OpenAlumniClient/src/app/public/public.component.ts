@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
-import {$$, group_works, showMessage} from "../tools";
+import {$$, getParams, group_works, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {ConfigService} from "../config.service";
 
 import {Location} from "@angular/common";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-public',
@@ -31,7 +32,8 @@ export class PublicComponent implements OnInit {
               public ngNavigatorShareService:NgNavigatorShareService,
               public _clipboardService:ClipboardService,
               public _location:Location,
-              public route:ActivatedRoute,
+              public toast:MatSnackBar,
+              public routes:ActivatedRoute,
               public api:ApiService) {
   }
 
@@ -42,16 +44,18 @@ export class PublicComponent implements OnInit {
         this.message="";
         let awards_timeline=[];
         if(awards && awards.count>0){
+          let old_year="";
           for(let a of awards.results){
             awards_timeline.push({
-              year:a.year,
-              title:a.description + " - " + a.festival.title,
+              year:old_year==a.year ? "" : ""+a.year,
+              title:a.festival.title+" : "+a.description,
               subtitle:a.pow.title,
               icon: this.config.icons["Award"],
               sources:a.source,
               type:"award",
               label:a.description + " - " + a.festival.title
             })
+            old_year=a.year;
           }
         }
 
@@ -72,25 +76,23 @@ export class PublicComponent implements OnInit {
   }
 
 
-  create_works_timeline(p:any){
+  create_works_timeline(p:any,works:any[]){
     p.expe={};
     let rc=[];
     let old_year=null;
-    for(let _w of p.works){
+    for(let _w of works){
+      _w.job=_w.jobs.join(" & ")
       _w.icon=this.config.icons["Movie"];
       for(let k of Object.keys(this.config.icons)){
         if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];
       }
-
       _w.type="work";
-      _w.title=_w.job;
-      _w.subtitle=_w.pow.title;
-      _w.label=_w.job+"<br>pour <a class='primary-color' href='./pows?query=\""+_w.pow.title+"\"'>"+_w.pow.title+"</a>"
-      if(_w.pow.year!=old_year){
-        _w.year=_w.pow.year;
-        old_year=_w.year;
-      }
-      if(_w.public)rc.push(_w);
+      _w.subtitle=_w.title;
+      _w.label=_w.job+" pour <a class='primary-color' href='./pows?query=\""+_w.title+"\"'>"+_w.title+"</a>"
+
+      // if(_w.public)
+
+      rc.push(_w);
 
       p.expe[_w.job]=p.expe.hasOwnProperty(_w.job) ? p.expe[_w.job]+1 : 1;
 
@@ -99,15 +101,7 @@ export class PublicComponent implements OnInit {
   }
 
 
-  group_items(rc){
-    rc=group_works(rc);
-    if(rc.length==0)return rc;
-    // rc[0].show_year=true;
-    // for(let i=1;i<this.items.length;i++){
-    //   rc[i].show_year=(rc[i].year!=rc[i-1].year);
-    // }
-    return rc;
-  }
+
 
   convert_to_html(items){
     let rc=[];
@@ -135,8 +129,9 @@ export class PublicComponent implements OnInit {
 
     this.create_awards_timeline(p.id).then((lst_awards:any[])=>{
       this.awards_timeline=lst_awards;
-      let rc=this.create_works_timeline(p);
-      this.works_timeline=this.group_items(rc);
+
+      let works=group_works(p.works);
+      this.works_timeline=this.create_works_timeline(p,works);
 
       let lst=Object.values(this.profil.expe).sort((a,b) => (a<b ? 1 : -1));
       if(lst.length>3)lst=lst.slice(0,3)
@@ -173,32 +168,39 @@ export class PublicComponent implements OnInit {
 
   field_style={
     year:{margin:0,padding:0,'font-size':'3em',color: 'grey','margin-top':'30px','margin-bottom':'15px'},
-    label:{margin:0,padding:0,'font-size':'1.5em',color: 'white','margin-bottom':'15px'}
+    label:{margin:0,padding:0,'font-size':'1.2em','line-height':'120%',color: 'white','margin-bottom':'15px'}
   }
 
   field_class={
     year: "label mat-body-2"
   }
 
+  cancel(){
+    showMessage(this,"Impossible de trouver le profil recherché");
+    this.router.navigate(["search"]);
+  }
 
 
   //test http://localhost:4200/public/?id=3076
-
   ngOnInit(): void {
-    let id=this.route.snapshot.queryParamMap.get("id");
-    if(id){
-      this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
-        this.profil=p.results[0];
-        this.works=this.profil.works;
-        this.url=this._location.path();
-        this.title = p.firstname + " " + p.lastname;
-        setTimeout(()=>{
+    getParams(this.routes).then((params:any)=>{
+      let id=params["id"]
+      if(id){
+        this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
+          if(p.count==0)this.cancel();
+          this.profil=p.results[0];
+          this.works=this.profil.works;
+          this.url=this._location.path();
+          this.title = p.firstname + " " + p.lastname;
           this.load_items(this.profil);
-        },100);
-      })
-    } else {
-      this.router.navigate(["search"]);
-    }
+        },(err)=>{
+          this.cancel();
+        })
+      } else {
+        this.cancel();
+      }
+    })
+
   }
 
 

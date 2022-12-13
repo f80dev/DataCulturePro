@@ -173,26 +173,19 @@ export function extract_id(url:string):string {
 
 //Permet de regrouper les travaux lorsque sur un meme film
 export function group_works(wrks) {
-  let rc=[];
+  let jobs={};
+  let pows={}
+
   for(let w of wrks){
-    let new_work=w;
-    for(let tmp of wrks){
-      if(tmp.job==w.job){
-        let idx=rc.indexOf(tmp);
-        if(idx>-1){
-          rc[idx].job=rc[idx].job +" & "+w.job
-          new_work=null;
-          break;
-        }
-      }
-    }
+    let pow_id=w.pow.title;
+    pows[pow_id]={year:w.pow.year,title:w.pow.title}
+    if(!jobs.hasOwnProperty(pow_id))jobs[pow_id]=[];
+    if(jobs[pow_id].indexOf(w.job)==-1)jobs[pow_id].push(w.job);
+  }
 
-    if(w.state!="D"){
-      if(new_work){
-        rc.push(new_work);
-      }
-
-    }
+  let rc=[];
+  for(let k of Object.keys(jobs)){
+    rc.push({title:k,jobs:jobs[k],year:pows[k].year})
   }
 
   rc.sort((a, b) => (Number(a.year) > Number(b.year) ? -1 : 1));

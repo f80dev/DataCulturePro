@@ -2,10 +2,7 @@
 # voir https://dev.to/koladev/configuring-the-client-for-testing-with-pytest-and-django-rest-1bnk
 # voir https://pytest-django.readthedocs.io/en/latest/configuring_django.html
 import json
-
 import pytest
-
-from alumni.views import infos_server
 from rest_framework.test import APIClient
 
 

@@ -121,6 +121,7 @@ def extract(text:str,start:str,end:str):
     :param end:
     :return:
     """
+    if text is None or len(text)==0:return text
     start = text.index(start) + len(start)
     end = text[start:].index(end) + start
     return text[start:end]
@@ -556,8 +557,12 @@ def extract_years(txt:str,index=None):
     else:
         return rc
 
-def clean_page(code:str,balises=["script","style","svg"]):
+def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
+    if code is None: return None
     if type(code)!=str:code=str(code)
+    if len(code)==0: return ""
+
+    lenCode=len(code)
     if "<body" in code:
         code="<body" + code.split("<body")[1]
 
@@ -565,6 +570,9 @@ def clean_page(code:str,balises=["script","style","svg"]):
         while "<"+balise in code:
             r=extract(code,"<"+balise,"</"+balise+">")
             code=code.replace("<"+balise+r+"</"+balise+">","")
+
+    gain=100-100*len(code)/lenCode
+    log("Compression de "+str(gain)+"%")
 
     return code
 

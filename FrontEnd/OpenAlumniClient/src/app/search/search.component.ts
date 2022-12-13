@@ -36,13 +36,13 @@ export class SearchComponent implements OnInit {
   }
 
 
+
   ngOnInit(): void {
     getParams(this.routes).then((params:any)=>{
       this.query.value=params.filter || params.query || "";
       if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
     })
   }
-
 
 
   refresh(q=null,limit=100) {

@@ -3,7 +3,7 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {ConfigService} from "../config.service";
-import {$$, checkLogin, group_works, now, showError, showMessage, stringDistance, uniq} from "../tools";
+import {$$, checkLogin, getParams, group_works, now, showError, showMessage, stringDistance, uniq} from "../tools";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {PromptComponent} from "../prompt/prompt.component";
@@ -141,41 +141,42 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   loadProfil(func=null){
-    let id=this.routes.snapshot.queryParamMap.get("id")
-    $$("Chargement du profil & des travaux");
-    this.api._get("profils/"+id+"/","").subscribe((p:any)=>{
-      $$("Profil chargé ",p);
+    getParams(this.routes).then((params:any)=>{
+      if(!params.hasOwnProperty("id"))this.quit();
+      $$("Chargement du profil & des travaux");
+      this.api._get("profils/"+params["id"]+"/","").subscribe((p:any)=>{
+        $$("Profil chargé ",p);
 
-      if(p){
-        if(!p.hasOwnProperty("links") || !p.links)p.links=[];
-        p.links.push({url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname,text:"Google"});
-        p.links.push({url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname,text:"Wikipedia"});
-        p.links.push({url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname,text:"Allocine"});
+        if(p){
+          if(!p.hasOwnProperty("links") || !p.links)p.links=[];
+          p.links.push({url:"https://www.google.com/search?q="+p.firstname+"+"+p.lastname,text:"Google"});
+          p.links.push({url:"https://en.wikipedia.org/w/index.php?search="+p.firstname+"+"+p.lastname,text:"Wikipedia"});
+          p.links.push({url:"https://www.allocine.fr/rechercher/?q="+p.firstname+"+"+p.lastname,text:"Allocine"});
+          p.links.push({url:"https://twitter.com/search?q="+p.firstname+"%20"+p.lastname,text:"Twitter"});
 
-        //Suppression des doublons sur la présence sur internet
-        p.links=uniq(p.links);
+          //Suppression des doublons sur la présence sur internet
+          p.links=uniq(p.links);
 
-        this.profil=p;
-        if(this.profil.sponsorBy){
-          this.api._get("profils/"+this.profil.sponsorBy+"/","").subscribe((sponsor:any)=>{
-            this.profil.sponsorBy=sponsor;
-          })
-        }
+          this.profil=p;
+          if(this.profil.sponsorBy){
+            this.api._get("profils/"+this.profil.sponsorBy+"/","").subscribe((sponsor:any)=>{
+              this.profil.sponsorBy=sponsor;
+            })
+          }
 
-        let d_min=1e9;
-        for(let j of this.config.jobs){
-          let d=stringDistance(p.department,j.value);
-          if(d<d_min){
-            d_min=d;
-            this.job=j.value;
+          let d_min=1e9;
+          for(let j of this.config.jobs){
+            let d=stringDistance(p.department,j.value);
+            if(d<d_min){
+              d_min=d;
+              this.job=j.value;
+            }
           }
         }
-      }
 
-      if(func)func();
-    });
-
-
+        if(func)func();
+      });
+    })
   }
 
 
@@ -547,6 +548,10 @@ export class EditComponent implements OnInit,OnDestroy  {
   reset_contrib_profil() {
     this.reset_works();
     this.reset_awards();
+  }
+
+  open_faqs(rubrique:string) {
+    this.router.navigate(["faqs"],{queryParams:{open:'ref_'+rubrique}})
   }
 }
 

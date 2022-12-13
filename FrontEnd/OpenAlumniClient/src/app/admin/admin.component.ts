@@ -31,14 +31,14 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refresh();
     this.api._get("infos_server").subscribe((infos:any)=>{
       this.info_server=infos;
-      setTimeout(()=>{
-        this.profils=Object.values(this.config.profils);
-      },2000);
     });
+    this.config.user_update.subscribe(()=>{
+      this.profils=Object.values(this.config.profils)
+      this.refresh();
 
+    })
   }
 
   raz(table:string) {
@@ -154,15 +154,12 @@ export class AdminComponent implements OnInit {
   }
 
   cancel_ask(u: any) {
-
   }
 
   send_email(u: any) {
-
   }
 
   accept_ask(u: any) {
-
   }
 
   export_dict() {

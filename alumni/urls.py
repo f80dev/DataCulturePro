@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('raz/',views.raz),
-    path('importer/',views.importer),
+    path('importer/',views.api_importer),
 ]

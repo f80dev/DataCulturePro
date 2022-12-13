@@ -169,7 +169,9 @@ class Profil(models.Model):
 
 
     def __str__(self):
-        return "{'id':"+str(self.id)+",'email':'"+self.email+"','fullname':'"+self.fullname+"','address':'"+self.address+" "+self.cp+" "+self.town+"'}"
+        s="{'id':"+str(self.id)+",'email':'"+self.email+"','fullname':'"+self.fullname+"',"
+        s=s+"'address':'"+self.address+" "+self.cp+" "+self.town+"','promo':"+str(self.degree_year)+"}"
+        return s
 
 
     @property

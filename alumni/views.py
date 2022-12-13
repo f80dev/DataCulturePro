@@ -50,7 +50,8 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
-from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex
+from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
+    profils_importer
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
 from OpenAlumni.nft import NFTservice
@@ -473,7 +474,7 @@ def refresh_jobsites(request):
     text = text.replace("%lastname%", quote(profil.lastname))
     text = text.replace("%firstname%", quote(profil.firstname))
 
-    sites=yaml.load(text)
+    sites=yaml.load(text,Loader=yaml.Loader)
     return JsonResponse({"sites":sites,"job":profil.job})
 
 
@@ -1291,35 +1292,6 @@ def export_all(request):
 
 
 
-def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={},header=list()):
-    """
-    Permet l'importation dynamique des colonnes
-    :param col:
-    :param row:
-    :param default:
-    :param max_len:
-    :param min_len:
-    :param replace_dict:
-    :param header:
-    :return:
-    """
-    for c in col.lower().split(","):
-        if c in header:
-            if row is not None and len(row)>header.index(c):
-                rc=str(row[header.index(c)])
-
-                #Application des remplacement
-                for old in replace_dict.keys():
-                    rc=rc.replace(old,replace_dict[old])
-
-                if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
-                if min_len==0 or len(rc)>=min_len:
-                    return rc.strip()
-            else:
-                return header.index(c)
-
-    return default
-
 
 
 @api_view(["GET"])
@@ -1340,7 +1312,7 @@ def movie_importer(request):
     :param request:
     :return:
     """
-    d,total_record=importer_file(request)
+    d,total_record=importer_file(request.data["file"],request.data["filename"])
 
     i = 0
     record = 0
@@ -1424,188 +1396,22 @@ def movie_importer(request):
 
 
 
-def importer_file(request):
-    d=list()
-
-    log("Importation de fichier")
-    data = base64.b64decode(str(request.data["file"]).split("base64,")[1])
-
-    log("Analyse du document")
-    for _encoding in ["utf-8", "ansi"]:
-        try:
-            txt = str(data, encoding=_encoding)
-            break
-        except:
-            pass
-
-    txt = txt.replace("&#8217;", "")
-    log("Méthode d'encoding " + _encoding)
-
-    if str(request.data["filename"]).endswith("xlsx"):
-        res = pd.read_excel(data)
-        d.append(list(res))
-        for k in range(1, len(res)):
-            d.append(list(res.loc[k]))
-        total_record = len(d) - 1
-    else:
-        delimiter = ";"
-        text_delimiter = False
-        if "\",\"" in txt:
-            delimiter = ","
-            text_delimiter = True
-
-        log("Importation du CSV")
-        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
-        total_record = sum(1 for line in d)
-        log("Nombre d'enregistrements identifié " + str(total_record))
-
-        # Répétion de la ligne pour remettre le curseur au début du fichier
-        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
-
-    return d,total_record
 
 
 #http://localhost:8000/api/importer/
 #profils importer
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def importer(request):
+def api_importer(request):
     """
     Importation des profils /import
     :param request:
     :param format:
     :return:
     """
-    i = 0
-    record = 0
-    non_import=list()
-
-    d,total_record=importer_file(request)
-
-    l_department_category=[(x.lower() if not x is None else '') for x in Profil.objects.values_list("department_category",flat=True)]
-    for row in d:
-
-        if i==0:
-            header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
-            log("Liste des colonnes disponibles "+str(header))
-        else:
-            s=request.data["dictionnary"].replace("'","\"").replace("\n","").strip()
-            dictionnary=dict() if len(s)==0 else loads(s)
-
-            firstname=idx("fname,firstname,prenom,prénom",row,max_len=40,header=header)
-            lastname=idx("lastname,nom,lname",row,max_len=100,header=header)
-            if i % 10 == 0:
-                log(firstname + " " + lastname + " - " + str(i) + "/" + str(total_record) + " en cours d'importation")
-
-            email=idx("email,mail,e-mail",row,header=header,max_len=50)
-            idx_photo=idx("photo,picture,image",header=header)
-
-            #Eligibilité et evoluation du genre
-            gender=idx("gender,genre,civilite,civilité",row,"",header=header)
-            if len(lastname)>1 and len(lastname)+len(firstname)>4:
-                if idx_photo is None or len(row[idx_photo])==0:
-                    photo=None
-
-                    if gender=="Monsieur" or gender=="M." or str(gender).startswith("Mr"):
-                        photo="/assets/img/boy.png"
-                        gender = "M"
-
-                    if str(gender).lower() in ["monsieur","mme","mademoiselle","mlle"]:
-                        photo="/assets/img/girl.png"
-                        gender = "F"
-
-                    if photo is None:
-                        photo = "/assets/img/anonymous.png"
-                        gender = ""
-
-                else:
-                    photo=stringToUrl(idx("photo",row,""))
-
-                #Calcul
-                dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row,header=header)
-                # if len(dt_birthdate)==8:
-                #     tmp=dt_birthdate.split("/")
-                #     if int(tmp[2])>50:
-                #         dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
-                #     else:
-                #         dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
-                dt=dateToTimestamp(dt_birthdate)
-
-                if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4,header=header)
-                if type(promo)!=str: promo=str(promo)
-                if not promo is None and len(promo)>4:
-                    promo=dateToTimestamp(promo)
-                    if not promo is None:promo=promo.year
-
-                standard_replace_dict={"nan":"","[vide]":""}
-                cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1)
-
-                department = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
-                if cursus=="P":
-                    department_category=translate(department,["department_category"])
-                else:
-                    department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
-                    if department_category is None or len(department_category)==0:
-                        if department.lower() in l_department_category:
-                            department_category=department
-
-                profil=Profil(
-                    firstname=firstname,
-                    school="FEMIS",
-                    lastname=lastname,
-                    name_index=index_string(firstname+lastname),
-                    gender=gender,
-                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict,header=header),
-                    nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
-                    country=idx("country,pays",row,"France",header=header),
-                    birthdate=dt,
-                    department=translate(department,sections=["departements"]),
-                    job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
-                    degree_year=promo,
-                    address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),
-                    department_category=department_category,
-                    town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict,header=header),
-                    source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict,header=header),
-                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict,header=header),
-                    website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict,header=header)),
-                    biography=idx("biographie",row,"",header=header),
-                    crm=idx("crm,oasis",row,header=header),
-
-                    facebook=idx("facebook",row,"",header=header),
-                    instagram=idx("instagram",row,"",header=header),
-                    vimeo=idx("vimeo",row,"",header=header),
-                    tiktok=idx("tiktok",row,"",header=header),
-                    linkedin=idx("linkedin", row, "",header=header),
-
-                    email=email,
-                    photo=photo,
-
-                    cursus=cursus
-                )
-
-                try:
-                    if len(profil.email)>0:
-                        res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
-                        hasChanged=True
-                        if len(res)>0:
-                            #log("Le profil existe déjà")
-                            profil,hasChanged=fusion(res.first(),profil)
-
-                    if hasChanged:
-                        log("Mise a jour de "+firstname+" "+lastname)
-                        profil.save()
-
-                    #log(profil.lastname + " est enregistré")
-                    record=record+1
-                except Exception as inst:
-                    log("Probléme d'enregistrement de "+email+" :"+str(inst))
-                    non_import.append(str(profil))
-            else:
-                log("Le profil "+str(row)+" ne peut être importée")
-                non_import.append(str(profil))
-        i=i+1
-
+    dictionnary=request.data["dictionnary"]
+    rows,total_record=importer_file(request.data["file"])
+    record,non_import=profils_importer(rows,total_record,dictionnary)
     if record>0: reindex()
 
     return JsonResponse({"imports":str(record),"abort":non_import})
@@ -1644,7 +1450,7 @@ def oauth(request):
 
 
 
-#https://localhost:
+#http://localhost:8000/api/profilsdoc
 @permission_classes([AllowAny])
 class ProfilDocumentView(DocumentViewSet):
     document=ProfilDocument

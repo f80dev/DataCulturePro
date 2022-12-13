@@ -1,7 +1,9 @@
 <div *ngIf="nbColumns==2">
   <table style="width:100%;">
     <tr style="border: none;" *ngFor="let r of rows" [style]="row_style">
-      <td *ngFor="let c of columns" [innerHTML]="r[c]" [style]="field_style[c]">
+      <td *ngFor="let c of columns"
+          [innerHTML]="r[c]"
+          [style]="field_style[c]">
       </td>
     </tr>
   </table>
@@ -10,7 +12,10 @@
 <div *ngIf="nbColumns==1">
   <div *ngFor="let r of rows">
     <div *ngFor="let c of columns">
-      <div *ngIf="r[c] && r[c].length>0" [ngClass]="field_class[c]" [ngStyle]="field_style[c]" [innerHTML]="r[c]"></div>
+      <div *ngIf="r[c] && r[c].length>0"
+           [ngClass]="field_class[c]"
+           [ngStyle]="field_style[c]"
+           [innerHTML]="r[c]"></div>
     </div>
   </div>
 </div>

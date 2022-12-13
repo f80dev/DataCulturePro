@@ -33,9 +33,7 @@ export class ProfilComponent implements OnChanges {
   constructor(public toast:MatSnackBar,
               public router:Router,
               public config:ConfigService,
-              public api:ApiService,
-              public ngNavigatorShareService:NgNavigatorShareService,
-              public _clipboardService:ClipboardService) { }
+              public api:ApiService) { }
 
 
 

@@ -1,6 +1,6 @@
 <div class="mainform" style="text-align: center">
   <br>
-  <mat-card class="app-card" style="display: inline-block;width:50%;max-width: 800px;text-align: left;">
+  <mat-card class="app-card" style="display: inline-block;width:50%;max-width: 1200px;text-align: left;">
     <table style="padding: 0;margin-left:0;width: 100%;border: none;border-spacing: 0;" *ngIf="profil">
       <tr style="width: 100%;margin:0;">
         <td *ngIf="profil?.public_photo" style="width: 150px;">
@@ -36,7 +36,7 @@
               </td>
             </tr>
 
-            <tr *ngIf="profil.works.length>0" id="rowExperiences">
+            <tr *ngIf="profil.works?.length>0" id="rowExperiences">
               <td class="label">Domaine d'activité</td>
               <td>
                 {{expe}}<br>
@@ -44,7 +44,7 @@
               </td>
 
             </tr>
-            <tr *ngIf="profil.works.length>0">
+            <tr *ngIf="profil.works?.length>0">
               <td></td>
               <td>
                 <span *ngIf="profil.works?.length>0">{{profil.works.length}} films</span><br>
@@ -71,11 +71,11 @@
     <app-hourglass [message]="message"></app-hourglass>
     <br>
 
-    <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message.length==0">
+    <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0">
 
       <div style="width:100%;" class="row">
 
-        <div class="column" *ngIf="profil.works?.length>0">
+        <div class="column" *ngIf="profil?.works?.length>0">
           <div class="mat-subheading-1 label">FILMOGRAPHIE</div>
           <br>
           <app-timeline
@@ -88,8 +88,8 @@
 
         </div>
 
-        <div class="column" *ngIf="profil.awards?.length>0">
-          <div class="mat-body-2 label">RECOMPENSES</div>
+        <div class="column" *ngIf="awards_timeline?.length>0">
+          <div class="mat-subheading-1 label">RECOMPENSES</div>
           <br>
           <app-timeline class="column"
                         style="margin-top: 20px;"
