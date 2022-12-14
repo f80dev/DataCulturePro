@@ -12,12 +12,6 @@
                             <span style="text-transform: uppercase;">{{profil.department_category}}</span><br>
                         </div>
 
-                        <div *ngIf="profil?.cursus=='P'"
-                             (click)="openQuery($event,profil?.department)"
-                             name="lblCursus"
-                             style="font-size: x-small;color: white;line-height: 95%;cursor: pointer;">
-                            {{profil.department}}
-                        </div>
                     </td>
 
                     <td style="text-align: right;width: min-content;" >
@@ -35,6 +29,7 @@
                     </td>
                 </tr>
             </table>
+            <br>
             <hr class="dark_separator">
 
             <!--            A voir si l'on supprime la présentation de la photo-->
@@ -49,7 +44,7 @@
             <!--            </div>-->
 
 
-            <table style="width:100%;">
+            <table style="width:100%;margin-top: 15px;">
                 <tr class="mat-subheading-1">
                     <td style="text-align: left;overflow: hidden;">
                         <div name="lblName" style="margin-top: 10px" class="mat-subheading-1">
@@ -78,7 +73,15 @@
         </div>
 
         <div class="flip-card-back" name="cardAction">
-            <div style="margin-top: 5px;">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
+            <div style="margin-top: 5px;" class="mat-subheading-1">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
+            <div *ngIf="profil?.cursus=='P'"
+                 (click)="openQuery($event,profil?.department)"
+                 name="lblCursus"
+                 style="color: white;line-height: 95%;cursor: pointer;">
+                {{profil.department}}
+            </div>
+            <br>
+
             <div *ngIf="showAction">
                 <button mat-button mat-icon-button
                         name="cmdContact"
@@ -95,7 +98,7 @@
                         name="cmdShareProfil"
                         class="small-icon-button"
                         (click)="open_public_profil($event,profil)">
-                    <mat-icon>zoom_in</mat-icon>
+                    <mat-icon>visibility</mat-icon>
                 </button>
 
                 <!--        <button mat-button mat-icon-button-->

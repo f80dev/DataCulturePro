@@ -1,10 +1,11 @@
 <div class="mainform" style="padding: 10px;">
     <app-tuto label="Ici vous gérez les films"></app-tuto>
     <app-hourglass [message]="message"></app-hourglass>
-    <div class="h-zone" *ngIf="!showDetail">Insérer un nouveau film</div>
+    <br>
+    <div class="h-zone mat-display-1" *ngIf="!showDetail">Insérer un nouveau film</div>
     <div style="width: 50%;min-width:350px;max-width: 600px;text-align: left;display: inline-block;">
-        <mat-form-field appearance="fill" class="app-field" *ngIf="!showDetail">
-            <mat-label>Titre du film</mat-label>
+        <mat-form-field appearance="legacy" class="app-field mat-subheading-2" *ngIf="!showDetail">
+            <mat-label>Titre du film ?</mat-label>
             <input matInput placeholder="mon titre" id="txtTitle"
                    (ngModelChange)="changeTitle($event)"
                    type="text" [(ngModel)]="pow.title"
@@ -15,25 +16,37 @@
 <!--            "{{pow.title}}"-->
 <!--        </div>-->
 
-        <mat-selection-list #items *ngIf="!showDetail && pows!.length>0" class="mat-elevation-z4" style="height: 65vh;width: 95%;overflow: scroll;"
-                            (selectionChange)="select_title(items.selectedOptions.selected[0].value)"
-                            [multiple]="false">
-            <mat-list-option *ngFor="let item of pows" [value]="item" name="films">
-                <mat-icon mat-list-icon>videocam</mat-icon>
-                <div mat-line>{{item.title}} ({{item.year}})</div>
-            </mat-list-option>
-        </mat-selection-list>
+        <div *ngIf="pow.title.length>2" style="height: 50vh;width: 95%;overflow: scroll;">
+            <table>
+                <tr>
+                    <td>
+                        Avant de référencer un nouveau film, assurez vous que celui ci n'existe pas déjà dans {{config.values.appname}}<br>
+                        <div *ngIf="pows!.length>0">Si c'est le cas, sélectionné le dans la liste ci-dessous:</div>
+                    </td>
+                    <td></td>
+                    <td>
+                        <button class="app-button login-button"
+                                *ngIf="pow.title?.length>2"
+                                id="cmdAddPow"
+                                mat-button mat-raised-button
+                                (click)="add_title()">
+                            <div class="bloc-bouton">Ajouter un<br>nouveau film</div>
+                        </button>
+                    </td>
+                </tr>
+            </table>
 
-        <div style="display: inline-block;margin-top: 15px;" *ngIf="!showDetail">
-            <span *ngIf="pows.length>0">Sélectionner un film ou </span>
-            <button class="app-button login-button"
-                    *ngIf="pow.title?.length>2"
-                    id="cmdAddPow"
-                    mat-button mat-raised-button
-                    (click)="add_title()">
-                <div class="bloc-bouton">Ajouter un<br>nouveau film</div>
-            </button>
+            <mat-selection-list #items *ngIf="!showDetail"
+                                (selectionChange)="select_title(items.selectedOptions.selected[0].value)"
+                                [multiple]="false">
+                <mat-list-option *ngFor="let item of pows" [value]="item" name="films">
+                    <mat-icon mat-list-icon>videocam</mat-icon>
+                    <div mat-line>{{item.title}} ({{item.year}})</div>
+                </mat-list-option>
+            </mat-selection-list>
         </div>
+
+
 
         <div *ngIf="showDetail">
             <mat-accordion [multi]="false" style="text-align: left;">

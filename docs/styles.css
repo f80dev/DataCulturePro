@@ -1407,8 +1407,8 @@ textarea.cdk-textarea-autosize-measuring-firefox {
 .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
 .mat-flat-button, .mat-fab, .mat-mini-fab {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 
 .mat-button-toggle-standalone:not([class*=mat-elevation-z]),
@@ -1510,12 +1510,12 @@ textarea.cdk-textarea-autosize-measuring-firefox {
 }
 
 .mat-card-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 300;
 }
 
 .mat-card-header .mat-card-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
 }
 
 .mat-card-subtitle,
@@ -1945,8 +1945,8 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 
 .mat-calendar-body-label,
 .mat-calendar-period-button {
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 
 .mat-calendar-table-header th {
@@ -1961,7 +1961,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-dialog-title {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
 }
 
@@ -2184,21 +2184,18 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-form-field {
-  font-size: inherit;
-  font-weight: 400;
-  line-height: 1.125;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  letter-spacing: normal;
+  font: 300 1em / 1em Roboto;
+  letter-spacing: -0.03em;
 }
 
 .mat-form-field-wrapper {
-  padding-bottom: 1.34375em;
+  padding-bottom: 1.25em;
 }
 
 .mat-form-field-prefix .mat-icon,
 .mat-form-field-suffix .mat-icon {
   font-size: 150%;
-  line-height: 1.125;
+  line-height: 1em;
 }
 
 .mat-form-field-prefix .mat-icon-button,
@@ -2209,43 +2206,43 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 
 .mat-form-field-prefix .mat-icon-button .mat-icon,
 .mat-form-field-suffix .mat-icon-button .mat-icon {
-  height: 1.125em;
-  line-height: 1.125;
+  height: 1em;
+  line-height: 1em;
 }
 
 .mat-form-field-infix {
   padding: 0.5em 0;
-  border-top: 0.84375em solid transparent;
+  border-top: 0.75em solid transparent;
 }
 
 .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.34373em) scale(0.75);
+  transform: translateY(-1.24998em) scale(0.75);
   width: 133.3333533333%;
 }
 
 .mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.34372em) scale(0.75);
+  transform: translateY(-1.24997em) scale(0.75);
   width: 133.3333633333%;
 }
 
 .mat-form-field-label-wrapper {
-  top: -0.84375em;
-  padding-top: 0.84375em;
+  top: -0.75em;
+  padding-top: 0.75em;
 }
 
 .mat-form-field-label {
-  top: 1.34375em;
+  top: 1.25em;
 }
 
 .mat-form-field-underline {
-  bottom: 1.34375em;
+  bottom: 1.25em;
 }
 
 .mat-form-field-subscript-wrapper {
   font-size: 75%;
   margin-top: 0.6666666667em;
-  top: calc(100% - 1.7916666667em);
+  top: calc(100% - 1.6666666667em);
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-wrapper {
@@ -2253,27 +2250,27 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-infix {
-  padding: 0.4375em 0;
+  padding: 0.5em 0;
 }
 
 .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00106px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00106px);
   width: 133.3333933333%;
 }
 
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-form-field-autofill-control:-webkit-autofill + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00107px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00107px);
   width: 133.3334033333%;
 }
 
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00108px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00108px);
   width: 133.3334133333%;
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-label {
-  top: 1.28125em;
+  top: 1.25em;
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-underline {
@@ -2281,20 +2278,20 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-subscript-wrapper {
-  margin-top: 0.5416666667em;
+  margin-top: 0.6666666667em;
   top: calc(100% - 1.6666666667em);
 }
 
 @media print {
   .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28116em) scale(0.75);
+    transform: translateY(-1.24991em) scale(0.75);
   }
   .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-form-field-autofill-control:-webkit-autofill + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28115em) scale(0.75);
+    transform: translateY(-1.2499em) scale(0.75);
   }
   .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28114em) scale(0.75);
+    transform: translateY(-1.24989em) scale(0.75);
   }
 }
 
@@ -2303,18 +2300,18 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-form-field-appearance-fill .mat-form-field-label {
-  top: 1.09375em;
+  top: 1em;
   margin-top: -0.5em;
 }
 
 .mat-form-field-appearance-fill.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-fill.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-0.59373em) scale(0.75);
+  transform: translateY(-0.49998em) scale(0.75);
   width: 133.3333533333%;
 }
 
 .mat-form-field-appearance-fill.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-0.59372em) scale(0.75);
+  transform: translateY(-0.49997em) scale(0.75);
   width: 133.3333633333%;
 }
 
@@ -2323,18 +2320,18 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 .mat-form-field-appearance-outline .mat-form-field-label {
-  top: 1.84375em;
+  top: 1.75em;
   margin-top: -0.25em;
 }
 
 .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-outline.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.59373em) scale(0.75);
+  transform: translateY(-1.49998em) scale(0.75);
   width: 133.3333533333%;
 }
 
 .mat-form-field-appearance-outline.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.59372em) scale(0.75);
+  transform: translateY(-1.49997em) scale(0.75);
   width: 133.3333633333%;
 }
 
@@ -2420,7 +2417,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 input.mat-input-element {
-  margin-top: -0.0625em;
+  margin-top: 0em;
 }
 
 .mat-list-base .mat-list-item {
@@ -2764,7 +2761,7 @@ input.mat-input-element {
 }
 
 .mat-select-trigger {
-  height: 1.125em;
+  height: 1em;
 }
 
 .mat-drawer-container {
@@ -3321,8 +3318,8 @@ input.mat-input-element {
 
 .mat-tab-label, .mat-tab-link {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 
 .mat-toolbar {
@@ -3387,7 +3384,7 @@ input.mat-input-element {
 .mat-toolbar h4,
 .mat-toolbar h5,
 .mat-toolbar h6 {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   margin: 0;
 }
@@ -3451,7 +3448,7 @@ input.mat-input-element {
   line-height: 1;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 200;
+  font-weight: 300;
 }
 
 .mat-h1,
@@ -3459,7 +3456,7 @@ input.mat-input-element {
 .mat-typography .mat-h1,
 .mat-typography .mat-headline,
 .mat-typography h1 {
-  font: 500 2rem / 2rem Roboto;
+  font: 500 1.8rem / 1.8rem Roboto;
   letter-spacing: 0.03em;
   margin: 0 0 16px;
 }
@@ -3469,7 +3466,7 @@ input.mat-input-element {
 .mat-typography .mat-h2,
 .mat-typography .mat-title,
 .mat-typography h2 {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   margin: 0 0 16px;
 }
@@ -3543,29 +3540,29 @@ input.mat-input-element {
 
 .mat-display-4,
 .mat-typography .mat-display-4 {
-  font: 600 4.2rem / 4.2rem Roboto;
-  letter-spacing: 0.01em;
+  font: 600 3.8rem / 3.8rem Roboto;
+  letter-spacing: 0.03em;
   margin: 0 0 56px;
 }
 
 .mat-display-3,
 .mat-typography .mat-display-3 {
-  font: 500 3.8rem / 3.8rem Roboto;
-  letter-spacing: 0.03em;
+  font: 600 2.8rem / 2.8rem Roboto;
+  letter-spacing: 0.02em;
   margin: 0 0 64px;
 }
 
 .mat-display-2,
 .mat-typography .mat-display-2 {
-  font: 700 2.8rem / 3rem Roboto;
-  letter-spacing: 0.03em;
+  font: 500 2.2rem / 2.2rem Roboto;
+  letter-spacing: 0.02em;
   margin: 0 0 64px;
 }
 
 .mat-display-1,
 .mat-typography .mat-display-1 {
-  font: 600 2.5rem / 2.5rem Roboto;
-  letter-spacing: 0.03em;
+  font: 500 2rem / 2rem Roboto;
+  letter-spacing: 0.01em;
   margin: 0 0 64px;
 }
 
@@ -3585,7 +3582,7 @@ input.mat-input-element {
 }
 
 .expanded-plus {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   color: #E4983C;
 }
@@ -4740,8 +4737,8 @@ textarea.cdk-textarea-autosize-measuring-firefox {
 .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
 .mat-flat-button, .mat-fab, .mat-mini-fab {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 .mat-button-toggle-standalone:not([class*=mat-elevation-z]),
 .mat-button-toggle-group:not([class*=mat-elevation-z]) {
@@ -4820,11 +4817,11 @@ textarea.cdk-textarea-autosize-measuring-firefox {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 .mat-card-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 300;
 }
 .mat-card-header .mat-card-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
 }
 .mat-card-subtitle,
 .mat-card-content {
@@ -5160,8 +5157,8 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 .mat-calendar-body-label,
 .mat-calendar-period-button {
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 .mat-calendar-table-header th {
   font-size: 11px;
@@ -5173,7 +5170,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   color: white;
 }
 .mat-dialog-title {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
 }
 .mat-divider {
@@ -5344,19 +5341,16 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   color: rgba(255, 255, 255, 0.15);
 }
 .mat-form-field {
-  font-size: inherit;
-  font-weight: 400;
-  line-height: 1.125;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  letter-spacing: normal;
+  font: 300 1em / 1em Roboto;
+  letter-spacing: -0.03em;
 }
 .mat-form-field-wrapper {
-  padding-bottom: 1.34375em;
+  padding-bottom: 1.25em;
 }
 .mat-form-field-prefix .mat-icon,
 .mat-form-field-suffix .mat-icon {
   font-size: 150%;
-  line-height: 1.125;
+  line-height: 1em;
 }
 .mat-form-field-prefix .mat-icon-button,
 .mat-form-field-suffix .mat-icon-button {
@@ -5365,108 +5359,108 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 .mat-form-field-prefix .mat-icon-button .mat-icon,
 .mat-form-field-suffix .mat-icon-button .mat-icon {
-  height: 1.125em;
-  line-height: 1.125;
+  height: 1em;
+  line-height: 1em;
 }
 .mat-form-field-infix {
   padding: 0.5em 0;
-  border-top: 0.84375em solid transparent;
+  border-top: 0.75em solid transparent;
 }
 .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.34373em) scale(0.75);
+  transform: translateY(-1.24998em) scale(0.75);
   width: 133.3333533333%;
 }
 .mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.34372em) scale(0.75);
+  transform: translateY(-1.24997em) scale(0.75);
   width: 133.3333633333%;
 }
 .mat-form-field-label-wrapper {
-  top: -0.84375em;
-  padding-top: 0.84375em;
+  top: -0.75em;
+  padding-top: 0.75em;
 }
 .mat-form-field-label {
-  top: 1.34375em;
+  top: 1.25em;
 }
 .mat-form-field-underline {
-  bottom: 1.34375em;
+  bottom: 1.25em;
 }
 .mat-form-field-subscript-wrapper {
   font-size: 75%;
   margin-top: 0.6666666667em;
-  top: calc(100% - 1.7916666667em);
+  top: calc(100% - 1.6666666667em);
 }
 .mat-form-field-appearance-legacy .mat-form-field-wrapper {
   padding-bottom: 1.25em;
 }
 .mat-form-field-appearance-legacy .mat-form-field-infix {
-  padding: 0.4375em 0;
+  padding: 0.5em 0;
 }
 .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00106px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00106px);
   width: 133.3333933333%;
 }
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-form-field-autofill-control:-webkit-autofill + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00107px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00107px);
   width: 133.3334033333%;
 }
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.28125em) scale(0.75) perspective(100px) translateZ(0.00108px);
+  transform: translateY(-1.25em) scale(0.75) perspective(100px) translateZ(0.00108px);
   width: 133.3334133333%;
 }
 .mat-form-field-appearance-legacy .mat-form-field-label {
-  top: 1.28125em;
+  top: 1.25em;
 }
 .mat-form-field-appearance-legacy .mat-form-field-underline {
   bottom: 1.25em;
 }
 .mat-form-field-appearance-legacy .mat-form-field-subscript-wrapper {
-  margin-top: 0.5416666667em;
+  margin-top: 0.6666666667em;
   top: calc(100% - 1.6666666667em);
 }
 @media print {
   .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28116em) scale(0.75);
+    transform: translateY(-1.24991em) scale(0.75);
   }
   .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-form-field-autofill-control:-webkit-autofill + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28115em) scale(0.75);
+    transform: translateY(-1.2499em) scale(0.75);
   }
   .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-    transform: translateY(-1.28114em) scale(0.75);
+    transform: translateY(-1.24989em) scale(0.75);
   }
 }
 .mat-form-field-appearance-fill .mat-form-field-infix {
   padding: 0.25em 0 0.75em 0;
 }
 .mat-form-field-appearance-fill .mat-form-field-label {
-  top: 1.09375em;
+  top: 1em;
   margin-top: -0.5em;
 }
 .mat-form-field-appearance-fill.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-fill.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-0.59373em) scale(0.75);
+  transform: translateY(-0.49998em) scale(0.75);
   width: 133.3333533333%;
 }
 .mat-form-field-appearance-fill.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-0.59372em) scale(0.75);
+  transform: translateY(-0.49997em) scale(0.75);
   width: 133.3333633333%;
 }
 .mat-form-field-appearance-outline .mat-form-field-infix {
   padding: 1em 0 1em 0;
 }
 .mat-form-field-appearance-outline .mat-form-field-label {
-  top: 1.84375em;
+  top: 1.75em;
   margin-top: -0.25em;
 }
 .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
 .mat-form-field-appearance-outline.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.59373em) scale(0.75);
+  transform: translateY(-1.49998em) scale(0.75);
   width: 133.3333533333%;
 }
 .mat-form-field-appearance-outline.mat-form-field-can-float .mat-input-server[label]:not(:label-shown) + .mat-form-field-label-wrapper .mat-form-field-label {
-  transform: translateY(-1.59372em) scale(0.75);
+  transform: translateY(-1.49997em) scale(0.75);
   width: 133.3333633333%;
 }
 .mat-grid-tile-header,
@@ -5533,7 +5527,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   color: #af3326;
 }
 input.mat-input-element {
-  margin-top: -0.0625em;
+  margin-top: 0em;
 }
 .mat-list-base .mat-list-item {
   color: white;
@@ -5803,7 +5797,7 @@ input.mat-input-element {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 .mat-select-trigger {
-  height: 1.125em;
+  height: 1em;
 }
 .mat-drawer-container {
   background-color: #303030;
@@ -6249,8 +6243,8 @@ input.mat-input-element {
 }
 .mat-tab-label, .mat-tab-link {
   font-family: Roboto;
-  font-size: 10px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 300;
 }
 .mat-toolbar {
   background: #212121;
@@ -6304,7 +6298,7 @@ input.mat-input-element {
 .mat-toolbar h4,
 .mat-toolbar h5,
 .mat-toolbar h6 {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   margin: 0;
 }
@@ -6356,14 +6350,14 @@ input.mat-input-element {
   line-height: 1;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 200;
+  font-weight: 300;
 }
 .mat-h1,
 .mat-headline,
 .mat-typography .mat-h1,
 .mat-typography .mat-headline,
 .mat-typography h1 {
-  font: 500 2rem / 2rem Roboto;
+  font: 500 1.8rem / 1.8rem Roboto;
   letter-spacing: 0.03em;
   margin: 0 0 16px;
 }
@@ -6372,7 +6366,7 @@ input.mat-input-element {
 .mat-typography .mat-h2,
 .mat-typography .mat-title,
 .mat-typography h2 {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   margin: 0 0 16px;
 }
@@ -6437,26 +6431,26 @@ input.mat-input-element {
 }
 .mat-display-4,
 .mat-typography .mat-display-4 {
-  font: 600 4.2rem / 4.2rem Roboto;
-  letter-spacing: 0.01em;
+  font: 600 3.8rem / 3.8rem Roboto;
+  letter-spacing: 0.03em;
   margin: 0 0 56px;
 }
 .mat-display-3,
 .mat-typography .mat-display-3 {
-  font: 500 3.8rem / 3.8rem Roboto;
-  letter-spacing: 0.03em;
+  font: 600 2.8rem / 2.8rem Roboto;
+  letter-spacing: 0.02em;
   margin: 0 0 64px;
 }
 .mat-display-2,
 .mat-typography .mat-display-2 {
-  font: 700 2.8rem / 3rem Roboto;
-  letter-spacing: 0.03em;
+  font: 500 2.2rem / 2.2rem Roboto;
+  letter-spacing: 0.02em;
   margin: 0 0 64px;
 }
 .mat-display-1,
 .mat-typography .mat-display-1 {
-  font: 600 2.5rem / 2.5rem Roboto;
-  letter-spacing: 0.03em;
+  font: 500 2rem / 2rem Roboto;
+  letter-spacing: 0.01em;
   margin: 0 0 64px;
 }
 .student-name {
@@ -6472,7 +6466,7 @@ input.mat-input-element {
   letter-spacing: -0.03em;
 }
 .expanded-plus {
-  font: 300 1.8rem / 1.8rem Roboto;
+  font: 300 1.5rem / 1.5rem Roboto;
   letter-spacing: 0.03em;
   color: #E4983C;
 }
@@ -6604,10 +6598,6 @@ mat-drawer-container {
 }
 .h-zone {
   margin: 5px;
-  font-size: x-large;
-  font-weight: lighter;
-  font-feature-settings: "smcp", "c2sc";
-  font-variant-caps: all-small-caps;
   width: 100%;
   text-align: center;
   margin-bottom: 10px;
@@ -6767,7 +6757,7 @@ mat-card {
   background-color: #232429 !important;
 }
 .label {
-  color: #949698 !important;
+  color: #6c6d70 !important;
 }
 th {
   color: #949698 !important;

@@ -1,6 +1,6 @@
 <div class="mainform" style="text-align: center">
   <br>
-  <mat-card class="app-card" style="display: inline-block;width:50%;max-width: 1200px;text-align: left;">
+  <mat-card class="app-card" style="display: inline-block;width:85%;max-width: 1200px;text-align: left;">
     <table style="padding: 0;margin-left:0;width: 100%;border: none;border-spacing: 0;" *ngIf="profil">
       <tr style="width: 100%;margin:0;">
         <td *ngIf="profil?.public_photo" style="width: 150px;">
@@ -73,11 +73,8 @@
 
     <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0">
 
-      <div style="width:100%;" class="row">
-
-        <div class="column" *ngIf="profil?.works?.length>0">
-          <div class="mat-subheading-1 label">FILMOGRAPHIE</div>
-          <br>
+      <mat-tab-group>
+        <mat-tab label="FILMOGRAPHIE" *ngIf="profil?.works?.length>0">
           <app-timeline
                   style="margin-top: 20px;"
                   [data]="works_timeline"
@@ -85,12 +82,8 @@
                   [field_class]="field_class"
                   row_style="vertical-align: top;width:100%;">
           </app-timeline>
-
-        </div>
-
-        <div class="column" *ngIf="awards_timeline?.length>0">
-          <div class="mat-subheading-1 label">RECOMPENSES</div>
-          <br>
+        </mat-tab>
+        <mat-tab label="RECOMPENSES" *ngIf="awards_timeline?.length>0">
           <app-timeline class="column"
                         style="margin-top: 20px;"
                         [data]="awards_timeline"
@@ -99,10 +92,8 @@
                         row_style="vertical-align: top;width:100%;">
           </app-timeline>
 
-        </div>
-
-
-      </div>
+        </mat-tab>
+      </mat-tab-group>
 
       <br>
       <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);">
@@ -113,9 +104,9 @@
           <mat-icon style="cursor: pointer;">shareic</mat-icon>
         </button>
 
-        <span class="label mat-body-1">Partagez ce profil public sur vos réseaux</span><br>
+        <div class="label mat-body-2">Partagez ce profil public sur vos réseaux</div><br>
         <!--      voir https://ngx-sharebuttons.netlify.app/ -->
-        <share-buttons [theme]="'circles-dark'"
+        <share-buttons [theme]="'circles-light'"
                        style="text-align: center;"
                        [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                        [show]="8"
@@ -127,10 +118,6 @@
       </div>
 
     </div>
-
-
-
-
 
   </mat-card>
 

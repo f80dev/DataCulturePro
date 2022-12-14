@@ -53,7 +53,7 @@ export class PublicComponent implements OnInit {
               icon: this.config.icons["Award"],
               sources:a.source,
               type:"award",
-              label:a.description + " - " + a.festival.title
+              label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ a.pow.title+"</span></div>"
             })
             old_year=a.year;
           }
@@ -88,7 +88,7 @@ export class PublicComponent implements OnInit {
       }
       _w.type="work";
       _w.subtitle=_w.title;
-      _w.label=_w.job+" pour <a class='primary-color' href='./pows?query=\""+_w.title+"\"'>"+_w.title+"</a>"
+      _w.label="<div class='mat-subheading-2'>"+_w.job+" pour <a class='primary-color' href='./pows?query=\""+_w.title+"\"'>"+_w.title+"</a></div>"
 
       // if(_w.public)
 
@@ -131,6 +131,11 @@ export class PublicComponent implements OnInit {
       this.awards_timeline=lst_awards;
 
       let works=group_works(p.works);
+      let lastYear="";
+      for(let i=0;i<works.length;i++){
+        if(works[i].year==lastYear)works[i].year="";
+        if(works[i].year!="")lastYear=works[i].year;
+      }
       this.works_timeline=this.create_works_timeline(p,works);
 
       let lst=Object.values(this.profil.expe).sort((a,b) => (a<b ? 1 : -1));
@@ -167,8 +172,8 @@ export class PublicComponent implements OnInit {
   }
 
   field_style={
-    year:{margin:0,padding:0,'font-size':'3em',color: 'grey','margin-top':'30px','margin-bottom':'15px'},
-    label:{margin:0,padding:0,'font-size':'1.2em','line-height':'120%',color: 'white','margin-bottom':'15px'}
+    year:{margin:0,padding:0,'font-size':'3.5em','font-weight':'lighter',color: 'grey','margin-top':'50px','margin-bottom':'25px'},
+    label:{margin:0,padding:0,'line-height':'120%',color: 'white','margin-bottom':'15px'}
   }
 
   field_class={

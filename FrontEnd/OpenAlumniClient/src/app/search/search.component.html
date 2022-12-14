@@ -15,10 +15,10 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
-  <div *ngIf="profils.length==0"
-       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:20px;font-size: large;opacity: 0.8;">
-    Rechercher des anciens élève de la FEMIS
-  </div>
+  <h2 *ngIf="profils.length==0"
+       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:50px;">
+    Rechercher des anciens de la FEMIS
+  </h2>
 
   <div id="legende" style="width:100%;text-align: center;margin-top: 20px;" *ngIf="profils.length>0">
     <table style="display: inline-block;width:fit-content;">
@@ -39,7 +39,7 @@
     <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="Rechercher par nom, métier, promotion, titre de film ou récompense"
+           placeholder="par nom, métier, promotion, titre de film ou récompense"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"
@@ -53,7 +53,8 @@
   <mat-icon *ngIf="query.value?.length==0"
             id="cmdHelp"
             (click)="help()">help</mat-icon>
-  <mat-icon *ngIf="advanced_search?.length==0"
+
+  <mat-icon *ngIf="advanced_search?.length==0" style="margin-left:10px;"
             id="cmdExpertMode"
             (click)="switch_motor()">add_circle</mat-icon>
 
@@ -109,8 +110,10 @@
   <br>
 
   <div *ngIf="query.value.length<3"
-       style="width: 100%;text-align: center;margin-top: 20px;" >
-    <mat-slide-toggle [(ngModel)]="add_pro">Inclure la formation professionnelle</mat-slide-toggle>
+       style="width: 100%;text-align: center;margin-top: 40px;" >
+    <mat-slide-toggle [(ngModel)]="add_pro">
+      Inclure la formation professionnelle
+    </mat-slide-toggle>
   </div>
 
 

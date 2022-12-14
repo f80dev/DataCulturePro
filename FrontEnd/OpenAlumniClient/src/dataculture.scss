@@ -3,21 +3,22 @@
 
 @include mat.core();
 
-
 $dataculture-typography: mat.define-typography-config(
-        $display-4: mat.define-typography-level(4.2rem, 4.2rem, 600, Roboto, $letter-spacing: 0.01em),
-        $display-3: mat.define-typography-level(3.8rem, 3.8rem, 500, Roboto, $letter-spacing: 0.03em),       //H2
-        $display-2: mat.define-typography-level(2.8rem, 3rem, 700, Roboto, $letter-spacing: 0.03em), //H3
-        $display-1: mat.define-typography-level(2.5rem, 2.5rem, 600,Roboto, $letter-spacing: 0.03em),
-        $headline:  mat.define-typography-level(2rem, 2rem, 500,Roboto, $letter-spacing: 0.03em),
-        $title:  mat.define-typography-level(1.8rem, 1.8rem, 300,  Roboto, $letter-spacing: 0.03em),
-        $subheading-2:  mat.define-typography-level(16px, 16px, 400, Roboto,$letter-spacing: -0.01em),
-        $subheading-1:  mat.define-typography-level(14px, 14px, 400,Roboto,$letter-spacing: -0.01em),
-        $body-2: mat.define-typography-level(12px, 12px, 400, Roboto,$letter-spacing: -0.03em),
-        $body-1: mat.define-typography-level(11px, 11px, 300, Roboto,$letter-spacing: -0.03em),
-        $button: mat.define-typography-level(10px, 10px, 200, Roboto, $letter-spacing: -0.03em),
+        $display-4: mat.define-typography-level(3.8rem, $font-weight: 600, $font-family: Roboto, $letter-spacing: 0.03em),
+        $display-3: mat.define-typography-level(2.8rem, $font-weight: 600, $font-family: Roboto, $letter-spacing: 0.02em),
+        $display-2: mat.define-typography-level(2.2rem, $font-weight: 500, $font-family: Roboto, $letter-spacing: 0.02em),
+        $display-1: mat.define-typography-level(2.0rem, $font-weight: 500, $font-family: Roboto, $letter-spacing: 0.01em),
+        $headline: mat.define-typography-level(1.8rem, $font-weight: 500, $font-family: Roboto, $letter-spacing: 0.03em),       //h1
+        $title: mat.define-typography-level(1.5rem, $font-weight: 300, $font-family: Roboto, $letter-spacing: 0.03em),          //h2
+        $subheading-2: mat.define-typography-level(16px, 16px, 400, Roboto, $letter-spacing: -0.01em),                          //h3
+        $subheading-1: mat.define-typography-level(14px, 14px, 400, Roboto, $letter-spacing: -0.01em),                          //h4
+        $body-2: mat.define-typography-level(12px, 12px, 400, Roboto, $letter-spacing: -0.03em),
+        $body-1: mat.define-typography-level(11px, 11px, 300, Roboto, $letter-spacing: -0.03em),
+        $button: mat.define-typography-level(11px, 11px, 300, Roboto, $letter-spacing: -0.03em),
         $caption: mat.define-typography-level(10px, 10px, 300, Roboto, $letter-spacing: -0.03em),
+        $input: mat.define-typography-level(1em, 1em, 300, Roboto, $letter-spacing: -0.03em)
 );
+
 
 
 //voir https://material.angular.io/guide/theming#palettes
@@ -109,6 +110,8 @@ $dataculture-theme:mat.define-dark-theme((
         ),
         typography: $dataculture-typography,
 ));
+
+
 
 
 @include mat.all-component-themes($dataculture-theme);

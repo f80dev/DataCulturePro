@@ -71,19 +71,21 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
   ngOnInit(): void {
-    checkLogin(this,()=>{
-      this.message = "Chargement de votre profil";
-      this.loadProfil(() => {
-        this.showAddWork = 0;
-        this.message = "";
-        this.autoAddMovie();
-        this.refresh_job();
-        this.refresh_students();
-        this.refresh_works();
-        this.refresh_awards();
-        //this.refresh_relations(); //TODO: a corriger avant de réactiver
-      });
-    },()=>{this.quit();})
+    this.config.user_update.subscribe(()=>{
+      checkLogin(this,()=>{
+        this.message = "Chargement de votre profil";
+        this.loadProfil(() => {
+          this.showAddWork = 0;
+          this.message = "";
+          this.autoAddMovie();
+          this.refresh_job();
+          this.refresh_students();
+          this.refresh_works();
+          this.refresh_awards();
+          //this.refresh_relations(); //TODO: a corriger avant de réactiver
+        });
+      },()=>{this.quit();})
+    })
   }
 
   refresh(){
@@ -117,7 +119,8 @@ export class EditComponent implements OnInit,OnDestroy  {
       //TODO: ouvrir la fenetre works si non vide
       this.works=group_works(r.results);
       for(let w of this.works) {
-        if(w.pow)this.pows.push(w.pow);
+        w.job=w.jobs.join(" & ");
+        this.pows.push(w);
       }
 
     },(err)=>{

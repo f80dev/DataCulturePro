@@ -205,8 +205,6 @@
               </td>
             </tr></table>
         </div>
-
-
       </mat-expansion-panel>
 
       <!--      Job-->
@@ -238,13 +236,8 @@
               <div style="line-height: 90%;font-size: small;">{{site.description}}</div>
             </td>
             <td style="width:110px;text-align: right;">
-              <button class="icon-button" style="margin:0;" title="Rechercher" mat-icon-button mat-raised-button (click)="opensite(site,'search')">
-                <mat-icon>search</mat-icon>
-              </button>
-              &nbsp;
-              <button class="icon-button" title="Se connecter" mat-icon-button mat-raised-button (click)="opensite(site,'login')">
-                <mat-icon>person</mat-icon>
-              </button>
+              <mat-icon (click)="opensite(site,'search')">search</mat-icon>
+              <mat-icon title="Se connecter" (click)="opensite(site,'login')">person</mat-icon>
             </td>
           </tr>
         </table>
@@ -297,7 +290,7 @@
             </td>
             <td style="text-align: right;width:70px;" name="experience_panel">
 
-              <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
+              <mat-icon
                         name="cmdEdit"
                         (click)="edit_work(work)">
                 edit
