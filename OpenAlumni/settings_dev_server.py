@@ -189,8 +189,8 @@ DATABASES = {
         "NAME": "dataculture",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.europlots.com',
-        'PORT': '30573',
+        'HOST': 'provider.bdl.computer',
+        'PORT': '31509',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }

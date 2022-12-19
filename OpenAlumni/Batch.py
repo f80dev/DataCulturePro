@@ -822,6 +822,7 @@ def dict_to_pow(film:dict,content=None):
 def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={},header=list()):
     """
     Permet l'importation dynamique des colonnes
+    version 1.0
     :param col:
     :param row:
     :param default:
@@ -849,6 +850,12 @@ def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={}
 
 
 def importer_file(file):
+    """
+    Systeme d'importation de fichier csv ou excel
+    version 1.0
+    :param file:
+    :return:
+    """
     d=list()
 
     log("Importation de fichier")

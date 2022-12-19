@@ -51,7 +51,7 @@ from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
-    profils_importer
+    profils_importer, idx
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
 from OpenAlumni.nft import NFTservice
