@@ -1,17 +1,11 @@
 <mat-nav-list class="sidemenu">
   <br>
   <header>
-    <div *ngIf="!config.user?.user?.email || config.user?.user?.email?.length==0"
-         style="width:100%;text-align:center;opacity: 0.2;" >
-      Connectez-vous pour utiliser<br>
-      les fonctionalités avancées
-    </div>
-
-    <div *ngIf="config.user?.user?.email.length>0" style="margin: 10px;">
-      <div style="color:lightgray;font-size: x-small">Bonjour,</div>
-      {{config.user?.user?.email}}
-      <br><br>
-    </div>
+<!--    <div *ngIf="config.user?.user?.email.length>0" style="margin: 10px;" class="label">-->
+<!--      <small>Bonjour,</small><br>-->
+<!--      {{config.user?.user?.email}}-->
+<!--      <br><br>-->
+<!--    </div>-->
     <br>
 
     <a title="Consultation de l'annuaire"
@@ -26,7 +20,7 @@
        routerLink="pows"
        mat-list-item
        id="cmdShowMovies">
-      <mat-icon>theaters</mat-icon>
+      <mat-icon>movie</mat-icon>
       Films
     </a>
 
@@ -122,10 +116,8 @@
        (click)="router.navigate(['login'])"
        id="cmdLogin">
       <mat-icon>login</mat-icon>
-      Se Connecter
+      Se connecter
     </a>
-    <br>
-    <br>
 
     <a title="Voir les NFTs"
        routerLink="nfts"
@@ -144,22 +136,20 @@
     </a>
 
 
-    <br>
     <a title="A propos" routerLink="about"
        mat-list-item
        id="cmdAbout">
-      <mat-icon>article</mat-icon>
+      <mat-icon>info</mat-icon>
       A propos
     </a>
 
-    <br>
-
     <a title="Administration"
+       style="margin-top: 50px;"
        *ngIf="isLocal || config.hasPerm('admin')"
        mat-list-item routerLink="admin"
        id="cmdAdmin">
       <mat-icon>settings</mat-icon>
-      Console<br>d'administration
+      Administration
     </a>
 
   </footer>

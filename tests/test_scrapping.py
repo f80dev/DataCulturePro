@@ -1,9 +1,9 @@
 import pytest
 
 from OpenAlumni.Batch import extract_profil_from_imdb, extract_profil_from_unifrance, extract_film_from_imdb, \
-	add_pows_to_profil, extract_film_from_unifrance, extract_awards_from_imdb
+	add_pows_to_profil, extract_film_from_unifrance, extract_awards_from_imdb, create_article
 from OpenAlumni.Tools import equal_str, log
-from alumni.models import Profil
+from alumni.models import Profil, PieceOfWork
 
 
 def test_extract_profil(lastname="ducournau",firstname="julia",refresh_delay=0,_return=None):
@@ -61,5 +61,6 @@ def test_movies(pows=["Plus belle la vie","titane"]):
 	for pow in pows:
 		rc=test_extract_movies(pow,refresh_delay=3)
 		assert not rc is None
+
 
 

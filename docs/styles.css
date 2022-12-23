@@ -6655,11 +6655,11 @@ mat-expansion-panel {
   margin: 5px;
 }
 mat-expansion-panel-header {
-  height: 45px !important;
-  padding-left: 10px !important;
-  font-weight: lighter !important;
-  font-size: small !important;
+  height: 40px !important;
+  padding-left: 15px !important;
+  font-weight: bold !important;
   width: 100% !important;
+  color: #cc4137;
 }
 mat-expansion-panel-content {
   padding: 2px !important;
@@ -6684,6 +6684,7 @@ mat-action-row {
 }
 .dark_separator {
   border: 1px solid black;
+  opacity: 0.3;
   width: 100%;
   margin-top: 10px;
   margin-bottom: 5px;
@@ -6700,16 +6701,16 @@ mat-action-row {
   border-radius: 45px 45px;
 }
 .fi-color {
-  color: #5471D2;
+  color: #81C784;
 }
 .material-icon.fi-color {
-  color: #5471D2;
+  color: #81C784;
 }
 .material-icon.fc-color {
-  color: #81C784;
+  color: #5471D2;
 }
 .fc-color {
-  color: #81C784;
+  color: #5471D2;
 }
 .flip-card {
   max-width: 400px;
@@ -6736,11 +6737,11 @@ mat-action-row {
 }
 .flip-card-front, .flip-card-back {
   position: absolute;
-  border-radius: 10px 10px;
+  border-radius: 16px 16px;
   background-color: #232429;
   padding: 10%;
   width: 80%;
-  height: 100px;
+  height: 90px;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   overflow: hidden;

@@ -19,7 +19,9 @@
           <hr class="dark_separator">
           <br>
 
-          <table style="margin:0;padding:0;;border-spacing: 10px;vertical-align: top;" id="tableProperties" class="mat-body-2 blur">
+          <table style="margin:0;padding:0;;border-spacing: 10px;vertical-align: top;"
+                 id="tableProperties"
+                 class="mat-body-2 blur">
             <tr>
               <td [title]="'Composition de la promotion '+profil.degree_year" class="label mat-body-2" style="min-width: 200px;">Promotion<br></td>
               <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})" style="cursor: pointer;">{{profil?.degree_year}}</td>
@@ -41,14 +43,6 @@
               <td>
                 {{expe}}<br>
 
-              </td>
-
-            </tr>
-            <tr *ngIf="profil.works?.length>0">
-              <td></td>
-              <td>
-                <span *ngIf="profil.works?.length>0">{{profil.works.length}} films</span><br>
-                <span *ngIf="profil.awards?.length>0">{{profil.awards.length}} récompenses</span>
               </td>
             </tr>
             <tr *ngIf="profil?.links?.length>0">
@@ -75,6 +69,7 @@
 
       <mat-tab-group>
         <mat-tab label="FILMOGRAPHIE" *ngIf="profil?.works?.length>0">
+          <div class="label" style="margin-top: 20px" *ngIf="profil.works?.length>5">({{profil.works.length}} résultats)</div>
           <app-timeline
                   style="margin-top: 20px;"
                   [data]="works_timeline"
@@ -84,6 +79,7 @@
           </app-timeline>
         </mat-tab>
         <mat-tab label="RECOMPENSES" *ngIf="awards_timeline?.length>0">
+          <div class="label"  *ngIf="profil.awards?.length>5" style="margin-top: 20px">({{profil.awards.length}} résultats=</div>
           <app-timeline class="column"
                         style="margin-top: 20px;"
                         [data]="awards_timeline"
@@ -107,11 +103,11 @@
         <div class="label mat-body-2">Partagez ce profil public sur vos réseaux</div><br>
         <!--      voir https://ngx-sharebuttons.netlify.app/ -->
         <share-buttons [theme]="'circles-light'"
-                       style="text-align: center;"
+                       style="text-align: center;filter: grayscale(1);opacity: 0.3;"
                        [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                        [show]="8"
                        [url]="url"
-                       description="Découvrez mon profil et mes réalisations"
+                       description="Mon profil et mes réalisations sur l'annuaire de la FEMIS"
                        tags="FEMIS"
                        [title]="title">
         </share-buttons>

@@ -24,7 +24,8 @@
     <br>{{appVersion}}<br><br><br>
     <table style="display: inline-block;">
       <tr>
-        <td style="width: 50%;text-align: right;">Réalisation</td>
+        <td style="width: 50%;text-align: right;" class="label">Réalisation</td>
+        <td>&nbsp;</td>
         <td style="width: 50%;text-align: left;">
           <a style="color:lightgray;font-variant: normal;font-weight: normal;" [href]="config.values.editor?.link_author" target="_blank">
             {{config.values.editor?.author}}
@@ -32,7 +33,8 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50%;text-align: right;">Edition</td>
+        <td style="width: 50%;text-align: right;" class="label">Edition</td>
+        <td>&nbsp;</td>
         <td style="width: 50%;text-align: left;">
           <a style="color:lightgray;font-variant: normal;font-style: normal;font-weight: normal;" [href]="config.values.editor?.website" target="_blank">
             <strong>{{config.values.editor?.name}}</strong>
@@ -40,7 +42,8 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 50%;text-align: right;">Conditions générales</td>
+        <td style="width: 50%;text-align: right;" class="label">Conditions générales</td>
+        <td>&nbsp;</td>
         <td style="width: 50%;text-align: left;">
           <a style="color:lightgray;font-variant: normal;font-style: normal;font-weight: normal;" title="Conditions d'utilisation" mat-list-item routerLink="cgu" id="cmdCGU">
             CGU

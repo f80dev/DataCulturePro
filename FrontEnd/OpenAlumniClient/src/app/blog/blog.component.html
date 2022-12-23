@@ -1,15 +1,13 @@
 <div class="mainform" style="overflow: hidden;">
 
-  <div style="margin:10px;text-align: left;">
-    <mat-form-field appearance="legacy" color="accent"
-                    style="max-width:600px;width: 80%;font-size: small;">
-      <mat-label style="font-size: medium;">Afficher les articles</mat-label>
-      <mat-select name="selOrder" [(ngModel)]="selected_tag" (ngModelChange)="refresh()" multiple>
-        <mat-option *ngFor="let tag of allTags" [value]="tag">
-          {{tag}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div style="margin:10px;text-align: center;width:100%;">
+
+
+   <mat-checkbox *ngFor="let tag of allTags" class="mat-body-2"
+                 [(ngModel)]="tag.checked" style="margin: 20px;"
+                 (ngModelChange)="refresh()">
+     {{tag.label}}
+   </mat-checkbox>
 
     <button class="app-button" mat-button mat-raised-button
             id="cmdEdit" style="margin: 25px;"

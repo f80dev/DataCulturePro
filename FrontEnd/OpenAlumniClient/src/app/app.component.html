@@ -6,10 +6,15 @@
 </app-tuto>
 
 <mat-toolbar class="toolbar-app" (mousedown)="closeMenu()">
+  <div style="width:170px;text-align: right;" *ngIf="sidemenu_mode=='side'">
+    <mat-icon style="cursor: pointer;margin: 10px;color:white;" (click)="drawer.toggle()">
+      menu_open
+    </mat-icon>
+  </div>
   <mat-icon
-    id="cmdMenu"
+    id="cmdMenu" *ngIf="sidemenu_mode=='over'"
     (click)="drawer.toggle()"
-    style="cursor: pointer;margin: 10px">
+    style="cursor: pointer;margin: 10px;color:white;">
     menu
   </mat-icon>
 

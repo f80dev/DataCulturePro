@@ -13,8 +13,12 @@ import {tArticle} from "../types";
 export class BlogComponent implements OnInit {
   articles: tArticle[]=[];
 
-  allTags: string[] = ['Sortie de film', 'Evénements','Info professionnelle',"Offre d'emploi"];
-  selected_tag=this.allTags;
+  allTags: any[] = [
+    {label:'Sortie de film',checked:true},
+    {label:'Evénements',checked: false},
+    {label:'Info professionnelle',checked: false},
+    {label:'Offre d\'emploi',checked: false}
+  ];
 
   constructor(
     public api:ApiService,
@@ -35,8 +39,8 @@ export class BlogComponent implements OnInit {
       this.articles=[];
       for(let a of articles.results){
         if(this.config.hasPerm('validate') || a.validate){
-          for(let tag of this.selected_tag){
-            if(a.tags.indexOf(tag)>-1){
+          for(let tag of this.allTags){
+            if(tag.checked && a.tags.indexOf(tag.label)>-1){
               this.articles.push(a);
               break;
             }
@@ -67,6 +71,6 @@ export class BlogComponent implements OnInit {
   }
 
   notif(article: any) {
-
   }
+
 }

@@ -21,7 +21,7 @@ export class ProfilComponent implements OnChanges {
   @Input("pows") pows:number=1;
   @Input("showAction") showAction:boolean=true;
   @Input("writeAccess") writeAccess:boolean=false;
-  @Input("backgroundColor") backgroundColor:string="x404040";
+  @Input("backgroundColor") backgroundColor:string="";
   @Input("width") width="320px";
   @Output('delete') ondelete: EventEmitter<any>=new EventEmitter();
   @Output('askfriend') onaskfriend: EventEmitter<any>=new EventEmitter();

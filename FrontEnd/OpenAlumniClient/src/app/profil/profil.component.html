@@ -16,7 +16,6 @@
 
                     <td style="text-align: right;width: min-content;" >
                         <div *ngIf="config.hasPerm('r_promo')">
-                            <!--            <span *ngIf="profil?.cursus=='P'" name="lblCursus">Formation Pro - </span>-->
                             <span style='cursor: pointer' name="lblPromo"
                                   [title]="'Toute la promotion '+profil?.degree_year"
                                   (dblclick)="openQuery($event,profil?.degree_year)">
@@ -29,7 +28,6 @@
                     </td>
                 </tr>
             </table>
-            <br>
             <hr class="dark_separator">
 
             <!--            A voir si l'on supprime la présentation de la photo-->
@@ -44,7 +42,7 @@
             <!--            </div>-->
 
 
-            <table style="width:100%;margin-top: 15px;">
+            <table style="width:100%;margin-top: 10px;">
                 <tr class="mat-subheading-1">
                     <td style="text-align: left;overflow: hidden;">
                         <div name="lblName" style="margin-top: 10px" class="mat-subheading-1">
@@ -64,7 +62,8 @@
                 </tr>
             </table>
 
-            <div name="cardContent" style="pointer-events: none;display:inline-block;position:absolute;left:0;top:0;height:100%;width:100%;z-index:100;">
+            <div name="cardContent"
+                 style="pointer-events: none;display:inline-block;position:absolute;left:0;top:0;height:100%;width:100%;z-index:100;">
                 <ng-content></ng-content>
                 <app-hourglass [message]="profil?.message"></app-hourglass>
             </div>

@@ -5,6 +5,8 @@ from urllib import parse
 from urllib.parse import urlparse
 from json import loads
 
+import yaml
+from django.contrib.auth.models import User
 from django.core import management
 from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
@@ -18,9 +20,9 @@ from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, in_dict, load_json, remove_html, fusion, remove_ponctuation, \
     equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp
 
-from OpenAlumni.settings import MOVIE_NATURE
+from OpenAlumni.settings import MOVIE_NATURE, STATIC_ROOT
 
-from alumni.models import Profil, Work, PieceOfWork, Award, Festival
+from alumni.models import Profil, Work, PieceOfWork, Award, Festival, Article, ExtraUser
 
 ia=IMDb()
 
@@ -360,7 +362,9 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     return None
 
 
-def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title="",year="",win=True,url=""):
+
+
+def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title="",year="",win=True,url="",user:ExtraUser=None):
     """
     Ajout un award sur la base d'un titre de festival, titre de film et année de récompense
     :param festival_title:
@@ -411,6 +415,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     a = Award(description=desc[:249], year=year, pow=pow, festival=f, profil=profil, winner=win,source=url)
     try:
         a.save()
+        create_article("new_award",user,profil=profil,pow=pow,award=a)
         return a
     except:
         log("!!Probleme d'enregistrement de l'award sur " + pow.title)
@@ -779,18 +784,56 @@ def extract_actor_from_wikipedia(lastname,firstname):
 
 
 
-def create_article(profil:Profil, pow:PieceOfWork, work:Work, template:str):
-    rc=template["code"]
-    fields=rc.split("{{")[1:]
-    for field in fields:
-        model=field.split(".")[0]
-        field=field.split("}}")[0].replace(model+".","")
-        if model=="profil":value=getattr(profil,field)
-        if model=="pow" :value=getattr(pow,field)
-        if model=="work":value=getattr(work,field)
-        if not value is None:
-            if type(value)==int:value=str(value)
-            rc=rc.replace("{{"+model+"."+field+"}}",value)
+def create_article(template_id:str,
+                   owner:User,
+                   profil:Profil=None,
+                   pow:PieceOfWork=None,
+                   work:Work=None,
+                   award:Award=None,
+                   visual=None):
+    """
+
+    :param profil:
+    :param pow:
+    :param work:
+    :param template:
+    :return:
+    """
+    if owner is None:return False
+
+    rc=False
+    f=open(STATIC_ROOT+"/news_template.yaml", "r",encoding="utf-8")
+    templates=yaml.safe_load(f.read())["templates"]
+    for template in templates:
+        if template["id"]==template_id:
+            for section in ["content","title","description","visual"]:
+                code=template[section]
+                fields=code.split("{{")[1:]
+                for field in fields:
+                    model=field.split(".")[0]
+                    field=field.split("}}")[0].replace(model+".","")
+                    if model=="profil":value=getattr(profil,field) if profil else ""
+                    if model=="pow" :value=getattr(pow,field) if pow else ""
+                    if model=="work":value=getattr(work,field) if work else ""
+                    if model=="award":value=getattr(award,field) if award else ""
+                    if not value is None:
+                        if type(value)==int:value=str(value)
+                        code=code.replace("{{"+model+"."+field+"}}",value)
+                template[section]=code
+
+            try:
+                article=Article(
+                    title=template["title"],
+                    summary=template["description"],
+                    visual=template["visual"] if visual is None else visual,
+                    content=template["content"],
+                    owner=owner,
+                    to_publish=True,validate=True
+                )
+                save_result=article.save()
+                rc=True
+            except:
+                rc=False
 
     return rc
 
@@ -1037,7 +1080,7 @@ def profils_importer(data_rows,limit=10,dictionnary={}):
 
 
 
-def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=None,content=None):
+def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=None,user:User=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -1142,10 +1185,9 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
                             work = Work(pow=pow, profil=profil, job=t_job, source=source)
                             try:
                                 work.save()
+                                create_article("new_work",user,profil=profil, pow=pow, work=work)
                             except Exception as inst:
                                 log("Impossible d'enregistrer le travail: " + str(inst.args))
-
-                            if len(templates) > 0: articles.append(create_article(profil, pow, work, templates[0]))
                         else:
                             log("Pas d'enregistrement de la contribution job="+job)
 
@@ -1173,7 +1215,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,templates=[],bot=
             #                 work.save()
             #                 n_works=n_works+1
 
-    return n_films,n_works,articles
+    return n_films,n_works
 
 
 
@@ -1196,7 +1238,7 @@ def exec_batch_movies(pows,refresh_delay=31):
 #http://localhost:8000/api/batch
 def exec_batch(profils,refresh_delay_profil=31,
                refresh_delay_pages=31,limit=2000,
-               limit_contrib=10,templates=list(),
+               limit_contrib=10,
                content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False},
                remove_works=False):
     """
@@ -1283,8 +1325,7 @@ def exec_batch(profils,refresh_delay_profil=31,
             if remove_works:
                 Work.objects.filter(profil_id=profil.id,source__contains="auto").delete()
 
-            rc_films,rc_works,articles=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,templates=templates,bot=bot)
-            rc_articles.append(articles)
+            rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
             if imdb_profil_url:
                 awards=extract_awards_from_imdb(imdb_profil_url)
                 for award in awards:
@@ -1324,7 +1365,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
     #clear_directory("./Temp","html")
 
-    return n_films,n_works,rc_articles
+    return n_films,n_works
 
 
 # def find_double():

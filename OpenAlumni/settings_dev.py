@@ -208,7 +208,7 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "dataculture_test",
+        "NAME": "dataculture",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
         'HOST': 'provider.bdl.computer',

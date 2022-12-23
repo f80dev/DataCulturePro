@@ -172,7 +172,7 @@ export class PublicComponent implements OnInit {
   }
 
   field_style={
-    year:{margin:0,padding:0,'font-size':'3.5em','font-weight':'lighter',color: 'grey','margin-top':'50px','margin-bottom':'25px'},
+    year:{margin:0,padding:0,'font-size':'2.5em','font-weight':'lighter',color: 'grey','margin-top':'50px','margin-bottom':'25px'},
     label:{margin:0,padding:0,'line-height':'120%',color: 'white','margin-bottom':'15px'}
   }
 

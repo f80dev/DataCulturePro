@@ -1,11 +1,32 @@
 version: 0.1
 description: Liste des templates de modèle de document
 templates:
-  - id: basique
+  - id: new_work
     lang: fr
-    description: Modèle basique pour l'ajout des contributions
-    code: "
-    <li>
+    description: "Modèle basique pour l'ajout des contributions"
+    content: "
      Nouvelle contribution de {{profil.firstname}} {{profil.lastname}} ({{profil.department}} - {{profil.degree_year}}) sur {{pow.title}} comme {{work.job}}
-     </li>
     "
+    title: "{{profil.fullname}} à travaillé sur {{pow.title}}"
+    visual: "{{pow.visual}}"
+
+
+  - id: new_pow
+    lang: fr
+    description: "{{pow.synopsis}}"
+    content: "
+     Le film {{pow.title}} est maintenant présent dans l'annuaire
+    "
+    title: "Référencement de {{pow.title}} ({{pow.year}}) dans l'annuaire"
+    visual: "{{pow.visual}}"
+
+
+  - id: new_profil
+    lang: fr
+    description: Référencement de {{profil.fullname}} dans l'annuaire
+    content: "
+     La carrière de {{profil.fullname}} issue du département ({{profil.department}}, 
+     promotion {{profil.degree_year}}) est maintenant disponible dans l'annuaire
+    "
+    title: "Retrouvez {{profil.fullname}} promo {{profil.degree_year}} dans l'annuaire"
+    visual: "{{profil.photo}}"

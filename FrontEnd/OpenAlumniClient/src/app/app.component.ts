@@ -11,6 +11,7 @@ import {$$} from "./tools";
 import {PromptComponent} from "./prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
+import {DeviceService} from "./device.service";
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit,AfterViewInit {
               public api:ApiService,
               public dialog:MatDialog,
               public _location:Location,
+              public device:DeviceService,
               public responsive: BreakpointObserver,
               public routes:ActivatedRoute,
               public router:Router){
@@ -41,12 +43,16 @@ export class AppComponent implements OnInit,AfterViewInit {
       this.config.init_user(null,null,localStorage.getItem("email"));
     });
     this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{this.simple_screen=result.matches;})
-
   }
 
+
+
+
   closeMenu() {
-    if (this.innerWidth < 800)
+
       this.drawer.close();
+      this.sidemenu_mode="over";
+
   }
 
   logout() {
@@ -60,13 +66,14 @@ export class AppComponent implements OnInit,AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize($event: any) {
     this.innerWidth = $event.currentTarget.innerWidth;
+    this.device.resize(this.innerWidth);
     if (this.innerWidth >= 800 && this.drawer){
       this.sidemenu_mode="side";
       this.drawer.open();
     }
     else{
       this.closeMenu();
-      this.sidemenu_mode="over";
+
     }
 
   }

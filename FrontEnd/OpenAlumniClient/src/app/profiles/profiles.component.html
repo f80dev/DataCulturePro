@@ -2,23 +2,25 @@
   <div style="max-width: 500px;text-align: center;display: inline-block;">
 
     <br>
-    <h2>Choisir un nouveau profil</h2>
+    <h3>Choisir un nouveau profil</h3>
 
     <app-tuto label="Les profils correspondent à des besoins particuliers, avoir le bon profil permet de simplifier l'usage de %APPNAME%"></app-tuto>
 
     <app-tuto label="%appname% propose différents profils d'utilisateur pour s'adapter a vos besoins et ne présentez que les informations dont vous avez réelement besoin"></app-tuto>
 
-    <mat-accordion [multi]="false" >
-      <div *ngFor="let profil of profils" style="text-align: left;">
-        <mat-expansion-panel *ngIf="profil.subscription=='online' || profil.subscription=='email'" name="tabProfils"  style="margin:10px;;display: inline-block;">
+    <mat-accordion [multi]="false" style="text-align: left;width: 80%;max-width: 600px;">
+      <div *ngFor="let profil of profils" style="width: 100%;">
+        <mat-expansion-panel *ngIf="profil.subscription=='online' || profil.subscription=='email' || !config.isProd()"
+                             name="tabProfils" class="mat-body-1"
+                             style="margin:10px;display: inline-block;width: 100%;">
 
           <mat-expansion-panel-header>
-            <mat-panel-title class="app-mat-panel-title">{{profil.title}}</mat-panel-title>
+            {{profil.title}}
           </mat-expansion-panel-header>
 
           <p>{{profil.presentation}}</p>
 
-          <div style="font-size: small;text-align: left;color:lightgrey;">
+          <div style="text-align: left;color:lightgrey;line-height: 120%;">
             Ce profil vous donnes accès:
             <div [innerHTML]="show_perm(profil.id)"></div>
             <br>
@@ -28,7 +30,6 @@
             <br><br>
             Prix:{{profil.price}}€/mois
           </div>
-
 
           <mat-action-row>
             <button mat-button mat-raised-button

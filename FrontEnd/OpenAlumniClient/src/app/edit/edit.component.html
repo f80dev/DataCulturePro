@@ -9,7 +9,7 @@
       <!--      Civilité -->
       <mat-expansion-panel  id="pnlAdmin">
         <mat-expansion-panel-header>
-          <mat-panel-title>Civilité</mat-panel-title>
+          Civilité
         </mat-expansion-panel-header>
 
         <img [src]="profil.photo"
@@ -79,9 +79,9 @@
       <!--      Réseau sociaux -->
       <mat-expansion-panel  style="text-align: left;" id="pnlSocial">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Réseaux sociaux
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
         Vos adresses sur les réseaux sociaux<br>
         <table style="width: 100%;vertical-align: text-top;">
@@ -120,9 +120,9 @@
       <!--      Mentorat-->
       <mat-expansion-panel  style="text-align: left;" id="pnlTutorat" *ngIf="config.hasPerm('tutorat')">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Tutorat
-          </mat-panel-title>
+          
 
         </mat-expansion-panel-header>
 
@@ -210,9 +210,9 @@
       <!--      Job-->
       <mat-expansion-panel  style="text-align: left;" id="pnlJob" *ngIf="config.hasPerm('job_search')">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Offres d'emplois
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
 
         <mat-form-field appearance="legacy" class="app-field" style="width: 70%;max-width: 250px;font-size: small;">
@@ -247,9 +247,9 @@
       <!--      Présence sur Internet -->
       <mat-expansion-panel [expanded]="expanded_internet_pnl" id="pnlInternet">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Présence internet
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
         <div class="mat-body-1 label">Voir et optimiser sa présence sur Internet</div>
         <table style="width:100%;">
@@ -266,9 +266,9 @@
       <!--      Expérience -->
       <mat-expansion-panel  [expanded]="expanded_experience_pnl" id="pnlExperience">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Expériences
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
           <div *ngIf="works.length==0 && message.length==0">
@@ -339,9 +339,9 @@
       <!-- Récompenses-->
       <mat-expansion-panel  [expanded]="false" id="pnlRecompenses">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Récompenses
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
         <br>
         <table style="width: 100%;font-size: small;">
@@ -388,9 +388,9 @@
       <!--      Relations -->
       <mat-expansion-panel  [expanded]="false" id="pnlRelations" *ngIf="relations?.length>0">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          
             Réseau pro
-          </mat-panel-title>
+          
         </mat-expansion-panel-header>
         Vous avez travaillé avec:<br>
         <div *ngFor="let relation of relations" style="cursor: pointer" (click)="open_profil(relation)">
@@ -422,9 +422,8 @@
             title="Efface les films"
             *ngIf="works?.length>0 && config.hasPerm('add_movies')"
             (click)="delete_pows()">
-      <mat-icon>delete</mat-icon>
+      <mat-icon style="font-size: x-large;">delete</mat-icon>
     </button>
-
 
     <button mat-icon-button
             mat-raised-button
@@ -434,7 +433,7 @@
             title="Sont effacées uniquement les expériences issue des annuaires publiques"
             *ngIf="works?.length>0"
             (click)="reset_contrib_profil()">
-      <mat-icon>loop</mat-icon>
+      <mat-icon style="font-size: x-large;">loop</mat-icon>
     </button>
 
     <button mat-icon-button
@@ -444,7 +443,7 @@
             title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
             id="cmdAnalyse"
             (click)="analyse()">
-      <mat-icon>search</mat-icon>
+      <mat-icon style="font-size: x-large;">search</mat-icon>
     </button>
 
 

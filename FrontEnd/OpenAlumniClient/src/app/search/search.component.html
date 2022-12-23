@@ -15,10 +15,11 @@
             label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
 
 
-  <h2 *ngIf="profils.length==0"
-       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:50px;">
-    Rechercher des anciens de la FEMIS
-  </h2>
+  <h3 *ngIf="profils.length==0"
+       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:150px;">
+    Rechercher des anciens de la FEMIS par nom, métier, promotion, titre de film ou récompense
+  </h3>
+
 
   <div id="legende" style="width:100%;text-align: center;margin-top: 20px;" *ngIf="profils.length>0">
     <table style="display: inline-block;width:fit-content;">
@@ -35,11 +36,10 @@
   <br>
 
   <mat-form-field  *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" >
-    <mat-icon matPrefix style="margin-right: 10px;">person_search</mat-icon>
     <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="par nom, métier, promotion, titre de film ou récompense"
+           placeholder="Votre requête"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0"
@@ -62,7 +62,7 @@
   <div *ngIf="advanced_search?.length>0" style="display: inline-block">
     <div *ngFor="let i of advanced_search" style="display: inline-block">
 
-      <mat-form-field [ngStyle]="{width:i.width}" style="margin: 3px;">
+      <mat-form-field [ngStyle]="{width:i.width}" appearance="fill" style="margin: 10px;" class="mat-body-2">
         <mat-label>{{i.label}}</mat-label>
         <input matInput matNativeControl
                *ngIf="i.type=='text'"
@@ -106,8 +106,6 @@
             matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
             id="cmdSimpleMode"
             (click)="switch_motor()">remove_circle</mat-icon>
-
-  <br>
 
   <div *ngIf="query.value.length<3"
        style="width: 100%;text-align: center;margin-top: 40px;" >

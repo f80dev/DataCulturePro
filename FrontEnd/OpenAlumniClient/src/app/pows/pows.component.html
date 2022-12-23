@@ -39,7 +39,6 @@
     <app-hourglass [message]="message"></app-hourglass>
   </div>
 
-
   <mat-accordion #powAccordion="matAccordion" [multi]="true">
     <div class="wrap-list" style="margin: 5px;">
       <mat-expansion-panel *ngFor="let pow of pows"
@@ -48,65 +47,77 @@
                            [expanded]="pow.expanded">
 
         <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*" style="padding: 0">
-          <div style="padding: 5px;width: 100%;text-align: left;">
-            <span class="mat-subheading-1">{{pow.title}}</span>
-            <hr class="dark_separator">
-            <table style="color:white;text-align: left;width:100%;">
-              <tr>
-                <td class="mat-body-1 label">
-                    {{pow.nature}}/{{pow.category}} - {{pow.year}}
-                </td>
-                <td style="text-align: right;" class="expanded-plus">
-                  <span *ngIf="pow.expanded">-</span>
-                  <span *ngIf="!pow.expanded">+</span>
-                </td>
-              </tr>
-            </table>
-          </div>
+          <table style="width: 90%;">
+            <tr style="vertical-align: top;text-align: left;">
+              <td *ngIf="pow.visual?.length>0" style="width: 110px;">
+                <img [src]="pow.visual"
+                     class="image-photo"
+                     style="width: 100px;">
+              </td>
+              <td style="padding: 5px;text-align: left;width: max-content;">
+
+                  <div class="mat-subheading-2" style="color:white;">{{pow.title}}</div>
+                  <hr class="dark_separator">
+                  <table style="color:white;text-align: left;width:100%;">
+                    <tr>
+                      <td class="mat-body-1 label">
+                        {{pow.nature}}/{{pow.category}} - {{pow.year}}<br>
+                        <div style="font-size: small;line-height: 97%;text-align: left;padding:5px;width: 90%;display: inline-block;"
+                             *ngIf="config.hasPerm('r_movie_synopsis')">
+                          {{pow.description}}
+                        </div>
+
+                        <table style="margin: 0;padding: 0;">
+                          <tr *ngIf="pow.budget>0">
+                            <td>Budget</td><td>{{pow.budget}}€</td>
+                          </tr>
+                          <tr *ngIf="pow.production">
+                            <td>Production</td><td>{{pow.production}}</td>
+                          </tr>
+                          <tr style="vertical-align: middle;">
+                            <td>Liens</td>
+                            <td>
+                              <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')">
+
+                                <div *ngFor="let link of pow.links" style="display: inline-block;">
+                                  <div *ngIf="link.url?.length>0" style="display: inline-block;margin:2px;margin-left:5px;">
+                                    <a href="{{link.url}}" target="_blank" class="label">
+                                      {{link.text.replace("auto:","").toUpperCase()}}
+                                    </a>
+                                  </div>
+                                  <div *ngIf="link.url?.length==0" style="display: inline-block;">
+                                    {{link.text.replace("auto:","")}}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+
+
+
+                      </td>
+                      <td style="text-align: right;" class="expanded-plus">
+                        <span *ngIf="pow.expanded">-</span>
+                        <span *ngIf="!pow.expanded">+</span>
+                      </td>
+                    </tr>
+                  </table>
+
+              </td>
+            </tr>
+          </table>
         </mat-expansion-panel-header>
 
 <!--        Affichage du visuel et du resumé-->
         <div style="text-align: center;" *ngIf="config.hasPerm('r_movie_picture')">
-          <table style="width: 100%;">
-            <tr>
-              <td *ngIf="pow.visual?.length>0" style="width: min-content;">
-                <img [src]="pow.visual"
-                     class="image-photo"
-                     style="width: 100px;"
-                >
-              </td>
-              <td style="font-size: small;line-height: 97%;text-align: left;padding:5px;width: 90%;display: inline-block;"
-                  *ngIf="config.hasPerm('r_movie_synopsis')">
-                {{pow.description}}
-                <p *ngIf="pow.reference?.length>0">
-                  Budget: {{pow.budget}} €<br>
-                  Prod : {{pow.production}}
-                </p>
-              </td>
-            </tr>
-          </table>
-        </div>
-
-
-        <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')"
-             style="height:20px;vertical-align:middle;width: 100%;text-align: left;">
-
-          <div *ngFor="let link of pow.links"
-               style="font-size:small;font-weight: lighter;display: inline-block;">
-
-            <div *ngIf="link.url?.length>0" style="display: inline-block;margin:2px;margin-left:5px;">
-              <a href="{{link.url}}" target="_blank">{{link.text.replace("auto:","").toUpperCase()}}</a>
-            </div>
-            <div *ngIf="link.url?.length==0" style="display: inline-block;">
-              {{link.text.replace("auto:","")}}
-            </div>
-
-          </div>
 
         </div>
 
 
-        <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;">
+
+
+        <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;text-align: left;">
           <hr class="dark_separator">
           <table style="width: 100%;">
             <tr *ngFor="let work of pow.works"
@@ -115,19 +126,22 @@
               <td style="width: 45%;text-align: left;" class="mat-body-2 label">{{work.job.toUpperCase()}}</td>
               <td style="width: 45%;" class="mat-body-2">{{work.name}}</td>
               <td style="width: 10px;text-align: right;">
-                <mat-icon style="font-size: small;padding:0px;margin:0;height: 17px;"
+                <mat-icon style="font-size: medium;padding:0px;margin:0;height: 17px;"
                           title="Cliquer pour consulter le profil">visibility</mat-icon>
               </td>
             </tr>
           </table>
         </div>
 
-        <div *ngIf="pow.award?.length>0" style="line-height: 95%;" class="mat-body-1">
-          <br>
-          <table style="width: 100%;text-align: left;margin-bottom: 7px;padding: 10px;">
-            <tr *ngFor="let a of pow.award" style="width:100%;padding: 3px;">
+        <br>
+        <hr class="dark_separator">
+
+        <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-1">
+          <br><div class="label">Récompenses</div><br>
+          <table style="width: 100%;text-align: left;margin-bottom: 7px;">
+            <tr *ngFor="let a of pow.award" style="width:100%;">
               <td [title]="a.description" style="color:lightgrey;width:80%;">
-                {{a.festival.title}} / {{a.description}}
+                <div style="margin-bottom: 8px">{{a.festival.title}} / {{a.description}}</div>
               </td>
               <td style="width: 10px;text-align: right;">
                 {{a.year}}

@@ -2,6 +2,7 @@
 @use "sass:map"
 @use './node_modules/@angular/material' as mat
 @import './dataculture'
+@import './node_modules/ngx-sharebuttons/themes/circles'
 
 //body,html
 //  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
@@ -154,7 +155,6 @@ mat-drawer-container
   text-align: left
 
 
-
 .bloc-bouton
   margin: 0
   padding: 0
@@ -171,9 +171,10 @@ mat-dialog-title
 
 
 .app-card-panel
-  max-width: 500px
+  max-width: 580px
+  width: 60%
   padding: 10px
-  width: 100%
+  min-width: 320px
   font-size: small
   display: inline-block
 
@@ -211,11 +212,11 @@ mat-expansion-panel
   margin: 5px
 
 mat-expansion-panel-header
-  height: 45px !important
-  padding-left: 10px !important
-  font-weight: lighter !important
-  font-size: small !important
+  height: 40px !important
+  padding-left: 15px !important
+  font-weight: bold !important
   width: 100%  !important
+  color: mat.get-color-from-palette($dataculture-primary-color)
 
 mat-expansion-panel-content
   padding: 2px !important
@@ -245,6 +246,7 @@ mat-action-row
 
 .dark_separator
   border: 1px solid black
+  opacity: 0.3
   width: 100%
   margin-top: 10px
   margin-bottom: 5px
@@ -263,18 +265,16 @@ mat-action-row
 
 
 .fi-color
-  color: $dataculture-blue
+  color: $dataculture-green
 
 .material-icon.fi-color
-  color: $dataculture-blue
+  color: $dataculture-green
 
 .material-icon.fc-color
-  color: $dataculture-green
+  color: $dataculture-blue
 
 .fc-color
-  color: $dataculture-green
-
-
+  color: $dataculture-blue
 
 
 .flip-card
@@ -305,11 +305,11 @@ mat-action-row
 
 .flip-card-front, .flip-card-back
   position: absolute
-  border-radius: 10px 10px
+  border-radius: 16px 16px
   background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
   padding: 10%
   width: 80%
-  height: 100px
+  height: 90px
   -webkit-backface-visibility: hidden
   backface-visibility: hidden
   overflow: hidden

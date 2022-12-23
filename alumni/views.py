@@ -258,6 +258,7 @@ def getyaml(request):
         f=open(STATIC_ROOT+"/"+name+".yaml", "r",encoding="utf-8")
     else:
         f=urlopen(url)
+
     result=yaml.safe_load(f.read())
     return JsonResponse(result,safe=False)
 
@@ -552,19 +553,13 @@ def batch(request):
         profils.update(auto_updates="0,0,0,0,0,0")
         refresh_delay=0.1
 
-    f=open(STATIC_ROOT+"/news_template.yaml", "r",encoding="utf-8")
-    templates=yaml.safe_load(f.read())
-    f.close()
-
     profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay_profil,
+    n_films,n_works=exec_batch(profils,refresh_delay_profil,
                                         refresh_delay_page,int(limit),int(limit_contrib),
-                                        templates["templates"],
                                         content=content,remove_works=request.GET.get("remove_works","false")=="true")
-    articles=[x for x in articles if x]
 
-    return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})
+    return Response({"message":"ok","films":n_films,"works":n_works})
 
 
 @api_view(["GET"])

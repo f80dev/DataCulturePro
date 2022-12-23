@@ -92,6 +92,7 @@ import {WebcamModule} from "ngx-webcam";
 import { ScoringComponent } from './scoring/scoring.component';
 import {NgxJsonViewerModule} from "ngx-json-viewer";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ScreencutterPipe } from './screencutter.pipe';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     RgpdComponent,
     EditAwardComponent,
     TimelineComponent,
-    ScoringComponent
+    ScoringComponent,
+    ScreencutterPipe
   ],
     imports: [
         BrowserModule,
