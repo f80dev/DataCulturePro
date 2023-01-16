@@ -1,7 +1,6 @@
 import base64
-import csv
-import sys
 
+from OpenAlumni.passwords import RESET_PASSWORD
 from datetime import datetime
 from io import StringIO, BytesIO
 from json import loads
@@ -162,12 +161,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 class ExtraProfilViewSet(viewsets.ModelViewSet):
+    """
+    http://localhost:8000/api/extraprofils/424
+    """
     queryset = Profil.objects.all()
     serializer_class = ExtraProfilSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["lastname","email","degree_year","department","department_category"]
-    filterset_fields=("lastname","firstname","email","degree_year","department","department_category",)
+    filterset_fields=("id","lastname","firstname","email","degree_year","department","department_category",)
 
 
 
@@ -224,7 +226,8 @@ class ExtraAwardViewSet(viewsets.ModelViewSet):
     serializer_class = ExtraAwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields=["profil","pow","festival"]
+    filterset_fields=["profil__id","profil__lastname","profil__name_index","pow__title","festival__title","description","winner"]
+
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class FestivalViewSet(viewsets.ModelViewSet):
@@ -270,20 +273,26 @@ def getyaml(request):
 @permission_classes([AllowAny])
 def run_backup(request):
     command=request.GET.get("command","save")
-    backup_file=request.GET.get("file","db_backup.json")
+    filename=request.GET.get("file","db_backup.json")
+
+    backup_file=request.GET.get("file",filename)
+    if not backup_file.endswith(".json"):backup_file=backup_file+".json"
+
     url=request.build_absolute_uri('/')
-    exclude_table=["auth.permission","contenttypes"]
+    exclude_table=["auth.permission","contenttypes","alumni.extrauser"]
     if command=="save":
         log("Enregistrement de la base dans "+backup_file)
-        with open(backup_file, 'w') as f:
-            management.call_command("dumpdata","alumni",stdout=f,exclude=exclude_table)
+        with open(backup_file, 'w',encoding="utf8") as f:
+            management.call_command("dumpdata","alumni",stdout=f,exclude=exclude_table,indent=2)
 
         return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
 
     if command=="load":
         log("Effacement de la base")
-        management.call_command("flush",interactive=False)
-        log("Lecture du backup")
+        if request.GET.get("flush","false")=="true":
+            management.call_command("flush",interactive=False)
+            log("Lecture du backup")
+
         management.call_command("loaddata",backup_file,verbosity=3,app_label="alumni")
 
         return redirect(url+"api/reindex/")
@@ -845,6 +854,9 @@ def get_analyse_pow(request):
 @permission_classes([AllowAny])
 def raz(request):
     filter=request.GET.get("tables","all")
+    if request.GET.get("password","")!=RESET_PASSWORD:
+        return Response({"message":"Password incorrect","error":1})
+
     log("Effacement de "+filter)
 
     if "profils" in filter or filter=="all":
@@ -1460,6 +1472,9 @@ class ProfilDocumentView(DocumentViewSet):
         SimpleQueryStringSearchFilterBackend,
         # MultiMatchSearchFilterBackend
     ]
+    filter_fields ={
+        "firstname":"firstname.raw"
+    }
 
     # multi_match_search_fields = {
     #     'lastname': {'boost': 4},

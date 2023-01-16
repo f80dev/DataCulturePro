@@ -177,15 +177,15 @@ export function group_works(wrks) {
   let pows={}
 
   for(let w of wrks){
-    let pow_id=w.pow.title;
-    pows[pow_id]={year:w.pow.year,title:w.pow.title}
+    let pow_id=w.pow.id;
+    pows[pow_id]={year:w.pow.year,title:w.pow.title,pow:w.pow.id}
     if(!jobs.hasOwnProperty(pow_id))jobs[pow_id]=[];
     if(jobs[pow_id].indexOf(w.job)==-1)jobs[pow_id].push(w.job);
   }
 
   let rc=[];
   for(let k of Object.keys(jobs)){
-    rc.push({title:k,jobs:jobs[k],year:pows[k].year})
+    rc.push({title:pows[k].title,jobs:jobs[k],year:pows[k].year,pow:pows[k].pow})
   }
 
   rc.sort((a, b) => (Number(a.year) > Number(b.year) ? -1 : 1));

@@ -8,10 +8,9 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {PromptComponent} from "../prompt/prompt.component";
 import {ImageSelectorComponent} from "../image-selector/image-selector.component";
-import {FormControl} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {EditAwardComponent} from "../edit-award/edit-award.component";
-import {environment} from "../../environments/environment";
+
 
 export interface Movie {
   title: string;
@@ -35,7 +34,6 @@ export class EditComponent implements OnInit,OnDestroy  {
   projects: any[];
   jobsites: any[]=[];
   students: any[]=[];
-  displayedColumns: string[] = ["title","dtStart","sel"];
   dataSource: MatTableDataSource<Movie>=null;
 
   dtStart:Date=new Date();
@@ -147,7 +145,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     getParams(this.routes).then((params:any)=>{
       if(!params.hasOwnProperty("id"))this.quit();
       $$("Chargement du profil & des travaux");
-      this.api._get("profils/"+params["id"]+"/","").subscribe((p:any)=>{
+      this.api._get("extraprofils/"+params["id"]+"/","").subscribe((p:any)=>{
         $$("Profil chargé ",p);
 
         if(p){
@@ -378,7 +376,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   reset_works() {
     let total=this.works.length;
     for(let w of this.works){
-      if(!w.source.startsWith("man")){
+      if(w.source && w.source.startsWith("man")){
         this.api._delete("works/"+w.id+"/","").subscribe(()=>{
           total=total-1;
           this.works.splice(this.works.indexOf(w),1);
@@ -427,13 +425,11 @@ export class EditComponent implements OnInit,OnDestroy  {
     })
   }
 
-  refresh_awards(func:Function=null) {
-    this.api._get("extraawards/","profil="+this.profil.id).subscribe((awards:any)=>{
+  refresh_awards() {
       this.awards=[];
-      for(let a of awards.results)
+      for(let a of this.profil.award.sort((a,b)=>{return a.year > b.year ? -1 : 1}))
         if(a.state!="D")this.awards.push(a);
-      if(func)func();
-    })
+
   }
 
   opensite(site: any, page: string) {
@@ -496,7 +492,7 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   delete_pows() {
     for(let w of this.works){
-      this.api._delete("pows/"+w.pow.id).subscribe((r:any)=>{
+      this.api._delete("pows/"+w.pow).subscribe((r:any)=>{
         this.works.splice(this.works.indexOf(w),1);
       });
     }

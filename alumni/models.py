@@ -45,7 +45,7 @@ class Profil(models.Model):
                               choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
     lastname = models.CharField(max_length=70, null=False, default='', help_text="Nom du profil")
-    name_index=models.CharField(max_length=70, null=False, default='', help_text="Index du nomprenom du profil")
+    name_index=models.CharField(max_length=70, null=False, default='', help_text="Index du prenom+nom du profil sans accent, sans espace")
 
     public_photo=models.BooleanField(default=False,null=False,help_text="Indique si la photo peut être ou pas présentée sur la page publique")
     birthdate=models.DateField(null=True,help_text="Date de naissance du profil")

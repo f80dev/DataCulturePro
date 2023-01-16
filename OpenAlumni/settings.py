@@ -164,8 +164,8 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.bdl.computer',
-        'PORT': '31509',
+        'HOST': 'provider.europlots.com',
+        'PORT': '32564',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }

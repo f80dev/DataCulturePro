@@ -5,6 +5,10 @@ import json
 import pytest
 from rest_framework.test import APIClient
 
+from OpenAlumni.Tools import index_string
+from OpenAlumni.passwords import RESET_PASSWORD
+from alumni.models import Profil, Work
+
 
 @pytest.fixture
 def server():
@@ -16,6 +20,7 @@ def call_api(server,url, params="", body=None, method=None, status_must_be=200):
 	if not url.endswith("/"): url = url+"/"
 	if method is None: method = "GET" if body is None else "POST"
 
+	response=None
 	if method == "GET": response = server.get("/api" + url + "?" + params)
 	if method == "POST": response = server.post("/api" + url + "?" + params, json=body)
 	if method == "DELETE": response = server.delete("/api" + url + "?" + params)
@@ -47,6 +52,46 @@ def test_search(server):
 
 	rc=call_api(server,"pows")
 	assert not rc is None
+
+
+
+@pytest.mark.django_db
+def test_backup(server,file="backup_test"):
+	assert Profil.objects.count()>0
+	assert Work.objects.count()>0
+	rc=call_api(server,"backup","command=save&file="+file)
+	assert not rc is None
+
+	rc=call_api(server,"raz","password="+RESET_PASSWORD+"&filter=all")
+	assert not "error" in rc
+	assert Profil.objects.count()==0
+	assert Work.objects.count()==0
+
+	rc=call_api(server,"backup","command=load&file="+file)
+	assert not rc is None
+	assert Profil.objects.count()>0
+	assert Work.objects.count()>0
+
+
+
+
+@pytest.mark.django_db
+def test_query_awards(server):
+	"""
+	Pour la construction des tests voir
+	:param server:
+	:return:
+	"""
+	rc=call_api(server,"extraawards","profil__name_index="+index_string("julia ducournau"))
+	assert rc["count"]>0
+
+	rc=call_api(server,"extraawards","profil__lastname=Ducournau")
+	assert rc["count"]>0
+
+	rc=call_api(server,"extraawards","profil__id=12")
+	assert rc["count"]==0
+
+
 
 
 

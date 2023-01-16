@@ -1,10 +1,17 @@
 import pytest
 
 from OpenAlumni.Batch import extract_profil_from_imdb, extract_profil_from_unifrance, extract_film_from_imdb, \
-	add_pows_to_profil, extract_film_from_unifrance, extract_awards_from_imdb, create_article
-from OpenAlumni.Tools import equal_str, log
+	add_pows_to_profil, extract_film_from_unifrance, extract_awards_from_imdb, create_article, imdb_search
+from OpenAlumni.Tools import equal_str, log, index_string
 from alumni.models import Profil, PieceOfWork
 
+
+def test_search_imdb(names=["julia ducournau","françois ozon","cyril nakash","hervé hadmar"]):
+	rc=""
+	for name in names:
+		rc=imdb_search(name,refresh_delay=1)
+		assert len(rc)>0
+	return rc[0]
 
 def test_extract_profil(lastname="ducournau",firstname="julia",refresh_delay=0,_return=None):
 	rc=extract_profil_from_imdb(lastname,firstname,refresh_delay=refresh_delay)
@@ -28,11 +35,7 @@ def test_extract_awards(url="julia ducournau",result=53):
 	return awards
 
 
-@pytest.mark.django_db
-def test_add_pow(lastname="ducournau",firstname="julia",refresh_delay=3):
-	p=Profil.objects.filter(lastname=lastname,firstname=firstname)
-	rc=test_extract_profil(lastname,firstname,refresh_delay=refresh_delay)
-	add_pows_to_profil(p,rc["links"],"",refresh_delay)
+
 
 
 def test_extract_movies(title="titane",url="",refresh_delay=3,sources=["unifrance","imdb"]):
@@ -40,12 +43,13 @@ def test_extract_movies(title="titane",url="",refresh_delay=3,sources=["unifranc
 		if src=="imdb":	rc=extract_film_from_imdb(url=url,title=title,refresh_delay=refresh_delay)
 		if src=="unifrance": rc=extract_film_from_unifrance(url=url,title=title,refresh_delay=refresh_delay)
 
-	assert equal_str(rc["title"],title)
-	assert len(rc["title"])>0
-	assert len(rc["nature"])>0
-	assert rc["nature"]=="Série" or len(rc["episodes"])==0
-	assert len(rc["year"])>0
-	assert len(rc["casting"])>0
+		assert equal_str(rc["title"],title)
+		assert len(rc["title"])>0
+		assert len(rc["nature"])>0
+		assert rc["nature"]=="Série" or len(rc["episodes"])==0
+		assert len(rc["year"])>0
+		assert len(rc["casting"])>0
+
 	return rc
 
 

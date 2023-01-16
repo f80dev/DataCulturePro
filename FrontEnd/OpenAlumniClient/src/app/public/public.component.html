@@ -69,7 +69,7 @@
 
       <mat-tab-group>
         <mat-tab label="FILMOGRAPHIE" *ngIf="profil?.works?.length>0">
-          <div class="label" style="margin-top: 20px" *ngIf="profil.works?.length>5">({{profil.works.length}} résultats)</div>
+          <div class="label" style="margin-top: 20px" *ngIf="profil.works?.length>5">({{profil.works.length}} résultats)</div><br>
           <app-timeline
                   style="margin-top: 20px;"
                   [data]="works_timeline"

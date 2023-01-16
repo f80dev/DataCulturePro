@@ -211,8 +211,8 @@ DATABASES = {
         "NAME": "dataculture",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.bdl.computer',
-        'PORT': '31509',
+        'HOST': 'provider.europlots.com',
+        'PORT': '32564',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }
@@ -292,10 +292,7 @@ APPNAME="Data Culture Pro (beta)"
 DOMAIN_APPLI="http://localhost:4200"
 DOMAIN_SERVER="http://localhost:8000"
 
-
-DEBUG = (sys.argv[1] == 'runserver')
-
-
+DEBUG = (len(sys.argv)<2 or sys.argv[1] == 'runserver')
 
 
 #Sécurisation

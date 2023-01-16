@@ -27,7 +27,7 @@ export class AppComponent implements OnInit,AfterViewInit {
   public adapter: ChatAdapter = new MyAdapter();
 
   innerWidth: number=400;
-  sidemenu_mode: MatDrawerMode="over";
+  sidemenu_mode: MatDrawerMode="side";
   simple_screen=false;
 
   constructor(public config: ConfigService,
@@ -42,17 +42,19 @@ export class AppComponent implements OnInit,AfterViewInit {
     config.init().then(() => {
       this.config.init_user(null,null,localStorage.getItem("email"));
     });
-    this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{this.simple_screen=result.matches;})
+    this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{
+      this.simple_screen=result.matches;
+    })
   }
 
 
 
 
   closeMenu() {
-
+    if(window.innerWidth<this.innerWidth){
       this.drawer.close();
-      this.sidemenu_mode="over";
-
+      this.sidemenu_mode="side";
+    }
   }
 
   logout() {

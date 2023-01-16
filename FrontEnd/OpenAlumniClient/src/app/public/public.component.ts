@@ -26,6 +26,7 @@ export class PublicComponent implements OnInit {
 
   url: any;
   title: any;
+  pows: any={};
 
   constructor(public router:Router,
               public config:ConfigService,
@@ -38,48 +39,44 @@ export class PublicComponent implements OnInit {
   }
 
 
-  create_awards_timeline(profil_id){
-    return new Promise((resolve, reject) => {
-      this.api._get("extraawards","profil="+profil_id).subscribe((awards:any)=> {
-        this.message="";
-        let awards_timeline=[];
-        if(awards && awards.count>0){
-          let old_year="";
-          for(let a of awards.results){
-            awards_timeline.push({
-              year:old_year==a.year ? "" : ""+a.year,
-              title:a.festival.title+" : "+a.description,
-              subtitle:a.pow.title,
-              icon: this.config.icons["Award"],
-              sources:a.source,
-              type:"award",
-              label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ a.pow.title+"</span></div>"
-            })
-            old_year=a.year;
-          }
-        }
+  create_awards_timeline(profil){
+    this.message="";
+    let awards_timeline=[];
 
-        $$("Ajout du diplome");
-        if(this.config.hasPerm("admin")){
-          awards_timeline.push({
-            year:this.profil.degree_year,
-            title:"FEMIS - département "+this.profil.department,
-            subtitle:"",
-            icon: this.config.icons["School"],
-            type:"degree"
-          })
-        }
+    let old_year="";
+    let awards=profil.award.sort( (a,b) => a.year>b.year ? -1 : 1);
+    for(let a of awards){
+      awards_timeline.push({
+        year:old_year==a.year ? "" : ""+a.year,
+        title:a.festival.title+" : "+a.description,
+        subtitle:this.pows[a.pow].title,
+        icon: this.config.icons["Award"],
+        sources:a.source,
+        type:"award",
+        label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ this.pows[a.pow].title+"</span></div>"
+      })
+      old_year=a.year;
+    }
 
-        resolve(awards_timeline);
-      },(err:any)=>{reject(err);});
-    });
+    $$("Ajout du diplome");
+    if(this.config.hasPerm("admin")){
+      awards_timeline.push({
+        year:this.profil.degree_year,
+        title:"FEMIS - département "+this.profil.department,
+        subtitle:"",
+        icon: this.config.icons["School"],
+        type:"degree"
+      })
+    }
+
+    return awards_timeline;
   }
 
 
   create_works_timeline(p:any,works:any[]){
     p.expe={};
     let rc=[];
-    let old_year=null;
+
     for(let _w of works){
       _w.job=_w.jobs.join(" & ")
       _w.icon=this.config.icons["Movie"];
@@ -127,47 +124,44 @@ export class PublicComponent implements OnInit {
   load_items(p){
     this.message="Chargement des expériences";
 
-    this.create_awards_timeline(p.id).then((lst_awards:any[])=>{
-      this.awards_timeline=lst_awards;
+    let works=group_works(p.works);
+    let lastYear="";
+    for(let i=0;i<works.length;i++){
+      if(works[i].year==lastYear)works[i].year="";
+      if(works[i].year!="")lastYear=works[i].year;
+    }
+    this.works_timeline=this.create_works_timeline(p,works);
 
-      let works=group_works(p.works);
-      let lastYear="";
-      for(let i=0;i<works.length;i++){
-        if(works[i].year==lastYear)works[i].year="";
-        if(works[i].year!="")lastYear=works[i].year;
-      }
-      this.works_timeline=this.create_works_timeline(p,works);
+    let lst=Object.values(this.profil.expe).sort((a,b) => (a<b ? 1 : -1));
+    if(lst.length>3)lst=lst.slice(0,3)
 
-      let lst=Object.values(this.profil.expe).sort((a,b) => (a<b ? 1 : -1));
-      if(lst.length>3)lst=lst.slice(0,3)
-
-      for(let k of Object.keys(this.profil.expe)){
-        if(lst.indexOf(this.profil.expe[k])>-1)
-          this.expe=this.expe+k+" ";
-      }
-    })
+    for(let k of Object.keys(this.profil.expe)){
+      if(lst.indexOf(this.profil.expe[k])>-1)
+        this.expe=this.expe+k+" ";
+    }
 
 
 
-      // let last_year_to_show="";
-      // for(let item of this.items){
-      //   if(item.pow){
-      //     item.title=item.job;
-      //     item.subtitle=item.pow.title;
-      //   }
+    // let last_year_to_show="";
+    // for(let item of this.items){
+    //   if(item.pow){
+    //     item.title=item.job;
+    //     item.subtitle=item.pow.title;
+    //   }
 
 
-        //icon: "<img src='"+item.icon+"' width='30'>",
+    //icon: "<img src='"+item.icon+"' width='30'>",
 
 
 
-        // if(this.works_timeline.length>0){
-        //   // if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
-        //   //   this.data_timeline.push({year:"<br><br>",icon:"",label:""});
-        //   // }
-        // }
-        //
+    // if(this.works_timeline.length>0){
+    //   // if(!this.data_timeline[this.data_timeline.length-1].show_year && item.show_year){
+    //   //   this.data_timeline.push({year:"<br><br>",icon:"",label:""});
+    //   // }
+    // }
+    //
 
+    this.awards_timeline=this.create_awards_timeline(p);
 
   }
 
@@ -191,12 +185,15 @@ export class PublicComponent implements OnInit {
     getParams(this.routes).then((params:any)=>{
       let id=params["id"]
       if(id){
-        this.api._get("profilsdoc/","profil="+id).subscribe((p:any)=>{
-          if(p.count==0)this.cancel();
-          this.profil=p.results[0];
+        this.api._get("extraprofils/"+id+"/").subscribe((p:any)=>{
+          this.profil=p;
           this.works=this.profil.works;
+          for(let w of this.works){
+            this.pows[w.pow.id]=w.pow;
+          }
           this.url=this._location.path();
           this.title = p.firstname + " " + p.lastname;
+
           this.load_items(this.profil);
         },(err)=>{
           this.cancel();
@@ -216,12 +213,12 @@ export class PublicComponent implements OnInit {
       text: "Profil de l'annuaire de la FEMIS",
       url: this.profil.public_url
     })
-      .then( (response) => {console.log(response);},()=>{
-        this._clipboardService.copyFromContent(this.profil.public_url);
-      })
-      .catch( (error) => {
-        this._clipboardService.copyFromContent(this.profil.public_url);
-      });
+        .then( (response) => {console.log(response);},()=>{
+          this._clipboardService.copyFromContent(this.profil.public_url);
+        })
+        .catch( (error) => {
+          this._clipboardService.copyFromContent(this.profil.public_url);
+        });
   }
 
 

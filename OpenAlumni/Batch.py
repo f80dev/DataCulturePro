@@ -1,6 +1,8 @@
 import base64
 import csv
+import urllib.parse
 from io import StringIO, BytesIO
+from os.path import exists
 from urllib import parse
 from urllib.parse import urlparse
 from json import loads
@@ -227,7 +229,7 @@ def extract_casting_from_unifrance(url:str,refresh_delay=31):
 
 
 def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
-    rc = dict({"casting": [], "source": "auto:unifrance", "url": url})
+    rc = dict({"casting": [], "source": "auto:unifrance", "url": url,"episodes":[]})
     if not url.startswith("http"):
         if len(url)==0:url=title
         log("On passe par la page de recherche pour retrouver le titre")
@@ -482,18 +484,32 @@ def extract_episode_from_serie(url,fullname="",refresh_delay=30) -> list :
                 episodes.append(link)
     return episodes
 
+def imdb_search(fullname:str,refresh_delay=10):
+    resultats=[]
+    q=urllib.parse.quote(fullname)
+    resp=load_page("https://www.imdb.com/find/?s=nm&q="+q+"&ref_=nv_sr_sm",refresh_delay=refresh_delay)
+    section_resultat=resp.find("section",{"data-testid":"find-results-section-name"})
+    if section_resultat is None: return None
+
+    for a in section_resultat.find_all("a"):
+        href=a["href"].split("?")[0]
+        if href.startswith("/name/nm"):
+            resultats.append({"name":a.text,"href":href})
+
+    return resultats
+
+
 
 
 def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_profil=""):
     infos={"links":[]}
     if url_profil is None or url_profil=="":
-        peoples=ia.search_person(firstname+" "+lastname)
+        peoples=imdb_search(firstname+" "+lastname)
         if len(peoples)==0: log(lastname+" inconnu sur IMDB")
         for p in peoples:
-            if "headshot" in p.data and not "nopicture" in p.data["headshot"]: infos["photo"] = p.data["headshot"]
-            name=remove_accents(remove_ponctuation(p.data["name"].upper()))
+            name=remove_accents(remove_ponctuation(p["name"].upper()))
             if (remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name) or equal_str(lastname+firstname,name):
-                url_profil = "https://imdb.com/name/nm" + p.personID + "/"
+                url_profil = "https://imdb.com" + p["href"]
                 break
 
 
@@ -637,7 +653,7 @@ def extract_film_from_imdb(url:str,title:str,job="",refresh_delay=31):
 
     page=load_page(url,refresh_delay)
     title=remove_ponctuation(title)
-    rc = dict({"title": title,"nature":"","casting":list(),"url":url,"source":"auto:IMDB"})
+    rc = dict({"title": title,"nature":"","casting":list(),"url":url,"source":"auto:IMDB","episodes":[]})
 
     divs=dict()
     elts=page.find_all("div",recursive=True)+page.find_all("h1",recursive=True)+page.find_all("ul",recursive=True)+page.find_all("p")+page.find_all("li")
@@ -901,7 +917,6 @@ def importer_file(file):
     """
     d=list()
 
-    log("Importation de fichier")
     data=file
     if type(file)==str and len(file)>500:
         if "base64," in file: file=str(file).split("base64,")[1]
@@ -911,6 +926,11 @@ def importer_file(file):
     if type(data)==bytes:
         res = read_excel(data)
     else:
+        log("Importation du fichier "+file)
+        if not exists(file):
+            log("Error: "+file+" not exist")
+            return None,0
+
         if data.endswith("xlsx"):
             res = read_excel(data)
         else:
@@ -946,7 +966,7 @@ def importer_file(file):
 
 
 
-def profils_importer(data_rows,limit=10,dictionnary={}):
+def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
     i = 0
     record = 0
     non_import=list()
@@ -1086,7 +1106,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
     :param profil:
     :param links:
     :param all_links:
-    :return:
+    :return: le couple (nb_de_film,nb_de_works) ajouté
     """
     n_films=0
     n_works=0

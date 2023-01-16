@@ -123,7 +123,7 @@ def extract(text:str,start:str,end:str):
     """
     if text is None or len(text)==0:return text
     start = text.index(start) + len(start)
-    end = text[start:].index(end) + start
+    end = (text[start:].index(end) + start) if end in text[start:] else len(text)
     return text[start:end]
 
 
@@ -539,7 +539,13 @@ def equal_str(s1:str,s2:str):
 
 
 def index_string(s):
-    return remove_accents(remove_ponctuation(s.replace(" ",""))).upper()
+    """
+    permet de créer une chaine de caractères pour la recherche
+    :param s: prenom+nom
+    :return: le fullname sans accent, ponctuation ou espace
+    """
+    while " " in s: s=s.replace(" ","")
+    return remove_accents(remove_ponctuation(s)).upper()
 
 
 def isWindows():

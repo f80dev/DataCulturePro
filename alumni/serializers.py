@@ -137,18 +137,6 @@ class POWSerializer(serializers.ModelSerializer):
 
 
 #http://localhost:8000/api/profils/?filter{firstname}=Adrien
-class ExtraProfilSerializer(serializers.ModelSerializer):
-    works = serializers.StringRelatedField(many=True,read_only=True)
-    sponsor = ProfilSerializer(many=False,read_only=True)
-    class Meta:
-        model=Profil
-        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
-                "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
-                "mobile","email","photo","gender","job","public_photo",
-                "linkedin","works","degree_year","department","department_category",
-                "dtLastUpdate","links","str_links",
-                "cp","public_url","fullname","cursus",
-                "address","town","promo"]
 
 
 class WorksCSVRenderer (CSVRenderer):
@@ -244,13 +232,31 @@ class FestivalSerializer(serializers.ModelSerializer):
 
 
 class AwardSerializer(serializers.ModelSerializer):
+    festival=FestivalSerializer(many=False,read_only=True)
     class Meta:
         model = Award
         fields = ["id","festival","description","year","pow","profil","state","source"]
 
+
+class ExtraProfilSerializer(serializers.ModelSerializer):
+    works = ExtraWorkSerializer(many=True,read_only=True)
+    sponsor = ProfilSerializer(many=False,read_only=True)
+    award=AwardSerializer(many=True,read_only=True)
+    class Meta:
+        model=Profil
+        fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
+                "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
+                "mobile","email","photo","gender","job","public_photo","award",
+                "linkedin","works","degree_year","department","department_category",
+                "dtLastUpdate","links","str_links",
+                "cp","public_url","fullname","cursus",
+                "address","town","promo"]
+
+
 class ExtraAwardSerializer(serializers.ModelSerializer):
     festival=FestivalSerializer(many=False,read_only=True)
     pow=POWSerializer(many=False,read_only=True)
+    profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model = Award
         fields = ["id","festival","description","year","pow","profil","state","source"]
