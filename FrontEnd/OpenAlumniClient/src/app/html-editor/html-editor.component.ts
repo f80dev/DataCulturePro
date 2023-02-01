@@ -127,13 +127,13 @@ export class HtmlEditorComponent implements OnInit {
 
   create_article(to_publish=false){
     return {
-      html: this.editorContent,
-          title:this.title,
-        sumary:this.resumer,
-        owner: this.config.user.user.id,
-        validate: false,
-        tags:this.tags.join(" "),
-        to_publish:to_publish
+      content: this.editorContent,
+      title:this.title,
+      sumary:this.resumer,
+      owner: this.config.user.user.id,
+      validate: false,
+      tags:this.tags.join(" "),
+      to_publish:to_publish
     }
   }
 

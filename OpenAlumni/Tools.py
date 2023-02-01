@@ -563,6 +563,20 @@ def extract_years(txt:str,index=None):
     else:
         return rc
 
+
+def remove_string_between_delimiters(s:str,start_delimiter,end_delimiter):
+    return re.sub(f'{start_delimiter}.*?{end_delimiter}', '', s)
+
+    # while True:
+    #     start_index = s.find(start_delimiter)
+    #     if start_index == -1: break
+    #     end_index = s.find(end_delimiter, start_index + len(start_delimiter))
+    #     if end_index == -1: break
+    #     s=s[:start_index] + s[end_index + len(end_delimiter):]
+    # return s
+
+
+
 def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
     if code is None: return None
     if type(code)!=str:code=str(code)
@@ -573,9 +587,7 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
         code="<body" + code.split("<body")[1]
 
     for balise in balises:
-        while "<"+balise in code:
-            r=extract(code,"<"+balise,"</"+balise+">")
-            code=code.replace("<"+balise+r+"</"+balise+">","")
+        code=remove_string_between_delimiters(code,"<"+balise,"</"+balise+">")
 
     gain=100-100*len(code)/lenCode
     log("Compression de "+str(gain)+"%")
@@ -586,6 +598,8 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
 
     if url is None:return None
+    if url.startswith("/"):url="https://www.imdb.com/"+url
+
     filename=hashlib.sha224(bytes(url,"utf8")).hexdigest()+".html"
 
     if isWindows():

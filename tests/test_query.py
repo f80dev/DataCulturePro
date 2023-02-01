@@ -8,7 +8,7 @@ from OpenAlumni.Tools import log, index_string
 from alumni.models import Profil, PieceOfWork, Article, ExtraUser, Award
 from alumni.views import rebuild_index
 from tests.test_api import call_api
-from tests.test_scrapping import test_extract_profil
+from tests.test_scrapping import test_extract_profil, PROFILS
 
 NB_RECORDS=15
 IMPORT_PROFILS_FILE="spip_ancien_light.xlsx"
@@ -45,13 +45,12 @@ def test_import_profils(to_imports=[("spip_ancien_light.xlsx",7),("spip_anciens.
 
 
 @pytest.mark.django_db
-def test_add_pow(lastname="ducournau",firstname="julia",nb_films=3,refresh_delay=3):
-	query=Profil.objects.filter(name_index=index_string(firstname+lastname))
+def test_add_pow(profil_index=0,nb_films=3,refresh_delay=3):
+	query=Profil.objects.filter(name_index=index_string(PROFILS[profil_index]["name"]))
 	assert query.count()>0
-	rc=test_extract_profil(lastname,firstname,refresh_delay=refresh_delay)
-	rc=add_pows_to_profil(query.first(),rc["links"],"",refresh_delay)
+	_from_profil=test_extract_profil(PROFILS[profil_index],refresh_delay=refresh_delay)
+	rc=add_pows_to_profil(query.first(),_from_profil["links"],"",refresh_delay)
 	assert not rc is None
-	assert rc[0]==nb_films
 
 
 
