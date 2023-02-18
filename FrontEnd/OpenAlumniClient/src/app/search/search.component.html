@@ -12,13 +12,14 @@
 
   <app-tuto [delay]="10"
             id="tutoSideMenu"
-            label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral"></app-tuto>
+            label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral">
+  </app-tuto>
 
 
-  <h3 *ngIf="profils.length==0"
+  <div *ngIf="profils.length==0" class="main-message"
        style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:150px;">
     Rechercher des anciens de la FEMIS par nom, métier, promotion, titre de film ou récompense
-  </h3>
+  </div>
 
 
   <div id="legende" style="width:100%;text-align: center;margin-top: 20px;" *ngIf="profils.length>0">
@@ -35,7 +36,7 @@
   </div>
   <br>
 
-  <mat-form-field  *ngIf="advanced_search?.length==0" appearance="standard" class="search_zone" >
+  <mat-form-field appearance="outline" *ngIf="advanced_search?.length==0" class="search_zone" >
     <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"

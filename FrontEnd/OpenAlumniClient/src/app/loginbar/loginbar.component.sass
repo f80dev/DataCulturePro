@@ -2,30 +2,28 @@
 @use './node_modules/@angular/material' as mat
 @import '../../dataculture'
 
-
-mat-icon
-  font-size: 25px
-  margin-right: 12px
-  margin-left: 5px
-
-
 .sidemenu
+  @extend .grey800
+  border: none
   height: 95vh
+  width: 170px
   display: flex
   flex-direction: column
-  border: none
-  background: none
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
+
 
 header
+  @extend .grey800
   height: fit-content
 
 footer
+  @extend .grey800
   height: fit-content
   margin-bottom: 20px
 
 content
+  @extend .grey800
   flex: auto
 
-a
-  @extend mat-headline-6
+.menu-item
+  @extend .mat-headline-3 !optional
+

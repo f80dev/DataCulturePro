@@ -6,10 +6,8 @@
 				<mat-icon>thumb_down_alt</mat-icon>
 			</td>
 			<td>
-				<mat-slider [value]="value" [tickInterval]="1" thumbLabel
-				            (valueChange)="onchange($event)"
-				            style="width:100%;display: inline-block;"
-				            [min]="1" [max]="4">
+				<mat-slider style="width:100%;display: inline-block;" [min]="1" [max]="4">
+					<input matSliderThumb [(ngModel)]="value" (valueChange)="onchange($event)">
 				</mat-slider>
 			</td>
 			<td style="font-size: small;width:15px;">

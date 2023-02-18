@@ -1,14 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @use "sass:map"
 @use './node_modules/@angular/material' as mat
-@import './dataculture'
+
+@use './dataculture'
 @import './node_modules/ngx-sharebuttons/themes/circles'
-
-//body,html
-//  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
-
-mat-drawer-container
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,900) !important
 
 .app-button
   margin: 4px !important
@@ -67,14 +62,14 @@ mat-drawer-container
 
 //Le container contient le side-menu et le sidenavcontent
 .toolbar-app
+  @extend .grey800
   height: 5vh
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
+
 
 .container
   width: 100vw
   height: 95vh
   overflow: scroll
-
 
 
 
@@ -84,16 +79,21 @@ mat-drawer-container
   justify-content: center
   text-align: center
   border: none
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,900)
 
+.bodybg
+  @extend .grey900
+  position: fixed
+  width: 100vw
+  height: 100vh
 
 .mainform
   width: 100%
   text-align: center !important
-  height: 100%
   background: none
   padding: 10px
 
+mat-drawer-container
+  background: none !important
 
 
 .fake-button
@@ -112,17 +112,12 @@ mat-drawer-container
   padding: 0
 
 
-
 .app-field
   width: 95%
   max-width: 600px
   margin: 3px
   height: min-content
 
-//h3
-//  width: 100%
-//  text-align: center
-//  font-size: x-large
 
 .bottom-bar
   width: 100%
@@ -144,7 +139,6 @@ mat-drawer-container
   margin-bottom: 10px
 
 
-
 .fill-remaining-space
   flex: 1 1 auto
 
@@ -161,7 +155,6 @@ mat-drawer-container
   text-align: center
   display: inline-block
   line-height: 96%
-
 
 
 mat-dialog-title
@@ -183,12 +176,8 @@ mat-dialog-title
 .mat-expansion-panel-body
   padding: 10px !important
 
-
-
-
-
 mat-icon
-  color: mat.get-color-from-palette($dataculture-grey-palette,600)
+  @extend .color-grey600
 
 a
   text-decoration: none
@@ -207,16 +196,16 @@ a
   vertical-align: center
 
 mat-expansion-panel
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+  @extend .grey800
   opacity: 0.8
   margin: 5px
 
 mat-expansion-panel-header
+  @extend .primary-color
   height: 40px !important
   padding-left: 15px !important
   font-weight: bold !important
   width: 100%  !important
-  color: mat.get-color-from-palette($dataculture-primary-color)
 
 mat-expansion-panel-content
   padding: 2px !important
@@ -256,25 +245,25 @@ mat-action-row
   max-width: 600px
   width: 60%
   font-size: large
-  display: inline-block
-  padding-left: 20px
   padding-right: 20px
   margin-right: 10px
-  border: mat.get-color-from-palette($dataculture-grey-palette,700) solid 1px
-  border-radius: 45px 45px
+  //border: mat.get-color-from-palette($dataculture-grey-palette,700) solid 1px
+  //border-radius: 45px 45px
+
+.search_zone::part(outline)
+  border: none !important
 
 
-.fi-color
-  color: $dataculture-green
+.main-message
+  @extend .mat-headline-5 !optional
 
-.material-icon.fi-color
-  color: $dataculture-green
 
-.material-icon.fc-color
-  color: $dataculture-blue
+.appli-title
+    @extend .mat-subtitle-2 !optional
+    font-size: calc(13px + 0.8vw)
+    font-variant-caps: all-small-caps
+    margin: 8px
 
-.fc-color
-  color: $dataculture-blue
 
 
 .flip-card
@@ -304,9 +293,9 @@ mat-action-row
 
 
 .flip-card-front, .flip-card-back
+  @extend .grey800
   position: absolute
   border-radius: 16px 16px
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
   padding: 10%
   width: 80%
   height: 90px
@@ -324,18 +313,20 @@ mat-action-row
 
 
 .primary-color
-  color: mat.get-color-from-palette($dataculture-red-palette,500)
+  @extend .color-red500
 
 
 mat-card
-  background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important
+  @extend .grey800
 
 
 .label
-  color: mat.get-color-from-palette($dataculture-grey-palette,600) !important
+  @extend .color-grey600
+
 
 th
-  color: mat.get-color-from-palette($dataculture-grey-palette,500) !important
+  @extend .color-grey600
+
   font-weight: normal
   min-width: 100px
 

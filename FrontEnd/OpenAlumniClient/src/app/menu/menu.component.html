@@ -1,0 +1,10 @@
+<!--    voir la documentation https://material.angular.io/components/list/overview -->
+<mat-nav-list>
+	<mat-list-item [title]="item.title" *ngFor="let item of l_items" >
+		<div style="display: flex;align-items: center;cursor: pointer;width:100%;" (click)="goto(item)">
+			<mat-icon *ngIf="item.icon.length>0">{{item.icon}}'</mat-icon>
+			<span *ngIf="item.label.length>0 && with_label">{{item.label}}</span>
+		</div>
+	</mat-list-item>
+</mat-nav-list>
+
