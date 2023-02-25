@@ -187,6 +187,17 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #         'options': '-c statement_timeout=5000'
 #     }
 # },
+# "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "NAME": "dataculture",
+#     "USER": "femis",
+#     "PASSWORD": DB_PASSWORD,
+#     'HOST': 'provider.europlots.com',
+#     'PORT': '32564',
+#     'OPTIONS': {
+#         'options': '-c statement_timeout=5000'
+#     }
+# },
 # "dev": {
 #         "ENGINE": "django.db.backends.postgresql_psycopg2",
 #         "NAME": "alumni_db",
@@ -208,11 +219,11 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "dataculture",
-        "USER": "femis",
+        "NAME": "alumni_db",
+        "USER": "hhoareau",
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.europlots.com',
-        'PORT': '32564',
+        'HOST': '109.205.183.200',
+        'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=5000'
         }
