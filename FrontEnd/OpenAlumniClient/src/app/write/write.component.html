@@ -40,7 +40,7 @@
     <mat-checkbox [(ngModel)]="send_copy">Recevoir une copie</mat-checkbox>
 
     <div>
-      <button mat-button mat-raised-button
+      <button mat-raised-button
               class="app-button"
               [disabled]="!text || text?.length==0"
               *ngIf="config.hasPerm('write_email')"
@@ -48,7 +48,7 @@
         Envoyer
       </button>
 
-      <button mat-button mat-raised-button
+      <button mat-raised-button
               *ngFor="let button of buttons"
               class="app-button"
               (click)="open_social(button.url)">

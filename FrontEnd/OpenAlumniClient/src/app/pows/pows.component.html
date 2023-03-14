@@ -8,18 +8,19 @@
 <div class="mainform">
 
   <app-tuto label="Vous pouvez également consulter la liste des élèves de la FEMIS (anciens et actuels), via le menu latéral"></app-tuto>
+  <app-tuto label="Pour chaque film, il est possible de naviguer vers les sites IMDB ou UniFrance"></app-tuto>
+  <app-tuto label="La recherche d'un film peut se faire via le casting, l'année de sortie, le titre"></app-tuto>
 
   <br><br>
-  <mat-form-field appearance="standard" class="search_zone" autofocus>
+  <mat-form-field appearance="outline" class="search_zone" autofocus>
     <input matInput matNativeControl
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)" [(ngModel)]="query.value"
-           placeholder="Rechercher un film par mots du titre du films, une année">
+           placeholder="Rechercher par titre, année de sortie, genre du film">
     <mat-icon *ngIf="query.value?.length>0"
               matSuffix style="cursor: pointer"
               (click)="clearQuery()">cancel</mat-icon>
   </mat-form-field>
-
 
   <mat-icon (click)="advanced=true" *ngIf="!advanced" style="cursor: pointer" title="Recherche en mode avancée">add_circle</mat-icon>
   <mat-checkbox *ngIf="advanced" [(ngModel)]="all" ><div class="bloc-bouton">Tous les<br>termes</div></mat-checkbox>
@@ -27,7 +28,7 @@
   <br><br>
 
   <div class="div-center" *ngIf="message.length==0">
-    <span *ngIf="pows.length==limit">+ de {{pows.length}} films</span>
+    <div *ngIf="pows.length==limit">+ de {{pows.length}} films</div>
     <span *ngIf="pows.length<limit && pows.length>10">{{pows.length}} films</span>
     <div style="display:inline-block;cursor: pointer;font-style: italic;font-size: small;" (click)="show_all()">
       <span *ngIf="limit==50">- En voir plus</span>
@@ -40,16 +41,17 @@
   </div>
 
   <mat-accordion #powAccordion="matAccordion" [multi]="true">
-    <div class="wrap-list" style="margin: 5px;">
+    <div class="wrap-list" style="width:100%;">
       <mat-expansion-panel *ngFor="let pow of pows"
-                           class="app-card-panel" hideToggle
+                           class="wrap-item" hideToggle
                            (afterExpand)="get_pow(pow)"
+                           (afterCollapse)="pow.expanded=false"
                            [expanded]="pow.expanded">
 
-        <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*" style="padding: 0">
-          <table style="width: 90%;">
+        <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*" style="padding: 10px;">
+          <table style="width: 100%;">
             <tr style="vertical-align: top;text-align: left;">
-              <td *ngIf="pow.visual?.length>0" style="width: 110px;">
+              <td *ngIf="pow.visual?.length>0 && pow.expanded" style="width: 110px;">
                 <img [src]="pow.visual"
                      class="image-photo"
                      style="width: 100px;">
@@ -93,11 +95,8 @@
                             </td>
                           </tr>
                         </table>
-
-
-
                       </td>
-                      <td style="text-align: right;" class="expanded-plus">
+                      <td style="text-align: left;width: 20px;" class="expanded-plus mat-headline-6">
                         <span *ngIf="pow.expanded">-</span>
                         <span *ngIf="!pow.expanded">+</span>
                       </td>
@@ -113,8 +112,6 @@
         <div style="text-align: center;" *ngIf="config.hasPerm('r_movie_picture')">
 
         </div>
-
-
 
 
         <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;text-align: left;">
@@ -138,7 +135,7 @@
 
         <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-1">
           <br><div class="label">Récompenses</div><br>
-          <table style="width: 100%;text-align: left;margin-bottom: 7px;">
+          <table style="width: 100%;text-align: left;vertical-align:text-top;">
             <tr *ngFor="let a of pow.award" style="width:100%;">
               <td [title]="a.description" style="color:lightgrey;width:80%;">
                 <div style="margin-bottom: 8px">{{a.festival.title}} / {{a.description}}</div>
@@ -166,7 +163,7 @@
 
             <button mat-icon-button
                     class="icon-button"
-                    mat-button title="Partager la fiche de ce film"
+                    title="Partager la fiche de ce film"
                     *ngIf="config.hasPerm('share')"
                     (click)="share(pow)">
               <mat-icon>share</mat-icon>
@@ -174,7 +171,7 @@
 
             <button mat-icon-button
                     class="icon-button"
-                    mat-button title="Réanalyse du film"
+                    title="Réanalyse du film"
                     *ngIf="config.hasPerm('add_movies')"
                     (click)="analyse(pow)">
               <mat-icon>build</mat-icon>
@@ -182,13 +179,13 @@
 
             <button mat-icon-button
                     class="icon-button"
-                    mat-button title="Rechercher avec Google"
+                     title="Rechercher avec Google"
                     (click)="openGoogle(pow)">
               <mat-icon>search</mat-icon>
             </button>
 
 
-            <button mat-icon-button mat-button
+            <button mat-icon-button
                     class="icon-button"
                     title="Enlever le film"
                     *ngIf="config.hasPerm('delete_pow')"
@@ -197,7 +194,7 @@
             </button>
 
             <button mat-icon-button
-                    class="icon-button" mat-button
+                    class="icon-button"
                     (click)="router.navigate(['faqs'],{queryParams:{open:'fiche_film'}})">
               <mat-icon>help</mat-icon>
             </button>

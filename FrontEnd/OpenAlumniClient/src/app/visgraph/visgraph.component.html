@@ -3,7 +3,7 @@
        class="toolbar-app"
        style="vertical-align:center;padding: 8px;position:absolute;text-align:left;display:block;width:fit-content;height:fit-content;right:0px;top:0px;z-index:100;background-color: #424242;">
 
-    <mat-form-field appearance="legacy">
+    <mat-form-field appearance="outline">
       <mat-label>Propriétés</mat-label>
       <mat-select id="selSelFilter" [(ngModel)]="selFilter">
         <mat-option *ngFor="let p of props" [value]="p">
@@ -23,7 +23,7 @@
       </mat-slider>
 
 
-    <mat-form-field appearance="legacy">
+    <mat-form-field appearance="outline">
       <mat-select id="selPromoFilter" [(ngModel)]="filter.promo.value" (selectionChange)="updateData()">
         <mat-option *ngFor="let y of filter.promo.values" [value]="y">
           {{y}}
@@ -31,7 +31,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="legacy">
+    <mat-form-field appearance="outline">
       <mat-select id="selFormationFilter" [(ngModel)]="filter.department.value" (selectionChange)="updateData()">
         <mat-option *ngFor="let y of filter.department.values" [value]="y">
           {{y}}

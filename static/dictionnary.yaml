@@ -18,6 +18,14 @@ abreviations:
   Cinématographique: Ciné.
   Expertiser: Exp.
   d'exploitation: exp.
+  additionnal: ""
+  special: ""
+  head: Dir.
+  Wishes: ""
+  Wish: ""
+  The: ""
+  Additional: ""
+
 
 #Permet le regroupement des département sur leur categorie
 department_category:
@@ -52,6 +60,8 @@ department_category:
 #Permet le regroupement des départements pour la formation professionnelle
 departements:
   Initiation à l'adaptation de romans: Initiation à l'adaptation de romans
+
+
 
 
 
@@ -114,6 +124,11 @@ jobs:
   Assistant director: Ass. réalisation
   Director of photography: Direction photo
   Camera operator: Caméra
+  Sound Supervisor: Son
+  Key Grip: "?"
+  Lighting Technician: Décor
+  Casting Assistant: Casting
+  Visual Effects: Effets spéciaux
   Associate producer: Production associée
   Second assistant camera: Ass. caméra
   Re-recording mixer: Ing. son
@@ -130,6 +145,11 @@ jobs:
   Foley recordist: Son
   Cast in credits order: Casting
   Music mixer: Son
+  Producers: Production
+  Music Supervisor: Musique
+  Costume Supervisor: Costume
+  Additional Camera: Caméra
+  Additional Electrician: Décor
   Post-production coordinator: Post-production
   Production manager only nrw: Production
   Boom operator: Assistant son
@@ -428,6 +448,15 @@ jobs:
   Series Costume Design: Costume
   Series Makeup Department: Maquillage
   Series Art Department: Décor
+  Stunt performer: Cascadeur
+  Stunt coordinator: Coordinateur cascade
+  Stunt double: Doublure cascade
+  Stunt pilot: Cascadeur
+  Visual effects artist: Effets spéciaux
+  Visual effects supervisor: Effets spéciaux
+  Special effects technician: Effets spéciaux
+  Foley assistant: Ass. son
+  Original music: Compositeur
 
 
 Languages:

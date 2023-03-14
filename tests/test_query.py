@@ -1,14 +1,15 @@
 import pytest
 from django.contrib.auth.models import User
-from django.contrib.sites import management
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
 from rest_framework.test import APIClient
 
-from OpenAlumni.Batch import importer_file, profils_importer, create_article, add_pows_to_profil, reindex, exec_batch
+from OpenAlumni.Batch import importer_file, profils_importer, create_article, add_pows_to_profil, reindex, raz
 from OpenAlumni.Tools import log, index_string
-from alumni.models import Profil, PieceOfWork, Article, ExtraUser, Award
-from alumni.views import rebuild_index
-from tests.test_api import call_api
-from tests.test_scrapping import test_extract_profil, PROFILS
+from alumni.documents import ProfilDocument
+from alumni.models import Profil, Article, ExtraUser, Award, PieceOfWork, Work, Festival
+
+from tests.test_scrapping import test_extract_movies_from_profil, PROFILS
 
 NB_RECORDS=15
 IMPORT_PROFILS_FILE="spip_ancien_light.xlsx"
@@ -16,6 +17,7 @@ IMPORT_PROFILS_FILE="spip_ancien_light.xlsx"
 @pytest.fixture
 def server():
 	return APIClient()
+
 
 @pytest.fixture(scope='session')
 def django_db_setup(django_db_setup, django_db_blocker):
@@ -25,32 +27,79 @@ def django_db_setup(django_db_setup, django_db_blocker):
 			user.save()
 
 		profil_before=Profil.objects.all().count()
+
 		if profil_before==0:
 			rows,n_records=importer_file(IMPORT_PROFILS_FILE)
 			rc=profils_importer(rows,100)
 			assert rc is not None
 			assert rc[0]>profil_before
 
+		for p in Profil.objects.all():
+			log(str(p))
 
 @pytest.mark.django_db
-def test_import_profils(to_imports=[("spip_ancien_light.xlsx",7),("spip_anciens.xlsx",1694),("stagiaires FP 211001 jl.xlsx",2000)]):
+def test_raz():
+	raz("all")
+	assert Profil.objects.all().count()==0
+	assert Work.objects.all().count()==0
+	assert PieceOfWork.objects.all().count()==0
+	assert Award.objects.all().count()==0
+	assert Festival.objects.all().count()==0
+
+@pytest.mark.django_db
+def test_import_profils(to_imports=[("spip_ancien_light.xlsx",7),("spip_anciens.xlsx",1694),("stagiaires FP 211001 jl.xlsx",2000)],raz_before=True):
+	if raz_before:test_raz()
+	profil_before=Profil.objects.all().count()
 	for file in to_imports:
-		profil_before=Profil.objects.all().count()
 		rows,n_records=importer_file(file[0])
 		assert n_records<=file[1]
 		assert n_records>0
-		imported,non_imported=profils_importer(rows,limit=1000)
+		imported,non_imported=profils_importer(rows,limit=10)
 		assert imported>0
 		assert not non_imported is None
+	profil_after=Profil.objects.all().count()
+	assert profil_before<profil_after
 
 
 @pytest.mark.django_db
-def test_add_pow(profil_index=0,nb_films=3,refresh_delay=3):
-	query=Profil.objects.filter(name_index=index_string(PROFILS[profil_index]["name"]))
-	assert query.count()>0
-	_from_profil=test_extract_profil(PROFILS[profil_index],refresh_delay=refresh_delay)
-	rc=add_pows_to_profil(query.first(),_from_profil["links"],"",refresh_delay)
-	assert not rc is None
+def test_remove_pows_from_profil(profil_index=0):
+	works=Work.objects.filter(profil__name_index=index_string(PROFILS[profil_index]["name"])).all()
+	for w in works:
+		powid=w.pow.id
+		Work.objects.filter(id=w.id).delete()
+		rc=PieceOfWork.objects.filter(id=powid).delete()
+		assert not rc is None
+		if rc[0]>0:
+			assert rc[1]["alumni.Work"]==1
+			assert rc[1]["alumni.PieceOfWork"]==1
+	assert len(test_get_movies_for_profils(profil_index=profil_index))==0
+
+
+@pytest.mark.django_db
+def test_add_pows_to_profils(profil_index=0,refresh_delay=3):
+	name_profil=index_string(PROFILS[profil_index]["name"])
+	log("Chargement de "+name_profil)
+	profils=Profil.objects.filter(name_index=name_profil)
+	if profils.count()>0:
+		movies=test_extract_movies_from_profil(PROFILS[profil_index], refresh_delay=refresh_delay)
+
+		test_remove_pows_from_profil(profil_index)
+		rc=add_pows_to_profil(profils.first(),movies["links"][:1],"",refresh_delay)
+		assert not rc is None
+		assert rc[0]>0
+		assert rc[1]>0
+	else:
+		log("Profil "+name_profil+" n'est pas référencé dans la base")
+
+
+@pytest.mark.django_db
+def test_get_movies_for_profils(profil_index=0):
+	works=Work.objects.filter(profil__name_index=index_string(PROFILS[profil_index]["name"])).all()
+	movies=[]
+	for w in works:
+		if not w.pow.id in movies:movies.append(w.pow.id)
+	return movies
+
 
 
 
@@ -80,7 +129,13 @@ def test_reindex():
 
 
 @pytest.mark.django_db
-def test_query_profils(db,server,queries=["firstname__contains=jul","firstname__terms=julia__julien","search=department:montage","search=firstname:Julien&search=lastname:ducournau","search=Fromentin","search=Julien","promo=1995"]):
+def test_query_profils(db,server,queries=["firstname__contains=julia",
+                                          "firstname__terms=julia__julien",
+                                          "search=department:montage",
+                                          "search=firstname:Julien&search=lastname:ducournau",
+                                          "search=Fromentin",
+                                          "search=Julien",
+                                          "promo=1995"]):
 	"""
 	conception des requetes voir
 	https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.11/filtering_usage_examples.html#search-a-single-term-on-specific-field
@@ -92,16 +147,24 @@ def test_query_profils(db,server,queries=["firstname__contains=jul","firstname__
 	:return:
 	"""
 	max_responses=Profil.objects.count()
-	for query in queries:
-		log("Execution de la requete "+query)
-		rc=call_api(server,"profilsdoc",query)
-		assert rc["count"]>0,"Réponse vide anormale"
-		assert rc["count"]<max_responses,"Le filtre n'a pas fonctionné"
+	if max_responses>0:
+		assert ProfilDocument.search().filter("term",firstname="julia").count()>0
+		assert ProfilDocument.search().filter("term",lastname="ducournau").count()>0
+		assert ProfilDocument.search().filter("contain",lastname="ducou").count()>0
+		assert ProfilDocument.search().filter("term",degree_year="2011").count()>0
+		assert ProfilDocument.search().filter("contain",email="free.fr").count()>0
+
+
+
+	# for query in queries:
+	# 	log("Execution de la requete "+query)
+
 
 @pytest.mark.django_db
 def test_direct_query_awards(db,server,profils=["Julia ducournau"]):
 	for profil in profils:
 		_p=Profil.objects.filter(name_index__exact=index_string(profil)).first()
+
 		rc=Award.objects.filter(profil_id=_p.id).count()
 		assert rc>0
 

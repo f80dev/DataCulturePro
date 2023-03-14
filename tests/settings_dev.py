@@ -208,13 +208,13 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "dataculture",
+        "NAME": "test_dataculture",
         "USER": "femis",
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.bdl.computer',
+        'HOST': '109.205.183.200',
         'PORT': '31509',
         'OPTIONS': {
-            'options': '-c statement_timeout=5000'
+            'options': '-c statement_timeout=50000'
         }
     },
 }
@@ -286,7 +286,6 @@ EMAIL_PORT = 587
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER ="contact.dcp@femis.fr"
-#EMAIL_HOST_PASSWORD ="" se trouve dans password.py
 
 APPNAME="Data Culture Pro (beta)"
 DOMAIN_APPLI="http://localhost:4200"
@@ -294,8 +293,6 @@ DOMAIN_SERVER="http://localhost:8000"
 
 
 DEBUG = (sys.argv[1] == 'runserver')
-
-
 
 
 #Sécurisation

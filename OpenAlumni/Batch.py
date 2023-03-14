@@ -7,6 +7,7 @@ from urllib import parse
 from urllib.parse import urlparse
 from json import loads
 
+import requests
 import yaml
 from django.contrib.auth.models import User
 from django.core import management
@@ -20,7 +21,8 @@ from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, fusion, remove_ponctuation, \
-    equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp
+    equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp, \
+    apply_dictionnary_on_each_words
 
 from OpenAlumni.settings import MOVIE_NATURE, STATIC_ROOT
 
@@ -471,17 +473,26 @@ def extract_awards_from_imdb(profil_url):
     return rc_awards
 
 
-def extract_episode_from_serie(url,fullname="",refresh_delay=30) -> list :
+def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
     log("Recherche des épisodes de "+url)
     episodes=[]
     for saison in range(1,20):
         url_season=url.split("?")[0]+"episodes?season="+str(saison)
         page_season=load_page(url_season,refresh_delay)
-        links_episodes=set(page_season.find("div",attrs={"class":"list detail eplist"}).find_all("a",attrs={'href': wikipedia.re.compile("^/title/tt")}))
-        for link_episode in links_episodes:
-            infos_episodes=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay)
-            if infos_episodes["title"] not in [x["title"] for x in episodes]:
-                episodes.append(infos_episodes)
+        title_season=page_season.find("h3",attrs={"id":"episode_top"})
+        saison_on_page=title_season.text.lower().replace("season","").strip() if title_season else "0"
+        if len(saison_on_page)<3 and int(saison_on_page)==saison:
+            section_artists=page_season.find("div",attrs={"class":"list detail eplist"})
+            if section_artists:
+                links_episodes=list(set(section_artists.find_all("a",attrs={'href': wikipedia.re.compile("^/title/tt")})))
+
+                for i in range(len(links_episodes)):
+                    link_episode=links_episodes[i]
+                    episode=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
+                    if episode["title"] not in [x["title"] for x in episodes]:
+                        episodes.append(episode)
+        else:
+            break
     return episodes
 
 def imdb_search(fullname:str,refresh_delay=10):
@@ -508,10 +519,10 @@ def extract_episodes_from_profil(episodes,fullname:str) -> list:
     rc=[]
     for episode in episodes:
         for k in episode["casting"].keys():
-            profil=episode["casting"][k]
-            if profil["index"]==index_string(fullname):
-                rc.append(episode)
-                break
+            for profil in episode["casting"][k]:
+                if type(profil)==dict and profil["index"]==index_string(fullname):
+                    rc.append(episode)
+                    break
     return rc
 
 
@@ -587,38 +598,52 @@ def clean_line(text:str) -> str:
 
 
 
-def extract_casting_from_imdb(url:str,refresh_delay=31):
+def extract_casting_from_imdb(url:str,casting_filter="",refresh_delay=31):
     rc=dict()
     url=url.split("?")[0]+"fullcredits/"
     page=load_page(url,refresh_delay)
     if not page is None:
-        page=page.find("div",attrs={"id":"fullcredits_content"})
-        credits=page.find_all("a",attrs={'href': wikipedia.re.compile("^/name/nm")})
+        section_fullcredits=page.find("div",attrs={"id":"fullcredits_content"})
+        if section_fullcredits:
+            content_for_masterrole=list(filter(lambda x : len(x.strip())>0, section_fullcredits.text.lower().split("\n")))
+            for i in range(len(content_for_masterrole)-1):
+                job=content_for_masterrole[i].replace("by","").strip()
+                _job=translate(job,["jobs"],must_be_in_dict=True)
+                if job and len(job)>0:
+                    name=clean_line(content_for_masterrole[i+1])
+                    if casting_filter=="" or index_string(casting_filter)==index_string(name):
+                        if not _job in rc: rc[_job]=[]
+                        rc[_job].append({"name":name,"source":"imdb","index":index_string(name)})
 
-        #Suppression des casting d'acteurs
-        table=page.find("table",attrs={"class":"cast_list"})
-        if not table is None:
-            table.clear(True)
+            credits=section_fullcredits.find_all("a",attrs={'href': wikipedia.re.compile("^/name/nm")})
 
-        for credit in credits:
-            name=clean_line(credit.text)
-            if len(name)>0:
-                tr=credit.parent
-                while not tr is None and tr.name!="tr":
-                    tr=tr.parent
+            #Suppression des casting d'acteurs
+            table=section_fullcredits.find("table",attrs={"class":"cast_list"})
+            if not table is None:
+                table.clear(True)
 
-                if not tr is None and not "in credits order" in tr.parent.parent.text:  #On vérifie que ce n'est pas les acteurs
-                    result=clean_line(tr.text)
-                    if not equal_str(result,name):
-                        job=result.replace(name,"").split(")")[0].split(" episodes")[0].strip()
-                        if len(job.split(" "))>3: job=" ".join(job.split(" ")[:3])
-                        if len(job)>3:
-                            _job=translate(job,["jobs"],must_be_in_dict=True)
-                            if _job:
-                                if not _job in rc: rc[_job]=[]
-                                rc[_job].append({"name":name,"source":"imdb","index":index_string(name)})
-                            else:
-                                log(job+" est absent du dictionnaire")
+            for credit in credits:
+                name=clean_line(credit.text)
+                if len(name)>0 and (casting_filter=="" or index_string(casting_filter)==index_string(name)):
+                    tr=credit.parent
+                    while not tr is None and tr.name!="tr":
+                        tr=tr.parent
+
+                    if not tr is None and not "in credits order" in tr.parent.parent.text:  #On vérifie que ce n'est pas les acteurs
+                        result=clean_line(tr.text)
+                        if not equal_str(result,name):
+                            job=result.replace(name,"").split(")")[0].split(" episodes")[0].strip()
+                            if len(job.split(" "))>3: job=" ".join(job.split(" ")[:3])
+
+                            job=apply_dictionnary_on_each_words("abreviations",job)
+
+                            if len(job)>3:
+                                _job=translate(job,["jobs"],must_be_in_dict=True)
+                                if _job:
+                                    if not _job in rc: rc[_job]=[]
+                                    rc[_job].append({"name":name,"source":"imdb","index":index_string(name)})
+                                else:
+                                    log(job+" est absent du dictionnaire")
 
     return rc
 
@@ -645,9 +670,42 @@ def extract_casting_from_imdb(url:str,refresh_delay=31):
 #         if not job in rc["job"]:rc["job"].append(job)
 
 
+def extract_tags_from_imdb(url_or_page:str,refresh_delay=31):
+    """
+    Utilisation des tags pour la category du film
+    :param url_or_page:
+    :param refresh_delay:
+    :return:
+    """
+    tags=[]
+    page=load_page(url_or_page,refresh_delay=refresh_delay) if type(url_or_page)==str else url_or_page
+    section=page.find("div",attrs={"data-testid":"genres"})
+    if not section is None:
+        for a in section.find_all("a"):
+            if len(a.text)>0 and not a.text.lower() in tags:
+                tags.append(a.text.lower())
+    return tags
+
+
+def extract_nature_from_imdb(url_or_page:str,refresh_delay=31) -> str:
+    tags=extract_tags_from_imdb(url_or_page,refresh_delay)
+    if "documentaire" in tags or "documentary" in tags: return "Documentaire"
+    if "short" in tags or "Court-métrage" in tags:
+        return "Short"
+
+    page=load_page(url_or_page,refresh_delay=refresh_delay) if type(url_or_page)==str else url_or_page
+    section=page.find("div",attrs={"data-testid":"hero-subnav-bar-left-block"})
+    for a in section.find_all("a"):
+        if "episodes/" in a.attrs["href"]:
+            return "Série"
+
+    return "Long"
+
+
+
 
 #http://localhost:8000/api/batch
-def extract_film_from_imdb(url:str,title:str="",job="",refresh_delay=31):
+def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh_delay=31,exclude_episode=False):
     """
     :return:
     """
@@ -668,19 +726,32 @@ def extract_film_from_imdb(url:str,title:str="",job="",refresh_delay=31):
             url="https://www.imdb.com"+url
 
     page=load_page(url,refresh_delay)
-    title=remove_ponctuation(title) if len(title)>0 else page.find("h1",attrs={"data-testid":"hero-title-block__title"}).text
+    if len(title)>0:
+        title=remove_ponctuation(title)
+    else:
+        title=page.find("h1",attrs={"data-testid":"hero__pageTitle"})
+        if title is None:
+            log("Lecture du titre impossible")
+            section=page.find("div",attrs={"id":"ipc-wrap-background-id"}).parent
+            if section:
+                title=section.find("h1").text
+
+        else:
+            title=title.text
+
     title=title[0].upper()+title[1:].lower()
     rc = dict({"title": title,"nature":"","casting":list(),"url":url,"source":"auto:IMDB","episodes":[]})
 
+    rc["nature"]=extract_nature_from_imdb(page,refresh_delay=refresh_delay)
     divs=dict()
     elts=page.find_all("div",recursive=True)+page.find_all("h1",recursive=True)+page.find_all("ul",recursive=True)+page.find_all("p")+page.find_all("li")
     for div in elts:
-        s=div.text
-        s_t=translate(s)
-        if s_t in MOVIE_NATURE:
-            rc["nature"]=s_t
-        if s.startswith("1h") or s.startswith("2h") and s.endswith("m") and len(rc["nature"])==0:
-            rc["nature"]=translate("long")
+        #s=div.text
+        #s_t=translate(s)
+        # if s_t in MOVIE_NATURE:
+        #     rc["nature"]=s_t
+        # if s.startswith("1h") or s.startswith("2h") and s.endswith("m") and len(rc["nature"])==0:
+        #     rc["nature"]=translate("long")
         if "data-testid" in div.attrs:
             divs[div.attrs["data-testid"]]=div
 
@@ -713,21 +784,24 @@ def extract_film_from_imdb(url:str,title:str="",job="",refresh_delay=31):
         pass
 
     #Recherche de la nature et de la catégorie
-    if not "genres" in divs:
-        elt=page.find("li",{"role":"presentation","class":"ipc-inline-list__item"})
-        if not elt is None:
-            cat=elt.text
-        else:
-            cat = "inconnu"
-    else:
-        cat=""
-        for div in divs["genres"]:
-            cat = cat+translate(div.text.lower())+" "
-        if cat.split(" ")[0] in MOVIE_NATURE:
-            rc["nature"]=cat.split(" ")[0]
-            cat=cat.replace(rc["nature"],"").strip()
+    # if not "genres" in divs:
+    #     elt=page.find("li",{"role":"presentation","class":"ipc-inline-list__item"})
+    #     if not elt is None:
+    #         cat=elt.text
+    #     else:
+    #         cat = "inconnu"
+    # else:
+    #     cat=""
+    #     for div in divs["genres"]:
+    #         cat = cat+translate(div.text.lower())+" "
+    #     if cat.split(" ")[0] in MOVIE_NATURE:
+    #         rc["nature"]=cat.split(" ")[0]
+    #         cat=cat.replace(rc["nature"],"").strip()
+    #
+    # rc["category"]=cat.strip()
+    #
+    rc["category"]="/".join(extract_tags_from_imdb(page))
 
-    rc["category"]=cat.strip()
     if rc["nature"]=="" and not page.find("div",{"data-testid":"hero-subnav-bar-season-episode-numbers-section-xs"}) is None:
         rc["nature"]="Série"
 
@@ -737,9 +811,9 @@ def extract_film_from_imdb(url:str,title:str="",job="",refresh_delay=31):
             rc["year"]=extract_years(uls[0].text)[:2]
 
         log("On est en présence d'une série")
-        title=divs["hero-title-block__title"].text
-        infos=divs["hero-title-block__title"].parent.text
-        rc["episodes"]=extract_episode_from_serie(url)
+
+        if not exclude_episode:
+            rc["episodes"]=extract_episode_from_serie(url,casting_filter=casting_filter)
 
 
     if "hero-media__poster" in divs:
@@ -753,7 +827,7 @@ def extract_film_from_imdb(url:str,title:str="",job="",refresh_delay=31):
     #log("Recherche du role sur le film")
     if not "job" in rc: rc["job"]=job
 
-    rc["casting"]=extract_casting_from_imdb(url,refresh_delay=refresh_delay)
+    rc["casting"]=extract_casting_from_imdb(url,casting_filter=casting_filter,refresh_delay=refresh_delay)
 
     return rc
 
@@ -972,6 +1046,40 @@ def importer_file(file):
     return d,total_record
 
 
+def raz(filter:str="all"):
+
+    log("Effacement de "+filter)
+    if "work" in filter or filter=="all":
+        log("Effacement des contributions")
+        if "imdb" in filter:
+            Work.objects.filter(source="imdb").delete()
+        elif "unifrance" in filter:
+            Work.objects.filter(source="unifrance").delete()
+        else:
+            Work.objects.all().delete()
+
+    if "awards" in filter or filter=="all":
+        log("Effacement des awards")
+        Award.objects.all().delete()
+
+    if "festivals" in filter or filter=="all":
+        log("Effacement des festivals")
+        Festival.objects.all().delete()
+
+
+    if "profils" in filter or filter=="all":
+        log("Effacement des profils")
+        Profil.objects.all().delete()
+
+    if "users" in filter  or filter=="all":
+        log("Effacement des utilisateurs")
+        User.objects.all().delete()
+
+    if "pows" in filter  or filter=="all":
+        log("Effacement des oeuvres")
+        PieceOfWork.objects.all().delete()
+
+
 
 def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
     i = 0
@@ -1106,6 +1214,19 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
     return record,non_import
 
 
+def extract_movie_from_filmdoc(title):
+    """
+    voir https://www.film-documentaire.fr/4DACTION/w_search_full
+    :param title:
+    :return:
+    """
+    data="rech_simple="+title
+    resp=requests.post("https://www.film-documentaire.fr/4DACTION/w_search_full",data=data)
+    if resp.status_code==200:
+        link=resp.links
+
+    return ""
+
 
 def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=None,user:User=None):
     """
@@ -1132,7 +1253,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
             films.append(extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot))
 
         if "imdb" in l["url"]:
-            film=extract_film_from_imdb(l["url"], l["text"],job=l["job"],refresh_delay=refresh_delay_page)
+            film=extract_film_from_imdb(l["url"], l["text"],job=l["job"],casting_filter=profil.name_index,refresh_delay=refresh_delay_page)
             if film and (film["category"]=="News" or len(film["nature"])==0) \
                     or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) \
                     or film["job"]==["Remerciements"] or film["job"]==["Casting"] \
@@ -1154,7 +1275,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
                         jobs.append(k) #On ajoute le métier k à la personne
 
             if not film is None and len(jobs)>0:
-                if not "nature" in film: film["nature"] = l["nature"]
+                #if not "nature" in film: film["nature"] = l["nature"]
                 if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 
                 pow=dict_to_pow(film,content)
@@ -1206,7 +1327,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
                 #     jobs = [profil.job]
                 #     log("Le job n'est pas présent dans le film, par defaut on reprend le job du profil")
 
-                for job in jobs:
+                for job in list(filter(lambda x: not x is None,jobs)):
                     t_job = translate(job)
                     if len(t_job)==0:
                         if job_for and pow and pow.title: log("!Job non identifié pour "+job_for+" sur "+pow.title)
@@ -1218,6 +1339,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
                                 try:
                                     work.save()
                                     create_article("new_work",user,profil=profil, pow=pow, work=work)
+                                    n_works=n_works+1
                                 except Exception as inst:
                                     log("Impossible d'enregistrer le travail: " + str(inst.args))
                             else:
@@ -1307,7 +1429,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             try:
                 imdb_profil_url=None
-                if content["imdb"]:
+                if content is None or content["imdb"]:
                     infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname.lower(),refresh_delay=refresh_delay_pages,url_profil=profil.get_home("IMDB"))
                     if infos is None:
                         infos=extract_profil_from_imdb(firstname=remove_accents(profil.firstname), lastname=remove_accents(profil.lastname),refresh_delay=refresh_delay_pages,url_profil=profil.get_home("IMDB"))
@@ -1322,16 +1444,16 @@ def exec_batch(profils,refresh_delay_profil=31,
                         if len(infos["links"])==0:
                             log("Aucune info trouvé pour https://www.imdb.com/find?q="+profil.lastname+"&ref_=nv_sr_sm")
 
-                        for film in infos["links"]:
-                            for e in film["episodes"]:
-                                casting=extract_casting_from_imdb(e["url"])
-                                pass
+                        # for film in infos["links"]:
+                        #     for e in film["episodes"]:
+                        #         casting=extract_casting_from_imdb(e["url"])
+                        #         pass
 
             except Exception as inst:
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 
             try:
-                if content["lefilmfrancais"]:
+                if not content is None and content["lefilmfrancais"]:
                     infos=extract_profil_from_lefimlfrancais(firstname=profil.firstname,lastname=profil.lastname)
                     if "url" in infos:profil.add_link(infos["url"],"LeFilmF")
                     if len(infos["links"])>0:
@@ -1340,7 +1462,7 @@ def exec_batch(profils,refresh_delay_profil=31,
             except:
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
-            if content["unifrance"]:
+            if not content is None and content["unifrance"]:
                 infos = extract_profil_from_unifrance(remove_accents(profil.firstname + " " + profil.lastname), refresh_delay=refresh_delay_pages)
                 log("Extraction d'un profil d'unifrance "+str(infos))
                 if infos is None:

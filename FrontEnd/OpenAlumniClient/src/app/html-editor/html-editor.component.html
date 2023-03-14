@@ -5,7 +5,7 @@
   <app-hourglass [message]="message"></app-hourglass>
   <br>
 
-  <mat-form-field appearance="legacy"
+  <mat-form-field appearance="outline"
                   style="max-width:600px;width:60%;font-size: large;display: inline-block;margin:5px;text-align: center;" autofocus>
     <mat-label>Titre</mat-label>
     <input matInput matNativeControl
@@ -90,28 +90,28 @@
          (change)="_import($event)"
          accept=".html,.htm"/>
 
-  <button class="app-button" mat-button mat-raised-button
+  <button class="app-button" mat-raised-button
           id="cmdImport"
           title="Importer"
           (click)="csvInput.click()">
     <div class="bloc-bouton">Importer un<br>fichier html</div>
   </button>
 
-  <button class="app-button" mat-button mat-raised-button
+  <button class="app-button" mat-raised-button
           id="cmdImportImage"
           title="Importer"
           (click)="import_image()">
     Images
   </button>
 
-  <button class="icon-button" mat-button mat-raised-button mat-icon-button
+  <button class="icon-button" mat-raised-button mat-icon-button
           id="cmdReset"
           title="Effacer l'article en cours"
           (click)="clear_article()">
     <mat-icon>delete</mat-icon>
   </button>
 
-  <button class="icon-button" mat-button mat-raised-button mat-icon-button
+  <button class="icon-button" mat-raised-button mat-icon-button
           id="cmdSave"
           [disabled]="!editorContent || editorContent.length==0 || title?.length==0 || resumer?.length==0"
           title="Enregistrer un brouillon"
@@ -119,7 +119,7 @@
     <mat-icon>save</mat-icon>
   </button>
 
-  <button class="app-button" mat-button mat-raised-button
+  <button class="app-button" mat-raised-button
           [disabled]="!editorContent || editorContent.length==0 || title?.length==0  || resumer?.length==0"
           id="cmdClear"
           color="primary"

@@ -1,23 +1,12 @@
 <div class="mainform" *ngIf="config.values">
 
-<!--  <div class="mat-display-4">mat-display-4</div>-->
-<!--  <div class="mat-display-3">mat-display-3</div>-->
-<!--  <div class="mat-display-2">mat-display-2</div>-->
-<!--  <div class="mat-display-1">mat-display-1</div>-->
-<!--  <h1>titre 1 : headline</h1>-->
-<!--  <h2>titre 2 : subheading-2</h2>-->
-<!--  <h3>titre 3 : subheading-1</h3>-->
-<!--  <h4>titre 4</h4>-->
-<!--  <h5>titre 5</h5>-->
-<!--  <h6>titre 6</h6>-->
-
-  <br><br>
-  <h2>{{config.values.appname}}</h2>
+  <br>
+  <div class="titleform">{{config.values.appname}}</div>
   <div style="width: 100%;text-align: center;font-size: small;margin-top:5px;">
     <div *ngIf="config.values.logo?.length>0">
       <img
-        [src]="config.values.logo"
-        [ngStyle]="{'width':200,'margin':'15px'}">
+              [src]="config.values.logo"
+              [ngStyle]="{'width':200,'margin':'15px'}">
       <br>
     </div>
     <small>Version:</small>
@@ -56,36 +45,34 @@
     <br><br>
     <div style="width: 100%;text-align: center;font-size: medium;">
 
-    <button class="icon-button" mat-icon-button mat-raised-button
-            (click)="openMail(config.values.support?.email)">
+      <button class="icon-button" mat-icon-button
+              (click)="openMail(config.values.support?.email)">
         <mat-icon>mail</mat-icon>
-    </button>
+      </button>
 
-    &nbsp;
-    <button class="icon-button" mat-icon-button mat-raised-button
-            (click)="openFrame(config.values.support?.forum)">
-      <mat-icon class="big-icon">persons</mat-icon>
-    </button>
-    &nbsp;
-    <button class="icon-button"
-            mat-icon-button mat-raised-button
-            (click)="openFrame(config.values.support?.faq)">
-      <mat-icon >help</mat-icon>
-    </button>
-&nbsp;
-    <button class="icon-button" mat-icon-button mat-raised-button
-            (click)="openFrame(config.values.support?.website)"
-           >
-      <mat-icon >home</mat-icon>
-    </button>
+      &nbsp;
+      <button class="icon-button" mat-icon-button
+              (click)="openFrame(config.values.support?.forum)">
+        <mat-icon class="big-icon">persons</mat-icon>
+      </button>
+      &nbsp;
+      <button class="icon-button"
+              mat-icon-button
+              (click)="openFrame(config.values.support?.faq)">
+        <mat-icon >help</mat-icon>
+      </button>
+      &nbsp;
+      <button class="icon-button" mat-icon-button
+              (click)="openFrame(config.values.support?.website)"
+      >
+        <mat-icon >home</mat-icon>
+      </button>
     </div>
   </div>
 
   <br>
-    <button class="app-button" mat-button mat-raised-button
-            (click)="router.navigate(['issues'])"
-           >
-      <div class="bloc-bouton">Signaler<br>un problème</div>
-    </button>
+  <button mat-raised-button (click)="router.navigate(['issues'])">
+    <div class="bloc-bouton">Signaler<br>un problème</div>
+  </button>
 
 </div>

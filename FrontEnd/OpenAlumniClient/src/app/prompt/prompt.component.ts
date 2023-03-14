@@ -1,14 +1,48 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
+export function _prompt(vm:any,title:string,_default:string="",description="",_type="text",lbl_ok="ok",
+                        lbl_cancel="Annuler",onlyConfirm=true,options:any=null,
+                        force_yes=false):Promise<string> {
+  //permet d'afficher une boite de dialog
+  return new Promise((resolve, reject) => {
+    if(_type=="yesorno" || _type=="boolean" || _type=="bool")onlyConfirm=true;
+    if(force_yes){
+      resolve("yes");
+    } else {
+      vm.dialog.open(PromptComponent,{
+        width: 'auto',data:
+            {
+              title: title,
+              type: _type,
+              question:description,
+              options:options,
+              result:_default,
+              onlyConfirm:onlyConfirm,
+              lbl_ok:lbl_ok,
+              lbl_cancel:lbl_cancel
+            }
+      }).afterClosed().subscribe((resp:any) => {
+        if(resp) {
+          resolve(resp);
+        } else {
+          reject()
+        }
+      },(err:any)=>{reject(err)});
+    }
+  });
+}
+
+
 
 export interface DialogData {
   title: string;
-  result: string;
+  result: any;
   question:string;
   placeholder:string;
   onlyConfirm:boolean;
   min:number,
+  image:string,
   n_rows:number,
   max:number,
   emojis:boolean;
@@ -20,24 +54,28 @@ export interface DialogData {
   subtitle:string
 }
 
+
 @Component({
   selector: 'app-prompt',
   templateUrl: './prompt.component.html',
   styleUrls: ['./prompt.component.sass']
 })
 
-export class PromptComponent implements OnInit {
+export class PromptComponent  {
 
   showEmoji=false;
   _type="text";
-  _min: number;
-  _max: number;
+  // @ts-ignore
+  _min!: number;
+  // @ts-ignore
+  _max!: number;
 
   constructor(
     public dialogRef_prompt: MatDialogRef<PromptComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData)
   {
-    if(data.hasOwnProperty("type"))this._type=data.type;
+    if(this._type=="oui/non")data.onlyConfirm=true;
+    if(this._type=="images")data.result=[];
     if(data.onlyConfirm)data.result="yes";
     if(data.min){
       this._min=data.min;
@@ -47,15 +85,17 @@ export class PromptComponent implements OnInit {
       this._max=data.max;
       this._type="number";
     }
+    if(data.hasOwnProperty("type"))this._type=data.type;
     if(!data.result)data.result="";
     if(!data.n_rows)data.n_rows=4;
+    if(this._type=="string" || this._type=="str")this._type="text";
   }
 
   onNoClick(): void {
     this.dialogRef_prompt.close(null);
   }
 
-  selectEmoji(event){
+  selectEmoji(event:any){
     this.data.result=this.data.result+event.emoji.native;
     this.showEmoji=false;
   }
@@ -70,6 +110,18 @@ export class PromptComponent implements OnInit {
     this.dialogRef_prompt.close(value);
   }
 
-  ngOnInit(): void {
+
+  select_image(img:any) {
+    if(this.data.result=="")this.data.result=[];
+    let index=this.data.result.indexOf(img);
+    if(index>-1){
+      this.data.result.splice(index,1);
+    } else {
+      this.data.result.push(img);
+    }
   }
+
+    select_all() {
+      this.dialogRef_prompt.close(this.data.options)
+    }
 }

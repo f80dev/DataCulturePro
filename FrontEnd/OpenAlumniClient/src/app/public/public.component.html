@@ -19,7 +19,7 @@
           <hr class="dark_separator">
           <br>
 
-          <table style="margin:0;padding:0;;border-spacing: 10px;vertical-align: top;"
+          <table style="width:100%;margin:0;padding:0;;border-spacing: 10px;vertical-align: top;"
                  id="tableProperties"
                  class="mat-body-2 blur">
             <tr>
@@ -42,15 +42,13 @@
               <td class="label">Domaine d'activité</td>
               <td>
                 {{expe}}<br>
-
               </td>
             </tr>
             <tr *ngIf="profil?.links?.length>0">
-              <td></td>
-              <td>Voir son profil sur</td>
-              <td>
+              <td class="label">Voir son profil sur</td>
+              <td style="text-align: left;">
                 <div *ngFor="let link of profil?.links" style="display: inline-block;">
-                  <a [href]="link.url" target="_blank">{{link.text}}</a>&nbsp;&nbsp;
+                  <a [href]="link.url" target="_blank" style="color: darkgray;">{{link.text}}</a>&nbsp;&nbsp;
                 </div>
               </td>
             </tr>
@@ -93,7 +91,7 @@
 
       <br>
       <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);">
-        <button mat-button mat-icon-button
+        <button mat-icon-button
                 title="Partager ce profil"
                 *ngIf="!config.isDesktop()"
                 class="icon-button" (click)="share()">

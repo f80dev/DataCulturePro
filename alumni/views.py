@@ -50,7 +50,7 @@ from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
-    profils_importer, idx
+    profils_importer, idx, raz
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
     levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
 from OpenAlumni.nft import NFTservice
@@ -295,7 +295,7 @@ def run_backup(request):
 
         management.call_command("loaddata",backup_file,verbosity=3,app_label="alumni")
 
-        return redirect(url+"api/reindex/")
+        return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
 
 
 
@@ -550,7 +550,16 @@ def rebuild_index(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def batch(request):
-    content=loads(str(request.body,"utf8"))
+    """
+
+    :param request:
+    :return:
+    """
+    try:
+        content=loads(str(request.body,"utf8"))
+    except:
+        content=None
+
     filter= request.GET.get("filter", "*")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
@@ -852,37 +861,12 @@ def get_analyse_pow(request):
 #http://localhost:8000/api/raz/
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def raz(request):
+def api_raz(request):
     filter=request.GET.get("tables","all")
     if request.GET.get("password","")!=RESET_PASSWORD:
         return Response({"message":"Password incorrect","error":1})
 
-    log("Effacement de "+filter)
-
-    if "profils" in filter or filter=="all":
-        log("Effacement des profils")
-        Profil.objects.all().delete()
-
-    if "users" in filter  or filter=="all":
-        log("Effacement des utilisateurs")
-        User.objects.all().delete()
-
-    if "pows" in filter  or filter=="all":
-        log("Effacement des contributions")
-        Work.objects.all().delete()
-        log("Effacement des awards")
-        Award.objects.all().delete()
-        log("Effacement des oeuvres")
-        PieceOfWork.objects.all().delete()
-
-    if "work" in filter or filter=="all":
-        log("Effacement des contributions")
-        if "imdb" in filter:
-            Work.objects.filter(source="imdb").delete()
-        elif "unifrance" in filter:
-            Work.objects.filter(source="unifrance").delete()
-        else:
-            Work.objects.all().delete()
+    raz(filter)
 
     log("Effacement de la base terminée")
     return Response({"message":"Compte effacé"})

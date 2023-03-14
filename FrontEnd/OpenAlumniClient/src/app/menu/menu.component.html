@@ -1,5 +1,5 @@
 <!--    voir la documentation https://material.angular.io/components/list/overview -->
-<mat-nav-list>
+<mat-nav-list >
 	<mat-list-item [title]="item.title" *ngFor="let item of l_items" >
 		<div style="display: flex;align-items: center;cursor: pointer;width:100%;" (click)="goto(item)">
 			<mat-icon *ngIf="item.icon.length>0">{{item.icon}}'</mat-icon>

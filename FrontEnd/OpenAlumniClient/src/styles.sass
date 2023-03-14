@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use "sass:map"
-@use './node_modules/@angular/material' as mat
+@use '@angular/material' as mat
 
 @use './dataculture'
 @import './node_modules/ngx-sharebuttons/themes/circles'
@@ -8,6 +8,18 @@
 .app-button
   margin: 4px !important
   min-width: 100px !important
+
+.fake-button
+  @extend .app-button
+  width: 80px
+  height: 26px
+  text-align: center
+  display: inline-block
+  cursor: pointer
+  line-height: 90%
+  font-size: small
+  padding: 10px
+
 
 .cdk-visually-hidden
   display: none
@@ -17,6 +29,7 @@
   margin-left: 0
   margin-right: 10px
   display: inline-block
+  background: none !important
 
 .div-center
   width: 100%
@@ -45,19 +58,28 @@
   width: 60px
   clip-path: circle()
 
+  //https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+.wrap-item
+  margin: 10px
+  width: 350px
+
+
 .wrap-list
   display: flex
+  gap: 15px
   flex-wrap: wrap
+  flex-direction: row
   justify-content: center
+  align-content: flex-start
+  justify-items: center
   align-items: flex-start
-  min-height: 600px
 
 ::-webkit-scrollbar
-    width: 0
-    background: transparent
+  width: 0
+  background: transparent
 
 ::-webkit-scrollbar-thumb
-    background: transparent
+  background: transparent
 
 
 //Le container contient le side-menu et le sidenavcontent
@@ -69,7 +91,6 @@
 .container
   width: 100vw
   height: 95vh
-  overflow: scroll
 
 
 
@@ -92,20 +113,14 @@
   background: none
   padding: 10px
 
+.titleform
+  margin: 20px
+  @extend .mat-headline-5
+
 mat-drawer-container
   background: none !important
 
 
-.fake-button
-  @extend .app-button
-  width: 80px
-  height: 26px
-  text-align: center
-  display: inline-block
-  cursor: pointer
-  line-height: 90%
-  font-size: small
-  padding: 10px
 
 
 .sidenav
@@ -164,17 +179,14 @@ mat-dialog-title
 
 
 .app-card-panel
-  max-width: 580px
-  width: 60%
+  max-width: 500px
+  width: 40%
   padding: 10px
   min-width: 320px
   font-size: small
   display: inline-block
 
 
-
-.mat-expansion-panel-body
-  padding: 10px !important
 
 mat-icon
   @extend .color-grey600
@@ -195,23 +207,18 @@ a
   font-size: small
   vertical-align: center
 
+
 mat-expansion-panel
   @extend .grey800
-  opacity: 0.8
+  opacity: 1
   margin: 5px
 
 mat-expansion-panel-header
   @extend .primary-color
+  font-weight: bold !important
   height: 40px !important
   padding-left: 15px !important
-  font-weight: bold !important
   width: 100%  !important
-
-mat-expansion-panel-content
-  padding: 2px !important
-  margin: 0 !important
-  width: 100%  !important
-
 
 
 mat-action-row
@@ -312,14 +319,6 @@ mat-action-row
   transform: rotateY(180deg)
 
 
-.primary-color
-  @extend .color-red500
-
-
-mat-card
-  @extend .grey800
-
-
 .label
   @extend .color-grey600
 
@@ -330,4 +329,17 @@ th
   font-weight: normal
   min-width: 100px
 
+
+.app-prompt
+  padding: 20px
+  margin: 0
+  position: fixed
+  display: block
+  left: 20vw
+  top: 20vh
+  width: 60vw
+  height: fit-content
+  max-width: 600px
+  max-height: 400px
+  @extend .grey800
 

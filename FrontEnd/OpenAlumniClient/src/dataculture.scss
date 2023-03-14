@@ -1,6 +1,9 @@
-@use 'sass:map';
-@use './node_modules/@angular/material' as mat;
+@use '@angular/material' as mat;
+@include mat.core(); //<-- cette ligne ne doit surtout pas être supprimé
 
+@media(max-width: 1500px) { html {font-size: 1.4vw;} }
+@media(max-width: 1000px) { html {font-size: 1.8vw;} }
+@media(max-width: 600px) { html {font-size: 2.2vw;} }
 
 $dataculture-typography: mat.define-typography-config(
         $headline-1: mat.define-typography-level(3.8rem,3.8rem, $font-weight: 600, $font-family: Roboto),
@@ -13,7 +16,7 @@ $dataculture-typography: mat.define-typography-config(
         $subtitle-2: mat.define-typography-level(14px, 14px, 400, Roboto),
         $body-1: mat.define-typography-level(12px, 12px, 400, Roboto),
         $body-2: mat.define-typography-level(11px, 11px, 300, Roboto),
-        $button: mat.define-typography-level(11px, 11px, 300, Roboto),
+        $button: mat.define-typography-level(12px, 8px, 400, Roboto),
         $caption: mat.define-typography-level(10px, 10px, 300, Roboto),
         $overline: mat.define-typography-level(10px, 10px, 300, Roboto)
 );
@@ -90,6 +93,7 @@ $dataculture-grey-palette :(
 
 
 $dataculture-primary-color: mat.define-palette($dataculture-red-palette, 700);
+$dataculture-secondary-color: mat.define-palette($dataculture-grey-palette, 200);
 $dataculture-accent-color:mat.define-palette($dataculture-red-palette, 700);
 $dataculture-warn-color: mat.define-palette($dataculture-red-palette, 900);
 $dataculture-green: #81C784;
@@ -104,17 +108,16 @@ $dataculture-foreground: mat.define-palette($dataculture-grey-palette,50);
 $dataculture-theme:mat.define-dark-theme((
         color: (
                 primary: $dataculture-primary-color,
+                secondary: $dataculture-secondary-color,
                 accent: $dataculture-accent-color,
                 warn:  $dataculture-warn-color,
         ),
+        background:$dataculture-background,
         typography: $dataculture-typography,
 ));
 
-
-
-
 @include mat.all-component-themes($dataculture-theme);
-
+@include mat.all-component-typographies($dataculture-typography);               //Application de la typographie
 
 .student-name {
         @extend .mat-body-2 !optional;
@@ -133,12 +136,20 @@ $dataculture-theme:mat.define-dark-theme((
         color: $dataculture-orange
 }
 
+.grey600 {
+        background-color: mat.get-color-from-palette($dataculture-grey-palette,600)
+}
+
 .grey800 {
-        background-color: mat.get-color-from-palette($dataculture-grey-palette,800)
+        background-color: mat.get-color-from-palette($dataculture-grey-palette,800) !important;
+}
+
+.grey700 {
+        background-color: mat.get-color-from-palette($dataculture-grey-palette,700)
 }
 
 .grey900 {
-        background-color: mat.get-color-from-palette($dataculture-grey-palette,900)
+        background-color: mat.get-color-from-palette($dataculture-grey-palette,900) !important;
 }
 
 .color-grey600 {
@@ -150,12 +161,9 @@ $dataculture-theme:mat.define-dark-theme((
         color: mat.get-color-from-palette($dataculture-red-palette,500);
 }
 
-
-
 .dataculture-background-color {
         background-color: $dataculture-background
 }
-
 
 .film-title {
         @include mat.typography-level($dataculture-typography,"body-1");
@@ -179,4 +187,8 @@ $dataculture-theme:mat.define-dark-theme((
 
 .fc-color {
         color: $dataculture-blue
+}
+
+.primary-color {
+        @extend .color-red500
 }

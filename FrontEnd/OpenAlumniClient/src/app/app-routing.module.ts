@@ -26,6 +26,7 @@ import {ProfilsScannerComponent} from "./profils-scanner/profils-scanner.compone
 import {IssuesComponent} from "./issues/issues.component";
 import {SettingsComponent} from "./settings/settings.component";
 import {RgpdComponent} from "./rgpd/rgpd.component";
+import {FestivalsComponent} from "./festivals/festivals.component";
 
 const routes: Routes = [
   { path: 'public', component: PublicComponent},
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'blog', component: BlogComponent},
   { path: 'addpow', component: AddpowComponent},
   { path: 'admin', component: AdminComponent},
+  { path: 'festivals', component: FestivalsComponent},
   { path: 'dev', component: DevComponent},
   { path: 'stats', component: StatsComponent},
   { path: 'settings', component: SettingsComponent},

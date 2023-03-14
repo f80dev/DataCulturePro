@@ -1,0 +1,30 @@
+mat-form-field {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 5px;
+  padding: 0;
+}
+
+button {
+  margin: 5px;
+}
+
+
+mat-form-field:not(.mat-focused) .mat-hint {
+  display: none;
+}
+
+
+.input-elements {
+  display: inline-flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: stretch;
+}
+
+.help-input {
+  opacity: 0.6;
+  font-size: xx-small;
+  margin-top: -5px;
+}
+

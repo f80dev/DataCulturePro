@@ -12,11 +12,8 @@
                    autofocus>
         </mat-form-field>
 
-<!--        <div *ngIf="showDetail" class="h-zone" style="margin: 10px;">-->
-<!--            "{{pow.title}}"-->
-<!--        </div>-->
 
-        <div *ngIf="pow.title.length>2" style="height: 50vh;width: 95%;overflow: scroll;">
+        <div *ngIf="pow.title.length>2 && !showDetail" style="height: 50vh;width: 95%;overflow: scroll;">
             <table>
                 <tr>
                     <td>
@@ -28,9 +25,9 @@
                         <button class="app-button login-button"
                                 *ngIf="pow.title?.length>2"
                                 id="cmdAddPow"
-                                mat-button mat-raised-button
+                                mat-raised-button
                                 (click)="add_title()">
-                            <div class="bloc-bouton">Ajouter un<br>nouveau film</div>
+                            Ajouter
                         </button>
                     </td>
                 </tr>
@@ -46,9 +43,8 @@
             </mat-selection-list>
         </div>
 
-
-
         <div *ngIf="showDetail">
+            <div class="mat-headline-4" style="width: 100%;text-align: center;">"{{pow.title}}"</div>
             <mat-accordion [multi]="false" style="text-align: left;">
                 <mat-expansion-panel  [expanded]="true">
                     <mat-expansion-panel-header>
@@ -65,7 +61,7 @@
                         <button class="app-button login-button" color="primary"
                                 id="cmdVisual"
                                 *ngIf="pow.visual.length==0"
-                                mat-button mat-raised-button
+                                mat-raised-button
                                 (click)="change_visual()">
                             Ajouter un visuel
                         </button>
@@ -75,13 +71,18 @@
                     </div>
 
 
-                    <mat-form-field  appearance="fill" class="app-field">
-                        <mat-label>Synopsis</mat-label>
-                        <input matInput id="txtSynopsis"
-                               type="text" max="3000" required
-                               [(ngModel)]="pow.description">
-                        <mat-hint>Synopsis de l'oeuvre (3000 caractères max)</mat-hint>
-                    </mat-form-field> <br>
+                    <app-input label="Synopsis" max="3000" value_type="textarea" [value]="pow.description"
+                               (valueChange)="pow.description=$event"
+                                help="Synopsis de l'oeuvre (3000 caractères max)">
+                    </app-input><br>
+
+<!--                    <mat-form-field  appearance="fill" class="app-field">-->
+<!--                        <mat-label>Synopsis</mat-label>-->
+<!--                        <input matInput id="txtSynopsis"-->
+<!--                               type="text" max="3000" required-->
+<!--                               [(ngModel)]="pow.description">-->
+<!--                        <mat-hint>Synopsis de l'oeuvre (3000 caractères max)</mat-hint>-->
+<!--                    </mat-form-field> <br>-->
 
 
                     <mat-form-field  appearance="fill" class="app-field" style="max-width: 175px;">
@@ -139,7 +140,7 @@
                     <mat-action-row id="pnlActionAddLink">
                         <button class="app-button login-button"
                                 *ngIf="pow.title.length>0 && link.url.length>0"
-                                mat-button mat-raised-button
+                                mat-raised-button
                                 (click)="add_link()">
                             Ajouter
                         </button>
@@ -160,21 +161,21 @@
            accept=".xls,.xlsx"/>
 
     <button class="app-button login-button"
-            mat-button mat-raised-button
+            mat-raised-button
             *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
             (click)="csvInput.click()">
         Importer
     </button>
 
     <button class="app-button login-button"
-            mat-button mat-raised-button
+            mat-raised-button
             *ngIf="pow?.owner=='public' && config.hasPerm('add_movies')"
             (click)="router.navigate(['profils_scanner'])">
         Analyse
     </button>
 
     <button class="app-button login-button"
-            mat-button mat-raised-button
+            mat-raised-button
             [disabled]="pow?.description?.length==0 || pow?.year==0"
             id="cmdSave" color="primary"
             (click)="quit(true)">
@@ -182,7 +183,7 @@
     </button>
 
     <button class="app-button login-button"
-            mat-button mat-raised-button
+            mat-raised-button
             (click)="quit(false)">
         Annuler
     </button>

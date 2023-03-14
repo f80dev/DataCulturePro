@@ -2,6 +2,10 @@
 
   <br>
 
+  <div class="titleform" *ngIf="config && config.user && config.user.user">
+    {{config.user.user.email}}
+  </div>
+
   <mat-accordion style="display: inline-block;width:90%;max-width: 1200px;">
     <mat-expansion-panel  style="text-align: left;" id="pnlGeneral" [expanded]="true">
       <mat-expansion-panel-header>Général</mat-expansion-panel-header>
@@ -27,9 +31,7 @@
         <br>
         <br>
 
-        <button class="app-button"
-                mat-button mat-raised-button
-                (click)="open_perms()">
+        <button mat-raised-button (click)="open_perms()">
           Modifier vos permissions
         </button>
 
@@ -47,7 +49,7 @@
 
       <button class="app-button"
               color="primary"
-              mat-button mat-raised-button
+              mat-raised-button
               (click)="raz()">
         Effacer votre compte
       </button>

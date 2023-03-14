@@ -51,7 +51,7 @@
                         </div>
                     </td>
                     <td style="text-align: right;width:fit-content;">
-                        <button mat-button mat-icon-button
+                        <button mat-icon-button
                                 title="Voir la page publique"
                                 name="cmdShareProfil"
                                 class="small-icon-button"
@@ -82,7 +82,7 @@
             <br>
 
             <div *ngIf="showAction">
-                <button mat-button mat-icon-button
+                <button  mat-icon-button
                         name="cmdContact"
                         class="small-icon-button"
                         *ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('write_email')"
@@ -92,7 +92,7 @@
                 </button>
 
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         title="Voir la page publique"
                         name="cmdShareProfil"
                         class="small-icon-button"
@@ -100,7 +100,7 @@
                     <mat-icon>visibility</mat-icon>
                 </button>
 
-                <!--        <button mat-button mat-icon-button-->
+                <!--        <button mat-icon-button-->
                 <!--                title="Réalisations / Films / Livres"-->
                 <!--                name="cmdOpenWork"-->
                 <!--                class="small-icon-button"-->
@@ -109,7 +109,7 @@
                 <!--          <mat-icon>videocam</mat-icon>-->
                 <!--        </button>-->
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         title="Accès au profil via le CRM"
                         name="cmdOpenCRM"
                         *ngIf="config.hasPerm('CRM_acces')"
@@ -118,7 +118,7 @@
                     <mat-icon>school</mat-icon>
                 </button>
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         class="small-icon-button"
                         title="Consulter son site web"
                         name="cmdWebsite"
@@ -127,7 +127,7 @@
                     <mat-icon>public</mat-icon>
                 </button>
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         class="small-icon-button"
                         title="Supprimer le profil"
                         name="cmdDelProfil"
@@ -136,7 +136,7 @@
                     <mat-icon>delete</mat-icon>
                 </button>
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         class="small-icon-button"
                         title="Générer un NFT"
                         name="cmdCreateNFT"
@@ -145,7 +145,7 @@
                     <mat-icon>enhanced_encryption</mat-icon>
                 </button>
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         class="small-icon-button"
                         title="Demander en tuteur"
                         name="cmdAskTutor"
@@ -154,7 +154,7 @@
                     <mat-icon>school</mat-icon>
                 </button>
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         title="Editer mon profil"
                         class="small-icon-button"
                         name="cmdEditProfil"
@@ -165,7 +165,7 @@
 
                 <!--
 					TODO: a rétablir pour les communications
-					<button mat-button mat-icon-button
+					<button mat-icon-button
 							title="Demander en ami"
 							*ngIf="config.user?.user?.email!=profil?.email && config.hasPerm('ask_friend')"
 							(click)="askFriend(profil)">
@@ -174,7 +174,7 @@
 
 					-->
 
-                <button mat-button mat-icon-button
+                <button mat-icon-button
                         title="Voir sa page linkedin"
                         class="small-icon-button"
                         *ngIf="profil?.linkedin?.length>0 && config.hasPerm('r_linkedin')"

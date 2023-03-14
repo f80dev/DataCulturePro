@@ -8,18 +8,18 @@
   <br><br>
   <app-hourglass maxwidth="300px" [message]="wait_message" faq="authent"></app-hourglass>
 
-  <div *ngIf="config.user?.user.email?.length==0 && wait_message.length==0">
+  <div *ngIf="wait_message.length==0">
     <div style="width: 100%;text-align: center;">
       <div *ngIf="messageCode.length==0">
         <button class="app-button login-button"
                 id="cmdGoogle"
-                mat-button mat-raised-button
+                mat-raised-button
                 (click)="socialSignIn('google')">
           Google
         </button>
         <br>
 <!--        <button class="app-button login-button"-->
-<!--                mat-button mat-raised-button-->
+<!--                mat-raised-button-->
 <!--                id="cmdFacebook"-->
 <!--                (click)="socialSignIn('facebook')">-->
 <!--          Facebook-->
@@ -29,7 +29,7 @@
       <br>
       <button class="app-button login-button"
               *ngIf="messageCode.length==0"
-              mat-button mat-raised-button
+              mat-raised-button
               id="cmdEmail"
               (click)="email_login()">
         Email
@@ -63,7 +63,7 @@
 
         <br>
         <button class="app-button"
-                mat-button mat-raised-button
+                mat-raised-button
                 *ngIf="code>10000"
                 id="cmdValider"
                 (click)="updateCode(code)">
@@ -72,14 +72,14 @@
         <br><br><br>
         <div *ngIf="code.length<4">
           <button class="app-button"
-                  mat-button mat-raised-button
+                  mat-raised-button
                   id="cmdResend"
                   (click)="resend_code()">
             Renvoyer le code
           </button>
           &nbsp;
           <button class="app-button"
-                  mat-button mat-raised-button
+                  mat-raised-button
                   id="cmdReset"
                   (click)="next()">
             Rester anonyme
@@ -105,7 +105,7 @@
 
     <button class="app-button"
             id="cmdGoStore"
-            mat-button mat-raised-button
+            mat-raised-button
             (click)="next()">
       Continuer
     </button>

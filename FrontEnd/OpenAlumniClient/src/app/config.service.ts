@@ -126,7 +126,8 @@ export class ConfigService {
   }
 
 
-  init_user(func_success=null,func_anonyme=null,email=null) {
+  async init_user(email=null) : Promise<any> {
+    if(!email)return(email);
     $$("Initialisation de l'utilisateur "+email);
     this.api.getextrauser(email).subscribe((r:any)=>{
       if(r.count>0){
@@ -140,17 +141,14 @@ export class ConfigService {
           })
         }
 
-        if(func_success)func_success();
+        return(this.user);
       } else {
-
         $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")
         if(email){
           this.api.logout();
         }
         this.raz_user();
-        this.user.profil="Anonyme";
-        this.user_update.next(this.user);
-        if(func_anonyme)func_anonyme();
+        return;
       }
     });
   }
@@ -162,8 +160,9 @@ export class ConfigService {
       black_list: "", dtCreate: "", dtLogin: "", level: 0, nbLogin: 0, profil_name: "",
       user:{email:"",id:""},
       perm:this.profils["anonyme"].perm,
-      profil:""
+      profil:"anonyme"
     };
+    this.user_update.next(this.user);
   }
 
   isLogin() {

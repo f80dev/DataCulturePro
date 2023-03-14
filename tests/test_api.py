@@ -7,7 +7,9 @@ from rest_framework.test import APIClient
 
 from OpenAlumni.Tools import index_string
 from OpenAlumni.passwords import RESET_PASSWORD
-from alumni.models import Profil, Work
+from alumni.models import Profil, Work, Award
+from tests.test_query import test_raz, test_import_profils
+from tests.test_scrapping import PROFILS
 
 
 @pytest.fixture
@@ -55,10 +57,26 @@ def test_search(server):
 
 
 
+
+@pytest.mark.django_db
+def test_batch(server,profil:Profil=None):
+	if profil:
+		rc=call_api(server,"batch","filter="+str(profil.id),method="POST")
+	else:
+		rc=call_api(server,"batch",method="POST")
+
+
+
 @pytest.mark.django_db
 def test_backup(server,file="backup_test"):
-	assert Profil.objects.count()>0
-	assert Work.objects.count()>0
+	rc=test_import_profils(raz_before=False)
+	test_batch(server,Profil.objects.all()[0])
+	old_profils=Profil.objects.count()
+	old_works=Work.objects.count()
+	old_awards=Award.objects.count()
+	assert old_profils>0
+	assert old_works>0
+
 	rc=call_api(server,"backup","command=save&file="+file)
 	assert not rc is None
 
@@ -71,17 +89,23 @@ def test_backup(server,file="backup_test"):
 	assert not rc is None
 	assert Profil.objects.count()>0
 	assert Work.objects.count()>0
+	assert Profil.objects.count()==old_profils
+	assert Work.objects.count()==old_works
+	assert Award.objects.count()==old_awards
 
 
 
 
 @pytest.mark.django_db
-def test_query_awards(server):
+def test_query_awards(server,lastname="ducournau"):
 	"""
 	Pour la construction des tests voir
 	:param server:
 	:return:
 	"""
+	_profils=Profil.objects.filter(lastname__iexact=lastname.upper()).all()
+	test_batch(server,_profils[0])
+
 	rc=call_api(server,"extraawards","profil__name_index="+index_string("julia ducournau"))
 	assert rc["count"]>0
 

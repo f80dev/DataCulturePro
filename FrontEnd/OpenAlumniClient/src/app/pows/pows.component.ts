@@ -70,7 +70,7 @@ export class PowsComponent implements OnInit {
 
 
   refresh(limit=100) {
-    if(this.query.value.length>3)this._location.replaceState("pows/?query="+this.query.value);
+    if(this.query.value && this.query.value.length>3)this._location.replaceState("pows/?query="+this.query.value);
     let param=translateQuery(this.query.value,false);
     param=param+"&limit="+limit;
     this.message="Recherche des films";

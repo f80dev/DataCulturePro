@@ -167,7 +167,7 @@ DATABASES = {
         'HOST': 'provider.europlots.com',
         'PORT': '32564',
         'OPTIONS': {
-            'options': '-c statement_timeout=5000'
+            'options': '-c statement_timeout=50000'
         }
     }
 }

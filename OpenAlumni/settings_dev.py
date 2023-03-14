@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
-from OpenAlumni.passwords import DB_PASSWORD,_SECRET_KEY
+from OpenAlumni.passwords import DB_PASSWORD, _SECRET_KEY, DB_USER
 
 PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 #PAGEFILE_PATH="c://Temp/"
@@ -176,6 +176,17 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #         'options': '-c statement_timeout=5000'
 #     }
 # },
+# "old": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "NAME": "alumni_db",
+#     "USER": "hhoareau",
+#     "PASSWORD": DB_PASSWORD,
+#     'HOST': '109.205.183.200',
+#     'PORT': '5432',
+#     'OPTIONS': {
+#         'options': '-c statement_timeout=5000'
+#     }
+# }
 # "default": {
 #     "ENGINE": "django.db.backends.postgresql_psycopg2",
 #     "NAME": "dataculture",
@@ -183,17 +194,6 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #     "PASSWORD": DB_PASSWORD,
 #     'HOST': 'europlot.provider.eu',
 #     'PORT': '30573',
-#     'OPTIONS': {
-#         'options': '-c statement_timeout=5000'
-#     }
-# },
-# "default": {
-#     "ENGINE": "django.db.backends.postgresql_psycopg2",
-#     "NAME": "dataculture",
-#     "USER": "femis",
-#     "PASSWORD": DB_PASSWORD,
-#     'HOST': 'provider.europlots.com',
-#     'PORT': '32564',
 #     'OPTIONS': {
 #         'options': '-c statement_timeout=5000'
 #     }
@@ -220,14 +220,14 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "alumni_db",
-        "USER": "hhoareau",
+        "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': '109.205.183.200',
-        'PORT': '5432',
+        'HOST': '109.205.183.200',    #'provider.europlots.com' pour akash
+        'PORT': '5432',             #32564 pour akash
         'OPTIONS': {
-            'options': '-c statement_timeout=5000'
+            'options': '-c statement_timeout=50000'
         }
-    },
+    }
 }
 
 #Installation d'elasticsearch dans README à la racine

@@ -77,10 +77,15 @@ export function normaliser(s:string):string {
 }
 
 export function remove_ponctuation(s:string):string {
-  for(let it of [":",",",";","!","?","-","_","  "])
-    s=s.replace(it," ");
+  if(s){
+    for(let it of [":",",",";","!","?","-","_","  "]){
+      s=s.replace(it," ");
+    }
 
-  return s.trim();
+    return s.trim();
+  }else {
+    return s;
+  }
 }
 
 export function decrypt(s:string | any) : string {

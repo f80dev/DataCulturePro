@@ -1,6 +1,6 @@
 import { SocialAuthService } from 'angularx-social-login';
 import { FacebookLoginProvider, GoogleLoginProvider } from 'angularx-social-login';
-import {$$, showError, showMessage} from '../tools';
+import {$$, getParams, showError, showMessage} from '../tools';
 import {ApiService} from '../api.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {ConfigService} from '../config.service';
@@ -56,26 +56,34 @@ export class LoginComponent implements OnInit {
 
     let email=localStorage.getItem("email");
     $$("Chargement de la configuration si l'email est dans les cookies");
-    this.config.init_user(() => {
-      $$("L'utilisateur est déjà loggé");
-      this.quit();
-    }, () => {
-      const params: ParamMap = this.route.snapshot.queryParamMap;
-      this.redirect = params.get('redirect');
-      if (params.has('message')) { this.message = params.get('message'); }
-      if (params.has('address') || params.has('email')) {
-        let addr = params.get('address');
-        if (!addr) {addr = params.get('email'); }
-        $$('Récupération de l\'adresse ' + addr);
-        localStorage.setItem('lastEmail', addr);
-        this.email_login();
-      }
-      if(params.has("login") && params.has("password")){
-        debugger
-        this.email=params.get("login");
-        this.updateCode(params.get("password"));
-      }
-    },email);
+    this.config.init_user(email).then( (result)=> {
+      this.email=result;
+      if (result) {
+        $$("L'utilisateur est déjà loggé");
+        this.quit();
+      } else {
+        getParams(this.route).then((params:any)=>{
+          this.redirect = params['redirect'];
+          if (params.message) { this.message = params['message']; }
+
+          if (params.address || params.email) {
+            let addr = params['address'];
+            if (!addr) {addr = params['email']; }
+            $$('Récupération de l\'adresse ' + addr);
+            localStorage.setItem('lastEmail', addr);
+            this.email_login();
+          }
+
+          if(params["login"] && params["password"]){
+            this.email=params["login"];
+            this.updateCode(params["password"]);
+          }
+
+          this.messageCode=""
+          this.email="";
+      })
+    }
+  });
   }
 
 
@@ -194,7 +202,6 @@ export class LoginComponent implements OnInit {
   }
 
 
-
   updateCode(code: any){
     if (typeof(code) == 'object') {code = code.target.value; }
     $$('Vérification du code: '+code);
@@ -207,8 +214,10 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('token', r.token);
         localStorage.setItem("email",this.email);
         this.messageCode = '';
-        this.config.init_user(() => {this.quit();}, () => {},this.email);
-      } else {
+        this.config.init_user(this.email).then((r:any) => {
+          if(r)this.quit();
+        })
+    }else {
 
         $$('Problème technique');
         this.config.raz_user();
@@ -277,6 +286,7 @@ export class LoginComponent implements OnInit {
           provider: socialUser.provider,
           provider_id: socialUser.id,
         }, false);
+        if(!this.redirect)this.router.navigate(["settings"]);
       },
       (err) => {
         this.n_try = this.n_try + 1;

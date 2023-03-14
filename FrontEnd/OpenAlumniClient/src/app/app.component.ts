@@ -40,7 +40,7 @@ export class AppComponent implements OnInit,AfterViewInit {
               public router:Router){
     this.appVersion=environment.appVersion;
     config.init().then(() => {
-      this.config.init_user(null,null,localStorage.getItem("email"));
+      this.config.init_user(localStorage.getItem("email"));
     });
     this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{
       this.simple_screen=result.matches;
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit,AfterViewInit {
     $$("Déconnexion");
     this.api.logout();
     this.config.raz_user();
-    window.location.reload();
+    this.router.navigate(["search"])
   }
 
 

@@ -6,6 +6,8 @@ import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {tProfilPerms} from "../types";
+import {_prompt} from "../prompt/prompt.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-admin',
@@ -22,34 +24,38 @@ export class AdminComponent implements OnInit {
   constructor(private api:ApiService,
               public config:ConfigService,
               public router:Router,
-              public toast:MatSnackBar) { }
+              public dialog:MatDialog,
+              public toast:MatSnackBar) {
+    this.config.user_update.subscribe(()=>{
+      this.profils=Object.values(this.config.profils);
+      this.refresh();
+    })
+  }
 
   refresh(){
     this.api._get("extrausers").subscribe((r:any)=>{
       this.users=r.results;
+      for(let i=0;i<this.users.length;i++){
+        this.users[i].profil=this.profils[this.users[i].profil_name]
+      }
     })
   }
 
   ngOnInit(): void {
-    this.api._get("infos_server").subscribe((infos:any)=>{
-      this.info_server=infos;
-    });
-    this.config.user_update.subscribe(()=>{
-      this.profils=Object.values(this.config.profils)
-      this.refresh();
-
-    })
+    this.refresh_server();
   }
 
   raz(table:string) {
-    this.message="Effacement de la base de données";
-    this.api._get("raz/","tables="+table,200).subscribe(()=>{
-      showMessage(this,"Base de données effacée");
-      this.message="";
-      this.initdb();
-      this.router.navigate(["import"]);
-    },(err)=>{
-      showError(this,"Echec d'effacement de la base");
+    _prompt(this,"Confirmer l'effacement total ?").then(()=>{
+      this.message="Effacement de la base de données";
+      this.api._get("raz/","tables="+table+"&password=oui",200).subscribe(()=>{
+        showMessage(this,"Base de données effacée");
+        this.message="";
+        this.initdb();
+        this.router.navigate(["import"]);
+      },(err)=>{
+        showError(this,"Echec d'effacement de la base");
+      })
     })
   }
 
@@ -109,8 +115,8 @@ export class AdminComponent implements OnInit {
   }
 
   update_index() {
-    this.message="Le moteur de recherche est en cours de réinidexation";
-    this.api._get("rebuild_index","name=profils").subscribe((r:any)=>{
+    this.message="Le moteur de recherche est en cours de réinidexation (ce processus peut être long)" ;
+    this.api._get("rebuild_index","name=profils",600).subscribe((r:any)=>{
       this.message="";
       showMessage(this,r.message);
     });
@@ -167,10 +173,20 @@ export class AdminComponent implements OnInit {
   }
 
 
-  update_profil(u: any) {
-    u.perm = this.config.profils[u.profil_name].perm;
+  update_profil(u: any,sel_profil:string) {
+    u.profil_name=sel_profil
+    for(let p of this.profils){
+      if(p.id==sel_profil)u.perm = p.perm;
+    }
+
     this.api.setuser(u).subscribe(() => {
       showMessage(this,"Profil mise a jour");
     });
   }
+
+    refresh_server() {
+      this.api._get("infos_server").subscribe((infos:any)=>{
+        this.info_server=infos;
+      });
+    }
 }

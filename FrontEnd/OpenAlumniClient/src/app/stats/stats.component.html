@@ -82,7 +82,7 @@
     <mat-tab name="tabs" label="Exports" *ngIf="config.hasPerm('export_stats')">
 
       <br>
-      <mat-form-field appearance="legacy" style="min-width: 300px;width:5%;">
+      <mat-form-field appearance="outline" style="min-width: 300px;width:5%;">
         <mat-label>Liste des raports</mat-label>
         <mat-select multiple [(ngModel)]="sel_instant_report_to_copy">
           <mat-option *ngFor="let report of instant_reports" [value]="report.id">
@@ -91,7 +91,7 @@
         </mat-select>
       </mat-form-field>
 
-      <button mat-button mat-raised-button
+      <button mat-raised-button
               class="app-button"
               id="cmdCopyReport"
               *ngIf="sel_instant_report_to_copy?.length>0"
@@ -127,17 +127,17 @@
           <tr>
             <td>Données brutes</td>
             <td style="text-align: left;">
-              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+              <button mat-raised-button class="app-button" style="width: 140px;"
                       (click)="downloadReport('csv')">
                 <mat-icon>download</mat-icon>&nbsp;Excel (CSV)
               </button>
               &nbsp;
-              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+              <button mat-raised-button class="app-button" style="width: 140px;"
                       (click)="downloadReport('xml')">
                 <mat-icon>download</mat-icon>&nbsp;XML
               </button>
 
-              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+              <button mat-raised-button class="app-button" style="width: 140px;"
                       (click)="downloadReport('json')">
                 <mat-icon>download</mat-icon>&nbsp;JSON
               </button>
@@ -147,13 +147,13 @@
           <tr>
             <td>Modèle d'analyse</td>
             <td style="text-align: left;">
-              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+              <button mat-raised-button class="app-button" style="width: 140px;"
                       (click)="downloadReport('excel')">
                 <mat-icon>download</mat-icon>
                 Excel
               </button>
               &nbsp;
-              <button mat-button mat-raised-button class="app-button" style="width: 140px;"
+              <button mat-raised-button class="app-button" style="width: 140px;"
                       (click)="downloadReport('powerbi')">
                 <mat-icon>download</mat-icon>
                 PowerBI
@@ -180,7 +180,7 @@
       <!--        <mat-hint>Sélectionner le rapport que vous souhaitez consulter</mat-hint>-->
       <!--      </mat-form-field>-->
 
-      <!--      <button mat-button mat-raised-button-->
+      <!--      <button mat-raised-button-->
       <!--              class="app-button"-->
       <!--              id="cmdOpenStat" color="primary"-->
       <!--              *ngIf="sel_report?.length>0 && sel_report!='building'"-->
@@ -203,14 +203,14 @@
       <p>La liste des données disponibles via DataCulture pour construire les reportings</p>
 
       <br>
-      <button mat-button mat-raised-button
+      <button mat-raised-button
               title="Exporter ce tableau au format JSON"
               class="app-button"
               (click)="export_doc('json',true)">
         Exporter en JSON
       </button>
 
-      <button mat-button mat-raised-button
+      <button mat-raised-button
               title="Exporter ce tableau au format JSON"
               class="app-button"
               (click)="export_doc('csv',false)">
@@ -258,7 +258,7 @@
 <div class="bottom-bar">
   <hr>
 
-  <!--    <button mat-button mat-raised-button-->
+  <!--    <button mat-raised-button-->
   <!--            *ngIf="config.query_cache?.length>0"-->
   <!--            title="Exporter le résultat de votre dernière recherche"-->
   <!--            class="app-button"-->
@@ -267,7 +267,7 @@
   <!--    </button>-->
 
   <div *ngIf="tabGroup?.selectedIndex==0" style="display: inline-block">
-    <button mat-button mat-raised-button
+    <button mat-raised-button
             class="app-button"
             id="cmdOpen"
             *ngIf="sel_report?.url?.length>0"
@@ -275,7 +275,7 @@
       <div class="bloc-bouton">Agrandir le<br>graphique</div>
     </button>
 
-    <button mat-button mat-raised-button
+    <button mat-raised-button
             class="app-button"
             id="cmdExport"
             *ngIf="sel_report?.url?.length>0"
@@ -283,7 +283,7 @@
       <div class="bloc-bouton">Exporter<br>sous Excel</div>
     </button>
 
-    <button mat-button mat-raised-button
+    <button mat-raised-button
             class="app-button"
             id="cmdShare"
             *ngIf="sel_report?.url?.length>0"
@@ -291,7 +291,7 @@
       <div class="bloc-bouton">Partager<br>le rapport</div>
     </button>
 
-    <button mat-button mat-raised-button
+    <button mat-raised-button
             class="app-button"
             id="cmdRefresh"
             (click)="refresh_stats()">
@@ -300,14 +300,14 @@
 
   </div>
 
-  <button mat-button mat-raised-button
+  <button mat-raised-button
           class="app-button"
           id="cmdOpenSocialGraph"
           (click)="openSocialGraph()">
     <div class="bloc-bouton">Graphe<br>social</div>
   </button>
 
-  <!--  <button mat-button mat-raised-button-->
+  <!--  <button mat-raised-button-->
   <!--          class="app-button"-->
   <!--          (click)="showGraphQL=true">-->
   <!--    GraphQL-->

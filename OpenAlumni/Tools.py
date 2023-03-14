@@ -455,6 +455,11 @@ def in_dict(key:str,section="jobs"):
     key=key[0].upper() + key[1:].lower()
     return key.lower() in MYDICT[section].keys()
 
+def apply_dictionnary_on_each_words(section:str,text:str):
+    rc=[]
+    for wrd in text.split(" "):
+        rc.append(translate(wrd,sections=[section],must_be_in_dict=False))
+    return " ".join(rc)
 
 
 def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages"],must_be_in_dict=False):

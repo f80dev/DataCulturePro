@@ -69,7 +69,7 @@
 
 
         <mat-action-row>
-          <button color="primary" class="icon-button" mat-button mat-icon-button mat-raised-button (click)="quit()">
+          <button color="primary" class="icon-button" mat-icon-button (click)="quit()">
             <mat-icon>save</mat-icon>
           </button>
         </mat-action-row>
@@ -109,7 +109,7 @@
         <mat-action-row>
           <button color="primary" class="icon-button"
                   [disabled]="!mustSave"
-                  mat-button mat-icon-button mat-raised-button (click)="quit()">
+                  mat-icon-button (click)="quit()">
             <mat-icon>save</mat-icon>
           </button>
         </mat-action-row>
@@ -132,7 +132,6 @@
           </td>
           <td style="width: 30px;text-align: right;">
             <button class="icon-button" mat-icon-button
-                    mat-raised-button
                     title="Voir le profil de son tuteur"
                     (click)="open_profil(profil.sponsorBy)">
               <mat-icon>visibility</mat-icon>
@@ -140,7 +139,6 @@
           </td>
           <td style="width: 30px;text-align: right;">
             <button class="icon-button" mat-icon-button
-                    mat-raised-button
                     title="Contacter votre tuteur"
                     (click)="contact_profil(profil.sponsorBy)">
               <mat-icon>email</mat-icon>
@@ -148,7 +146,6 @@
           </td>
           <td style="width: 30px;text-align: right;">
             <button class="icon-button" mat-icon-button
-                    mat-raised-button
                     title="Ne plus avoir comme tuteur"
                     (click)="remove_tuteur()">
               <mat-icon>cancel</mat-icon>
@@ -215,7 +212,7 @@
           
         </mat-expansion-panel-header>
 
-        <mat-form-field appearance="legacy" class="app-field" style="width: 70%;max-width: 250px;font-size: small;">
+        <mat-form-field appearance="outline" class="app-field" style="width: 70%;max-width: 250px;font-size: small;">
           <mat-label>Critères de recherche</mat-label>
           <input matInput type="text" max="50" [(ngModel)]="query">
         </mat-form-field>
@@ -324,7 +321,7 @@
         </table>
 
         <mat-action-row>
-          <button class="app-button" mat-button mat-raised-button
+          <button class="app-button" mat-raised-button
                   color="primary"
                   id="cmdAddExperience"
                   (click)="add_pow()">
@@ -372,7 +369,7 @@
           </tr>
         </table>
         <mat-action-row>
-          <button class="app-button" mat-button mat-raised-button
+          <button class="app-button" mat-raised-button
                   color="primary"
                   *ngIf="works.length>0"
                   id="cmdAddAward"
@@ -403,7 +400,7 @@
     <br>
     <div *ngIf="works.length>0" style="text-align: center;width: 100%;">
       <br>
-      <button class="app-button" mat-button mat-raised-button
+      <button class="app-button" mat-raised-button
               id="cmdPreview"
               title="Permet de voir la page publique qui liste vos expériences"
               *ngIf="works?.length>0"
@@ -415,8 +412,7 @@
     </div>
 
 
-    <button mat-icon-button mat-button
-            mat-raised-button
+    <button mat-icon-button
             class="icon-button"
             id="cmdDeletePows"
             title="Efface les films"
@@ -428,7 +424,6 @@
     <button mat-icon-button
             mat-raised-button
             class="icon-button"
-            mat-button
             id="cmdClear"
             title="Sont effacées uniquement les expériences issue des annuaires publiques"
             *ngIf="works?.length>0"
@@ -437,9 +432,9 @@
     </button>
 
     <button mat-icon-button
-            mat-raised-button
+
             class="icon-button"
-            mat-button
+
             title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
             id="cmdAnalyse"
             (click)="analyse()">
@@ -485,7 +480,7 @@
   <!--          <th mat-header-cell *matHeaderCellDef>Sélectionner</th>-->
   <!--          <td mat-cell *matCellDef="let element">-->
   <!--            <button class="icon-button"-->
-  <!--                    mat-button mat-raised-button mat-icon-button-->
+  <!--                    mat-raised-button mat-icon-button-->
   <!--                    (click)="select(element)">-->
   <!--              <mat-icon>checkmark</mat-icon>-->
   <!--            </button>-->
@@ -502,7 +497,7 @@
   <!--      </table>-->
 
   <!--      <br>-->
-  <!--      <button class="app-button" mat-button mat-raised-button-->
+  <!--      <button class="app-button" mat-raised-button-->
   <!--              (click)="add_pow()">-->
   <!--        Nouveau film-->
   <!--      </button>-->
@@ -594,14 +589,13 @@
     <br>
 
     <button class="app-button"
-            mat-button mat-raised-button
+            mat-raised-button
             (click)="this.showAddWork=0">
       Anuler
     </button>
 
     <button class="app-button" color="primary"
-            mat-button mat-raised-button
-            id="cmdAddExperience"
+            mat-raised-button
             title="Ajouter ce projet à votre expérience"
             (click)="save_newwork()">
       <div class="bloc-bouton">Enregistrer cette<br>expérience</div>

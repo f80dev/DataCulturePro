@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ApiService} from "../api.service";
 import {$$, abrege, getParams, normaliser, showError, showMessage, translateQuery} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -36,11 +36,11 @@ export class SearchComponent implements OnInit {
   }
 
 
-
   ngOnInit(): void {
     getParams(this.routes).then((params:any)=>{
       this.query.value=params.filter || params.query || "";
       if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
+      this.refresh();
     })
   }
 

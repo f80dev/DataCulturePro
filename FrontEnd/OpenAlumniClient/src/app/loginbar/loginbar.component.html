@@ -1,14 +1,7 @@
 <div class="sidemenu">
-  <header>
-    <app-menu [items]="menu_header"></app-menu>
-  </header>
-
-  <content style="flex:auto;"></content>
-
-  <footer>
-    <app-menu [items]="menu_footer"></app-menu>
-  </footer>
-
+ <app-menu [items]="menu_header" [status]="status" (select)="onselect($event)"></app-menu>
+ <content style="flex:auto;"></content>
+ <app-menu [items]="menu_footer" [status]="status" (select)="onselect($event)"></app-menu>
 </div>
 
 

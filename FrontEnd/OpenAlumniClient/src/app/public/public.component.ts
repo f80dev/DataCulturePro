@@ -78,7 +78,7 @@ export class PublicComponent implements OnInit {
     let rc=[];
 
     for(let _w of works){
-      _w.job=_w.jobs.join(" & ")
+      _w.job=_w.jobs.join(" / ")
       _w.icon=this.config.icons["Movie"];
       for(let k of Object.keys(this.config.icons)){
         if((_w.job).toLowerCase().indexOf(k.toLowerCase())>-1)_w.icon=this.config.icons[k];

@@ -94,6 +94,8 @@ import {NgxJsonViewerModule} from "ngx-json-viewer";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ScreencutterPipe } from './screencutter.pipe';
 import { MenuComponent } from './menu/menu.component';
+import { InputComponent } from './input/input.component';
+import { FestivalsComponent } from './festivals/festivals.component';
 
 @NgModule({
   declarations: [
@@ -139,7 +141,9 @@ import { MenuComponent } from './menu/menu.component';
     TimelineComponent,
     ScoringComponent,
     ScreencutterPipe,
-    MenuComponent
+    MenuComponent,
+    InputComponent,
+    FestivalsComponent
   ],
     imports: [
         BrowserModule,

@@ -116,9 +116,6 @@ perms:
   - tag: r_department
     description: à la formation du profil
 
-  - tag: admin
-    description: à la console d'administration
-
   - tag: publish
     description: à la publication d'article
 

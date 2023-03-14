@@ -1,0 +1,12 @@
+<div class="mainform">
+	<br>
+	<mat-form-field appearance="outline" class="search_zone" autofocus>
+		<input matInput matNativeControl
+		       title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
+		       (keyup)="onQuery($event)" [(ngModel)]="query.value"
+		       placeholder="Rechercher par année, par film, par nom du festival">
+		<mat-icon *ngIf="query.value?.length>0"
+		          matSuffix style="cursor: pointer"
+		          (click)="clearQuery()">cancel</mat-icon>
+	</mat-form-field>
+</div>
