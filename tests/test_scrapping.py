@@ -25,6 +25,12 @@ MOVIES={
 
 PROFILS=[
 	{
+		"name":"julia ducournau",
+		"unifrance":{"links":3},
+		"imdb":{"links":4},
+		"awards":20
+	},
+	{
 		"name":"béatrice Colombier",
 		"unifrance":{},
 		"imdb":{}
@@ -35,18 +41,10 @@ PROFILS=[
 		"imdb":{"links":2}
 	},
 	{
-		"name":"julia ducournau",
-		"unifrance":{"links":3},
-		"imdb":{"links":4},
-		"awards":20
-	},
-	{
 		"name":"Sandrine gregor",
 		"unifrance":{"links":2},
 		"imdb":{"links":4}
 	},
-
-
 	{
 		"name":"francois ozon",
 		"unifrance":{},

@@ -70,28 +70,36 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   ngOnInit(): void {
     this.config.user_update.subscribe(()=>{
-      checkLogin(this,()=>{
-        this.message = "Chargement de votre profil";
-        this.loadProfil(() => {
-          this.showAddWork = 0;
-          this.message = "";
-          this.autoAddMovie();
-          this.refresh_job();
-          this.refresh_students();
-          this.refresh_works();
-          this.refresh_awards();
-          //this.refresh_relations(); //TODO: a corriger avant de réactiver
-        });
-      },()=>{this.quit();})
+      this.refresh();
     })
+    this.refresh();
   }
 
   refresh(){
     $$("Rafraichir les expériences");
-    this.loadMovies((data:any[])=>{
-      this.dataSource = new MatTableDataSource<Movie>(data);
-      this.autoAddMovie();
-    });
+    checkLogin(this,()=>{
+      this.message = "Chargement de votre profil";
+      this.loadProfil(() => {
+        this.loadMovies((data:any[])=>{
+          this.dataSource = new MatTableDataSource<Movie>(data);
+          this.autoAddMovie();
+        });
+
+        this.showAddWork = 0;
+        this.message = "";
+        this.autoAddMovie();
+        this.refresh_job();
+        this.refresh_students();
+        this.refresh_works();
+        this.refresh_awards();
+        //this.refresh_relations(); //TODO: a corriger avant de réactiver
+      });
+    },()=>{
+      showMessage(this,"Vous devez être connecté pour éditer un profil");
+      this.quit();
+    })
+
+
   }
 
 
@@ -427,7 +435,9 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   refresh_awards() {
       this.awards=[];
-      for(let a of this.profil.award.sort((a,b)=>{return a.year > b.year ? -1 : 1}))
+      let l_awards=this.profil.award.sort((a,b)=>{return a.year > b.year ? -1 : 1})
+    debugger
+      for(let a of l_awards)
         if(a.state!="D")this.awards.push(a);
 
   }

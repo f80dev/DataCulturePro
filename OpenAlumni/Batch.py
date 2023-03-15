@@ -24,8 +24,7 @@ from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, 
     equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp, \
     apply_dictionnary_on_each_words
 
-from OpenAlumni.settings import MOVIE_NATURE, STATIC_ROOT
-
+from OpenAlumni.settings import STATIC_ROOT
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival, Article, ExtraUser
 
 ia=IMDb()
@@ -489,7 +488,7 @@ def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
                 for i in range(len(links_episodes)):
                     link_episode=links_episodes[i]
                     episode=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
-                    if episode["title"] not in [x["title"] for x in episodes]:
+                    if episode["title"] not in [x["title"] for x in episodes] and len(episode["casting"])>0:
                         episodes.append(episode)
         else:
             break
