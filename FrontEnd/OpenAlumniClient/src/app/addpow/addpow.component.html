@@ -71,35 +71,21 @@
                     </div>
 
 
-                    <app-input label="Synopsis" max="3000" value_type="textarea" [value]="pow.description"
+                    <app-input label="Synopsis" max="3000" [cols]="30" [rows]="5" [value]="pow.description"
                                (valueChange)="pow.description=$event"
                                 help="Synopsis de l'oeuvre (3000 caractères max)">
                     </app-input><br>
 
-<!--                    <mat-form-field  appearance="fill" class="app-field">-->
-<!--                        <mat-label>Synopsis</mat-label>-->
-<!--                        <input matInput id="txtSynopsis"-->
-<!--                               type="text" max="3000" required-->
-<!--                               [(ngModel)]="pow.description">-->
-<!--                        <mat-hint>Synopsis de l'oeuvre (3000 caractères max)</mat-hint>-->
-<!--                    </mat-form-field> <br>-->
+                    <app-input label="Année de sortie" [value]="pow.year"
+                               (valueChange)="pow.year=$event" width="175px" value_type="number"
+                                help="Synopsis de l'oeuvre (3000 caractères max)">
+                    </app-input>
 
+                    <app-input label="Budget"  [value]="pow.budget"
+                               (valueChange)="pow.budget=$event" width="175px" value_type="number"
+                                help="En €">
+                    </app-input>
 
-                    <mat-form-field  appearance="fill" class="app-field" style="max-width: 175px;">
-                        <mat-label>Année de sortie</mat-label>
-                        <input matInput required
-                               id="txtYear"
-                               type="number" min="1900" max="2030"
-                               [(ngModel)]="pow.year">
-                    </mat-form-field>
-
-                    <mat-form-field  appearance="fill" class="app-field" style="max-width: 200px">
-                        <mat-label>Budget</mat-label>
-                        <input matInput id="txtBudget"
-                               type="number" min="0"
-                               [(ngModel)]="pow.budget">
-                        <span matSuffix>€</span>
-                    </mat-form-field><br>
 
 
 

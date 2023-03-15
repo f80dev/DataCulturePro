@@ -13,16 +13,10 @@
     Rapport en cours de construction
   </div>
 
-  <mat-tab-group style="height: 87vh;text-align: center;"
-                 id="tabStats"
-                 #tabGroup mat-align-tabs="start"
-  >
-
+  <mat-tab-group style="height: 87vh;text-align: center;" id="tabStats" #tabGroup mat-align-tabs="start">
     <mat-tab name="tabs" label="Rapports pré-définis">
-
       <br>
-
-      <mat-form-field appearance="fill" style="width: 80%;max-width: 500px;">
+      <mat-form-field appearance="fill" style="width: 80%;max-width: 500px; margin-top:25px;">
         <mat-label>Sélectionner un rapport</mat-label>
         <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
           <mat-option *ngFor="let report of instant_reports" [value]="report">

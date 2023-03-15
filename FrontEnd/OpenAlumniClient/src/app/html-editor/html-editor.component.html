@@ -36,7 +36,7 @@
 
 
 
-  <div class="mat-elevation-z12" style="min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
+  <div class="mat-elevation-z12" style="max-width:1000px;margin:25px;min-height: 300px;color: black;display: inline-block;width:95%;background-color: lightgrey;">
     <quill-editor id="htmlEditorZone"
                   *ngIf="!onlyPreview"
                   [(ngModel)]="editorContent">
@@ -104,14 +104,14 @@
     Images
   </button>
 
-  <button class="icon-button" mat-raised-button mat-icon-button
+  <button class="icon-button" mat-icon-button
           id="cmdReset"
           title="Effacer l'article en cours"
           (click)="clear_article()">
     <mat-icon>delete</mat-icon>
   </button>
 
-  <button class="icon-button" mat-raised-button mat-icon-button
+  <button class="icon-button" mat-icon-button
           id="cmdSave"
           [disabled]="!editorContent || editorContent.length==0 || title?.length==0 || resumer?.length==0"
           title="Enregistrer un brouillon"

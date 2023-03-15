@@ -206,6 +206,7 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "town",
                 "works",
                 "promo",
+                "awards",
                 "dtLastUpdate",
                 "dtLastSearch")
 

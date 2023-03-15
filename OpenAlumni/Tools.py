@@ -549,8 +549,10 @@ def index_string(s):
     :param s: prenom+nom
     :return: le fullname sans accent, ponctuation ou espace
     """
-    while " " in s: s=s.replace(" ","")
-    return remove_accents(remove_ponctuation(s)).upper()
+    if not s is None:
+        while " " in s: s=s.replace(" ","")
+        s=remove_accents(remove_ponctuation(s)).upper()
+    return s
 
 
 def isWindows():

@@ -1,20 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HourglassComponent } from './hourglass.component';
+import { ReverseblocComponent } from './reversebloc.component';
 
-describe('HourglassComponent', () => {
-  let component: HourglassComponent;
-  let fixture: ComponentFixture<HourglassComponent>;
+describe('ReverseblocComponent', () => {
+  let component: ReverseblocComponent;
+  let fixture: ComponentFixture<ReverseblocComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HourglassComponent ]
+      declarations: [ ReverseblocComponent ]
     })
     .compileComponents();
-  });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(HourglassComponent);
+    fixture = TestBed.createComponent(ReverseblocComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

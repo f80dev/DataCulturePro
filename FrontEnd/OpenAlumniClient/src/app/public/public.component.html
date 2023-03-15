@@ -1,6 +1,9 @@
 <div class="mainform" style="text-align: center">
   <br>
-  <mat-card class="app-card" style="display: inline-block;width:85%;max-width: 1200px;text-align: left;">
+  <app-hourglass [message]="message" style="color: white"></app-hourglass>
+
+  <br>
+  <mat-card class="app-card" *ngIf="message.length==0" style="display: inline-block;width:85%;max-width: 1200px;text-align: left;">
     <table style="padding: 0;margin-left:0;width: 100%;border: none;border-spacing: 0;" *ngIf="profil">
       <tr style="width: 100%;margin:0;">
         <td *ngIf="profil?.public_photo" style="width: 150px;">
@@ -12,7 +15,7 @@
         </td>
 
         <td>
-          <div class="mat-subheading-1 blur" id="lblName">
+          <div class="mat-headline-5" id="lblName">
             {{profil?.firstname+" "+profil?.lastname?.toUpperCase()}}
           </div>
 
@@ -60,7 +63,6 @@
     <hr class="dark_separator">
     <br>
 
-    <app-hourglass [message]="message"></app-hourglass>
     <br>
 
     <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0">

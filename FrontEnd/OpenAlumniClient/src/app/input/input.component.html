@@ -1,13 +1,11 @@
 <div class="input-elements" [style.width]="width" [style.max-width]="maxwidth">
 
   <!-- input standard -->
-  <mat-form-field appearance="fill" class="mat-body-2"
-                  *ngIf="value_type!='slider' && value_type!='list' && options.length==0 && cols==0 && rows==0 && max==0"
-                    [title]="help_input">
+  <mat-form-field appearance="fill" class="mat-body-2" [title]="help_input" style="width: 100%;"
+                  *ngIf="value_type!='slider' && value_type!='list' && options.length==0 && cols==0 && rows==0 && max==0">
     <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
 
     <input matInput
-           class="mat-body-2"
            [type]="value_type"
            [maxlength]="maxlength"
            [(ngModel)]="value"
@@ -23,11 +21,12 @@
 
   <!-- input de type textarea-->
   <mat-form-field style="width: 100%;" *ngIf="cols>0 && rows>0" appearance="fill" class="mat-body-2">
-    <mat-label *ngIf="label.length>0" style="width: 100%;" class="mat-caption">{{label}}</mat-label>
+    <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
 
-    <textarea [placeholder]="placeholder" title="infobull" style="width: 100%;" matInput
+    <textarea [placeholder]="placeholder" title="infobull" matInput
               [(ngModel)]="value"
-            [rows]="rows" [cols]="cols" (focusin)="showHelp=true" (focusout)="showHelp=false" (keyup)="on_key($event)">
+              [rows]="rows" [cols]="cols" (focusin)="showHelp=true"
+              (focusout)="showHelp=false" (keyup)="on_key($event)">
     </textarea>
 
     <mat-icon matSuffix *ngIf="value && value!.length>0" (click)="on_clear()" style="opacity: 0.7;">cancel</mat-icon>
@@ -51,8 +50,7 @@
   </button>
 
 
-
-  <mat-form-field  style="flex-basis:80%;" appearance="fill"
+  <mat-form-field  style="width:100%;" appearance="fill"
                   *ngIf="value_type=='list' || options.length>0">
 
     <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>

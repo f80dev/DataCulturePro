@@ -1,0 +1,24 @@
+<div class="surbloc" [style.width]="width" [style.height]="height" [style.margin]="margin"
+     (mouseenter)="on_reverse(true)"
+     (mouseleave)="on_reverse(false)">
+  <div class="flip-card-inner" [style.border-color]="border_color">
+    <div class="flip-card-front" [ngStyle]="style">
+      <div style="display: block;position: absolute;left: 20px;top:20px;z-index: 1;"
+           *ngIf="title.length>0" class="mat-headline-4"
+           [style.font-size]="fontsize" [style.color]="color">
+        <div *ngIf="icon.length>0">
+          <img [src]="icon" style="height:70px;">
+        </div>
+        {{title}}
+      </div>
+
+      <img [src]="image"
+           style="width:100%;object-fit: cover;">
+    </div>
+    <div class="flip-card-back" [ngStyle]="style">
+      <div style="width:85%;margin-top: 5%;margin-left:5%;background: none;">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

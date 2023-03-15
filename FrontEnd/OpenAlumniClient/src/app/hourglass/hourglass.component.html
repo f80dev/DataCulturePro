@@ -1,9 +1,21 @@
-<div *ngIf="message?.length>0" [ngStyle]="{maxwidth:maxwidth,display:'inline-block'}">
-  <table style="width:100%;">
+<div *ngIf="modal && message && message.length>0"
+     class="modal-popup-bg">
+  <div class="modal-popup">
+    <mat-spinner *ngIf="diameter>0" [diameter]="diameter*6"></mat-spinner><br><br>
+    <span [style.font-size]="fontsize">
+           {{message}}
+        </span>
+  </div>
+</div>
+
+
+<div *ngIf="message && message.length>0 && !modal" [ngStyle]="{maxwidth:maxwidth,marginTop:marginTop,display:'inline-block',marginBottom:'5px'}">
+  <table style="width:100%;display: inline-block;height: min-content;">
     <tr>
-      <td>
+      <td *ngIf="diameter>0">
         <mat-spinner [diameter]="diameter"></mat-spinner>
       </td>
+
       <td [ngStyle]="{'text-align': 'left','font-size':fontsize}">
         {{message}}
       </td>
@@ -11,10 +23,27 @@
       <td *ngIf="canCancel" style="text-align: right;cursor: pointer;">
         <mat-icon (click)="oncancel.emit()">cancel</mat-icon>
       </td>
-      <td *ngIf="faq?.length>0" style="text-align: right;cursor: pointer;">
-        <app-faq-link [faq]="faq"></app-faq-link>
-      </td>
+
+
     </tr>
   </table>
-  <br>
+
+  <div *ngIf="src.length>0">
+    <img [src]="src" style="width: 150px">
+    <br>
+  </div>
+
+  <mat-progress-bar
+                    style="max-width:300px;width: 90%;margin:0px;margin-left: 5%;"
+                    mode="determinate"
+                    [value]="current" *ngIf="step>0">
+  </mat-progress-bar>
+
+  <div *ngIf="showMessage && showMessage.length>0" style="font-size: small;display: inline-block;width:90%;">
+    {{showMessage}}
+  </div>
+
+
 </div>
+<br *ngIf="_br">
+

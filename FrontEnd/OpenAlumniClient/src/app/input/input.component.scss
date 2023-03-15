@@ -16,7 +16,7 @@ mat-form-field:not(.mat-focused) .mat-hint {
 
 
 .input-elements {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-content: center;
   justify-content: stretch;

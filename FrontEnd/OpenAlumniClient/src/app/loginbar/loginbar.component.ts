@@ -59,7 +59,7 @@ export class LoginbarComponent implements OnInit {
       this.menu_footer._logout.actif=isLogin;
       this.menu_footer.settings.actif=isLogin;
       this.menu_header.addpow.actif=isLogin && this.config.hasPerm("add_movie");
-      this.menu_header.edit.actif=isLogin && this.config.hasPerm("edit");
+      //this.menu_header.edit.actif=isLogin && this.config.hasPerm("edit");
       this.menu_header.blog.actif=isLogin && this.config.hasPerm("blog");
       this.menu_footer.admin.actif=isLogin && this.config.hasPerm("admin") || !this.config.isProd();
       this.menu_footer.dev.actif=isLogin && this.config.hasPerm("dev");

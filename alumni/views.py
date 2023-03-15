@@ -1476,7 +1476,8 @@ class ProfilDocumentView(DocumentViewSet):
         'department': {'boost': 3},
         'department_category': {'boost': 3},
         'works__job': {'boost': 2},
-        'works__pow__title': {'boost': 2}
+        'works__pow__title': {'boost': 2},
+        'awards__year': {'boost': 1}
     }
 
     search_fields = ('lastname',
@@ -1486,8 +1487,9 @@ class ProfilDocumentView(DocumentViewSet):
                      'department_category',
                      'works__job',
                      'works__pow__title',
-                     'award__festival__title',
-                     'award__description'
+                     'awards__festival__title',
+                     'awards__description',
+                     'awards__year'
                      )
 
 

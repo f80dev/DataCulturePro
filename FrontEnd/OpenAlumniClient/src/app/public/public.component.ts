@@ -182,6 +182,7 @@ export class PublicComponent implements OnInit {
 
   //test http://localhost:4200/public/?id=3076
   ngOnInit(): void {
+    this.message="Chargement du profil";
     getParams(this.routes).then((params:any)=>{
       let id=params["id"]
       if(id){

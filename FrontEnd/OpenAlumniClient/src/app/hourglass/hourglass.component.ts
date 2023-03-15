@@ -1,28 +1,108 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Router} from '@angular/router';
+
+
+
+export function wait_message(vm:any,message="",modal=false,duration=10000) : boolean {
+  //Active les messages d'attentes
+  if(vm.hasOwnProperty("message"))return false;
+  if(vm.hasOwnProperty("modal"))vm.modal=modal;
+  vm.message=message;
+  setTimeout(()=>{vm.message=""},duration);
+  return true;
+}
 
 @Component({
   selector: 'app-hourglass',
   templateUrl: './hourglass.component.html',
-  styleUrls: ['./hourglass.component.sass']
+  styleUrls: ['./hourglass.component.css']
 })
-export class HourglassComponent implements OnInit {
+export class HourglassComponent implements OnInit, OnDestroy, OnChanges {
+  @Input("diameter") diameter = 18;
+  @Input("message") message: string = "";
+  @Input() modal:boolean=false;
+  @Input("long_message") long_message = "";
+  @Input("anim") src = "";
+  @Input("br") _br = false;
+  @Input("tips") tips = [];
+  @Input("canCancel") canCancel = false;
+  @Input("maxwidth") maxwidth = "100vw";
+  @Input("faq") faq = "";
+  @Input("duration") duration = 0;
+  @Input("fontsize") fontsize = "medium";
+  @Output('cancel') oncancel: EventEmitter<any> = new EventEmitter();
+  @Input("marginTop") marginTop = "0px";
+  pos = 0;
+  showMessage = "";
+  showTips = "";
+  current = 0;
+  step = 0;
 
-  @Input("diameter") diameter=18;
-  @Input("message") message="";
-  @Input("canCancel") canCancel=false;
-  @Input("maxwidth") maxwidth="100vw";
-  @Input("faq") faq="";
-  @Input("fontsize") fontsize="medium";
-  @Output('cancel') oncancel: EventEmitter<any>=new EventEmitter();
+  constructor(public router: Router) {
+  }
 
-  constructor(public router:Router) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(this.message && this.message.startsWith("(i)")){
+      this.message=this.message.replace("(i)","")
+      this.diameter=0;
+    }
+  }
 
   ngOnInit() {
+    if(this.long_message.length>0){
+      this.read_message();
+    }
+
+    if(this.tips.length>0){
+      this.showTips=this.tips[Math.random()*this.tips.length];
+    }
+
+    if(this.duration>0){
+      this.current=0;
+      this.step=100/this.duration;
+      this.decompte(0);
+    }
+
+
   }
+
+  handle:any=0;
+  decompte(current:any){
+    if(current>=100){
+      this.current=0;
+      this.duration=0;
+      clearTimeout(this.handle);
+    } else {
+      this.current=current;
+      this.handle=setTimeout(()=>{
+        this.decompte(current+this.step);
+        },1000);
+    }
+  }
+
+  read_message(){
+    if(this.pos<this.long_message.split("/").length){
+      this.showMessage=this.long_message[this.pos];
+      setTimeout(()=> {
+        this.pos=this.pos+1;
+        this.read_message();
+      },1000);
+    } else {
+      this.showMessage="";
+    }
+  }
+
+
 
   openfaq() {
     this.router.navigate(["faq"],{queryParams:{open:this.faq}});
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.handle);
+    this.current=0;
+    this.duration=0;
+    this.step=0;
   }
 
 }
