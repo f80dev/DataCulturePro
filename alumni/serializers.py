@@ -7,7 +7,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_csv.renderers import CSVRenderer
 
 from OpenAlumni.Tools import reset_password, log, sendmail
-from alumni.documents import ProfilDocument, PowDocument
+from alumni.documents import ProfilDocument, PowDocument, FestivalDocument
 from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 
 import os
@@ -178,6 +178,14 @@ class ProfilsCSVRenderer (CSVRenderer):
     ]
 
 
+class FestivalDocumentSerializer(DocumentSerializer):
+    class Meta:
+        document=FestivalDocument
+        fields=(
+            "id","title","country","url","award"
+        )
+
+
 
 #ProfilDocument utilisé par elasticsearch
 class ProfilDocumentSerializer(DocumentSerializer):
@@ -211,11 +219,12 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "dtLastSearch")
 
 
-
 class PowDocumentSerializer(DocumentSerializer):
     class Meta:
         document=PowDocument
-        fields=("id","title","nature","description",'category','year','works','links',"award")
+        fields=("id","title","nature","description",
+                'category','year','works','links',
+                "award")
 
 
 class ExtraWorkSerializer(serializers.ModelSerializer):

@@ -2,7 +2,6 @@
 python manage.py makemigrations
 python manage.py migrate --settings OpenAlumni.settings_dev
 
-
 set PYTHONIOENCODING=utf-8
 
 echo "Deployer le dev"

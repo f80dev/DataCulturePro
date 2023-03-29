@@ -273,7 +273,7 @@ MOVIE_CATEGORIES=[
     "Sport"
 ]
 
-MOVIE_NATURE=["Serie","TV","Short","Long","Documentary","Court-métrage","Long-métrage","Film","Film TV","Série","Documentaire"]
+MOVIE_NATURE=["Serie","TV","Short","Long","Documentary","Court-métrage","Long-métrage","Film","Film TV","Série","Documentaire","Episode"]
 MYDICT=None
 
 DELAY_TO_AUTOSEARCH=10   #10 jours

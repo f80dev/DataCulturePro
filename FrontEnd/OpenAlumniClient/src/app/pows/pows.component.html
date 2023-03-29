@@ -76,11 +76,10 @@
                           <tr *ngIf="pow.production">
                             <td>Production</td><td>{{pow.production}}</td>
                           </tr>
-                          <tr style="vertical-align: middle;">
+                          <tr style="vertical-align: middle;" *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')">
                             <td>Liens</td>
                             <td>
-                              <div *ngIf="pow.links?.length>0 && config.hasPerm('r_movie_links')">
-
+                              <div>
                                 <div *ngFor="let link of pow.links" style="display: inline-block;">
                                   <div *ngIf="link.url?.length>0" style="display: inline-block;margin:2px;margin-left:5px;">
                                     <a href="{{link.url}}" target="_blank" class="label">
@@ -96,7 +95,7 @@
                           </tr>
                         </table>
                       </td>
-                      <td style="text-align: left;width: 20px;" class="expanded-plus mat-headline-6">
+                      <td style="text-align: left;width: 20px;" class="expanded-plus mat-headline-6" *ngIf="pows.length>1">
                         <span *ngIf="pow.expanded">-</span>
                         <span *ngIf="!pow.expanded">+</span>
                       </td>
@@ -133,7 +132,7 @@
         <br>
         <hr class="dark_separator">
 
-        <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-1">
+        <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-2">
           <br><div class="label">Récompenses</div><br>
           <table style="width: 100%;text-align: left;vertical-align:text-top;">
             <tr *ngFor="let a of pow.award" style="width:100%;">

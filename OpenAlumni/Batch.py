@@ -15,6 +15,7 @@ from django.forms import model_to_dict
 from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import make_aware
+from django_elasticsearch_dsl import Index, Document
 from imdb import IMDb
 from pandas import read_excel
 from wikipedia import wikipedia, re
@@ -25,6 +26,7 @@ from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, 
     apply_dictionnary_on_each_words
 
 from OpenAlumni.settings import STATIC_ROOT
+from alumni.documents import FestivalDocument
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival, Article, ExtraUser
 
 ia=IMDb()
@@ -38,9 +40,16 @@ def extract_movie_from_cnca(title:str):
     return title
 
 
-def reindex():
+def reindex(index_name=""):
+    #test http://localhost:8000/api/reindex/?index_name=festivals
     log("Ré-indexage de la base")
-    return management.call_command("search_index","--rebuild","-f")
+    if len(index_name)==0:
+        return management.call_command("search_index","--rebuild","-f")
+    else:
+        index:Index=Index(index_name)
+        if index.exists(): index.delete()
+        FestivalDocument.init(index=index,using="default")
+        return management.call_command("search_index","--rebuild")
 
 
 def extract_movie_from_bdfci(pow:PieceOfWork,refresh_delay=31):
@@ -177,13 +186,13 @@ def extract_casting_from_unifrance(url:str,refresh_delay=31):
             name=real_links[0].text
         else:
             if page.find("div",{"itemprop":"director"}):
-                name=page.find("div",{"itemprop":"director"}).text.lower()
+                name=page.find("div",{"itemprop":"director"}).find_all("p")[0].text.lower()
         if name:
             rc[translate("Réalisation")]=[{
                 "name":name,
                 "source":"unifrance",
                 "index":index_string(name),
-                "url":real_links[0].get("href")
+                "url":real_links[0].get("href") if len(real_links)>0 else ""
             }]
 
         #Recherche dans le générique détaillé
@@ -289,7 +298,7 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
 
                 for l in section_prix.find_all("div")[1].find_all("a"):
                     if "festivals" in l.attrs["href"]:
-                        _prix["title"]=l.text.split("(")[0]
+                        _prix["title"]=translate(l.text.split("(")[0],["festivals"])
                         _prix["year"] = re.findall(r"[1-2][0-9]{3}", l.text)[0]
                     # if "person" in l.attrs["href"] and "profil" not in _prix:
                     #     _prix["profil"]=index_string(l.text)
@@ -377,6 +386,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     :param year:
     :return:
     """
+    festival_title=translate(festival_title,["festivals"])
     pow = None
     if len(film_title)>0 and len(year)>0:
         pows = PieceOfWork.objects.filter(title__iexact=film_title)
@@ -444,7 +454,7 @@ def extract_awards_from_imdb(profil_url):
     for i in range(0, len(tables)):
         for tr in tables[i].find_all("tr"):
             if tr:
-                festival_title = translate(awards[i].text.split(",")[0].lower().strip())
+                festival_title = translate(translate(awards[i].text.split(",")[0].lower().strip()),["festivals"])
                 tds = tr.find_all("td")
                 if len(tds)<=2:
                     log("Format non conforme "+tr.text)
@@ -478,18 +488,24 @@ def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
     for saison in range(1,20):
         url_season=url.split("?")[0]+"episodes?season="+str(saison)
         page_season=load_page(url_season,refresh_delay)
-        title_season=page_season.find("h3",attrs={"id":"episode_top"})
-        saison_on_page=title_season.text.lower().replace("season","").strip() if title_season else "0"
-        if len(saison_on_page)<3 and int(saison_on_page)==saison:
+        if not "The requested URL was not found on our server" in page_season.find_all("div")[0].text:
+            title_season=page_season.find("h3",attrs={"id":"episode_top"})
+
             section_artists=page_season.find("div",attrs={"class":"list detail eplist"})
-            if section_artists:
+            #saison_on_page=title_season.text.lower().replace("season","").strip() if title_season else "0"
+            if not section_artists is None:
                 links_episodes=list(set(section_artists.find_all("a",attrs={'href': wikipedia.re.compile("^/title/tt")})))
 
                 for i in range(len(links_episodes)):
                     link_episode=links_episodes[i]
-                    episode=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
-                    if episode["title"] not in [x["title"] for x in episodes] and len(episode["casting"])>0:
+                    title=link_episode.attrs["title"]
+                    if title not in [x["title"] for x in episodes]:
+                        episode=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
                         episodes.append(episode)
+                    else:
+                        break
+            else:
+                break
         else:
             break
     return episodes
@@ -642,7 +658,11 @@ def extract_casting_from_imdb(url:str,casting_filter="",refresh_delay=31):
                                     if not _job in rc: rc[_job]=[]
                                     rc[_job].append({"name":name,"source":"imdb","index":index_string(name)})
                                 else:
-                                    log(job+" est absent du dictionnaire")
+                                    with open("./absent_du_dictionnaire.txt","a+") as f:
+                                        f.write(job+" est absent du dictionnaire")
+                                        f.close()
+
+                                    #log(job+" est absent du dictionnaire")
 
     return rc
 
@@ -694,9 +714,14 @@ def extract_nature_from_imdb(url_or_page:str,refresh_delay=31) -> str:
 
     page=load_page(url_or_page,refresh_delay=refresh_delay) if type(url_or_page)==str else url_or_page
     section=page.find("div",attrs={"data-testid":"hero-subnav-bar-left-block"})
-    for a in section.find_all("a"):
-        if "episodes/" in a.attrs["href"]:
-            return "Série"
+
+    if not section is None:
+        if not section.find("a",{"data-testid":"hero-subnav-bar-all-episodes-button"}) is None:
+            return "Episode"
+
+        for a in section.find_all("a"):
+            if "episodes/" in a.attrs["href"]:
+                return "Série"
 
     return "Long"
 
@@ -1048,6 +1073,11 @@ def importer_file(file):
 def raz(filter:str="all"):
 
     log("Effacement de "+filter)
+
+    if filter=="all":
+        management.call_command("flush",interactive=False)
+        log("Lecture du backup")
+
     if "work" in filter or filter=="all":
         log("Effacement des contributions")
         if "imdb" in filter:
@@ -1310,8 +1340,9 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
             if not pow is None:
                 if not film is None and "prix" in film and not film["prix"] is None and len(film["prix"]) > 0:
                     for award in film["prix"]:
-                         a=add_award(
-                            festival_title=award["title"],
+                        festival_title=translate(award["title"],["festivals"])
+                        a=add_award(
+                            festival_title=festival_title,
                             year=award["year"],
                             profil=profil if "profil" in award and equal_str(award["profil"],profil.firstname+" "+profil.lastname) else None,
                             desc=award["desc"],

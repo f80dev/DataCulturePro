@@ -1,4 +1,5 @@
 import base64
+from os.path import exists
 
 from OpenAlumni.passwords import RESET_PASSWORD
 from datetime import datetime
@@ -52,7 +53,7 @@ from rest_framework import viewsets, generics
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
     profils_importer, idx, raz
 from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
-    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict
+    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict, now
 from OpenAlumni.nft import NFTservice
 
 
@@ -72,12 +73,12 @@ if os.environ.get("DEBUG"):
 
 
 from OpenAlumni.social import SocialGraph
-from alumni.documents import ProfilDocument, PowDocument
+from alumni.documents import ProfilDocument, PowDocument, FestivalDocument
 from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer, ExtraUserSerializer, POWSerializer, \
     WorkSerializer, ExtraPOWSerializer, ExtraWorkSerializer, ProfilDocumentSerializer, \
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
-    CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer
+    CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer, FestivalDocumentSerializer
 
 STYLE_TABLE="""
                 <style>
@@ -265,6 +266,16 @@ def getyaml(request):
     result=yaml.safe_load(f.read())
     return JsonResponse(result,safe=False)
 
+#http://localhost:8000/api/backup_files
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def list_backup_file(request):
+    rc=[]
+    prefix=request.GET.get("prefix","dataculture_db_")
+    for f in os.listdir("."):
+        if f.startswith(prefix):
+            rc.append({"filename":f,"label":f,"value":f})
+    return JsonResponse({"files":rc})
 
 
 #http://localhost:8000/api/backup?command=save
@@ -273,7 +284,11 @@ def getyaml(request):
 @permission_classes([AllowAny])
 def run_backup(request):
     command=request.GET.get("command","save")
-    filename=request.GET.get("file","db_backup.json")
+    prefix=request.GET.get("prefix","dataculture_db_")
+    filename=request.GET.get(
+        "file",
+        prefix+datetime.now().strftime("%d-%m-%Y_%H%M")+".json"
+    )
 
     backup_file=request.GET.get("file",filename)
     if not backup_file.endswith(".json"):backup_file=backup_file+".json"
@@ -283,19 +298,21 @@ def run_backup(request):
     if command=="save":
         log("Enregistrement de la base dans "+backup_file)
         with open(backup_file, 'w',encoding="utf8") as f:
-            management.call_command("dumpdata","alumni",stdout=f,exclude=exclude_table,indent=2)
+            management.call_command("dumpdata","alumni",
+                                    stdout=f,exclude=exclude_table,
+                                    indent=2)
 
         return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
 
     if command=="load":
-        log("Effacement de la base")
-        if request.GET.get("flush","false")=="true":
-            management.call_command("flush",interactive=False)
-            log("Lecture du backup")
+        if Profil.objects.count()>0 or PieceOfWork.objects.count()>0 or Work.objects.count()>0:
+            return JsonResponse({"message":"La base doit avoir été préalablement vidé"},status=500)
 
-        management.call_command("loaddata",backup_file,verbosity=3,app_label="alumni")
-
-        return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
+        if exists("./"+backup_file):
+            management.call_command("loaddata","./"+backup_file,verbosity=3,app_label="alumni")
+            return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
+        else:
+            return JsonResponse({"message":"fichier de backup introuvable"},status=500)
 
 
 
@@ -529,17 +546,19 @@ def search(request):
 
 
 
-#http://localhost:8000/api/reindex/
+#http://localhost:8000/api/reindex
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def rebuild_index(request):
     """
     Relance l'indexation d'elasticsearch
     TODO: mettre en place un échéancier pour déclenchement régulier
+    voir
     :param request:
     :return:
     """
-    reindex()
+    index_name=request.GET.get("index_name","")
+    reindex(index_name)
     return JsonResponse({"message":"Re-indexage terminé"})
 
 
@@ -1439,6 +1458,33 @@ def oauth(request):
     return redirect("http://localhost:4200")
 
 
+@permission_classes([AllowAny])
+class FestivalDocumentView(DocumentViewSet):
+    document=FestivalDocument
+    serializer_class = FestivalDocumentSerializer
+    pagination_class = LimitOffsetPagination
+    lookup_field = "id"
+    filter_backends = [
+        FilteringFilterBackend,
+        CompoundSearchFilterBackend,
+        DefaultOrderingFilterBackend,
+        SimpleQueryStringSearchFilterBackend,
+        # MultiMatchSearchFilterBackend
+    ]
+
+    filter_fields ={
+        "title":"title.raw",
+        "year":"year"
+    }
+
+    simple_query_string_search_fields = {
+        'title': {'boost': 4},
+        'year':{'boost':3},
+        'description':{'boost':1}
+    }
+
+    search_fields = ('title','year',"award__pow__title","description","award__profil__lastname")
+
 
 
 #http://localhost:8000/api/profilsdoc
@@ -1459,13 +1505,6 @@ class ProfilDocumentView(DocumentViewSet):
     filter_fields ={
         "firstname":"firstname.raw"
     }
-
-    # multi_match_search_fields = {
-    #     'lastname': {'boost': 4},
-    #     'firstname': {'boost': 2},
-    #     'degree_year': {'boost': 3},
-    #     'department_category': {'boost': 3}
-    # }
 
 
     #voir la documentation : https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.22.2/search_backends.html

@@ -20,6 +20,9 @@ export class AdminComponent implements OnInit {
   users:any[];
   info_server: any;
   profils: tProfilPerms[]=[];
+  backup_files: any[]=[];
+  sel_backup_file:string="";
+  show_server: boolean=true;
 
   constructor(private api:ApiService,
               public config:ConfigService,
@@ -43,6 +46,7 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh_server();
+    this.refresh_backup();
   }
 
   raz(table:string) {
@@ -189,4 +193,30 @@ export class AdminComponent implements OnInit {
         this.info_server=infos;
       });
     }
+
+  load_backup() {
+    this.message="Chargement en cours ... le processus peut être très long";
+    this.api._get("backup","command=load&file="+this.sel_backup_file,60000).subscribe((r:any)=>{
+      this.message="";
+      showMessage(this,"Chargement terminé")
+      this.show_server=true;
+    },(err:any)=>{
+      showMessage(this,err.error.message);
+    })
+  }
+
+  refresh_backup(){
+    this.api._get("backup_files","").subscribe((r:any)=>{
+      this.backup_files=r.files;
+    })
+  }
+
+  save_backup() {
+    this.message="Backup en cours";
+    this.api._get("backup","command=save").subscribe((r:any)=>{
+      this.message="";
+      this.refresh_backup();
+      showMessage(this,"Enregistrement terminé")
+    })
+  }
 }

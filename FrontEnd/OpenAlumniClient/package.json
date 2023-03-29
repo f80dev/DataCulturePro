@@ -1,6 +1,6 @@
 {
   "name": "DataCulturePro",
-  "version": "0.0.197",
+  "version": "0.0.198",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --live-reload",
@@ -24,12 +24,10 @@
     "@angular/platform-browser-dynamic": "15.2.0",
     "@angular/router": "15.2.0",
     "@angular/service-worker": "15.2.0",
-    
     "@fortawesome/angular-fontawesome": "^0.12.1",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-brands-svg-icons": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
-    
     "angular-google-charts": "^2.2.3",
     "angular-mgl-timeline": "^0.4.0",
     "angularx-social-login": "^4.1.0",

@@ -317,9 +317,12 @@ def tirage(indice_sup,indice_inf=0):
 
 
 import datetime
-def now():
+def now(format="dec"):
     rc= datetime.datetime.now(tz=None).timestamp()
+    if format=="hex":return hex(int(rc*10000))
+    if format=="random":return hex(int(rc*10000)+random.randint(0,1000000))
     return rc
+
 
 
 start=now()
@@ -462,7 +465,7 @@ def apply_dictionnary_on_each_words(section:str,text:str):
     return " ".join(rc)
 
 
-def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages"],must_be_in_dict=False):
+def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages","festivals"],must_be_in_dict=False):
     """
     Remplacement de certains termes
     :param wrd:

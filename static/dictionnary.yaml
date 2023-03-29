@@ -61,7 +61,9 @@ department_category:
 departements:
   Initiation à l'adaptation de romans: Initiation à l'adaptation de romans
 
-
+#Permet de dédoublonner certains festivals
+festivals:
+  Cannes film festival: Festival international du film de Cannes
 
 
 

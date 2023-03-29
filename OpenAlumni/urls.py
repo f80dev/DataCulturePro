@@ -36,6 +36,7 @@ router.register(r'festivals', views.FestivalViewSet)
 router.register(r'extrapows', views.ExtraPOWViewSet)
 router.register(r'extrapow', views.ExtraPOWViewSet)
 router.register(r'profilsdoc', views.ProfilDocumentView,basename="profilsdoc")
+router.register(r'festivalsdoc', views.FestivalDocumentView,basename="festivalsdoc")
 router.register(r'powsdoc', views.PowDocumentView,basename="powsdoc")
 
 urlpatterns = [
@@ -61,6 +62,7 @@ urlpatterns = [
     path('api/reindex/', views.rebuild_index),
     path('api/getyaml/', views.getyaml),
     path('api/get_yaml/', views.getyaml),
+    path('api/backup_files/', views.list_backup_file),
     path('api/backup/', views.run_backup),
     path('api/update_extrauser/', views.update_extrauser),
     path('api/infos_server/', views.infos_server),

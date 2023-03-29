@@ -8,6 +8,7 @@ import {ConfigService} from "../config.service";
 
 import {Location} from "@angular/common";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {awards_timeline} from "../DataCulture";
 
 @Component({
   selector: 'app-public',
@@ -39,37 +40,8 @@ export class PublicComponent implements OnInit {
   }
 
 
-  create_awards_timeline(profil){
-    this.message="";
-    let awards_timeline=[];
-
-    let old_year="";
-    let awards=profil.award.sort( (a,b) => a.year>b.year ? -1 : 1);
-    for(let a of awards){
-      awards_timeline.push({
-        year:old_year==a.year ? "" : ""+a.year,
-        title:a.festival.title+" : "+a.description,
-        subtitle:this.pows[a.pow].title,
-        icon: this.config.icons["Award"],
-        sources:a.source,
-        type:"award",
-        label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ this.pows[a.pow].title+"</span></div>"
-      })
-      old_year=a.year;
-    }
-
-    $$("Ajout du diplome");
-    if(this.config.hasPerm("admin")){
-      awards_timeline.push({
-        year:this.profil.degree_year,
-        title:"FEMIS - département "+this.profil.department,
-        subtitle:"",
-        icon: this.config.icons["School"],
-        type:"degree"
-      })
-    }
-
-    return awards_timeline;
+  create_awards_timeline(p:any){
+    return awards_timeline(p.award,this.config,p,this.pows);
   }
 
 
@@ -162,6 +134,7 @@ export class PublicComponent implements OnInit {
     //
 
     this.awards_timeline=this.create_awards_timeline(p);
+    this.message="";
 
   }
 

@@ -1,9 +1,10 @@
 @use '@angular/material' as mat;
 @include mat.core(); //<-- cette ligne ne doit surtout pas être supprimé
 
-@media(max-width: 1500px) { html {font-size: 1.4vw;} }
-@media(max-width: 1000px) { html {font-size: 1.8vw;} }
-@media(max-width: 600px) { html {font-size: 2.2vw;} }
+html {font-size: 1.1vw;}
+@media(max-width: 1500px) { html {font-size: 1.6vw;} }
+@media(max-width: 1000px) { html {font-size: 1.9vw;} }
+@media(max-width: 600px) { html {font-size: 2.4vw;} }
 
 $dataculture-typography: mat.define-typography-config(
         $headline-1: mat.define-typography-level(3.8rem,3.8rem, $font-weight: 600, $font-family: Roboto),
@@ -13,9 +14,9 @@ $dataculture-typography: mat.define-typography-config(
         $headline-5: mat.define-typography-level(1.8rem,1.8rem, $font-weight: 500, $font-family: Roboto),
         $headline-6: mat.define-typography-level(1.5rem,1.5rem, $font-weight: 300, $font-family: Roboto),
         $subtitle-1: mat.define-typography-level(16px, 16px, 400, Roboto),
-        $subtitle-2: mat.define-typography-level(14px, 14px, 400, Roboto),
-        $body-1: mat.define-typography-level(12px, 12px, 400, Roboto),
-        $body-2: mat.define-typography-level(11px, 11px, 300, Roboto),
+        $subtitle-2: mat.define-typography-level(15px, 15px, 400, Roboto),
+        $body-1: mat.define-typography-level(14px, 14px, 400, Roboto),
+        $body-2: mat.define-typography-level(12px, 12px, 300, Roboto),
         $button: mat.define-typography-level(12px, 8px, 400, Roboto),
         $caption: mat.define-typography-level(10px, 10px, 300, Roboto),
         $overline: mat.define-typography-level(10px, 10px, 300, Roboto)

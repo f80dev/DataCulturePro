@@ -79,7 +79,7 @@
           </app-timeline>
         </mat-tab>
         <mat-tab label="RECOMPENSES" *ngIf="awards_timeline?.length>0">
-          <div class="label"  *ngIf="profil.awards?.length>5" style="margin-top: 20px">({{profil.awards.length}} résultats=</div>
+          <div class="label" *ngIf="profil.awards?.length>5" style="margin-top: 20px">({{profil.awards.length}} résultats=</div>
           <app-timeline class="column"
                         style="margin-top: 20px;"
                         [data]="awards_timeline"

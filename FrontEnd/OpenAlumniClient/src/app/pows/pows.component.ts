@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
-import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {$$, getParams, normaliser, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
+import {ActivatedRoute, Router} from "@angular/router";
+import {$$, getParams, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
