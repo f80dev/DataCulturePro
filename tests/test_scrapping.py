@@ -1,5 +1,3 @@
-import pytest
-
 from OpenAlumni.Batch import extract_profil_from_imdb, extract_profil_from_unifrance, extract_film_from_imdb, \
 	extract_film_from_unifrance, extract_awards_from_imdb, imdb_search, extract_episodes_from_profil, \
 	extract_casting_from_imdb, extract_tags_from_imdb, extract_nature_from_imdb
@@ -7,10 +5,12 @@ from OpenAlumni.Tools import equal_str, log, remove_string_between_delimiters, i
 from OpenAlumni.settings import MOVIE_NATURE
 
 MOVIES={
+	"sam":{"url":"https://www.imdb.com/title/tt5085178/?ref_=ttep_ep_tt","episodes":14,"casting":9},
+	"Ghosts of Elyon":{"url":"https://www.imdb.com/title/tt0742517/?ref_=ttep_ep16"},
+	"L'Ombre Masquée contre-attaque":{"url":"https://www.imdb.com/title/tt4449186/?ref_=ttep_ep4"},
 	"L'histoire du samedi":{"url":"https://www.imdb.com/title/tt3805856/"},
 	"Jocelyn":{"url":"https://www.imdb.com/title/tt15235788/?ref_=ttep_ep2"},
 	"Episode 258":{"url":"https://www.imdb.com/title/tt15803534/?ref_=ttep_ep43"},
-	"sam":{"url":"https://www.imdb.com/title/tt5085178/?ref_=ttep_ep_tt","episodes":16,"casting":9},
 	"Emmanuelle Laborit, éclats de signes": {"url":"https://www.imdb.com/title/tt11850060/?ref_=nm_flmg_c_14_dr"},
 	"Personne ne s’aimera jamais comme on s’aime":{"url":"https://www.unifrance.org/film/45837/personne-ne-s-aimera-jamais-comme-on-s-aime"},
 	"Truckstop":{"url":"https://www.imdb.com/title/tt0507501/"},
@@ -26,8 +26,17 @@ MOVIES={
 }
 
 
-
 PROFILS=[
+	{
+		"name":"francois ozon",
+		"unifrance":{},
+		"imdb":{}
+	},
+	{
+		"name":"arnaud surel",
+		"unifrance":None,
+		"imdb":{"links":2}
+	},
 	{
 		"name":"julia ducournau",
 		"unifrance":{"links":3},
@@ -40,22 +49,12 @@ PROFILS=[
 		"imdb":{}
 	},
 	{
-		"name":"arnaud surel",
-		"unifrance":None,
-		"imdb":{"links":2}
-	},
-	{
 		"name":"Sandrine gregor",
 		"unifrance":{"links":2},
 		"imdb":{"links":4}
-	},
-	{
-		"name":"francois ozon",
-		"unifrance":{},
-		"imdb":{}
-	},
-
+	}
 ]
+
 
 
 def test_search_imdb(names=["julia ducournau","françois ozon","cyril nakash","hervé hadmar"]):
@@ -64,6 +63,7 @@ def test_search_imdb(names=["julia ducournau","françois ozon","cyril nakash","h
 		rc=imdb_search(name,refresh_delay=1)
 		assert len(rc)>0
 	return rc[0]
+
 
 
 def test_extract_movies_from_profil(query={"name": "julia ducournau", "imdb": {"links": 3}, "unifrance": {"links": 3}}, refresh_delay=10):
@@ -93,7 +93,7 @@ def test_extract_movies_from_profil(query={"name": "julia ducournau", "imdb": {"
 def test_extract_awards_from_profils(profils=PROFILS):
 	for p in profils:
 		url=test_search_imdb([p["name"]])
-		log("Extract award pour "+url["href"])
+		log("Extract award pour "+p["name"])
 		awards=extract_awards_from_imdb("https://imdb.com"+url["href"])
 		assert not awards is None
 		assert len(awards)>=(p["awards"] if "awards" in p else 0)
@@ -103,9 +103,17 @@ def test_extract_awards_from_profils(profils=PROFILS):
 def test_extract_episodes(movies=MOVIES):
 	for title in movies.keys():
 		log("Recherche des épisodes de "+title)
-		rc=test_extract_movies(url=MOVIES[title]["url"],title=title,src="imdb",refresh_delay=1)
+		rc=test_extract_movies(url=MOVIES[title]["url"],
+		                       title=title,
+		                       src="imdb",
+		                       refresh_delay=1
+		                       )
 		assert len(rc["episodes"])>=(MOVIES[title]["episodes"] if "episodes" in MOVIES[title] else 0)
 	return rc
+
+
+def test_for_optimize():
+	test_extract_episodes({"sam":MOVIES["sam"]})
 
 
 def test_extract_episode_from_profil(name="Claire Lemaréchal",title="sam"):
@@ -149,7 +157,6 @@ def test_extract_movies(title="titane",url="",refresh_delay=3,src="imdb"):
 		assert len(rc["casting"])>0
 
 	assert len(rc["year"])>0
-
 
 	return rc
 

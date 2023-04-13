@@ -96,6 +96,8 @@ import { ScreencutterPipe } from './screencutter.pipe';
 import { MenuComponent } from './menu/menu.component';
 import { InputComponent } from './input/input.component';
 import { FestivalsComponent } from './festivals/festivals.component';
+import { UploadFileComponent } from './upload-file/upload-file.component';
+import { FileDragNDropDirective } from './file-drag-ndrop.directive';
 
 @NgModule({
   declarations: [
@@ -143,7 +145,9 @@ import { FestivalsComponent } from './festivals/festivals.component';
     ScreencutterPipe,
     MenuComponent,
     InputComponent,
-    FestivalsComponent
+    FestivalsComponent,
+    UploadFileComponent,
+    FileDragNDropDirective
   ],
     imports: [
         BrowserModule,

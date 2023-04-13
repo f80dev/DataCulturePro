@@ -1,3 +1,4 @@
+
 #PyCharm
 ##dev
 Configuration en mode django server

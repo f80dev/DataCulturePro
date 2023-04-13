@@ -1,6 +1,7 @@
-<div class="mat-dialog-title">{{data.title}}</div>
-<div class="mat-dialog-subtitle" *ngIf="data.subtitle">{{data.subtitle}}</div>
+
 <mat-dialog-content>
+  <div class="mat-headline-6">{{data.title}}</div>
+  <div class="mat-subheading-2" *ngIf="data.subtitle">{{data.subtitle}}</div>
 
   <div style="display: flex;flex-wrap:wrap; align-items: flex-start;width:100%;">
     <!--    <div style="display: inline-flex;">-->
@@ -13,7 +14,7 @@
     <!--    </div>-->
 
     <div style="display: inline-flex;">
-      <button mat-flat-button mat-button
+      <button mat-flat-button
               *ngIf="data.webcam"
               style="height:45px"
               class="app-button"

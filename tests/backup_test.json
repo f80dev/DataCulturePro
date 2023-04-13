@@ -144,7 +144,7 @@
     "country": "nan",
     "website": "http://",
     "dtLastUpdate": "2023-03-06T10:39:25.279Z",
-    "dtLastSearch": "2023-03-21T12:57:29.444Z",
+    "dtLastSearch": "2023-04-11T18:57:16.076Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
     "biography": "",
@@ -365,7 +365,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 912,
+  "pk": 979,
   "fields": {
     "gender": "",
     "firstname": "Renée",
@@ -403,7 +403,7 @@
     "cp": "E1W 1",
     "country": "Canada",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:25.677Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.313Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -417,7 +417,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 913,
+  "pk": 980,
   "fields": {
     "gender": "",
     "firstname": "Sophie",
@@ -455,7 +455,7 @@
     "cp": "93260",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:25.786Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.407Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -469,7 +469,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 914,
+  "pk": 981,
   "fields": {
     "gender": "",
     "firstname": "Laurence",
@@ -507,7 +507,7 @@
     "cp": "93160",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:25.880Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.501Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -521,7 +521,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 915,
+  "pk": 982,
   "fields": {
     "gender": "",
     "firstname": "Angela",
@@ -559,7 +559,7 @@
     "cp": "75009",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:25.974Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.579Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -573,7 +573,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 916,
+  "pk": 983,
   "fields": {
     "gender": "",
     "firstname": "Anne",
@@ -611,7 +611,7 @@
     "cp": "75003",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.068Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.672Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -625,7 +625,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 917,
+  "pk": 984,
   "fields": {
     "gender": "",
     "firstname": "Celine",
@@ -663,7 +663,7 @@
     "cp": "93200",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.146Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.763Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -677,7 +677,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 918,
+  "pk": 985,
   "fields": {
     "gender": "",
     "firstname": "Sylvia",
@@ -715,7 +715,7 @@
     "cp": "94800",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.240Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.835Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -729,7 +729,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 919,
+  "pk": 986,
   "fields": {
     "gender": "",
     "firstname": "Marie",
@@ -767,7 +767,7 @@
     "cp": "75013",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.333Z",
+    "dtLastUpdate": "2023-04-11T16:57:12.929Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -781,7 +781,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 920,
+  "pk": 987,
   "fields": {
     "gender": "",
     "firstname": "Béatrice",
@@ -819,7 +819,7 @@
     "cp": "75009",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.428Z",
+    "dtLastUpdate": "2023-04-11T16:57:13.023Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -833,7 +833,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 921,
+  "pk": 988,
   "fields": {
     "gender": "",
     "firstname": "Sara",
@@ -871,7 +871,7 @@
     "cp": "75010",
     "country": "nan",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:26.532Z",
+    "dtLastUpdate": "2023-04-11T16:57:13.111Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -885,7 +885,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 922,
+  "pk": 989,
   "fields": {
     "gender": "M",
     "firstname": "Luc",
@@ -923,7 +923,7 @@
     "cp": "33600",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.397Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.119Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -937,7 +937,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 923,
+  "pk": 990,
   "fields": {
     "gender": "",
     "firstname": "Valérie",
@@ -975,7 +975,7 @@
     "cp": "75020",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.492Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.198Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -989,7 +989,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 924,
+  "pk": 991,
   "fields": {
     "gender": "M",
     "firstname": "Jérôme",
@@ -1027,7 +1027,7 @@
     "cp": "40110",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.573Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.290Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1041,7 +1041,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 925,
+  "pk": 992,
   "fields": {
     "gender": "M",
     "firstname": "Susana",
@@ -1079,7 +1079,7 @@
     "cp": "1050-",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.682Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.384Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1093,7 +1093,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 926,
+  "pk": 993,
   "fields": {
     "gender": "M",
     "firstname": "Roger",
@@ -1131,7 +1131,7 @@
     "cp": "75017",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.807Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.462Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1145,7 +1145,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 927,
+  "pk": 994,
   "fields": {
     "gender": "M",
     "firstname": "Robin",
@@ -1183,7 +1183,7 @@
     "cp": "75011",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:28.901Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.556Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1197,7 +1197,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 928,
+  "pk": 995,
   "fields": {
     "gender": "M",
     "firstname": "Jef",
@@ -1235,7 +1235,7 @@
     "cp": "",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:29.010Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.650Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1249,7 +1249,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 929,
+  "pk": 996,
   "fields": {
     "gender": "M",
     "firstname": "Xavier",
@@ -1287,7 +1287,7 @@
     "cp": "64000",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:29.105Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.748Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1301,7 +1301,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 930,
+  "pk": 997,
   "fields": {
     "gender": "",
     "firstname": "Santorri",
@@ -1339,7 +1339,7 @@
     "cp": "TW3 3",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:29.194Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.841Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1353,7 +1353,7 @@
 },
 {
   "model": "alumni.profil",
-  "pk": 931,
+  "pk": 998,
   "fields": {
     "gender": "M",
     "firstname": "Jean-Pierre",
@@ -1391,7 +1391,7 @@
     "cp": "1040",
     "country": "France",
     "website": "http://",
-    "dtLastUpdate": "2023-03-21T11:57:29.288Z",
+    "dtLastUpdate": "2023-04-11T16:57:15.935Z",
     "dtLastSearch": "2021-01-01T00:00:00Z",
     "dtLastNotif": "2021-01-01T00:00:00Z",
     "obsolescenceScore": 0,
@@ -1405,15 +1405,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 191,
+  "pk": 217,
   "fields": {
     "profil": 10,
-    "pow": 147,
+    "pow": 161,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Ing. son",
     "duration": 0,
     "comment": "",
@@ -1427,15 +1427,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 192,
+  "pk": 218,
   "fields": {
     "profil": 10,
-    "pow": 147,
+    "pow": 161,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Ass. montage",
     "duration": 0,
     "comment": "",
@@ -1449,15 +1449,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 193,
+  "pk": 219,
   "fields": {
     "profil": 10,
-    "pow": 148,
+    "pow": 162,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Ing. son",
     "duration": 0,
     "comment": "",
@@ -1471,15 +1471,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 194,
+  "pk": 220,
   "fields": {
     "profil": 10,
-    "pow": 148,
+    "pow": 162,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Montage son",
     "duration": 0,
     "comment": "",
@@ -1493,15 +1493,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 195,
+  "pk": 221,
   "fields": {
     "profil": 10,
-    "pow": 149,
+    "pow": 163,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Ing. son",
     "duration": 0,
     "comment": "",
@@ -1515,15 +1515,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 196,
+  "pk": 222,
   "fields": {
     "profil": 10,
-    "pow": 149,
+    "pow": 163,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Montage son",
     "duration": 0,
     "comment": "",
@@ -1537,15 +1537,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 197,
+  "pk": 223,
   "fields": {
     "profil": 10,
-    "pow": 150,
+    "pow": 164,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Ing. son",
     "duration": 0,
     "comment": "",
@@ -1559,15 +1559,15 @@
 },
 {
   "model": "alumni.work",
-  "pk": 198,
+  "pk": 224,
   "fields": {
     "profil": 10,
-    "pow": 150,
+    "pow": 164,
     "status": "",
     "state": "A",
     "creator": "auto",
     "public": true,
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "job": "Montage son",
     "duration": 0,
     "comment": "",
@@ -1581,17 +1581,17 @@
 },
 {
   "model": "alumni.pieceofwork",
-  "pk": 147,
+  "pk": 161,
   "fields": {
-    "dtLastSearch": "2023-03-21T11:57:31.861Z",
+    "dtLastSearch": "2023-04-11T16:57:18.669Z",
     "visual": "https://m.media-amazon.com/images/M/MV5BMTJkYTg4N2MtMzcwMy00ZjFiLWFlNzItMmJhMTllZjI2YjRlXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_QL75_UY281_CR11,0,190,281_.jpg",
-    "dtStart": "2023-03-21",
-    "dtEnd": "2023-03-21",
+    "dtStart": "2023-04-11",
+    "dtEnd": "2023-04-11",
     "title": "8 femmes",
     "title_index": "8FEMMES",
     "year": "2002",
     "nature": "Film",
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "reference": "",
     "budget": 0,
     "production": "Production companies,BIM Distribuzione,Canal+,Centre national du cinéma et de l'image animée (CNC)",
@@ -1600,7 +1600,7 @@
         "url": "https://www.imdb.com/title/tt0283832/",
         "desc": "",
         "text": "auto:IMDB",
-        "update": 1679399851.844204
+        "update": 1681232238.653742
       }
     ],
     "owner": "public",
@@ -1620,17 +1620,17 @@
 },
 {
   "model": "alumni.pieceofwork",
-  "pk": 148,
+  "pk": 162,
   "fields": {
-    "dtLastSearch": "2023-03-21T11:57:32.924Z",
-    "visual": "https://m.media-amazon.com/images/M/MV5BZjQyMTZiMDMtNDJmNS00ZmFhLWFlOGYtYWJkZTA3YTNjYjA2XkEyXkFqcGdeQXVyMjgyNjk3MzE@._V1_QL75_UY281_CR4,0,190,281_.jpg",
-    "dtStart": "2023-03-21",
-    "dtEnd": "2023-03-21",
+    "dtLastSearch": "2023-04-11T16:57:19.735Z",
+    "visual": "https://m.media-amazon.com/images/M/MV5BOTBmZDZkNWYtODIzYi00N2Y4LWFjMmMtNmM1OGYyNGVhYzUzXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_QL75_UX190_CR0,0,190,281_.jpg",
+    "dtStart": "2023-04-11",
+    "dtEnd": "2023-04-11",
     "title": "La môme",
     "title_index": "LAMOME",
     "year": "2007",
     "nature": "Film",
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "reference": "",
     "budget": 0,
     "production": "Production companies,Légende Films,TF1 International,TF1 Films Production",
@@ -1639,7 +1639,7 @@
         "url": "https://www.imdb.com/title/tt0450188/",
         "desc": "",
         "text": "auto:IMDB",
-        "update": 1679399852.908843
+        "update": 1681232239.71962
       }
     ],
     "owner": "public",
@@ -1659,17 +1659,17 @@
 },
 {
   "model": "alumni.pieceofwork",
-  "pk": 149,
+  "pk": 163,
   "fields": {
-    "dtLastSearch": "2023-03-21T11:57:33.962Z",
-    "visual": "https://m.media-amazon.com/images/M/MV5BNzllZTJmNjQtZjg4Zi00YTcwLWFlMDItYzc1NDgwNjhhMzRiXkEyXkFqcGdeQXVyMjgyNjk3MzE@._V1_QL75_UY281_CR5,0,190,281_.jpg",
-    "dtStart": "2023-03-21",
-    "dtEnd": "2023-03-21",
+    "dtLastSearch": "2023-04-11T16:57:20.672Z",
+    "visual": "https://m.media-amazon.com/images/M/MV5BNjYxNTA5NWUtY2FjNC00YTAzLWEwNDYtZGY2Y2E2NjNkZTY5XkEyXkFqcGdeQXVyMTA0MjU0Ng@@._V1_QL75_UY281_CR3,0,190,281_.jpg",
+    "dtStart": "2023-04-11",
+    "dtEnd": "2023-04-11",
     "title": "Sur mes lèvres",
     "title_index": "SURMESLEVRES",
     "year": "2001",
     "nature": "Film",
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "reference": "",
     "budget": 0,
     "production": "Production companies,Canal+,Centre national du cinéma et de l'image animée (CNC),Ciné B",
@@ -1678,7 +1678,7 @@
         "url": "https://www.imdb.com/title/tt0274117/",
         "desc": "",
         "text": "auto:IMDB",
-        "update": 1679399853.946612
+        "update": 1681232240.657352
       }
     ],
     "owner": "public",
@@ -1698,17 +1698,17 @@
 },
 {
   "model": "alumni.pieceofwork",
-  "pk": 150,
+  "pk": 164,
   "fields": {
-    "dtLastSearch": "2023-03-21T11:57:35.442Z",
+    "dtLastSearch": "2023-04-11T16:57:22.128Z",
     "visual": "https://m.media-amazon.com/images/M/MV5BMjI2MTY4OTkwOV5BMl5BanBnXkFtZTcwNzg2NjM5Ng@@._V1_QL75_UY281_CR0,0,190,281_.jpg",
-    "dtStart": "2023-03-21",
-    "dtEnd": "2023-03-21",
+    "dtStart": "2023-04-11",
+    "dtEnd": "2023-04-11",
     "title": "Largo winch",
     "title_index": "LARGOWINCH",
     "year": "2008",
     "nature": "Film",
-    "dtCreate": "2023-03-21",
+    "dtCreate": "2023-04-11",
     "reference": "",
     "budget": 0,
     "production": "Production companies,Pan Européenne,Wild Bunch,TF1 Films Production",
@@ -1717,7 +1717,7 @@
         "url": "https://www.imdb.com/title/tt0808339/",
         "desc": "",
         "text": "auto:IMDB",
-        "update": 1679399855.428905
+        "update": 1681232242.112534
       }
     ],
     "owner": "public",

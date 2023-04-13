@@ -93,14 +93,24 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false) {
+  batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false,filter="*") {
     let catalog="imdb,unifrance,lefilmfrancais";
-    // for(let key of Object.keys(this.config.values.catalog)){
-    //   if(this.config.values.catalog[key])catalog=catalog+key.replace(" ","").trim()+"_";
-    // }
-    this.api._post("batch/","remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page,this.config.values.catalog).subscribe(()=>{
+    let params="remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page+"&filter="+filter;
+
+    this.api._post("batch/",params,this.config.values.catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
+  }
+
+  async ask_for_filter() {
+    let filter=await _prompt(
+        this,"Premières lettres du nom",
+        "",
+        "Seul les profils dont le nom commence par les lettres suivantes sont analysés",
+        "text","Démarrer","Annuler",false);
+    if(filter){
+      this.batch(31,20,false,filter)
+    }
   }
 
   batch_movies() {
@@ -219,4 +229,8 @@ export class AdminComponent implements OnInit {
       showMessage(this,"Enregistrement terminé")
     })
   }
+
+
+
+
 }

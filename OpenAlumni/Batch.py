@@ -376,7 +376,7 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
 
 
 
-def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title="",year="",win=True,url="",user:ExtraUser=None):
+def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title="",year="",win=True,url="",user:ExtraUser=None,film_url=""):
     """
     Ajout un award sur la base d'un titre de festival, titre de film et année de récompense
     :param festival_title:
@@ -392,6 +392,9 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
         pows = PieceOfWork.objects.filter(title__iexact=film_title)
         for i in range(0,len(pows)):
             pow=pows[i]
+
+            if "https://www.imdb.com/title/"+film_url+"/" in [l["url"] for l in pow.links]: break
+
             if pow is None or pow.year is None or year is None:
                 log("Probléme de date avec le film")
             else:
@@ -441,48 +444,44 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
 
 def extract_awards_from_imdb(profil_url):
     # Recherche des awards
-    page = load_page(profil_url + "awards?ref_=nm_awd")
+    url=profil_url + "awards?ref_=nm_awd"
+    page = load_page(url,timeout=0,agent="Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.48 Mobile Safari/537.36")
 
-    awards = page.find_all("h3")
-    if len(awards)>0:
-        awards.pop(0)
+    awards = page.find_all("section",{"class":["ipx-page-section","ipc-page-section--base"]})
 
-    rc_awards=[]
-
-    tables = page.find_all("table", {"class": "awards"})
-
-    for i in range(0, len(tables)):
-        for tr in tables[i].find_all("tr"):
-            if tr:
-                festival_title = translate(translate(awards[i].text.split(",")[0].lower().strip()),["festivals"])
-                tds = tr.find_all("td")
-                if len(tds)<=2:
-                    log("Format non conforme "+tr.text)
+    rc_awards = []
+    for award in awards:
+        festival_title=list(award.children)[0].text
+        if len(list(award.children))>1:
+            desc=list(list(award.children)[1].find_all("a"))[1].text
+            links=list(list(award.children)[1].find_all("a"))
+            if len(links)>2:
+                film_title=links[2].text
+                film_id=links[2].attrs["href"].split("/title/")[1].split("/")[0] if "/title/" in links[2].attrs["href"] else ""
+                years=extract_years(desc)
+                if len(years)>0 and len(desc)>0 and len(desc.split(" "))>2:
+                    winner=desc.split(" ")[1]
+                    desc=" ".join(desc.split(" ")[2:])
+                    rc_awards.append({
+                        "festival_title":festival_title,
+                        "profil":profil_url,
+                        "desc":desc,
+                        "film_title":film_title,
+                        "film_id":film_id,
+                        "year":years[0],
+                        "win":("Winner" in award),
+                        "url":profil_url+"/awards"
+                    })
                 else:
-                    year = tds[0].text.replace("\n","").replace(" ","").strip()
-                    award=None
-                    for award in tds[2].text.split("\n"):
-                        if  len(award.strip())>3:
-                            award=award.strip()
-                            break
-
-                    film = tds[2].find("a")
-                    if film and award:
-                        film_title=film.text
-                        rc_awards.append({
-                            "festival_title":festival_title,
-                            "profil":profil_url,
-                            "desc":award,
-                            "film_title":film_title,
-                            "year":year,
-                            "win":("Winner" in award),
-                            "url":profil_url+"/awards"
-                        })
+                    log("A priori "+award.text+" pas conforme")
+            else:
+                pass
 
     return rc_awards
 
 
 def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
+    if not url.endswith("/"):url=url+"/"
     log("Recherche des épisodes de "+url)
     episodes=[]
     for saison in range(1,20):
@@ -615,7 +614,10 @@ def clean_line(text:str) -> str:
 
 def extract_casting_from_imdb(url:str,casting_filter="",refresh_delay=31):
     rc=dict()
-    url=url.split("?")[0]+"fullcredits/"
+    url=url.split("?")[0]
+    if not url.endswith("/"): url=url+"/"
+    url=url+"fullcredits/"
+
     page=load_page(url,refresh_delay)
     if not page is None:
         section_fullcredits=page.find("div",attrs={"id":"fullcredits_content"})
@@ -733,6 +735,8 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
     """
     :return:
     """
+    url=url.split("/?ref_=ttep_ep")[0]
+    years=[]
     if not url.startswith("http"):
         if not url.startswith("/title"):
             page=load_page("https://www.imdb.com/find?s=tt&q="+parse.quote(title))
@@ -756,9 +760,12 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
         title=page.find("h1",attrs={"data-testid":"hero__pageTitle"})
         if title is None:
             log("Lecture du titre impossible")
-            section=page.find("div",attrs={"id":"ipc-wrap-background-id"}).parent
+            section=page.find("div",attrs={"id":"ipc-wrap-background-id"})
             if section:
+                section=section.parent
                 title=section.find("h1").text
+            else:
+                raise RuntimeError("Probleme avec la page "+url)
 
         else:
             title=title.text
@@ -794,7 +801,7 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
                     if len(rc["production"])>2: rc["production"]=rc["production"][0:len(rc["production"])-2]
 
     if not "year" in rc:
-        section=page.find("h1")
+        section=page.find("h1").parent.parent
         if not section is None and not section.parent is None:
             years=extract_years(section.text)
         if len(years)>0: rc["year"]=years[0]
@@ -1520,7 +1527,8 @@ def exec_batch(profils,refresh_delay_profil=31,
                         film_title=award["film_title"],
                         year=award["year"],
                         win=award["win"],
-                        url=imdb_profil_url+"/awards"
+                        url=imdb_profil_url+"/awards",
+                        film_url=award["film_id"]
                     )
 
 

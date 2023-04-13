@@ -145,7 +145,7 @@ class ProfilViewSet(viewsets.ModelViewSet):
     """
     API de gestion des profils
     """
-    queryset = Profil.objects.all()
+    queryset = Profil.objects.all().order_by('-lastname')
     serializer_class = ProfilSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
@@ -163,7 +163,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 class ExtraProfilViewSet(viewsets.ModelViewSet):
     """
-    http://localhost:8000/api/extraprofils/424
+    http://localhost:8000/api/extraprofils/12
     """
     queryset = Profil.objects.all()
     serializer_class = ExtraProfilSerializer
@@ -579,19 +579,21 @@ def batch(request):
     except:
         content=None
 
-    filter= request.GET.get("filter", "*")
+    filter:str= request.GET.get("filter", "*")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
     profils=Profil.objects.order_by("dtLastSearch").all()
     refresh_delay_profil=int(request.GET.get("refresh_delay_profil", 31))
     refresh_delay_page=int(request.GET.get("refresh_delay_page", 31))
     if filter!="*":
-        profils=Profil.objects.filter(id=filter,school="FEMIS")
-        profils.update(auto_updates="0,0,0,0,0,0")
-        refresh_delay=0.1
+        if filter.isnumeric():
+            profils=Profil.objects.filter(id=filter,school="FEMIS")
+            profils.update(auto_updates="0,0,0,0,0,0")
+        else:
+            profils=Profil.objects.filter(lastname__istartswith=filter,school="FEMIS")
+
 
     profils=profils.order_by("dtLastSearch")
-
     n_films,n_works=exec_batch(profils,refresh_delay_profil,
                                         refresh_delay_page,int(limit),int(limit_contrib),
                                         content=content,remove_works=request.GET.get("remove_works","false")=="true")

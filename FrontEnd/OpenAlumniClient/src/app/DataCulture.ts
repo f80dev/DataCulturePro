@@ -1,5 +1,7 @@
 import {$$} from "./tools";
 
+export const MAX_FILE_SIZE=100000
+
 export function awards_timeline(awards,config,profil,pows){
     let awards_timeline=[];
 

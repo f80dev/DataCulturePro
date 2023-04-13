@@ -12,14 +12,19 @@
           Civilité
         </mat-expansion-panel-header>
 
-        <img [src]="profil.photo"
-             mat-card-avatar
-             class="image-photo"
-             style="max-width:150px;"
-             (click)="change_photo()"><br>
+        <div style="height:175px;padding:5px;display: inline-block;">
+          <app-upload-file (uploaded)="change_photo($event)"
+                           [zone]="true"
+                           width="150px" [maxsize]="100000000"
+                           title="Associer aux visuels un fichier de descriptions / attributs"
+                           extensions=".jpg,.png,.jpeg">
+            <img [src]="profil.photo" mat-card-avatar class="image-photo" style="width:100%;">
+          </app-upload-file>
+        </div>
+        <br>
 
         <mat-checkbox
-                (change)="save_profil(null,$event,'public_photo')"
+                (change)="save_profil($event,'public_photo')"
                 title="Cliquez sur cette photo pour la mettre a jour"
                 [(ngModel)]="profil.public_photo">
           Photo visible sur ma page publique
@@ -156,7 +161,7 @@
         <br>
 
         <mat-checkbox
-                (change)="save_profil(null,$event,'acceptSponsor');"
+                (change)="save_profil($event,'acceptSponsor');"
                 [checked]="profil.acceptSponsor">
           Accepte d'être tuteur
         </mat-checkbox>
@@ -178,7 +183,6 @@
               </td>
               <td style="width: 30px;text-align: right;">
                 <button class="icon-button" mat-icon-button
-                        mat-raised-button
                         title="Voir le profil"
                         (click)="open_profil(st)">
                   <mat-icon>visibility</mat-icon>
@@ -186,7 +190,6 @@
               </td>
               <td style="width: 30px;text-align: right;">
                 <button class="icon-button" mat-icon-button
-                        mat-raised-button
                         title="Le/la contacter"
                         (click)="contact_profil(st.id)">
                   <mat-icon>email</mat-icon>
@@ -194,7 +197,6 @@
               </td>
               <td style="width: 30px;text-align: right;">
                 <button class="icon-button" mat-icon-button
-                        mat-raised-button
                         title="Ne plus avoir comme tuteur"
                         (click)="remove_student(st.id)">
                   <mat-icon>cancel</mat-icon>
@@ -422,7 +424,6 @@
     </button>
 
     <button mat-icon-button
-            mat-raised-button
             class="icon-button"
             id="cmdClear"
             title="Sont effacées uniquement les expériences issue des annuaires publiques"

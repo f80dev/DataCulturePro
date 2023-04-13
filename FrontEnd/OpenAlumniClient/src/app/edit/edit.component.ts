@@ -273,13 +273,13 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
 
-  save_profil(func:Function=null,evt=null,field=""){
+  save_profil(evt=null,field=""){
     if(this.profil){
       if(field=="acceptSponsor")this.profil.acceptSponsor=evt.checked;
       if(field=="public_photo")this.profil.public_photo=evt.checked;
       this.profil.dtLastUpdate=new Date().toISOString();
       this.api.setprofil(this.profil).subscribe(()=>{
-        if(func)func();
+        showMessage(this,"Profil enregistré")
       },(err)=>{showError(this,err);});
     }
   }
@@ -311,25 +311,9 @@ export class EditComponent implements OnInit,OnDestroy  {
     });
   }
 
-  change_photo() {
-    this.dialog.open(ImageSelectorComponent, {position:
-        {left: '5vw', top: '5vh'},
-      maxWidth: 400, maxHeight: 700, width: '90vw', height: '90vh', data:
-        {
-          result: this.profil.photo,
-          checkCode: true,
-          width: 200,
-          height: 200,
-          emoji: false,
-          internet: false,
-          ratio: 1,
-          quality:0.7
-        }
-    }).afterClosed().subscribe((result) => {
-      if (result) {
-        this.profil.photo= result;
-      }
-    });
+  change_photo($event:any) {
+    this.profil.photo= $event.file
+    this.save_profil();
   }
 
 
@@ -436,7 +420,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   refresh_awards() {
       this.awards=[];
       let l_awards=this.profil.award.sort((a,b)=>{return a.year > b.year ? -1 : 1})
-    debugger
+
       for(let a of l_awards)
         if(a.state!="D")this.awards.push(a);
 

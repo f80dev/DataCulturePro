@@ -605,7 +605,7 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
     return code
 
 
-def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
+def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mozilla/5.0'):
 
     if url is None:return None
     if url.startswith("/"):url="https://www.imdb.com/"+url
@@ -634,7 +634,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
             return load_page(url)
 
         html=clean_page(html)
-        page=wikipedia.BeautifulSoup(html)
+        page=wikipedia.BeautifulSoup(html,"html.parser")
         if len(page.contents)==0:
             log("Le fichier ./Temp/"+filename+" est corrompu")
             os.remove(PAGEFILE_PATH + filename)
@@ -650,7 +650,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600):
                 if bot:
                     rc = wikipedia.BeautifulSoup(bot.download_page(url), "html5lib")
                 else:
-                    rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text, "html5lib")
+                    rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': agent}).text, "html5lib")
                 break
             except:
                 pass

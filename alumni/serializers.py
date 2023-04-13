@@ -122,7 +122,6 @@ class ProfilSerializer(serializers.ModelSerializer):
         model=Profil
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","school",
                 "mobile","email","photo","gender","job","public_photo",
-                "works",
                 "facebook","youtube","tiktok","vimeo","instagram","telegram","twitter",
                 "linkedin","degree_year","promo","department","department_category",
                 "dtLastUpdate","links","str_links","blockchain",

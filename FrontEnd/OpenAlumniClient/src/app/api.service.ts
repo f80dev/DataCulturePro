@@ -175,8 +175,8 @@ export class ApiService {
 
   //Mise a jour du profil du user
   setprofil(data:any) {
-    data.dtLastUpdate=now()
-    return this._put("profils/"+data.id+"/","",data);
+    data.dtLastUpdate=now();
+    return this._put("profils/"+data.id,"",data);
   }
 
 
