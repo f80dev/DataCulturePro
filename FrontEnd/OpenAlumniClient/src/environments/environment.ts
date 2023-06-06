@@ -5,11 +5,16 @@
 export const environment = {
   production: false,
   name: "local",
-  domain_server:"http://localhost:8000",
+  domain_server:"http://provider.bdl.computer:30648",
   config_file:"config",
   domain_appli: "http://localhost:4200",
   appVersion: require('../../package.json').version + '-dev',
 };
+
+//domain_server:"http://localhost:8100",
+//domain_server:"http://provider.bdl.computer:30648",
+//domain_server:"http://192.168.1.62:8100",
+
 
 /*
  * For easier debugging in development mode, you can import the following file

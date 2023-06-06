@@ -26,17 +26,15 @@ pd.options.plotting.backend = "plotly"
 
 from django.http import JsonResponse, HttpResponse
 
-from django_elasticsearch_dsl import Index
 from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
-from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, IdsFilterBackend, \
-    OrderingFilterBackend, DefaultOrderingFilterBackend, \
-    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend, MultiMatchSearchFilterBackend
+from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, DefaultOrderingFilterBackend, \
+    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
 from django_elasticsearch_dsl_drf.pagination import LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
-from erdpy.accounts import Account
+
 from rest_framework.decorators import api_view,  permission_classes, renderer_classes
 
 from rest_framework.filters import SearchFilter
@@ -468,18 +466,18 @@ def write_nft(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def nfts(request):
-    _u=Account(pem_file=ADMIN_PEMFILE)
-    url=BC_PROXY+"/address/"+_u.address.bech32()+"/esdt/"
-    r=requests.get(url).json()
+    # _u=Account(pem_file=ADMIN_PEMFILE)
+    # url=BC_PROXY+"/address/"+_u.address.bech32()+"/esdt/"
+    # r=requests.get(url).json()
     rc=[]
-    for t in r["data"]["esdts"]:
-        if t.startswith(TOKEN_ID):
-            nft=r["data"]["esdts"][t]
-            try:
-                nft["attributes"]=str(base64.b64decode(nft["attributes"]),"utf8")
-                rc.append(nft)
-            except:
-                pass
+    # for t in r["data"]["esdts"]:
+    #     if t.startswith(TOKEN_ID):
+    #         nft=r["data"]["esdts"][t]
+    #         try:
+    #             nft["attributes"]=str(base64.b64decode(nft["attributes"]),"utf8")
+    #             rc.append(nft)
+    #         except:
+    #             pass
     return JsonResponse({"results":rc})
 
 

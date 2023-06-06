@@ -2,6 +2,8 @@
 #effacer toutes les images : docker rmi $(docker images -a -q)
 #effacer tous les containers : docker rm  $(docker ps -a -f status=exited -q) / podman rm  $(podman ps -a -f status=exited -q)
 
+#ajouter un certificat sous Akash : https://docs.akash.network/guides/cloudmos-deploy/wordpress-deployment-example
+
 
 FROM python
 
@@ -58,7 +60,9 @@ RUN pip3 install xlsxwriter
 RUN pip3 install docutils
 RUN pip3 install networkx
 RUN pip3 install py7zr
-RUN pip3 install erdpy
+RUN pip3 install multiversx-sdk-core
+RUN pip3 install multiversx-sdk-wallet
+RUN pip3 install multiversx-sdk-network-providers
 RUN pip3 install pandasql
 RUN pip3 install plotly
 RUN pip3 install jellyfish
@@ -93,7 +97,10 @@ EXPOSE 8000
 ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev
 ENV DEBUG=True
 
-#CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
-#ENTRYPOINT ["/home/app/start.sh"]
+#execution dans un environnement SSL
+#CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
+
+#Execution sans securité
+CMD ["python3", "manage.py", "runserver","0.0.0.0:8000"]
+
 

@@ -1,7 +1,4 @@
-from erdpy.accounts import Account
-from erdpy.config import DEFAULT_GAS_PRICE,get_tx_version,get_chain_id
-from erdpy.proxy import ElrondProxy
-from erdpy.transactions import Transaction
+from multiversx_sdk_core import Transaction
 
 from OpenAlumni.Tools import log
 from OpenAlumni.settings import NFT_CONTRACT, TOKEN_ID, BC_PROXY, ADMIN_PEMFILE, BC_EXPLORER, NFT_CREATE_COST
@@ -37,11 +34,12 @@ def hex_to_str(number):
 
 class NFTservice:
     def __init__(self, proxy=BC_PROXY,pem_file=ADMIN_PEMFILE):
-        self._proxy = ElrondProxy(proxy)
-        self.chain_id = self._proxy.get_chain_id()
-        #self.environment = TestnetEnvironment(proxy)
-        log("Initialisation de l'admin avec "+pem_file)
-        self._sender=Account(pem_file=pem_file)
+        pass
+        # self._proxy = ElrondProxy(proxy)
+        # self.chain_id = self._proxy.get_chain_id()
+        # #self.environment = TestnetEnvironment(proxy)
+        # log("Initialisation de l'admin avec "+pem_file)
+        # self._sender=Account(pem_file=pem_file)
 
 
 
@@ -51,14 +49,14 @@ class NFTservice:
 
         t = Transaction()
         t.nonce = _sender.nonce
-        t.version = get_tx_version()
+        # t.version = get_tx_version()
         t.data = data
         t.receiver = receiver
         t.chainID = self._proxy.get_chain_id()
         t.gasLimit = gasLimit
         t.value = value
         t.sender = self._sender.address.bech32()
-        t.gasPrice = DEFAULT_GAS_PRICE
+        # t.gasPrice = DEFAULT_GAS_PRICE
         t.sign(self._sender)
 
         log("Execution d'une transaction sur "+BC_EXPLORER+"/address/"+t.sender)

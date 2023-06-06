@@ -231,6 +231,12 @@ export class AdminComponent implements OnInit {
   }
 
 
-
-
+  fast_batch() {
+    let alphabet="abcdefghijklmnopqrstuvwxyz";
+    let step=3
+    for(let i=0;i<alphabet.length;i=i+step){
+      let filter=alphabet.substring(i,i+step);
+      this.batch(30,200,false,filter)
+    }
+  }
 }

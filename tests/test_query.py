@@ -92,6 +92,7 @@ def test_add_pows_to_profils(profil_index=0,refresh_delay=3):
 		log("Profil "+name_profil+" n'est pas référencé dans la base")
 
 
+
 @pytest.mark.django_db
 def test_get_movies_for_profils(profil_index=0):
 	works=Work.objects.filter(profil__name_index=index_string(PROFILS[profil_index]["name"])).all()
@@ -164,7 +165,6 @@ def test_query_profils(db,server,queries=["firstname__contains=julia",
 def test_direct_query_awards(db,server,profils=["Julia ducournau"]):
 	for profil in profils:
 		_p=Profil.objects.filter(name_index__exact=index_string(profil)).first()
-
 		rc=Award.objects.filter(profil_id=_p.id).count()
 		assert rc>0
 
