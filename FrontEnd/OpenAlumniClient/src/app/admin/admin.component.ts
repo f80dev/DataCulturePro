@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../api.service";
-import {api, showError, showMessage} from "../tools";
+import {$$, api, showError, showMessage} from "../tools";
 import {Router} from "@angular/router";
 import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
@@ -29,14 +29,15 @@ export class AdminComponent implements OnInit {
               public router:Router,
               public dialog:MatDialog,
               public toast:MatSnackBar) {
+
     this.config.user_update.subscribe(()=>{
       this.profils=Object.values(this.config.profils);
-      this.refresh();
     })
   }
 
   refresh(){
     this.api._get("extrausers").subscribe((r:any)=>{
+      this.profils=Object.values(this.config.profils);
       this.users=r.results;
       for(let i=0;i<this.users.length;i++){
         this.users[i].profil=this.profils[this.users[i].profil_name]
@@ -47,6 +48,8 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     this.refresh_server();
     this.refresh_backup();
+    this.refresh();
+    this.profils=Object.values(this.config.profils);
   }
 
   raz(table:string) {
@@ -212,6 +215,7 @@ export class AdminComponent implements OnInit {
       this.show_server=true;
     },(err:any)=>{
       showMessage(this,err.error.message);
+      this.message="";
     })
   }
 
@@ -219,6 +223,14 @@ export class AdminComponent implements OnInit {
     this.api._get("backup_files","").subscribe((r:any)=>{
       this.backup_files=r.files;
     })
+  }
+
+  upload_backup(file:any){
+    this.message="Chargement d'un backup";
+    this.api._post("backup_files/","",file).subscribe(()=>{
+      this.refresh_backup();
+    })
+
   }
 
   save_backup() {
@@ -232,11 +244,34 @@ export class AdminComponent implements OnInit {
 
 
   fast_batch() {
-    let alphabet="abcdefghijklmnopqrstuvwxyz";
+    let alphabet="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,,x,y,z".split(",");
     let step=3
     for(let i=0;i<alphabet.length;i=i+step){
-      let filter=alphabet.substring(i,i+step);
-      this.batch(30,200,false,filter)
+      let filter=alphabet.slice(i,i+step);
+      $$("Lancement du batch avec "+filter.join(","))
+      this.batch(30,200,false,filter.join(","))
+    }
+  }
+
+  async add_user() {
+    let rep=await _prompt(this,"Email de l'utilisateur","","Un email d'inscription lui sera envoyé","text","Envoyé","Annuler",false)
+    if(rep){
+      this.api.getextrauser(rep).subscribe(async (result: any) => {
+        if (result.results.length > 0) {
+          showMessage(this,"Impossible ce compte existe déjà")
+        } else {
+          let fullname=await _prompt(this,"Indiquer son prénom et son nom","","","text","Envoyé","Annuler",false)
+          let firstname=fullname.split(" ")[0]
+          this.api.register({
+            email: rep,
+            username: rep,
+            first_name: firstname,
+            last_name: fullname.replace(firstname+" ",""),
+          }).subscribe((res: any) => {
+            this.refresh();
+          });
+        }
+      })
     }
   }
 }

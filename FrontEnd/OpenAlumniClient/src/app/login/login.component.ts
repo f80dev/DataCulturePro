@@ -8,7 +8,7 @@ import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {PromptComponent} from '../prompt/prompt.component';
+import {_prompt, PromptComponent} from '../prompt/prompt.component';
 
 
 
@@ -34,7 +34,6 @@ export class LoginComponent implements OnInit {
   redirect = null;
   code = '';
   email="";
-  showAuthentPlatform = true;
 
   shareObj = {
     href: 'FACEBOOK-SHARE-LINK',
@@ -128,19 +127,13 @@ export class LoginComponent implements OnInit {
 
 
 
-  email_login() {
+  async email_login() {
     $$('Ouverture du login par email');
-    this.dialog.open(PromptComponent, {
-      backdropClass: 'removeBackground',
-      width: 'fit-content', data: {
-        title: 'Authentification par email',
-        result: localStorage.getItem("lastEmail"),
-        question: 'Renseigner votre adresse mail',
-        lbl_ok: 'OK',
-        lbl_cancel: 'Annuler'
-      }
-    }).afterClosed().subscribe((email: any) => {
-      if (email != 'no') {
+    let lastEmail=localStorage.getItem("lastEmail") || "";
+    if(lastEmail=="null")lastEmail="";
+    let email=await _prompt(this,'Authentification par email',lastEmail,'Renseigner votre adresse mail',
+        "text","Se connecter","Annuler",false)
+      if (email) {
         localStorage.setItem('lastEmail', email);
         this.email=email;
         $$('Recherche d\'un compte déjà existant a l\'email=' + email);
@@ -151,7 +144,7 @@ export class LoginComponent implements OnInit {
             this.messageCode = 'Veuillez indiquer votre code à 6 chiffres reçu par mail';
           } else {
             this.wait_message = 'Nouveau compte, création en cours';
-            this.api.register({email, username: email}).subscribe((res: any) => {
+            this.api.register({email:email, username: email}).subscribe((res: any) => {
               this.api._get("set_perm")
               this.wait_message = '';
               if (res != null) {
@@ -171,7 +164,6 @@ export class LoginComponent implements OnInit {
         showMessage(this, 'Vous restez anonyme');
         this._location.back();
       }
-    });
 
     // var message="Un lien de connexion à votre nouveau profil vous a été envoyer sur votre boite. Utilisez le pour vous reconnecter";
     // if(res.status!=200)message="Problème technique. Essayer une autre méthode d'authentification";
@@ -215,7 +207,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("email",this.email);
         this.messageCode = '';
         this.config.init_user(this.email).then((r:any) => {
-          if(r)this.quit();
+          this.router.navigate(["settings"])
         })
     }else {
 
@@ -246,7 +238,7 @@ export class LoginComponent implements OnInit {
           $$("Le compte existe bien");
           this.updateCode(data.provider_id);
         } else {
-          $$('Il n\'y a pas de compte à cet email');
+          $$("Il n'y a pas de compte associé à cet email");
           this.api.register({
             email: data.email,
             username: '___' + data.provider_id,

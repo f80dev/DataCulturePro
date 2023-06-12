@@ -4,7 +4,8 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from rest_framework.test import APIClient
 
-from OpenAlumni.Batch import importer_file, profils_importer, create_article, add_pows_to_profil, reindex, raz
+from OpenAlumni.Batch import importer_file, profils_importer, create_article, add_pows_to_profil, reindex, raz, \
+	exec_batch
 from OpenAlumni.Tools import log, index_string
 from alumni.documents import ProfilDocument
 from alumni.models import Profil, Article, ExtraUser, Award, PieceOfWork, Work, Festival
@@ -46,6 +47,13 @@ def test_raz():
 	assert Award.objects.all().count()==0
 	assert Festival.objects.all().count()==0
 
+
+@pytest.mark.django_db(transaction=True)
+def test_exec_batch():
+	profils=Profil.objects.filter(lastname__icontains="ducournau")
+	exec_batch(profils=profils,refresh_delay_profil=0)
+
+
 @pytest.mark.django_db
 def test_import_profils(to_imports=[("spip_ancien_light.xlsx",7),("spip_anciens.xlsx",1694),("stagiaires FP 211001 jl.xlsx",2000)],raz_before=True):
 	if raz_before:test_raz()
@@ -84,7 +92,7 @@ def test_add_pows_to_profils(profil_index=0,refresh_delay=3):
 		movies=test_extract_movies_from_profil(PROFILS[profil_index], refresh_delay=refresh_delay)
 
 		test_remove_pows_from_profil(profil_index)
-		rc=add_pows_to_profil(profils.first(),movies["links"][:1],"",refresh_delay)
+		rc=add_pows_to_profil(profils.first(),movies["links"],"",refresh_delay)
 		assert not rc is None
 		assert rc[0]>0
 		assert rc[1]>0

@@ -14,14 +14,15 @@
 
         <div style="height:175px;padding:5px;display: inline-block;">
           <app-upload-file (uploaded)="change_photo($event)"
-                           [zone]="true"
-                           width="150px" [maxsize]="100000000"
+                           [zone]="true" icon="edit" [src]="profil.photo"
+                           width="150px" height="200px" [maxsize]="100000000"
                            title="Associer aux visuels un fichier de descriptions / attributs"
                            extensions=".jpg,.png,.jpeg">
-            <img [src]="profil.photo" mat-card-avatar class="image-photo" style="width:100%;">
+<!--            <mat-icon>edit</mat-icon>-->
+<!--            <img [src]="profil.photo" mat-card-avatar class="image-photo" style="width:100%;">-->
           </app-upload-file>
         </div>
-        <br>
+        <br><br>
 
         <mat-checkbox
                 (change)="save_profil($event,'public_photo')"
@@ -338,9 +339,7 @@
       <!-- Récompenses-->
       <mat-expansion-panel  [expanded]="false" id="pnlRecompenses">
         <mat-expansion-panel-header>
-          
-            Récompenses
-          
+            Nominations / Récompenses
         </mat-expansion-panel-header>
         <br>
         <table style="width: 100%;font-size: small;">

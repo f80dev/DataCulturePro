@@ -2,14 +2,15 @@
 <project version="4">
   <component name="PublishConfigData" serverName="mainCloud">
     <serverData>
-      <paths name="mainCloud">
+      <paths name="localServer">
         <serverdata>
           <mappings>
+            <mapping local="$PROJECT_DIR$/FrontEnd/OpenAlumniClient" web="/" />
             <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="root@192.168.1.4">
+      <paths name="mainCloud">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

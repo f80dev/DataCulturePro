@@ -47,7 +47,7 @@
                  matInput
                  autofocus
                  id="txtCode"
-                 min="10000"
+                 min="100000"
                  max="999999"
                  title="Saisissez votre code d'accès à 6 chiffres"
                  placeholder="Votre code"
@@ -91,25 +91,6 @@
       </div>
 
     </div>
-  </div>
-
-  <!--Zone d'acceuil-->
-  <div *ngIf="config.user?.user.email?.length>0">
-    <h1>Bonjour {{config.user?.user.email}}</h1>
-    <br>
-<!--    <img *ngIf="config.user?.photo?.length>0"-->
-<!--         [src]="config.user?.photo" width="150px"-->
-<!--         height="150px"-->
-<!--         class="image-photo">-->
-    <br>
-
-    <button class="app-button"
-            id="cmdGoStore"
-            mat-raised-button
-            (click)="next()">
-      Continuer
-    </button>
-
   </div>
 
 </div>

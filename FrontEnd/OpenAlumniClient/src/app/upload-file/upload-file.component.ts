@@ -1,10 +1,11 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {showMessage} from "../tools";
 import {MAX_FILE_SIZE} from "../DataCulture";
+import {showMessage} from "../tools";
+
 
 @Component({
-  selector: "app-upload-file",
+  selector: 'app-upload-file',
   templateUrl: './upload-file.component.html',
   styleUrls: ['./upload-file.component.css']
 })
@@ -34,6 +35,7 @@ export class UploadFileComponent implements OnInit, OnChanges {
   constructor(
       public toast: MatSnackBar,
   ) {
+
   }
 
   refresh(){

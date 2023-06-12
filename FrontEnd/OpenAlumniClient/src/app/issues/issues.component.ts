@@ -15,6 +15,7 @@ export class IssuesComponent implements OnInit {
   title="";
   description="";
   localisation="";
+  screen_capture: any;
 
   constructor(
     public api:ApiService,
@@ -29,7 +30,7 @@ export class IssuesComponent implements OnInit {
 
   send() {
     let body="De 'user"+this.config.user.user.id+"'\nLocalisation: "+this.localisation+"\nDescription:"+this.description;
-    this.api._post("add_issue","",{title:this.title,body:body}).subscribe((r)=>{
+    this.api._post("add_issue","",{title:this.title,body:body,screen:this.screen_capture}).subscribe((r)=>{
       showMessage(this,"Anomalie enregistrée. Celle ci sera traité dés que possible");
     });
     this.quit();
@@ -37,5 +38,9 @@ export class IssuesComponent implements OnInit {
 
   quit() {
     this._location.back();
+  }
+
+  upload_screen($event: any) {
+    this.screen_capture=$event;
   }
 }

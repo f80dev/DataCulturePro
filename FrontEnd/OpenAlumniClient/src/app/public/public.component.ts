@@ -21,8 +21,9 @@ export class PublicComponent implements OnInit {
   works: any[]=[];
   message: string;
   items: any[]=[];
-  works_timeline:any[]=[];
-  awards_timeline:any[]=[];
+  works_timeline:any[]=[]
+  awards_timeline:any[]=[]
+  nominations_timeline:any[]=[]
   expe="";
 
   url: any;
@@ -40,8 +41,8 @@ export class PublicComponent implements OnInit {
   }
 
 
-  create_awards_timeline(p:any){
-    return awards_timeline(p.award,this.config,p,this.pows);
+  create_awards_timeline(p:any,winner=true){
+    return awards_timeline(p.award,this.config,p,this.pows,winner);
   }
 
 
@@ -133,7 +134,8 @@ export class PublicComponent implements OnInit {
     // }
     //
 
-    this.awards_timeline=this.create_awards_timeline(p);
+    this.awards_timeline=this.create_awards_timeline(p,true);
+    this.nominations_timeline=this.create_awards_timeline(p,false);
     this.message="";
 
   }

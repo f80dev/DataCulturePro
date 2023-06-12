@@ -23,7 +23,7 @@ from wikipedia import wikipedia, re
 from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, fusion, remove_ponctuation, \
     equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp, \
-    apply_dictionnary_on_each_words
+    apply_dictionnary_on_each_words, init_dict
 
 from OpenAlumni.settings import STATIC_ROOT
 from alumni.documents import FestivalDocument
@@ -178,61 +178,55 @@ def extract_film_from_leFilmFrancais(url:str,job_for=None,all_casting=False,refr
 
 def extract_casting_from_unifrance(url:str,refresh_delay=31):
     rc=dict()
-    page=load_page(url,refresh_delay=refresh_delay)
-    if page.find("div",{"id":"description"}) and page.find("div",{"id":"description"}).find("p"):
-        real_links=page.find("div",{"id":"description"}).find("p").find_all("a")
-        name=None
-        if len(real_links)>0:
-            name=real_links[0].text
+    page=load_page(url,refresh_delay=refresh_delay) if type(url)==str else url
+    for li in page.findAll("li"):
+        job=translate(li.text.split(":")[0].strip(),["jobs"],True)
+        names=li.text.split(":")[1].strip().split(",")
+        if job:
+            for fullname in names:
+                if not job in rc:rc[job]=[]
+                rc[job].append(
+                    {
+                        "name":fullname,
+                        "url":"",
+                        "index":index_string(fullname),
+                        "source":"unifrance",
+                    }
+                )
         else:
-            if page.find("div",{"itemprop":"director"}):
-                name=page.find("div",{"itemprop":"director"}).find_all("p")[0].text.lower()
-        if name:
-            rc[translate("Réalisation")]=[{
-                "name":name,
-                "source":"unifrance",
-                "index":index_string(name),
-                "url":real_links[0].get("href") if len(real_links)>0 else ""
-            }]
+            log(li.text.split(":")[0].strip()+" absent du référentiel de jobs")
 
-        #Recherche dans le générique détaillé
-        section=page.find("section",{"id":"casting"})
-        if not section is None:
-            jobs = section.findAll("h2")
-            paras = section.findAll("p")
-            #if not "personne" in links[0].href:links.remove(0)
-            for idx in range(len(paras)):
-                links=paras[idx].findAll("a")
-                for l in links:
-                    job=translate(clean_line(jobs[idx].text),["jobs"],True)
-                    if job:
-                        #On ajoute l'ensemble du casting au systeme
-                        names = str(l.getText()).split(" ")
-                        lastname =names[len(names)-1]
-                        if not job in rc:rc[job]=[]
-                        fullname=l.getText().replace(lastname,"").strip()+" "+lastname
-                        rc[job].append(
-                            {
-                                "name":fullname,
-                                "url":l.attrs["href"],
-                                "index":index_string(fullname),
-                                "source":"unifrance",
-                            }
-                        )
-                    else:
-                        job=clean_line(jobs[idx].text)
-                        log(job+" non présent dans le référentiel")
+        # #Recherche dans le générique détaillé
+        # section=page.find("section",{"id":"casting"})
+        # if not section is None:
+        #     jobs = section.findAll("h2")
+        #     paras = section.findAll("p")
+        #     #if not "personne" in links[0].href:links.remove(0)
+        #     for idx in range(len(paras)):
+        #         links=paras[idx].findAll("a")
+        #         for l in links:
+        #             job=translate(clean_line(jobs[idx].text),["jobs"],True)
+        #             if job:
+        #                 #On ajoute l'ensemble du casting au systeme
+        #                 names = str(l.getText()).split(" ")
+        #                 lastname =names[len(names)-1]
+        #                 if not job in rc:rc[job]=[]
+        #                 fullname=l.getText().replace(lastname,"").strip()+" "+lastname
+        #
+        #             else:
+        #                 job=clean_line(jobs[idx].text)
+        #                 log(job+" non présent dans le référentiel")
 
         #Recherche dans les acteurs
-        for actor in page.find_all("div",{"itemprop":"actors"}):
-            if "data-title" in actor.attrs:
-                if not "actor" in rc:rc["actor"]=[]
-                fullname=actor.attrs["data-title"].lower()
-                rc["actor"].append({
-                    "name":fullname,
-                    "source":"unifrance",
-                    "index":index_string(fullname)
-                })
+        # for actor in page.find_all("div",{"itemprop":"actors"}):
+        #     if "data-title" in actor.attrs:
+        #         if not "actor" in rc:rc["actor"]=[]
+        #         fullname=actor.attrs["data-title"].lower()
+        #         rc["actor"].append({
+        #             "name":fullname,
+        #             "source":"unifrance",
+        #             "index":index_string(fullname)
+        #         })
 
     return rc
 
@@ -253,71 +247,122 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
     #r=wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0',"accept-encoding": "gzip, deflate"})
     #page = wikipedia.BeautifulSoup(str(r.content,encoding="utf-8"),"html5lib")
     page=load_page(url,refresh_delay)
-    _title=page.find('h1', attrs={'itemprop': "name"})
-    if not _title is None:
-        rc["title"]=_title.text
-        log("Analyse du film "+rc["title"])
+    main_section=page.find("div",attrs={'class':"jumbotron__content"})
 
-    for title in page.findAll('h1'):
-        if title.text.startswith("Affiches"):
-            section=title.parent
-            _img=section.find("img",attrs={'itemprop': "image"})
-            if not _img is None:
-                src:str=_img.get("src")
-                if not src.startswith("/ressource"):
-                    rc["visual"]=src
-                    log("Enregistrement de l'affiche "+src)
+    if main_section:
+        _title=main_section.findAll('h1')
+        if len(_title)>0:
+            rc["title"]=_title[0].text
+            log("Analyse du film "+rc["title"])
+    else:
+        return None
 
-    _real=page.find("div",attrs={"itemprop":"director"})
-    if not _real is None and not _real.find("a",attrs={"itemprop":"name"}) is None:
-        rc["real"]=_real.find("a",attrs={"itemprop":"name"}).get("href")
+    if len(main_section.findAll("img"))>0:
+        rc["visual"]=main_section.findAll("img")[0].attrs["src"]
 
+    # for title in page.findAll('h1'):
+    #     if title.text.startswith("Affiches"):
+    #         section=title.parent
+    #         _img=section.find("img",attrs={'itemprop': "image"})
+    #         if not _img is None:
+    #             src:str=_img.get("src")
+    #             if not src.startswith("/ressource"):
+    #                 rc["visual"]=src
+    #                 log("Enregistrement de l'affiche "+src)
+
+    for i,info in enumerate(main_section.findAll("div",attrs={"class":"info"})):
+        if i==0:rc["real"]=info.findAll("a")[0].text
+        if "Année de production" in info.text: rc["year"]=extract_years(info.text.replace("Année de production",""))
+
+    # if not _real is None and not _real.find("a",attrs={"itemprop":"name"}) is None:
+    #     rc["real"]=_real.find("a",attrs={"itemprop":"name"}).get("href")
+
+    rc["prix"]=[]
     idx_div=0
-    for div in page.findAll("div",attrs={'class': "details_bloc"}):
-        if idx_div==0:
-            if not ":" in div.text:rc["nature"]=div.text
+    sections=page.findAll("div",{"class":"collapse-wrapper"})+page.find("div",{"class":"js-summary-source"}).findAll("div",{"class":"page-sheet-section"})
+    for section in sections:
+        section_title=section.find("div").text
+        if "Mentions techniques" in section_title:
+            for div in section.findAll("li"):
+                if idx_div==0:
+                    if not ":" in div.text:rc["nature"]=div.text
 
-        if "Numéro de visa" in div.text: rc["visa"]=div.text.split(" : ")[1].replace(".","")
-        if "Langues de tournage" in div.text: rc["langue"]=div.text.split(" : ")[1]
-        if "Année de production : " in div.text: rc["year"]=div.text.replace("Année de production : ","")
-        if "Genre(s) : " in div.text: rc["category"]=translate(div.text.replace("Genre(s) : ",""))
+                if "Numéro de visa" in div.text: rc["visa"]=div.text.split(" : ")[1].replace(".","")
+                if "Langues de tournage" in div.text: rc["langue"]=div.text.split(" : ")[1]
+                if not "year" in rc and "Année de production : " in div.text: rc["year"]=extract_years(div.text.replace("Année de production : ",""))[0]
+                if "Genre(s) : " in div.text: rc["category"]=translate(div.text.replace("Genre(s) : ",""),["categories"],True)
+                if "Type :" in div.text:
+                    rc["nature"]=translate(div.text.split(":")[1].strip())
+
+        if "Générique détaillé" in section_title:
+            rc["casting"]=extract_casting_from_unifrance(section)
+
+        if "Synopsis" in section_title:
+            rc["synopsis"]=section.find("p").text
+
+        if "Palmarès" in section_title or "Sélections" in section_title:
+            for li in section.findAll("li"):
+                festival=li.find("h4")
+                if festival:
+                    year=extract_years(li.find("p").text)[0]
+                    desc=li.find("div",{"class":"card-selection"})
+                    if desc is None and len(li.findAll("li"))>0:
+                        for sli in li.findAll("li"):
+                            _prix={
+                                    "desc":sli.text.split(":")[0].strip(),
+                                    "year":year,
+                                    "title":festival.text,
+                                    "winner":("Palmarès" in section_title)
+                                    }
+                            if ":" in sli.text: _prix["profil"]=sli.text.split(":")[1].strip()
+                            rc["prix"].append(_prix)
+                    else:
+                        rc["prix"].append({
+                            "desc":desc.text if desc else "",
+                            "year":year,
+                            "title":festival.text,
+                            "winner":("Palmarès" in section_title)
+                        })
+
+
+
+
+
 
         idx_div=idx_div+1
 
     if "category" in rc and len(rc["category"])==0:rc["category"]="inconnue"
 
-    rc["prix"]=[]
-    for section_prix in page.find_all("div",attrs={"class":"distinction palmares"}):
-        if len(section_prix.find_all("div"))>0:
-            content=section_prix.find_all("div")[1].text
-            if content is not None:
-                content=content.replace("PlusMoins", "")
-                _prix={
-                    "desc":content.split(")Prix")[1].split(" : ")[0]
-                }
+    # rc["prix"]=[]
+    # for section_prix in page.find_all("div",attrs={"class":"distinction palmares"}):
+    #     if len(section_prix.find_all("div"))>0:
+    #         content=section_prix.find_all("div")[1].text
+    #         if content is not None:
+    #             content=content.replace("PlusMoins", "")
+    #             _prix={
+    #                 "desc":content.split(")Prix")[1].split(" : ")[0]
+    #             }
+    #
+    #             for l in section_prix.find_all("div")[1].find_all("a"):
+    #                 if "festivals" in l.attrs["href"]:
+    #                     _prix["title"]=translate(l.text.split("(")[0],["festivals"])
+    #                     _prix["year"] = re.findall(r"[1-2][0-9]{3}", l.text)[0]
+    #                 # if "person" in l.attrs["href"] and "profil" not in _prix:
+    #                 #     _prix["profil"]=index_string(l.text)
+    #
+    #             # if not "profil" in _prix and not job_for is None:
+    #             #     log("Attribution du prix à "+job_for)
+    #             #     _prix["profil"]=index_string(job_for)
+    #
+    #             if "year" in _prix and "title" in _prix:
+    #                 rc["prix"].append(_prix)
+    #                 log("Ajout du prix "+str(_prix))
+    #             else:
+    #                 log("!Prix non conforme sur "+url)
 
-                for l in section_prix.find_all("div")[1].find_all("a"):
-                    if "festivals" in l.attrs["href"]:
-                        _prix["title"]=translate(l.text.split("(")[0],["festivals"])
-                        _prix["year"] = re.findall(r"[1-2][0-9]{3}", l.text)[0]
-                    # if "person" in l.attrs["href"] and "profil" not in _prix:
-                    #     _prix["profil"]=index_string(l.text)
-
-                # if not "profil" in _prix and not job_for is None:
-                #     log("Attribution du prix à "+job_for)
-                #     _prix["profil"]=index_string(job_for)
-
-                if "year" in _prix and "title" in _prix:
-                    rc["prix"].append(_prix)
-                    log("Ajout du prix "+str(_prix))
-                else:
-                    log("!Prix non conforme sur "+url)
-
-    rc["casting"]=extract_casting_from_unifrance(url)
-
-    _synopsis = page.find("div", attrs={"itemprop": "description"})
-    if not _synopsis is None:
-        rc["synopsis"]=_synopsis.getText(strip=True)
+    # _synopsis = page.find("div", attrs={"itemprop": "description"})
+    # if not _synopsis is None:
+    #     rc["synopsis"]=_synopsis.getText(strip=True)
 
     return rc
 
@@ -418,7 +463,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
 
     desc = desc.replace("\n", "").replace("Winner", "").replace("Nominee", "").strip()
     if desc.startswith("(") and ")" in desc: desc = desc.split(")")[1]
-    if len(desc)<8:return None
+    if len(desc)<4:return None
 
     if profil is None:
         awards = Award.objects.filter(pow__id=pow.id, year=year).all()
@@ -442,7 +487,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
 
 
 
-def extract_awards_from_imdb(profil_url):
+def extract_awards_from_imdb(profil_url,fullname):
     # Recherche des awards
     url=profil_url + "awards?ref_=nm_awd"
     page = load_page(url,timeout=0,agent="Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.48 Mobile Safari/537.36")
@@ -464,13 +509,14 @@ def extract_awards_from_imdb(profil_url):
                     desc=" ".join(desc.split(" ")[2:])
                     rc_awards.append({
                         "festival_title":festival_title,
-                        "profil":profil_url,
+                        "profil_url":profil_url,
+                        "profil":fullname,
                         "desc":desc,
                         "film_title":film_title,
                         "film_id":film_id,
                         "year":years[0],
-                        "win":("Winner" in award),
-                        "url":profil_url+"/awards"
+                        "winner":("Winner" in award),
+                        "url":profil_url+"awards"
                     })
                 else:
                     log("A priori "+award.text+" pas conforme")
@@ -480,7 +526,7 @@ def extract_awards_from_imdb(profil_url):
     return rc_awards
 
 
-def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
+def extract_episode_from_serie(url,casting_filter="",refresh_delay=30,title_serie="") -> list :
     if not url.endswith("/"):url=url+"/"
     log("Recherche des épisodes de "+url)
     episodes=[]
@@ -493,20 +539,21 @@ def extract_episode_from_serie(url,casting_filter="",refresh_delay=30) -> list :
             section_artists=page_season.find("div",attrs={"class":"list detail eplist"})
             #saison_on_page=title_season.text.lower().replace("season","").strip() if title_season else "0"
             if not section_artists is None:
-                links_episodes=list(set(section_artists.find_all("a",attrs={'href': wikipedia.re.compile("^/title/tt")})))
+                links_episodes=page_season.find_all("div",{"itemprop":"episodes"})
 
                 for i in range(len(links_episodes)):
-                    link_episode=links_episodes[i]
-                    title=link_episode.attrs["title"]
-                    if title not in [x["title"] for x in episodes]:
-                        episode=extract_film_from_imdb(link_episode.attrs["href"],refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
+                    link_episode=links_episodes[i].find("a")
+                    url_episode=link_episode.attrs["href"].split("?")[0]
+                    if "https://www.imdb.com"+url_episode not in [x["url"] for x in episodes]:
+                        episode=extract_film_from_imdb(url_episode,refresh_delay=refresh_delay,casting_filter=casting_filter,exclude_episode=True)
+                        episode["title"]=title_serie+(" / " if len(title_serie)>0 else "")+episode["title"]
                         episodes.append(episode)
-                    else:
-                        break
+
             else:
                 break
         else:
             break
+
     return episodes
 
 def imdb_search(fullname:str,refresh_delay=10):
@@ -523,7 +570,7 @@ def imdb_search(fullname:str,refresh_delay=10):
 
     return resultats
 
-def extract_episodes_from_profil(episodes,fullname:str) -> list:
+def extract_episodes_for_profil(episodes, fullname:str) -> list:
     """
     Retourne l'ensemble des épisodes qui implique un profil
     :param episodes:
@@ -844,7 +891,7 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
         log("On est en présence d'une série")
 
         if not exclude_episode:
-            rc["episodes"]=extract_episode_from_serie(url,casting_filter=casting_filter)
+            rc["episodes"]=extract_episode_from_serie(url,casting_filter=casting_filter,title_serie=rc["title"])
 
 
     if "hero-media__poster" in divs:
@@ -1118,11 +1165,19 @@ def raz(filter:str="all"):
 
 
 def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
+    """
+    tag: profil_importer importer importer_profil
+    :param data_rows:
+    :param limit:
+    :param dictionnary:
+    :return:
+    """
+
     i = 0
     record = 0
     non_import=list()
 
-    l_department_category=[(x.lower() if not x is None else '') for x in Profil.objects.values_list("department_category",flat=True)]
+    #l_department_category=[(x.lower() if not x is None else '') for x in Profil.objects.values_list("department_category",flat=True)]
     for row in data_rows[:limit+1]:
 
         if i==0:
@@ -1188,8 +1243,9 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 else:
                     department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
                     if department_category is None or len(department_category)==0:
-                        if department.lower() in l_department_category:
-                            department_category=department
+                        department_category=translate(department,sections=["departements"],must_be_in_dict=True)
+                    if department_category is None or department_category=="":
+                        log("Impossible de créer le department_category pour "+department)
 
                 profil=Profil(
                     firstname=firstname,
@@ -1290,25 +1346,28 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
 
         if "imdb" in l["url"]:
             film=extract_film_from_imdb(l["url"], l["text"],job=l["job"],casting_filter=profil.name_index,refresh_delay=refresh_delay_page)
-            if film and (film["category"]=="News" or len(film["nature"])==0) \
-                    or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) \
-                    or film["job"]==["Remerciements"] or film["job"]==["Casting"] \
-                    or (not "year" in film):
-                log("Ce type d'événement est exclue :"+str(film))
-                film=None
-            else:
+            if film:
                 if len(film["episodes"])>0:
-                    films=films+extract_episode_from_serie(l["url"],job_for,refresh_delay=refresh_delay_page)
+                    episodes=extract_episodes_for_profil(film["episodes"], profil.fullname)
+                    films= films + episodes
                 else:
-                    films.append(film)
+                    if (film["category"]=="News" or len(film["nature"])==0) \
+                            or (film["nature"]=="Documentaire" and "acteurtrice" in film["job"]) \
+                            or film["job"]==["Remerciements"] or film["job"]==["Casting"] \
+                            or (not "year" in film):
+                        log("Ce type d'événement est exclue :"+str(film))
+                        film=None
+                    if film:
+                        films.append(film)
 
         jobs=[]
         for film in films:
             #Recherche les métiers qu'a exercé la personne sur le film
-            for k in film["casting"].keys():
-                for c in film["casting"][k]:
-                    if equal_str(c["index"],profil.name_index):
-                        jobs.append(k) #On ajoute le métier k à la personne
+            if film["casting"]:
+                for k in film["casting"].keys():
+                    for c in film["casting"][k]:
+                        if equal_str(c["index"],profil.name_index):
+                            jobs.append(k) #On ajoute le métier k à la personne
 
             if not film is None and len(jobs)>0:
                 #if not "nature" in film: film["nature"] = l["nature"]
@@ -1348,13 +1407,15 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
                 if not film is None and "prix" in film and not film["prix"] is None and len(film["prix"]) > 0:
                     for award in film["prix"]:
                         festival_title=translate(award["title"],["festivals"])
+                        dest=index_string(award["profil"]) if "profil" in award else None
+                        if dest: dest=Profil.objects.filter(name_index__iexact=dest).first()
                         a=add_award(
                             festival_title=festival_title,
                             year=award["year"],
-                            profil=profil if "profil" in award and equal_str(award["profil"],profil.firstname+" "+profil.lastname) else None,
+                            profil=dest,
                             desc=award["desc"],
                             pow_id=pow.id,
-                            win=True,
+                            win=award["winner"],
                             url=film["url"]
                         )
 
@@ -1448,6 +1509,8 @@ def exec_batch(profils,refresh_delay_profil=31,
     #     for l in pow.links:
     #         all_links.append(l["url"])
 
+    log("Lancement du batch sur "+str(len(profils))+" profils. Obsolescence des pages "+str(refresh_delay_pages))
+
     for profil in profils:
         limit=limit-1
         if limit<0 or len(rc_articles)>=limit_contrib:break
@@ -1518,18 +1581,20 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
             if imdb_profil_url:
-                awards=extract_awards_from_imdb(imdb_profil_url)
+                n_add_award=0
+                awards=extract_awards_from_imdb(imdb_profil_url,profil.fullname)
                 for award in awards:
-                    add_award(
+                    if not add_award(
                         festival_title=award["festival_title"],
                         profil=profil,
                         desc=award["desc"],
                         film_title=award["film_title"],
                         year=award["year"],
-                        win=award["win"],
+                        win=award["winner"],
                         url=imdb_profil_url+"/awards",
                         film_url=award["film_id"]
-                    )
+                    ) is None:
+                        n_add_award+=1
 
 
             n_films=n_films+rc_films

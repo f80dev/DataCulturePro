@@ -79,6 +79,7 @@ RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 RUN mkdir $APP_HOME/Temp
+RUN mkdir $APP_HOME/dbbackup
 
 WORKDIR $APP_HOME
 COPY ./static $APP_HOME/static
@@ -86,6 +87,8 @@ COPY ./OpenAlumni $APP_HOME/OpenAlumni
 COPY ./alumni $APP_HOME/alumni
 COPY ./manage.py $APP_HOME
 #COPY ./Temp $APP_HOME/Temp on ne fait pas la copie sur le serveur
+COPY ./certs/cert.pem $APP_HOME
+COPY ./certs/privkey.pem $APP_HOME
 
 # chown all the files to the app user
 #RUN addgroup -S app && adduser -S app -G app
@@ -102,5 +105,8 @@ ENV DEBUG=True
 
 #Execution sans securité
 CMD ["python3", "manage.py", "runserver","0.0.0.0:8000"]
+
+
+#CMD ["python3", "manage.py", "runsslserver","--certificate","cert.pem","--key","privkey.pem","0.0.0.0:8000"]
 
 

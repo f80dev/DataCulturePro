@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 export function _prompt(vm:any,title:string,_default:string="",description="",_type="text",lbl_ok="ok",
@@ -6,7 +6,8 @@ export function _prompt(vm:any,title:string,_default:string="",description="",_t
                         force_yes=false):Promise<string> {
   //permet d'afficher une boite de dialog
   return new Promise((resolve, reject) => {
-    if(_type=="yesorno" || _type=="boolean" || _type=="bool")onlyConfirm=true;
+    if(_type=="yesorno" || _type=="oui/non" || _type=="boolean" || _type=="bool")onlyConfirm=true;
+    if(_default.length>0)onlyConfirm=false;
     if(force_yes){
       resolve("yes");
     } else {
@@ -58,17 +59,15 @@ export interface DialogData {
 @Component({
   selector: 'app-prompt',
   templateUrl: './prompt.component.html',
-  styleUrls: ['./prompt.component.sass']
+  styleUrls: ['./prompt.component.css']
 })
 
 export class PromptComponent  {
 
   showEmoji=false;
   _type="text";
-  // @ts-ignore
-  _min!: number;
-  // @ts-ignore
-  _max!: number;
+  _min: number=0;
+  _max: number=0;
 
   constructor(
     public dialogRef_prompt: MatDialogRef<PromptComponent>,

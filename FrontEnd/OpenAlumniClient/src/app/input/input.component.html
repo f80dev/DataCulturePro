@@ -1,11 +1,12 @@
 <div class="input-elements" [style.width]="width" [style.max-width]="maxwidth">
 
   <!-- input standard -->
-  <mat-form-field appearance="fill" class="mat-body-2" [title]="help_input" style="width: 100%;"
-                  *ngIf="value_type!='slider' && value_type!='list' && options.length==0 && cols==0 && rows==0 && max==0">
+  <mat-form-field appearance="fill" class="mat-body-2" [title]="help_input" style="width: 100%;padding: 0;"
+                  *ngIf="value_type!='slider' && value_type!='list' && options.length==0 && cols==0 && rows==0">
     <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
-
     <input matInput
+           [max]="max"
+           [min]="min"
            [type]="value_type"
            [maxlength]="maxlength"
            [(ngModel)]="value"
@@ -13,10 +14,10 @@
            [title]="infobulle"
            (focusin)="showHelp=true" (focusout)="showHelp=false" (keyup)="on_key($event)">
 
-    <mat-icon matSuffix *ngIf="value_type!='number' && value && value!.length>0"
+    <mat-icon matSuffix *ngIf="showClear && value_type!='number' && value && value!.length>0"
               style="opacity: 0.6;"
               (click)="on_clear()">cancel</mat-icon>
-    <mat-hint *ngIf="showHelp" class="mat-body-1 help-input">{{help}}</mat-hint>
+    <mat-hint *ngIf="showHelp" class="mat-body-2 help-input">{{help}}</mat-hint>
   </mat-form-field>
 
   <!-- input de type textarea-->
@@ -29,14 +30,16 @@
               (focusout)="showHelp=false" (keyup)="on_key($event)">
     </textarea>
 
-    <mat-icon matSuffix *ngIf="value && value!.length>0" (click)="on_clear()" style="opacity: 0.7;">cancel</mat-icon>
-    <mat-hint *ngIf="showHelp" class="mat-body-1 help-input">
+    <mat-icon matSuffix *ngIf="showClear && value && value!.length>0" (click)="on_clear()" style="opacity: 0.7;">cancel</mat-icon>
+    <mat-hint *ngIf="showHelp" class="mat-body-2 help-input">
       {{help}}
     </mat-hint>
   </mat-form-field>
 
   <button mat-raised-button mat-button
           *ngIf="label_button.length>0"
+          style="height: 40px;"
+          [disabled]="value.length==0"
           [title]="help_button"
           (click)="on_validate()">
     {{label_button}}
@@ -49,7 +52,7 @@
     {{cancel_button}}
   </button>
 
-
+<!--options list-->
   <mat-form-field  style="width:100%;" appearance="fill"
                   *ngIf="value_type=='list' || options.length>0">
 
@@ -62,18 +65,23 @@
   </mat-form-field>
 
   <!--  Slider -->
-  <div *ngIf="value_type=='slider'">
+  <div *ngIf="value_type=='slider' || value_type=='slide'" style="width: 100%;">
     <table *ngIf="label.length>0" style="width: 100%;"><tr>
-      <td></td>
-      <td style="text-align: left;"><span class="mat-caption">{{label}}</span></td>
-      <td style="text-align: right;" class="mat-headline-6 color-primary">{{value}}</td>
+      <td style="text-align: left;width:80%;"><span class="mat-caption">{{label}}</span></td>
+      <td style="text-align: right;overflow: hidden;" class="mat-headline-6" [style.color]="color_value">
+        <input [(ngModel)]="value" type="number" [max]="max" [min]="min" matInput
+               class="mat-caption color-primary"
+               (ngModelChange)="direct_change_slider()"
+               (focusout)="direct_change_slider()"
+               style="max-width:60px;border: none;background:none;font-size: large;text-align: right;">
+      </td>
     </tr></table>
-    <mat-slider  [max]="max" [min]="min" [step]="step"
-                 style="width:100%;margin-top: -15px;" *ngIf="max>min"
+    <mat-slider [max]="max" [min]="min" [step]="step"
+                 style="margin-left: -3px;width:95%;margin-top: -10px;" *ngIf="max>min"
                  (focusin)="showHelp=true" (focusout)="showHelp=false">
       <input matSliderThumb [(ngModel)]="value" (ngModelChange)="sel_change({value:$event})">
     </mat-slider>
-    <div class="mat-body-1" style="margin-top:-5px;" [style.opacity]="showHelp ? 0.7 : 0">{{help}}</div>
+    <div class="mat-body-1" style="margin-top:-5px;text-align: left;" [style.opacity]="showHelp ? 0.7 : 0">{{help}}</div>
   </div>
 
   <ng-content></ng-content>

@@ -1,3 +1,5 @@
+import random
+
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
@@ -31,7 +33,7 @@ class UserSerializer(HyperlinkedModelSerializer):
         """
         log("Création du password, du user et du token")
         if data["username"].startswith("___"):
-            password = data["username"].replace("___","")
+            password = str(random.randint(100000,999999))
             data["username"]=data["email"]
             sendmail("Voici votre code de connexion via mail", [data["email"]], "welcome_google", dict({
                 "email": data["email"],
@@ -44,7 +46,7 @@ class UserSerializer(HyperlinkedModelSerializer):
             password = reset_password(data["email"], data["username"])
 
         if not "first_name" in data:data["first_name"]=data["email"].split(".")[0]
-        if not "last_name" in data:data["last_name"]=""
+        if not "last_name" in data:data["last_name"]="a compléter"
 
         user = User.objects.create_user(
             username=data["username"],
@@ -244,7 +246,7 @@ class AwardSerializer(serializers.ModelSerializer):
     festival=FestivalSerializer(many=False,read_only=True)
     class Meta:
         model = Award
-        fields = ["id","festival","description","year","pow","profil","state","source"]
+        fields = ["id","festival","description","year","pow","profil","state","source","winner"]
 
 
 class ExtraProfilSerializer(serializers.ModelSerializer):
@@ -268,7 +270,7 @@ class ExtraAwardSerializer(serializers.ModelSerializer):
     profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model = Award
-        fields = ["id","festival","description","year","pow","profil","state","source"]
+        fields = ["id","festival","description","year","pow","profil","state","source","winner"]
 
 
 #Exemple : http://localhost:8000/api/extrapows/9808/

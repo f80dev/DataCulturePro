@@ -35,7 +35,15 @@
                        width="300px" [options]="backup_files" value_field="value"
                        (valueChange)="sel_backup_file=$event" [value]="sel_backup_file">
             </app-input>
-            <button mat-raised-button class="app-button"
+
+            <app-upload-file  [zone]="true" extensions=".json"
+                              [maxsize]="10000000000"
+                             height="100px" width="200px"
+                             (uploaded)="upload_backup($event)">
+                Charger une sauvegarde
+            </app-upload-file>
+            <br>
+            <button mat-raised-button class="app-button" *ngIf="sel_backup_file"
                     (click)="load_backup()" >Charger</button>
             <button mat-raised-button class="app-button"
                     (click)="save_backup()" >Enregistrer</button>
@@ -105,7 +113,7 @@
             </mat-expansion-panel-header>
         </mat-expansion-panel>
 
-        <mat-expansion-panel  [expanded]="true">
+        <mat-expansion-panel  [expanded]="true" (afterExpand)="refresh()">
             <mat-expansion-panel-header>
 
                 Gestion des utilisateurs
@@ -121,18 +129,8 @@
                 <tr *ngFor="let u of users" style="width: 100%">
                     <td style="width: 40%;">{{u.user.username}}</td>
                     <td style="width: 15%;">
-
                         <app-input [options]="profils" [value]="u.profil_name" value_field="id"
                                    (valueChange)="update_profil(u,$event)"></app-input>
-
-                        <!--            <mat-form-field appearance="outline">-->
-                        <!--              <mat-select id="selFormationFilter" [(ngModel)]="u.profil_name" (selectionChange)="update_profil(u)">-->
-                        <!--                <mat-option *ngFor="let p of profils" [value]="p.id">-->
-                        <!--                  {{p.title}}-->
-                        <!--                </mat-option>-->
-                        <!--              </mat-select>-->
-                        <!--            </mat-form-field>-->
-
                     </td>
                     <td style="width: 15%;">{{u.ask}}</td>
                     <td>
@@ -143,6 +141,9 @@
                     </td>
                 </tr>
             </table>
+            <br>
+            <button mat-raised-button class="app-button" (click)="add_user()">Créer un utilisateur</button>
+            <button mat-raised-button class="app-button" (click)="refresh()">Rafraichir</button>
         </mat-expansion-panel>
 
 

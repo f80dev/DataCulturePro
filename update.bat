@@ -1,10 +1,11 @@
 
-python manage.py makemigrations
+python manage.py makemigrations --settings OpenAlumni.settings_dev
 python manage.py migrate --settings OpenAlumni.settings_dev
 
 set PYTHONIOENCODING=utf-8
 
 echo "Deployer le dev"
+copy CNAME-dev CNAME
 
 c:
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni\frontend\openalumniclient
@@ -12,6 +13,7 @@ start npm run dev
 
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni
 copy Dockerfile-dev Dockerfile
+
 docker build -t f80hub/openalumni-dev . & docker push f80hub/openalumni-dev:latest
 
 echo "Pousser sur Github et déployer l'image avec "

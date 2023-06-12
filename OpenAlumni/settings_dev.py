@@ -222,8 +222,8 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': '109.205.183.200',    #'provider.europlots.com' pour akash
-        'PORT': '5432',             #32564 pour akash
+        'HOST': '192.168.1.62',    #'provider.europlots.com' pour akash ou 192.168.1.62 ou serveur dolibarr=109.205.183.200
+        'PORT': '5432',                 #32564 pour akash
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
         }
@@ -234,7 +234,7 @@ DATABASES = {
 #Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '173.249.41.158:9210'
+        'hosts': '173.249.41.158:9210'                  #Serveur prestashop: 173.249.41.158:9210
     },
 }
 
@@ -282,6 +282,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 LANGUAGE_CODE = 'fr-FR'
@@ -304,7 +305,7 @@ DOMAIN_APPLI="http://localhost:4200"
 DOMAIN_SERVER="http://localhost:8000"
 
 DEBUG = (len(sys.argv)<2 or sys.argv[1] == 'runserver')
-
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50000000                      #maximum d'upload a 50 MB
 
 #Sécurisation
 #SECURE_SSL_REDIRECT = True

@@ -135,7 +135,19 @@
         <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-2">
           <br><div class="label">Récompenses</div><br>
           <table style="width: 100%;text-align: left;vertical-align:text-top;">
-            <tr *ngFor="let a of pow.award" style="width:100%;">
+            <tr *ngFor="let a of award_filter(pow.award,true)" style="width:100%;">
+              <td [title]="a.description" style="color:lightgrey;width:80%;">
+                <div style="margin-bottom: 8px">{{a.festival.title}} / {{a.description}}</div>
+              </td>
+              <td style="width: 10px;text-align: right;">
+                {{a.year}}
+              </td>
+            </tr>
+          </table>
+
+          <br><div class="label">Nominations</div><br>
+          <table style="width: 100%;text-align: left;vertical-align:text-top;">
+            <tr *ngFor="let a of award_filter(pow.award,false)" style="width:100%;">
               <td [title]="a.description" style="color:lightgrey;width:80%;">
                 <div style="margin-bottom: 8px">{{a.festival.title}} / {{a.description}}</div>
               </td>

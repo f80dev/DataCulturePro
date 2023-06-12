@@ -233,7 +233,9 @@ class ExtraUser(models.Model):
     profil=models.OneToOneField(Profil,on_delete=models.CASCADE,null=True)
 
     level=models.IntegerField(default=0,help_text="Niveau de l'utilisateur")
-    ask=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
+    #ask=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
+    ask=models.CharField(max_length=20,default="",blank=True,null=True)
+
     friends=ArrayField(base_field=models.IntegerField(null=False,default=0),null=True)
     dtLogin=models.DateField(blank=True,null=True, help_text="Date de la dernière connexion")
     nbLogin=models.IntegerField(default=0,help_text="Nombre de connexions")

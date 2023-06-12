@@ -28,5 +28,12 @@
       <jdbc-url>jdbc:postgresql://109.205.183.200:5432/test_alumni_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="alumni_db@192.168.1.62" uuid="07728195-a9e3-4ff2-9ea9-859d2b53e7ca">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://192.168.1.62:5432/alumni_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

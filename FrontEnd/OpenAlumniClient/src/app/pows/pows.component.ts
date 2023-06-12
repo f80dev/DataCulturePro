@@ -169,4 +169,9 @@ export class PowsComponent implements OnInit {
       showMessage(this,"Analyse terminée");
     });
   }
+
+  award_filter(awards: any[], winner: boolean) {
+    debugger
+    return awards.filter(i=>i.winner==winner)
+  }
 }

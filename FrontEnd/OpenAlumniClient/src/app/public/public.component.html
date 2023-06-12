@@ -89,6 +89,17 @@
           </app-timeline>
 
         </mat-tab>
+        <mat-tab label="NOMINATIONS" *ngIf="nominations_timeline?.length>0">
+          <div class="label" *ngIf="profil.awards?.length>5" style="margin-top: 20px">({{profil.awards.length}} résultats=</div>
+          <app-timeline class="column"
+                        style="margin-top: 20px;"
+                        [data]="nominations_timeline"
+                        [field_style]="field_style"
+                        [field_class]="field_class"
+                        row_style="vertical-align: top;width:100%;">
+          </app-timeline>
+
+        </mat-tab>
       </mat-tab-group>
 
       <br>

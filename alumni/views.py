@@ -4,7 +4,7 @@ from os.path import exists
 from OpenAlumni.passwords import RESET_PASSWORD
 from datetime import datetime
 from io import StringIO, BytesIO
-from json import loads
+from json import loads, load
 from urllib.parse import  quote
 
 from urllib.request import urlopen
@@ -265,15 +265,31 @@ def getyaml(request):
     return JsonResponse(result,safe=False)
 
 #http://localhost:8000/api/backup_files
-@api_view(["GET"])
+@api_view(["GET","POST"])
 @permission_classes([AllowAny])
 def list_backup_file(request):
-    rc=[]
     prefix=request.GET.get("prefix","dataculture_db_")
-    for f in os.listdir("."):
-        if f.startswith(prefix):
-            rc.append({"filename":f,"label":f,"value":f})
-    return JsonResponse({"files":rc})
+    work_dir=request.GET.get("work_dir","./dbbackup")
+
+    if request.method=="GET":
+        rc=[]
+        for f in os.listdir(work_dir):
+            if f.startswith(prefix):
+                rc.append({"filename":f,"label":f,"value":f})
+        return JsonResponse({"files":rc})
+
+    if request.method=="POST":
+        file=loads(request.body)
+        path=work_dir+"/"+prefix+file["filename"]
+        hFile=open(path,"wb")
+        hFile.write(base64.b64decode(file["file"].split("base64,")[1]))
+        hFile.close()
+
+        return JsonResponse({"path":path})
+
+
+
+
 
 
 #http://localhost:8000/api/backup?command=save
@@ -283,6 +299,7 @@ def list_backup_file(request):
 def run_backup(request):
     command=request.GET.get("command","save")
     prefix=request.GET.get("prefix","dataculture_db_")
+    work_dir=request.GET.get("work_dir","./dbbackup")
     filename=request.GET.get(
         "file",
         prefix+datetime.now().strftime("%d-%m-%Y_%H%M")+".json"
@@ -295,7 +312,7 @@ def run_backup(request):
     exclude_table=["auth.permission","contenttypes","alumni.extrauser"]
     if command=="save":
         log("Enregistrement de la base dans "+backup_file)
-        with open(backup_file, 'w',encoding="utf8") as f:
+        with open(work_dir+"/"+backup_file, 'w',encoding="utf8") as f:
             management.call_command("dumpdata","alumni",
                                     stdout=f,exclude=exclude_table,
                                     indent=2)
@@ -306,8 +323,8 @@ def run_backup(request):
         if Profil.objects.count()>0 or PieceOfWork.objects.count()>0 or Work.objects.count()>0:
             return JsonResponse({"message":"La base doit avoir été préalablement vidé"},status=500)
 
-        if exists("./"+backup_file):
-            management.call_command("loaddata","./"+backup_file,verbosity=3,app_label="alumni")
+        if exists(work_dir+"/"+backup_file):
+            management.call_command("loaddata",work_dir+"/"+backup_file,verbosity=3,app_label="alumni")
             return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
         else:
             return JsonResponse({"message":"fichier de backup introuvable"},status=500)
@@ -583,18 +600,27 @@ def batch(request):
     profils=Profil.objects.order_by("dtLastSearch").all()
     refresh_delay_profil=int(request.GET.get("refresh_delay_profil", 31))
     refresh_delay_page=int(request.GET.get("refresh_delay_page", 31))
+    n_films=0
+    n_works=0
     if filter!="*":
         if filter.isnumeric():
-            profils=Profil.objects.filter(id=filter,school="FEMIS")
+            profils=Profil.objects.filter(id=filter,school="FEMIS").order_by("dtLastSearch")
             profils.update(auto_updates="0,0,0,0,0,0")
         else:
-            profils=Profil.objects.filter(lastname__istartswith=filter,school="FEMIS")
+            for f in filter.split(","):
+                profils=Profil.objects.filter(lastname__istartswith=f.strip(),school="FEMIS").order_by("dtLastSearch")
+                n_f,n_w=exec_batch(profils,refresh_delay_profil,
+                                           refresh_delay_page,int(limit),int(limit_contrib),
+                                           content=content,remove_works=request.GET.get("remove_works","false")=="true")
+                n_films+=n_f
+                n_works+=n_w
+
+            return Response({"message":"ok","films":n_films,"works":n_works})
 
 
-    profils=profils.order_by("dtLastSearch")
     n_films,n_works=exec_batch(profils,refresh_delay_profil,
-                                        refresh_delay_page,int(limit),int(limit_contrib),
-                                        content=content,remove_works=request.GET.get("remove_works","false")=="true")
+                                    refresh_delay_page,int(limit),int(limit_contrib),
+                                    content=content,remove_works=request.GET.get("remove_works","false")=="true")
 
     return Response({"message":"ok","films":n_films,"works":n_works})
 
@@ -795,6 +821,8 @@ def ask_perms(request):
     for p in profils["profils"]:
         if p["id"]==perm_id:
             sel_profil=p
+            ext_user.ask=p["id"]
+            ext_user.save()
             break
 
     sendmail("Votre demande d'acces à DataCulturePro'", ext_user.user.email, "confirm_ask_perm", dict(
@@ -812,6 +840,7 @@ def ask_perms(request):
                                 "url_cancel": getConfig("API_SERVER") + "/api/set_perms/?user=" + str(ext_user.user.id) + "&perm=" + perm_id + "&response=refuse"
                               })
              )
+
 
     return Response({"message": "Hello world"})
 

@@ -1,41 +1,31 @@
 <div class="mainform">
-  <mat-form-field  appearance="fill" class="app-field" style="max-width: 350px;">
-    <mat-label>Titre de l'anomalie</mat-label>
-    <input matInput required
-           id="txtYear"
-           type="text"
-           [(ngModel)]="title">
-     <mat-hint>Résumez en 3 ou 4 mots le problème</mat-hint>
-  </mat-form-field>
-  <br>
 
-  <mat-form-field appearance="fill"
-                  style="width:90%;max-width: 350px;">
-    <mat-label>Localisation du probléme</mat-label>
-    <textarea matInput
-              [rows]="3"
-              [(ngModel)]="localisation">
-    </textarea>
-    <mat-hint>Indiquer le nom de l'écran concerné ou l'adresse (url) de la page</mat-hint>
-    <mat-icon matSuffix style="cursor: pointer"
-              (click)="localisation=''">cancel</mat-icon>
-  </mat-form-field>
-  <br>
+  <h2>Remonter un problème / une proposition d'évolution</h2>
+ <div style="width:80%;max-width: 350px;display: inline-block;text-align: center;">
+   <app-input label="Titre" [value]="title" (valueChange)="title=$event"
+              value_type="text" width="100%"
+              help="Résumez en 3 ou 4 mots le problème"></app-input>
+   <br>
 
+   <app-input label="Localisation" [value]="localisation" (valueChange)="localisation=$event"
+              value_type="text"width="100%"
+              help="Indiquer le nom de l'écran concerné ou l'adresse (url) de la page"></app-input>
+   <br>
 
-  <mat-form-field appearance="fill"
-                  style="width:90%;max-width: 350px;">
-    <mat-label>Description du probleme</mat-label>
-    <textarea matInput
-              [rows]="3"
-              [(ngModel)]="description">
-    </textarea>
-    <mat-hint>Décrivez brievement le problème, ajouter le message d'erreur s'il y en a un</mat-hint>
-    <mat-icon matSuffix style="cursor: pointer"
-              (click)="description=''">cancel</mat-icon>
-  </mat-form-field>
+   <app-input label="Description" [value]="description" (valueChange)="description=$event"
+              value_type="memo" [cols]="20" [rows]="3" width="100%"
+              help="Résumez en 3 ou 4 mots le problème"></app-input>
+   <br>
 
-  <br><br>
+   <app-upload-file extensions=".jpg,.png,.gif" [zone]="true"
+                    [maxsize]="1000000000"
+                    width="100%" height="500px" (uploaded)="upload_screen($event)">
+     Déposer une impression d'écran
+   </app-upload-file>
+
+ </div>
+
+  <br><br><br><br>
   <button mat-raised-button
           mat-button class="app-button"
           (click)="send()">

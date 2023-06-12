@@ -1,5 +1,5 @@
 <div *ngIf="modal && message && message.length>0"
-     class="modal-popup-bg">
+     class="modal-popup-bg background-component">
   <div class="modal-popup">
     <mat-spinner *ngIf="diameter>0" [diameter]="diameter*6"></mat-spinner><br><br>
     <span [style.font-size]="fontsize">
@@ -18,6 +18,10 @@
 
       <td [ngStyle]="{'text-align': 'left','font-size':fontsize}">
         {{message}}
+      </td>
+
+      <td *ngIf="link.length>0" style="font-size: small">
+        <mat-icon (click)="open_link()">explorer</mat-icon>
       </td>
 
       <td *ngIf="canCancel" style="text-align: right;cursor: pointer;">

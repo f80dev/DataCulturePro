@@ -1,72 +1,94 @@
 <div class="app-prompt">
-  <div mat-dialog-title style="margin-bottom: 10px !important;width:100%;text-align: center;">{{data.title}}</div>
-<!--  <div style="font-size: small;margin-bottom: 5px;" *ngIf="data.subtitle?.length>0">{{data.subtitle}}</div>-->
+  <div mat-dialog-title style="margin-bottom: 10px !important;width:100%;text-align: center;">{{data?.title}}</div>
   <div mat-dialog-content>
-    <p *ngIf="data.question?.length>0 && !data.question?.startsWith('http') && !data.question?.startsWith('./') && !data.question?.startsWith('html:')" style="font-size: medium;width:100%;text-align: center;">
-      {{data.question}}
+    <p *ngIf="_type!='list' && data && data.question &&  !data?.question?.startsWith('http') && !data?.question?.startsWith('./') && !data?.question?.startsWith('html:')"
+       style="font-size: medium;width:100%;text-align: center;color: darkgray">
+      {{data?.question}}
     </p>
 
-    <div *ngIf="data.question?.length>0 && (data.question?.startsWith('http') || data.question?.startsWith('./'))">
+    <img *ngIf="data && data?.image!=''"
+         [src]="data?.image"
+         style="float: left;max-width: 80px;max-height: 120px;">
+
+    <div *ngIf="data && data.question!='' && (data?.question?.startsWith('http') || data?.question?.startsWith('./'))">
       <iframe scrolling="auto" frameborder="0"
               style="background: none;"
-              [src]="data.question.replace('html:','') | safe" width="100%">
+              [src]="data!.question!.replace('html:','') | safe">
       </iframe>
       <br>
     </div>
 
-    <div *ngIf="data.question?.length>0 && data.question.startsWith('html:')">
-      <div [innerHTML]="data.question.replace('html:','')"
-              style="background: none;height: fit-content;">
+    <div *ngIf="data && data?.question!='' && data?.question?.startsWith('html:')">
+      <div [innerHTML]="data?.question?.replace('html:','')"
+           style="background: none;height: fit-content;">
       </div>
     </div>
 
 
-    <mat-form-field *ngIf="!data.onlyConfirm && !data.options" style="width: 95%;color: white">
+    <div *ngIf="!data?.onlyConfirm && !data?.options">
 
-      <div *ngIf="_type!='memo'">
-        <input id="txtPrompt" [type]="_type"
-               [max]="_max" [min]="_min"
-               matInput
-               [(ngModel)]="data.result"
-               [placeholder]="data.placeholder"
-               cdkFocusInitial autocomplete="false"
-               (keypress)="onEnter($event)">
-        <mat-icon *ngIf="data.emojis" matSuffix (click)="showEmoji=!showEmoji">emoji_emotions</mat-icon>
 
-      </div>
+        <app-input *ngIf="_type!='memo' && _type!='options'" id="txtPrompt" [value_type]="_type"
+                   [max]="_max" [min]="_min"
+                   [value]="data.result" (valueChange)="data.result=$event"
+                   [placeholder]="data.placeholder"
+                   (keypress)="onEnter($event)"></app-input>
+        <!--        <mat-icon *ngIf="data?.emojis" matSuffix (click)="showEmoji=!showEmoji">emoji_emotions</mat-icon>-->
 
-      <div *ngIf="_type=='memo'">
-        <textarea matInput
-                  [rows]="data.n_rows"
-                  type="text"
-                  [maxlength]="_max" [(ngModel)]="data.result" cdkFocusInitial></textarea>
-      </div>
+        <app-input *ngIf="_type=='memo'"
+                   [rows]="data?.n_rows || 3"
+                   value_type="memo"
+                   [maxlength]="_max.toString()" [value]="data.result"
+                   (valueChange)="data.result=$event"></app-input>
 
-      <mat-hint *ngIf="data.subtitle?.length>0">{{data.subtitle}}</mat-hint>
 
-    </mat-form-field>
+        <mat-hint *ngIf="data?.subtitle!=''">{{data?.subtitle}}</mat-hint>
+
+
+    </div>
+
 
 
   </div>
 
-  <div *ngIf="data.options?.length>0" style="width:100%;text-align: center;">
-    <div *ngFor="let option of data.options" style="margin:5px;">
+
+    <app-input [label]="data?.question || ''" *ngIf="_type=='options' || _type=='list'"
+               value_type="list" [value]="data.result"
+               (valueChange)="data.result=$event"
+               [options]="data.options || []"></app-input>
+
+  <div *ngIf="_type=='images' && data.options.length>0" style="display: flex;width:500px;flex-direction: row;flex-wrap: wrap;">
+
+    <div *ngFor="let img of data.options" style="margin-left: 5%;">
+      <img [src]="img"
+           style="width: 60px;height:60px;margin:3px;cursor: pointer;border: 0.1rem solid transparent;"
+           [style.opacity]="data.result.indexOf(img)==-1 ? 0.85 : 1"
+           [style.border-color]="data.result.indexOf(img)==-1 ? 'transparent' : 'blue'"
+           (dblclick)="select_option([img])" (click)="select_image(img)">
+    </div>
+  </div>
+
+
+  <div *ngIf="data && data.options && _type!='list' && _type!='images'" style="width:100%;text-align: center;">
+
+    <div *ngFor="let option of data?.options" style="margin:5px;">
       <button
         class="app-button"
         [ngStyle]="{width:option.width,verticalAlign:'middle'}"
         [title]="option.title"
         (click)="select_option(option.value)"
         [innerHTML]="option.label"
-        mat-raised-button>
+         mat-raised-button>
       </button>
     </div>
     <hr>
   </div>
 
   <div mat-dialog-actions style="text-align: right;">
-    <button class="app-button" id="cmdNo" *ngIf="data.lbl_cancel"  mat-raised-button [mat-dialog-close]="null">{{data.lbl_cancel}}</button>
-    <button class="app-button" id="cmdYes" *ngIf="data.lbl_ok" mat-raised-button [mat-dialog-close]="data.result">{{data.lbl_ok}}</button>
-    <button class="app-button" id="cmdSup" *ngIf="data.lbl_sup" mat-raised-button [mat-dialog-close]="'lbl_sup'">{{data.lbl_sup}}</button>
+    <button class="app-button" id="cmdAll" *ngIf="_type=='images'"  mat-raised-button (click)="select_all()">Tout</button>
+    <button class="app-button" id="cmdNo" *ngIf="data?.lbl_cancel"  mat-raised-button [mat-dialog-close]="null">{{data?.lbl_cancel}}</button>
+    <button class="app-button" id="cmdYes" *ngIf="data?.lbl_ok"  mat-raised-button [mat-dialog-close]="data?.result">{{data?.lbl_ok}}</button>
+    <button class="app-button" id="cmdSup" *ngIf="data?.lbl_sup"  mat-raised-button [mat-dialog-close]="'lbl_sup'">{{data?.lbl_sup}}</button>
   </div>
 
 </div>

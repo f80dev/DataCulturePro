@@ -76,7 +76,7 @@ python manage.py createsuperuser --settings OpenAlumni.settings_dev
 ## La base de données
 Executer la commande 
 <pre>
-firewall-cmd --zone=public --add-port=5432/tcp
+firewall-cmd --zone=public --add-port=5432/tcp ou ufw allow 5432
 docker rm -f postgres & docker run --name postgres -p 5432:5432  -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
 </pre>
 ou avec podman
@@ -107,6 +107,7 @@ docker-compose up -d --build
 ##Elasticsearch
 démarrer le noeud elasticsearch pour la production
 <pre>
+
 firewall-cmd --zone=public --add-port=9200/tcp
 firewall-cmd --zone=public --add-port=9300/tcp
 docker rm -f elastic_search_server
@@ -116,8 +117,19 @@ docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-
 
 ou avec docker pour l'environnement de dev
 <pre>
+hors ubuntu:
+apt install firewalld
 firewall-cmd --zone=public --add-port=9210/tcp
 firewall-cmd --zone=public --add-port=9310/tcp
+
+
+depuis ubuntu:
+apt install ufw
+ufw allow 9210
+ufw allow 9310
+ufw reload
+
+
 docker rm -f elastic_search_server-dev
 docker run -p 9210:9200 -p 9310:9300 -e "xpack.security.enabled=false" --restart=always -e "discovery.type=single-node" --name elastic_search_server-dev -ti docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>

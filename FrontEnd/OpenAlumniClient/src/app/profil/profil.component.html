@@ -4,7 +4,8 @@
             <table style="width:100%;">
                 <tr class="mat-subheading-1">
                     <td style="text-align: left;">
-                        <div *ngIf="config.hasPerm('r_department')"
+<!--                       *ngIf="config.hasPerm('r_department')" -->
+                        <div
                              title="Formation dispensée par la FEMIS"
                              name="lblDepartementCategorie"
                              style="cursor: pointer;"
@@ -15,7 +16,7 @@
                     </td>
 
                     <td style="text-align: right;width: min-content;" >
-                        <div *ngIf="config.hasPerm('r_promo')">
+                        <div>
                             <span style='cursor: pointer' name="lblPromo"
                                   [title]="'Toute la promotion '+profil?.degree_year"
                                   (dblclick)="openQuery($event,profil?.degree_year)">
@@ -46,8 +47,8 @@
                 <tr class="mat-subheading-1">
                     <td style="text-align: left;overflow: hidden;">
                         <div name="lblName" style="margin-top: 10px" class="mat-subheading-1">
-                            <span *ngIf="config.hasPerm('r_firstname')">{{profil?.firstname}}</span>
-                            <span *ngIf="config.hasPerm('r_lastname')"> {{profil?.lastname.toUpperCase()}}</span>
+                            <span >{{profil?.firstname}}</span>
+                            <span > {{profil?.lastname.toUpperCase()}}</span>
                         </div>
                     </td>
                     <td style="text-align: right;width:fit-content;">

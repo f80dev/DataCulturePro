@@ -1,10 +1,11 @@
 from OpenAlumni.Batch import extract_profil_from_imdb, extract_profil_from_unifrance, extract_film_from_imdb, \
-	extract_film_from_unifrance, extract_awards_from_imdb, imdb_search, extract_episodes_from_profil, \
-	extract_casting_from_imdb, extract_tags_from_imdb, extract_nature_from_imdb
+	extract_film_from_unifrance, extract_awards_from_imdb, imdb_search, extract_episodes_for_profil, \
+	extract_casting_from_imdb, extract_tags_from_imdb, extract_nature_from_imdb, exec_batch
 from OpenAlumni.Tools import equal_str, log, remove_string_between_delimiters, index_string
 from OpenAlumni.settings import MOVIE_NATURE
 
 MOVIES={
+	"servant":{"url":"https://www.imdb.com/title/tt8068860/?ref_=nv_sr_srsg_0","casting":9},
 	"sam":{"url":"https://www.imdb.com/title/tt5085178/?ref_=ttep_ep_tt","episodes":14,"casting":9},
 	"Ghosts of Elyon":{"url":"https://www.imdb.com/title/tt0742517/?ref_=ttep_ep16"},
 	"L'Ombre Masquée contre-attaque":{"url":"https://www.imdb.com/title/tt4449186/?ref_=ttep_ep4"},
@@ -19,7 +20,6 @@ MOVIES={
 	"Grave":{"url":"https://www.imdb.com/title/tt4954522/","casting":14},
 	"Titane":{"url":"https://www.imdb.com/title/tt10944760/?ref_=fn_al_tt_1","awards":20},
 	"Liberté":{"url":"https://www.imdb.com/title/tt5099262/?ref_=ttep_ep5"},
-	"servant":{"url":"https://www.imdb.com/title/tt8068860/?ref_=nv_sr_srsg_0","casting":9},
 	"top gun":{"url":"https://www.imdb.com/title/tt0092099/?ref_=nv_sr_srsg_5"},
 	"Un monde sans fin":{"url":"https://www.imdb.com/title/tt1878805/?ref_=nm_flmg_t_10_prd"},
 	"Être et avoir":{"url":"https://www.imdb.com/title/tt0318202/?ref_=nv_sr_srsg_0"}
@@ -27,6 +27,12 @@ MOVIES={
 
 
 PROFILS=[
+	{
+		"name":"julia ducournau",
+		"unifrance":{"links":3},
+		"imdb":{"links":4},
+		"awards":20
+	},
 	{
 		"name":"francois ozon",
 		"unifrance":{},
@@ -37,12 +43,7 @@ PROFILS=[
 		"unifrance":None,
 		"imdb":{"links":2}
 	},
-	{
-		"name":"julia ducournau",
-		"unifrance":{"links":3},
-		"imdb":{"links":4},
-		"awards":20
-	},
+
 	{
 		"name":"béatrice Colombier",
 		"unifrance":{},
@@ -118,8 +119,9 @@ def test_for_optimize():
 
 def test_extract_episode_from_profil(name="Claire Lemaréchal",title="sam"):
 	rc=test_extract_movies(url=MOVIES[title]["url"],title=title,src="imdb")
-	rc=extract_episodes_from_profil(rc["episodes"],name)
+	rc=extract_episodes_for_profil(rc["episodes"], name)
 	assert len(rc)>0
+
 
 
 def test_extract_casting_from_imdb(titles=["Grave","sam","servant","Liberté"]):
@@ -144,7 +146,7 @@ def test_remove_string_between_delimiters():
 	assert remove_string_between_delimiters("avant<a>milieu</p>apres","<a>","</a>")=="avant<a>milieu</p>apres"
 
 
-def test_extract_movies(title="titane",url="",refresh_delay=3,src="imdb"):
+def test_extract_movies(title="titane",url="",refresh_delay=3,src="unifrance"):
 	if "imdb" in url or src=="imdb": rc=extract_film_from_imdb(url=url,title=title,refresh_delay=refresh_delay)
 	if "unifrance" in url or src=="unifrance": rc=extract_film_from_unifrance(url=url,title=title,refresh_delay=refresh_delay)
 

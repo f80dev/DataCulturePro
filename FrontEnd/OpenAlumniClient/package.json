@@ -1,12 +1,12 @@
 {
   "name": "DataCulturePro",
-  "version": "0.0.198",
+  "version": "0.0.199",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --live-reload",
     "prod2": "ng build --aot --output-hashing=all --configuration=production",
     "prod": "npm version patch && ng build --configuration=production --output-hashing none",
-    "dev-nossl": "ng build --configuration=dev --output-hashing none  --source-map=true --optimization=false && gh-pages -d ./docs --repo https://github.com/nfluentdev/tokenforge.git -f -t true -b gh-pages -m \"update from gh-pages\"",
+    "dev-nossl": "ng build --configuration=dev --output-hashing none  --source-map=true --optimization=false && gh-pages -d ../../docs --repo https://github.com/f80dev/DataCulturePro.git -f -t true -b gh-pages -m \"update from gh-pages\"",
     "dev": "ng build --configuration=dev --output-hashing none",
     "test": "ng test",
     "lint": "ng lint",

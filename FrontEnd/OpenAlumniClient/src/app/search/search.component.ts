@@ -81,7 +81,7 @@ export class SearchComponent implements OnInit {
 
       //Ajout du tri
       if(this.order)localStorage.setItem("ordering",this.order);
-      if(this.order!="lastname" && this.order!="order_score"){
+      if(this.order!="-lastname" && this.order!="order_score"){
         param=param+"&ordering="+this.order;
       }else{
         this.limit=limit;
@@ -154,7 +154,7 @@ export class SearchComponent implements OnInit {
   fields=[
     {field:"Pertinance",value:"order_score"},
     {field:"Nouvelles Promos",value:"-promo"},
-    {field:"Alphabétique",value:"lastname"},
+    {field:"Alphabétique",value:"-lastname"},
     {field:"Anciennes promos",value:"promo"}
   ]
 
