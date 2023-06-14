@@ -25,10 +25,11 @@ Installation pour fedora
 <pre>
 dnf install certbot
 désactiver le firewall
-certbot certonly --standalone --email hhoareau@gmail.com -d server.f80lab.com
-mkdir /root/certs
-cp /etc/letsencrypt/live/server.f80lab.com/* /root/certs
+certbot certonly --standalone --email hhoareau@gmail.com -d api.f80.fr
+mkdir /root/certs_dataculture
+cp /etc/letsencrypt/live/api.f80.fr/* /root/certs_dataculture
 </pre>
+test du serveur : https://api.f80.fr/api
 
 
 
@@ -108,10 +109,11 @@ docker-compose up -d --build
 démarrer le noeud elasticsearch pour la production
 <pre>
 
-firewall-cmd --zone=public --add-port=9200/tcp
-firewall-cmd --zone=public --add-port=9300/tcp
+firewall-cmd --zone=public --add-port=9200/tcp ou ufw allow 9200
+firewall-cmd --zone=public --add-port=9300/tcp ou ufw allow 9300
 docker rm -f elastic_search_server
-docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+Non SSL: docker run -p 9200:9200 -p 9300:9300 --restart=always -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+SSL: docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>
 
 
@@ -144,6 +146,13 @@ Vérifier l'installation en ouvrant le serveur : http://<server>:9210
 puis reconstruire l'index par 
 <pre>
 python manage.py search_index --rebuild 
+</pre>
+
+#Netoyage du cache
+Suppression des fichiers ayant plus de 100 jours:
+<pre>
+cd G:\Projets\DataCulturePro\Temp
+Get-ChildItem -Path "." | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-100) } | Remove-Item -Force
 </pre>
 
 

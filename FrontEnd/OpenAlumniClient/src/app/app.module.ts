@@ -214,8 +214,8 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            //provider: new GoogleLoginProvider('794055474370-qrdn0gb051k774mtetvo7lifcslmlpgg.apps.googleusercontent.com'),
-            provider: new GoogleLoginProvider('167299914377-p8vuf2f6npqnigl5kpqrh34cqjd81eko.apps.googleusercontent.com'),
+            provider: new GoogleLoginProvider('794055474370-qrdn0gb051k774mtetvo7lifcslmlpgg.apps.googleusercontent.com'),
+            //provider: new GoogleLoginProvider('167299914377-p8vuf2f6npqnigl5kpqrh34cqjd81eko.apps.googleusercontent.com'),
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,

@@ -102,7 +102,7 @@ def reset_password(email,username):
 
     sendmail("Voici votre code",[email],"welcome",dict({
         "email": email,
-        "url_appli":DOMAIN_APPLI+"/?email="+email,
+        "url_appli":DOMAIN_APPLI+"/login?email="+email,
         "username": username,
         "code": password,
         "appname": APPNAME
@@ -465,7 +465,7 @@ def apply_dictionnary_on_each_words(section:str,text:str):
     return " ".join(rc)
 
 
-def translate(wrd:str,sections=["jobs","categories","abreviations","departements","languages","festivals"],must_be_in_dict=False):
+def translate(wrd:str,sections=["jobs","categories","abreviations","department_category","departements","languages","festivals"],must_be_in_dict=False):
     """
     Remplacement de certains termes
     :param wrd:
@@ -633,9 +633,13 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mo
             os.remove(PAGEFILE_PATH + filename)
             return load_page(url)
 
-        html=clean_page(html)
-        page=wikipedia.BeautifulSoup(html,"html.parser")
-        if len(page.contents)==0:
+        if "Something went wrong. Please reload the page and try again" in html:
+            page=None
+        else:
+            html=clean_page(html)
+            page=wikipedia.BeautifulSoup(html,"html.parser")
+
+        if page is None or len(page.contents)==0:
             log("Le fichier ./Temp/"+filename+" est corrompu")
             os.remove(PAGEFILE_PATH + filename)
             return load_page(url)

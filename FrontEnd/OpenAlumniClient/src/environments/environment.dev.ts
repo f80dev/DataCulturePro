@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   name: "developpement",
-  domain_server:"http://192.168.1.62:8100",
+  domain_server:"https://api.f80.fr:8000",
   config_file:"config",
-  domain_appli:"http://localhost:4200",
+  domain_appli:"http://testdcp.f80.fr",
   appVersion: require('../../package.json').version,
 };

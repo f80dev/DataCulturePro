@@ -159,7 +159,7 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #             "NAME": "alumni_db",
 #             "USER": "hhoareau",
 #             "PASSWORD": DB_PASSWORD,
-#             'HOST': LOCAL_FEDORA_SERVER,
+#             'HOST': '192.168.1.62',
 #             'PORT': '5432',
 #             'OPTIONS': {
 #                 'options': '-c statement_timeout=5000'
@@ -187,13 +187,13 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #         'options': '-c statement_timeout=5000'
 #     }
 # }
-# "default": {
+# "akash": {
 #     "ENGINE": "django.db.backends.postgresql_psycopg2",
 #     "NAME": "dataculture",
 #     "USER": "femis",
 #     "PASSWORD": DB_PASSWORD,
-#     'HOST': 'europlot.provider.eu',
-#     'PORT': '30573',
+#     'HOST': 'provider.pcgameservers.com',
+#     'PORT': '30844',
 #     'OPTIONS': {
 #         'options': '-c statement_timeout=5000'
 #     }
@@ -222,8 +222,8 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': '192.168.1.62',    #'provider.europlots.com' pour akash ou 192.168.1.62 ou serveur dolibarr=109.205.183.200
-        'PORT': '5432',                 #32564 pour akash
+        'HOST': '192.168.1.62',     #'provider.europlots.com' pour akash ou 192.168.1.62 ou serveur dolibarr=109.205.183.200
+        'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
         }
@@ -234,7 +234,7 @@ DATABASES = {
 #Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '173.249.41.158:9210'                  #Serveur prestashop: 173.249.41.158:9210
+        'hosts': '192.168.1.62:9200'                  #Serveur prestashop: 173.249.41.158:9210
     },
 }
 

@@ -16,7 +16,7 @@ profils:
     presentation: Consultation des profils en mode authentifié (par email / compte google).
     description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
     perm:
-      r_photo r_lastname r_firstname r_linkedin prof r_works r_promo write_email r_address r_department
+      r_photo r_lastname r_firstname r_linkedin prof r_works r_promo r_address r_department
       r_unifrance r_imdb
     price: 0
     subscription: online
@@ -26,7 +26,7 @@ profils:
     level: 1
     presentation: Vous chercher des profils pour un projet
     description: Profil destiné aux employeur
-    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works write_email r_promo advanced_search publish
+    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works r_promo advanced_search publish
     price: 0
     subscription: online
 

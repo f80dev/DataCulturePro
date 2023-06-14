@@ -25,6 +25,7 @@
     <mat-expansion-panel  style="text-align: left;" id="pnlPerm">
       <mat-expansion-panel-header>Permissions</mat-expansion-panel-header>
       <div style="width: 96%;margin:2%;">
+        <app-tuto label="Les permissions permettent de voir tout ce que votre profil vous permet de faire sur DataCulture"></app-tuto>
         <br>
         Actuellement vous avez accès
         <div style="text-align: left;line-height: 120%;" class="mat-body-1" [innerHTML]="show_perm"></div>
@@ -55,6 +56,17 @@
       </button>
 
     </mat-expansion-panel>
+
+
+
+    <br><br>
+    <button mat-raised-button (click)="open_profils()">
+      Chercher dans l'annuaire
+    </button>
+
+    <button mat-raised-button (click)="open_movies()">
+      Chercher des films
+    </button>
 
 
 

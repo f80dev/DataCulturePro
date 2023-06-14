@@ -292,6 +292,7 @@
 
               <mat-icon
                         name="cmdEdit"
+                        title="Editer cette expérience"
                         (click)="edit_work(work)">
                 edit
               </mat-icon>
@@ -343,7 +344,7 @@
         </mat-expansion-panel-header>
         <br>
         <table style="width: 100%;font-size: small;">
-          <tr *ngFor="let award of awards" style="width:100%;text-align: left;vertical-align: text-top;" [title]="'pour '+award.pow.title">
+          <tr *ngFor="let award of awards" style="width:100%;text-align: left;vertical-align: text-top;" [title]="'pour '+award.pow.title" [style.opacity]="award?.winner ? 1.0 : 0.5">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">{{award?.year}}:</td>
             <td style="line-height: 100%;width: fit-content;">
@@ -509,74 +510,39 @@
       Précisez votre contribution sur "{{add_work.movie}}"
       <span *ngIf="add_work.year"> ({{add_work.year}})</span>
     </h3>
-    <br>
+    <div style="max-width: 500px;display: inline-block;width:90%;">
+      <app-input [options]="config.jobs" label="Poste occupé" [value]="job" (valueChange)="job=$event"
+                 help="Sélectionner le poste que vous aviez sur le projet"></app-input>
+      <br>
 
-    <mat-form-field class="app-field" style="font-size: large;">
-      <mat-label>Poste occupé</mat-label>
-      <mat-select  [(ngModel)]="job">
-        <mat-option *ngFor="let job of config.jobs" [value]="job.value">{{job.label}}</mat-option>
-      </mat-select>
-      <mat-hint style="font-size: x-small;">Sélectionner le poste que vous aviez sur le projet</mat-hint>
-    </mat-form-field>
-    <br>
+      <app-input label="Heures travaillées" value_type="number" width="150px"
+                 [value]="duration" (valueChange)="duration=$event"
+                 help="Nombre d'heures de travail réalisé sur le projet"></app-input>
 
-    <br>
+      <app-input label="Revenu total" [value]="earning" (valueChange)="earning=$event"
+                 help="Revenu brut pour toute la durée" width="150px"></app-input>
+      <mat-icon title="Donnée anonymisée uniquement utilisée sous forme de moyenne pour les statistiques">help</mat-icon>
+      <br>
 
-    <!--    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">-->
-    <!--      <mat-label>Du</mat-label>-->
-    <!--      <input matInput [matDatepicker]="picker" [(ngModel)]="dtStart">-->
-    <!--      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
-    <!--      <mat-datepicker #picker></mat-datepicker>-->
-    <!--      <mat-hint>Premier jour de travail</mat-hint>-->
-    <!--    </mat-form-field>-->
+      <app-input label="Commentaires" [value]="comment" (valueChange)="comment=$event"
+                 maxlength="200"
+                 help="Détailler l'expérience, difficultés rencontrées, bénéfices"></app-input>
+      <br>
 
-    <!--    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">-->
-    <!--      <mat-label>... Au</mat-label>-->
-    <!--      <input matInput [matDatepicker]="picker2" [(ngModel)]="dtEnd">-->
-    <!--      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>-->
-    <!--      <mat-datepicker #picker2></mat-datepicker>-->
-    <!--      <mat-hint>Dernier jour de travail</mat-hint>-->
-    <!--    </mat-form-field>-->
-
-
-    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">
-      <mat-label>Heures travaillées</mat-label>
-      <input matInput type="number" value="8" [(value)]="duration">
-      <span matSuffix>Hrs</span>
-      <mat-hint>Nombre d'heures de travail réalisé sur le projet <mat-icon>help</mat-icon></mat-hint>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="app-field" style="max-width: 200px">
-      <mat-label>Revenu total</mat-label>
-      <input matInput type="number" value="" [(value)]="earning">
-      <span matSuffix>€</span>
-      <mat-hint>
-        Revenu brut pour toute la durée
-        <mat-icon title="Donnée anonymisée uniquement utilisée sous forme de moyenne pour les statistiques">help</mat-icon>
-      </mat-hint>
-    </mat-form-field>
-    <br><br><br>
-
-
-    <mat-form-field appearance="fill" class="app-field" style="width:100%;">
-      <mat-label>Commentaires</mat-label>
-      <input matInput max="200" type="text"
-             value="Décrire l'expérience" [(ngModel)]="comment">
-      <mat-hint>Détailler l'expérience, difficultés rencontrées, bénéfices</mat-hint>
-    </mat-form-field>
+    </div>
 
     <br>
 
-    <div style="display: inline-block;margin-top: 10px;">
-      <app-scoring [(value)]="score_school">
+    <div style="display: inline-block;margin-top: 10px;width:90%;">
+      <app-scoring [value]="score_school" (valueChange)="score_school=$event">
         Votre formation à la FEMIS vous a-t'elle aidé pour cette expérience ?
       </app-scoring><br>
 
-      <app-scoring [(value)]="score_salary">
+      <app-scoring [value]="score_salary" (valueChange)="score_salary=$event">
         Votre rémunération etait elle au niveau de vos attentes ?
       </app-scoring><br>
 
-      <app-scoring [(value)]="score_skill">
+      <app-scoring [value]="score_skill" (valueChange)="score_skill=$event">
         Votre rémunération etait elle au niveau de vos attentes ?
       </app-scoring>
 

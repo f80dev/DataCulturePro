@@ -183,7 +183,12 @@ export function group_works(wrks) {
 
   for(let w of wrks){
     let pow_id=w.pow.id;
-    pows[pow_id]={year:w.pow.year,title:w.pow.title,pow:w.pow.id}
+    if(pows.hasOwnProperty(pow_id)){
+      pows[pow_id]["works"].push(w.id)
+    }else{
+      pows[pow_id]={year:w.pow.year,title:w.pow.title,pow:w.pow.id,works:[w.id]}
+    }
+
     if(!jobs.hasOwnProperty(pow_id))jobs[pow_id]=[];
     if(jobs[pow_id].indexOf(w.job)==-1)jobs[pow_id].push(w.job);
   }

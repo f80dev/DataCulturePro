@@ -35,5 +35,12 @@
       <jdbc-url>jdbc:postgresql://192.168.1.62:5432/alumni_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="Akash" uuid="00848b41-e851-4ce0-980f-1550f62870e2">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://provider.pcgameservers.com:30844/alumni_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

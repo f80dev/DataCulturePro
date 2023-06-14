@@ -1,13 +1,13 @@
 {
   "name": "DataCulturePro",
-  "version": "0.0.199",
+  "version": "0.0.212",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --live-reload",
     "prod2": "ng build --aot --output-hashing=all --configuration=production",
-    "prod": "npm version patch && ng build --configuration=production --output-hashing none",
+    "prod": "npm version patch && ng build --configuration=production --output-hashing none && gh-pages -d ../../docs --repo https://github.com/f80dev/DataCulturePro.git -f -t true -b gh-pages -m \"update from gh-pages\"",
     "dev-nossl": "ng build --configuration=dev --output-hashing none  --source-map=true --optimization=false && gh-pages -d ../../docs --repo https://github.com/f80dev/DataCulturePro.git -f -t true -b gh-pages -m \"update from gh-pages\"",
-    "dev": "ng build --configuration=dev --output-hashing none",
+    "dev": "npm version patch && ng build --configuration=dev --output-hashing none && gh-pages -d ../../docs --repo https://github.com/f80dev/DataCulturePro.git -f -t true -b gh-pages -m \"update from gh-pages\"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

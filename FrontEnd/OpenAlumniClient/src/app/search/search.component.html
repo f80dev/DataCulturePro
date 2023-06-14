@@ -60,13 +60,14 @@
             (click)="switch_motor()">add_circle</mat-icon>
 
   <!--  Critère de la recherche avancée -->
-  <div *ngIf="advanced_search?.length>0" style="display: inline-block">
-    <div *ngFor="let i of advanced_search" style="display: inline-block">
+  <div *ngIf="advanced_search?.length>0" style="display: flex;margin-left:10%;width:80%;justify-content: center;align-items: center;">
+    <div *ngFor="let i of advanced_search" style="margin: 5px;width:150px;">
 
-      <mat-form-field [ngStyle]="{width:i.width}" appearance="fill" style="margin: 10px;" class="mat-body-2">
+      <mat-form-field [ngStyle]="{width:i.width}" appearance="fill"  class="mat-body-2">
         <mat-label>{{i.label}}</mat-label>
         <input matInput matNativeControl
                *ngIf="i.type=='text'"
+               style="width: 100%;"
                [title]="i.title"
                [id]="i.id"
                (keyup)="onQuery($event)"
@@ -80,29 +81,29 @@
       </mat-form-field>
 
     </div>
+    <div *ngIf="profils?.length>3"
+         style="display: inline-block;text-align: right;margin:5px;" autofocus>
 
+      <mat-form-field appearance="outline"
+                      *ngIf="config.width_screen>400"
+                      style="max-width:150px;font-size: small;">
+        <mat-label>Trier par</mat-label>
+        <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
+          <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-icon style="font-size: large;cursor: pointer;"
+                (click)="change_order()" *ngIf="config.width_screen<=400">
+        sort
+      </mat-icon>
+
+    </div>
   </div>
 
 
   <!--  gestion du tri-->
-  <div *ngIf="profils?.length>3 && advanced_search?.length>0"
-       style="display: inline-block;text-align: right;margin:5px;" autofocus>
 
-    <mat-form-field appearance="outline"
-                    *ngIf="config.width_screen>400"
-                    style="max-width:150px;font-size: small;">
-      <mat-label>Trier par</mat-label>
-      <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
-        <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-icon style="font-size: large;cursor: pointer;"
-              (click)="change_order()" *ngIf="config.width_screen<=400">
-      sort
-    </mat-icon>
-
-  </div>
   <mat-icon *ngIf="advanced_search?.length>0"
             matSuffix style="cursor: pointer;color:lightgray;margin-left:3px;"
             id="cmdSimpleMode"
@@ -126,10 +127,7 @@
         add_circle
       </mat-icon>
     </div>
-    &nbsp;
-
   </div>
-
 
 
   <div class="div-center" style="margin-top: 20px;">

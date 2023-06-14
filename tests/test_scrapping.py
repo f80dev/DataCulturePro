@@ -5,6 +5,7 @@ from OpenAlumni.Tools import equal_str, log, remove_string_between_delimiters, i
 from OpenAlumni.settings import MOVIE_NATURE
 
 MOVIES={
+	"un si grand soleil":{"url":"https://www.imdb.com/title/tt8883922/"},
 	"servant":{"url":"https://www.imdb.com/title/tt8068860/?ref_=nv_sr_srsg_0","casting":9},
 	"sam":{"url":"https://www.imdb.com/title/tt5085178/?ref_=ttep_ep_tt","episodes":14,"casting":9},
 	"Ghosts of Elyon":{"url":"https://www.imdb.com/title/tt0742517/?ref_=ttep_ep16"},
@@ -34,10 +35,12 @@ PROFILS=[
 		"awards":20
 	},
 	{
-		"name":"francois ozon",
+		"name":"françois ozon",
 		"unifrance":{},
-		"imdb":{}
+		"imdb":{},
+		"awards":2
 	},
+
 	{
 		"name":"arnaud surel",
 		"unifrance":None,
@@ -67,7 +70,7 @@ def test_search_imdb(names=["julia ducournau","françois ozon","cyril nakash","h
 
 
 
-def test_extract_movies_from_profil(query={"name": "julia ducournau", "imdb": {"links": 3}, "unifrance": {"links": 3}}, refresh_delay=10):
+def test_extract_movies_from_profil(query=PROFILS[0], refresh_delay=10):
 	firstname=query["name"].split(" ")[0]
 	lastname=query["name"].replace(firstname+" ","")
 	log("Extraction des films pour "+firstname+" "+lastname)
@@ -91,11 +94,11 @@ def test_extract_movies_from_profil(query={"name": "julia ducournau", "imdb": {"
 	return rc
 
 
-def test_extract_awards_from_profils(profils=PROFILS):
+def test_extract_imdb_awards_from_profils(profils=PROFILS):
 	for p in profils:
 		url=test_search_imdb([p["name"]])
 		log("Extract award pour "+p["name"])
-		awards=extract_awards_from_imdb("https://imdb.com"+url["href"])
+		awards=extract_awards_from_imdb("https://imdb.com"+url["href"],p["name"])
 		assert not awards is None
 		assert len(awards)>=(p["awards"] if "awards" in p else 0)
 		if len(profils)==1: return awards

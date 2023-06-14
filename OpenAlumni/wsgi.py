@@ -19,12 +19,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'OpenAlumni.settings')
 application = get_wsgi_application()
 
 log("Environnement server : "+str(os.environ._data))
-log("Settings appliqués : "+str(os.environ._data["DJANGO_SETTINGS_MODULE"]))
-
-if str(os.environ._data["DJANGO_SETTINGS_MODULE"])=="OpenAlumni.settings_dev":
-	sets=settings_dev.__dict__
-else:
-	sets=settings.__dict__
+sets=settings_dev.__dict__ if "DJANGO_SETTINGS_MODULE" in os.environ._data and str(os.environ._data["DJANGO_SETTINGS_MODULE"])=="OpenAlumni.settings_dev" else settings.__dict__
 log("Environnement django "+str(sets).replace(",","\n"))
 log("Base de données="+str(sets["DATABASES"]).replace(",","\n"))
 log("Elasticsearch="+str(sets["ELASTICSEARCH_DSL"]).replace(",","\n"))

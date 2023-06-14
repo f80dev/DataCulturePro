@@ -53,4 +53,11 @@ export class SettingsComponent implements OnInit {
   }
 
 
+    open_profils() {
+        this.router.navigate(["search"])
+    }
+
+    open_movies() {
+        this.router.navigate(["pows"])
+    }
 }

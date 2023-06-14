@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-from OpenAlumni.passwords import DB_PASSWORD,_SECRET_KEY
+from OpenAlumni.passwords import DB_PASSWORD, _SECRET_KEY, DB_USER
 
 import os
 
@@ -37,7 +37,7 @@ SETTINGS_FILENAME="settings.py"
 SECRET_KEY=_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
@@ -162,10 +162,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "alumni_db",
-        "USER": "femis",
+        "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'provider.europlots.com',
-        'PORT': '32564',
+        'HOST': '109.205.183.200',
+        'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
         }
@@ -240,8 +240,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER ="contact.dcp@femis.fr"
 
 APPNAME="Data Culture Pro"
-DOMAIN_APPLI="https://dcp.f80lab.com"
-DOMAIN_SERVER="https://server.f80lab.com:8000"
+DOMAIN_APPLI="https://dcp.f80.fr"
+DOMAIN_SERVER="https://api.f80.fr:8000"
 
 
 

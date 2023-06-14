@@ -4,6 +4,7 @@
     <br>
     <div class="h-zone mat-display-1" *ngIf="!showDetail">Insérer un nouveau film</div>
     <div style="width: 50%;min-width:350px;max-width: 600px;text-align: left;display: inline-block;">
+        <app-tuto label="DataCulture permet l'ajout manuel de nouveau film mais assurez vous d'avoir bien vérifier que ce film n'existait pas encore sur la plate forme IMDB ou Unifrance"></app-tuto>
         <mat-form-field class="app-field mat-subheading-2" *ngIf="!showDetail">
             <mat-label>Titre du film ?</mat-label>
             <input matInput placeholder="mon titre" id="txtTitle"

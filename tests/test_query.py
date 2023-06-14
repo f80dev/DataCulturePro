@@ -49,9 +49,10 @@ def test_raz():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_exec_batch():
-	profils=Profil.objects.filter(lastname__icontains="ducournau")
-	exec_batch(profils=profils,refresh_delay_profil=0)
+def test_exec_batch(profils=PROFILS):
+	for profil in profils:
+		_profils=Profil.objects.filter(name_index__iexact=index_string(profil["name"]))
+		exec_batch(profils=_profils,refresh_delay_profil=0,refresh_delay_pages=50)
 
 
 @pytest.mark.django_db

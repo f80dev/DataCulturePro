@@ -38,6 +38,8 @@ department_category:
   Montage: Montage
   Documentaire: Documentaire
   Décor: Décor
+  Script: Script
+  Distribution: Distribution
   Réalisation: Réalisation
   Séries: Séries
   Scénario: Scénario
@@ -49,6 +51,9 @@ department_category:
   Pitcher, promouvoir son documentaire: Documentaire
   Atelier réécriture: Scénario
   Atelier scénario: Scénario
+  Série TV: Série
+  Image: Image
+  La Résidence: La Résidence
   Grand Atelier Scénario / Comédie: Scénario
   parcours personnalisé Direction d'Exploitation Cinématographique - bloc 1: Exploitation
   Management d'exploitation cinématographique: Exploitation

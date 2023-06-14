@@ -219,13 +219,14 @@ export class SearchComponent implements OnInit {
   switch_motor() {
     if(this.advanced_search.length==0){
       this.advanced_search=[
-        {id:"txtFirstname",type:"text",label:"Prénom",width:"100px",value:"",field:"firstname",title:"Paul, Pa*, Fr?d?ri*"},
-        {id:"txtLastname",type:"text",label:"Nom",width:"100px",value:"",field:"lastname",title:"Un nom ou le début du nom et *"},
-        {id:"lstFormation",type:"list",label:"Formation",width:"100px",value:"",field:"formation",options:[],title:"Scénario, Réalisation, Atelier*"},
-        {id:"txtPromo",type:"text",label:"Promo",width:"50px",value:"",field:"promo",title:"2001,20*,19??"}
+        {id:"txtFirstname",type:"text",label:"Prénom",width:"150px",value:"",field:"firstname",title:"Paul, Pa*, Fr?d?ri*"},
+        {id:"txtLastname",type:"text",label:"Nom",width:"150px",value:"",field:"lastname",title:"Un nom ou le début du nom et *"},
+        {id:"txtPromo",type:"text",label:"Promo",width:"100px",value:"",field:"promo",title:"2001,20*,19??"}
       ]
 
-      this.advanced_search[2].options=["Scénario","Réalisation","Décor"];
+      //TODO: formation à réinclure
+      //{id:"lstFormation",type:"list",label:"Formation",width:"150px",value:"",field:"formation",options:[],title:"Scénario, Réalisation, Atelier*"},
+      //this.advanced_search[2].options=["Scénario","Réalisation","Décor"];
     }
     else {
       for(let zone of this.advanced_search) zone.value="";

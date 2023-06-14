@@ -1,23 +1,23 @@
 echo "Mise a jour"
 python manage.py makemigrations --settings OpenAlumni.settings
 python manage.py migrate --settings OpenAlumni.settings
-python manage.py search_index --settings OpenAlumni.settings --rebuild
 
-echo "Déploiement ?"
-pause 0
-c:
-cd C:\Users\hhoareau\PycharmProjects\OpenAlumni
+set PYTHONIOENCODING=utf-8
 
-copy Dockerfile-prod Dockerfile
-docker build -t f80hub/openalumni .
-
-cd frontend/openalumniclient
+echo "Déploiement du client"
+copy CNAME-prod CNAME
+cd C:\Users\hhoar\PycharmProjects\OpenAlumni\frontend\openalumniclient
 start npm run prod
-cd ..
-cd ..
 
-docker push f80hub/openalumni:latest
-echo "Exécuter cette ligne sur le serveur"
-echo "docker rm -f openalumni && docker pull f80hub/openalumni:latest && docker run --restart=always -v /root/certs:/certs -p 8000:8000 --name openalumni -d f80hub/openalumni:latest"
+echo "Déploiement du serveur"
+cd C:\Users\hhoar\PycharmProjects\OpenAlumni
+copy Dockerfile-prod Dockerfile
+docker build -t f80hub/openalumni . & docker push f80hub/openalumni:latest
 
-putty -load MainServer -l root
+
+echo "Backup de la base de données"
+python -Xutf8 manage.py dumpdata --settings OpenAlumni.settings > db_backup_prod.json
+
+echo "reconstruction de l'index"
+python manage.py search_index --settings OpenAlumni.settings --rebuild
+#putty -load MainServer -l root

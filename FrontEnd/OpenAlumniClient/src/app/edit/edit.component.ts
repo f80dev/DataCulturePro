@@ -402,12 +402,13 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
 
-
   edit_work(work: any) {
     this.current_work=work;
+    for(let j of this.config.jobs){
+      if(work.job==j.value)this.job=j;
+    }
     this.select(work,3);
   }
-
 
   refresh_job(func:Function=null) {
     this.api._get("jobsites/","profil="+this.profil.id+"&job="+this.query).subscribe((res:any)=>{

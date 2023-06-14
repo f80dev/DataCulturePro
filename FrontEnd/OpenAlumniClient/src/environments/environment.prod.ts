@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   name: "production",
-  domain_server:"https://server.f80lab.com:8000",
+  domain_server:"https://api.f80.fr:8000",
   config_file:"config",
-  domain_appli:"https://dcp.f80lab.com",
+  domain_appli:"https://testdcp.f80.fr",
   appVersion: require('../../package.json').version,
 };

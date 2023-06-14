@@ -13,7 +13,7 @@
 
   <br><br>
   <mat-form-field appearance="outline" class="search_zone" autofocus>
-    <input matInput matNativeControl
+    <input matInput matNativeControl autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)" [(ngModel)]="query.value"
            placeholder="Rechercher par titre, année de sortie, genre du film">

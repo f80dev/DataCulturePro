@@ -200,7 +200,7 @@ DATABASES = {
 #Installation d'elasticsearch dans README à la racine
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '173.249.41.158:9210'
+        'hosts': '173.249.41.158:921'
     },
 }
 

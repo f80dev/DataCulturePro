@@ -294,12 +294,6 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
                 if "Type :" in div.text:
                     rc["nature"]=translate(div.text.split(":")[1].strip())
 
-        if "Générique détaillé" in section_title:
-            rc["casting"]=extract_casting_from_unifrance(section)
-
-        if "Synopsis" in section_title:
-            rc["synopsis"]=section.find("p").text
-
         if "Palmarès" in section_title or "Sélections" in section_title:
             for li in section.findAll("li"):
                 festival=li.find("h4")
@@ -324,6 +318,12 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
                             "winner":("Palmarès" in section_title)
                         })
 
+        if "Générique détaillé" in section_title:
+            rc["casting"]=extract_casting_from_unifrance(section)
+
+        if "Synopsis" in section_title:
+            rc["synopsis"]=section.find("p").text
+
 
 
 
@@ -331,7 +331,7 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
 
         idx_div=idx_div+1
 
-    if "category" in rc and len(rc["category"])==0:rc["category"]="inconnue"
+    if not "category" in rc or rc["category"] is None or len(rc["category"])==0:rc["category"]="inconnue"
 
     # rc["prix"]=[]
     # for section_prix in page.find_all("div",attrs={"class":"distinction palmares"}):
@@ -400,21 +400,44 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
     links=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/annuaires/personne/")})
 
     rc=list()
+    awards=list()
     if len(links)>0:
         u=links[0].get("href")
         page=wikipedia.BeautifulSoup(wikipedia.requests.get(u, headers={'User-Agent': 'Mozilla/5.0'}).text,"html5lib")
-        if equal_str(name,page.title.text.split("-")[0]) or equal_str(name,links[0].text.split("Activités : ")[0]):
-            photo = ""
-            _photo = page.find('div', attrs={'class': "profil-picture pull-right"})
-            if not _photo is None: photo = _photo.find("a").get("href")
 
-            links_film=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]*/")})
-            for l in links_film:
-                url=l.get("href")
-                if not url in [x["url"] for x in rc]:
-                    rc.append({"url":url,"text":l.get("text"),"nature":""})
+        sections=page.findAll("div",{"class":"collapse-wrapper"})+page.find("div",{"class":"js-summary-source"}).findAll("div",{"class":"page-sheet-section"})
+        for section in sections:
+            section_title=section.find("div").text
+            if "Filmographie" in section_title:
+                photo = ""
+                _photo = section.find('div', attrs={'class': "profil-picture pull-right"})
+                if not _photo is None: photo = _photo.find("a").get("href")
 
-            return {"links": rc, "photo": photo, "url": u,"fullname":name}
+                links_film=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/film/[0-9][0-9]*/")})
+                for l in links_film:
+                    url=l.get("href")
+                    if not url in [x["url"] for x in rc]:
+                        rc.append({"url":url,"text":l.get("text"),"nature":""})
+
+
+            if "Palmarès" in section_title or "Sélections" in section_title:
+                for li in section.findAll("li"):
+                    festival=li.find("h4")
+                    if festival:
+                        year=extract_years(li.find("p").text)[0]
+                        desc=li.findAll("div",{"class":"card-selection"})
+                        for sli in desc:
+                            _prix={
+                                "desc":sli.text.split(":")[0].strip(),
+                                "pow":sli.text.split(":")[1].strip(),
+                                "year":year,
+                                "title":festival.text,
+                                "profil":name,
+                                "winner":("Palmarès" in section_title)
+                            }
+                            awards.append(_prix)
+
+        return {"links": rc, "photo": photo, "url": u,"fullname":name,"prix":awards}
 
     return None
 
@@ -433,7 +456,7 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     """
     festival_title=translate(festival_title,["festivals"])
     pow = None
-    if len(film_title)>0 and len(year)>0:
+    if pow_id==0 and len(film_title)>0 and len(year)>0:
         pows = PieceOfWork.objects.filter(title__iexact=film_title)
         for i in range(0,len(pows)):
             pow=pows[i]
@@ -443,14 +466,14 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
             if pow is None or pow.year is None or year is None:
                 log("Probléme de date avec le film")
             else:
-                if int(pow.year)<=int(year) and int(pow.year)-int(year)<2:
+                if int(pow.year)<=int(year) and int(pow.year)-int(year)<3:
                     break
     else:
-        if pow_id:
+        if pow_id>0:
             pow=PieceOfWork.objects.get(id=pow_id)
 
     if pow is None:
-        log("Impossible de trouver le film "+film_title+" dans la base. Annulation de l'award")
+        log("Pas de film donc Impossible de créer l'award "+desc+" pour le festival "+festival_title+" dans la base. Annulation de l'award")
         return None
 
     f = Festival.objects.filter(title__iexact=festival_title)
@@ -466,12 +489,15 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
     if len(desc)<4:return None
 
     if profil is None:
-        awards = Award.objects.filter(pow__id=pow.id, year=year).all()
+        awards = Award.objects.filter(festival_id=f.id,pow__id=pow.id, year=year).all()
     else:
-        awards = Award.objects.filter(pow__id=pow.id, year=year, profil__id=profil.id).all()
+        awards = Award.objects.filter(festival_id=f.id,pow__id=pow.id, year=year, profil__id=profil.id).all()
+
     for a in awards:
         if a.description==desc: return a        #Si on trouve la meme description, on a déjà l'award
-        if a.source and a.source[:15]!=url[:15]: return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
+        if a.source and a.source[:15]!=url[:15]:
+            log("La récompense est déjà présente depuis une autre source donc pas d'ajout")
+            return a    #Si on a pas la meme source, on refuse d'ajouter un nouvel award
 
     a = Award(description=desc[:249], year=year, pow=pow, festival=f, profil=profil, winner=win,source=url)
     try:
@@ -515,7 +541,7 @@ def extract_awards_from_imdb(profil_url,fullname):
                         "film_title":film_title,
                         "film_id":film_id,
                         "year":years[0],
-                        "winner":("Winner" in award),
+                        "winner":("Winner" in list(award)[1].text) or ("Vainqueur" in list(award)[1].text),
                         "url":profil_url+"awards"
                     })
                 else:
@@ -1228,11 +1254,14 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 dt=dateToTimestamp(dt_birthdate)
 
                 if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4,header=header)
+                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion,comment",row,dictionnary["promo"],0,4,header=header)
                 if type(promo)!=str: promo=str(promo)
                 if not promo is None and len(promo)>4:
-                    promo=dateToTimestamp(promo)
-                    if not promo is None:promo=promo.year
+                    if len(extract_years(promo))>0:
+                        promo=int(extract_years(promo)[0])
+                    else:
+                        promo=dateToTimestamp(promo)
+                        if not promo is None:promo=promo.year
 
                 standard_replace_dict={"nan":"","[vide]":""}
                 cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1)
@@ -1243,7 +1272,7 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 else:
                     department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
                     if department_category is None or len(department_category)==0:
-                        department_category=translate(department,sections=["departements"],must_be_in_dict=True)
+                        department_category=translate(department,sections=["department_category"],must_be_in_dict=True)
                     if department_category is None or department_category=="":
                         log("Impossible de créer le department_category pour "+department)
 
@@ -1282,6 +1311,9 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 )
 
                 try:
+                    if profil.department is None or profil.degree_year is None:
+                        raise RuntimeError("Données manquantes")
+
                     if len(profil.email)>0:
                         res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
                         hasChanged=True
@@ -1363,44 +1395,45 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
         jobs=[]
         for film in films:
             #Recherche les métiers qu'a exercé la personne sur le film
-            if film["casting"]:
-                for k in film["casting"].keys():
-                    for c in film["casting"][k]:
-                        if equal_str(c["index"],profil.name_index):
-                            jobs.append(k) #On ajoute le métier k à la personne
+            if not film is None:
+                if film["casting"]:
+                    for k in film["casting"].keys():
+                        for c in film["casting"][k]:
+                            if equal_str(c["index"],profil.name_index):
+                                jobs.append(k) #On ajoute le métier k à la personne
 
-            if not film is None and len(jobs)>0:
-                #if not "nature" in film: film["nature"] = l["nature"]
-                if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
+                if len(jobs)>0:
+                    #if not "nature" in film: film["nature"] = l["nature"]
+                    if "title" in film: log("Traitement de " + film["title"] + " à l'adresse " + l["url"])
 
-                pow=dict_to_pow(film,content)
+                    pow=dict_to_pow(film,content)
 
-                try:
-                    result=PieceOfWork.objects.filter(title_index__iexact=pow.title_index)
-                    if len(result)>0:
-                        bFindMovie=False
-                        for p in result:
-                            if p.year is None or abs(int(p.year)-int(pow.year))<=1:
-                                bFindMovie=True
-                                log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
-                                pow,hasChanged=fusion(p,pow)
-                                if hasChanged:
-                                    pow.dtLastSearch=datetime.now()
-                                    pow.save()
-                                    break
+                    try:
+                        result=PieceOfWork.objects.filter(title_index__iexact=pow.title_index)
+                        if len(result)>0:
+                            bFindMovie=False
+                            for p in result:
+                                if p.year is None or abs(int(p.year)-int(pow.year))<=1:
+                                    bFindMovie=True
+                                    log("Le film existe déjà dans la base, on le met a jour avec les nouvelles données")
+                                    pow,hasChanged=fusion(p,pow)
+                                    if hasChanged:
+                                        pow.dtLastSearch=datetime.now()
+                                        pow.save()
+                                        break
 
-                    if len(result)==0 or (len(result)>0 and not bFindMovie):
-                        n_films=n_films+1
-                        pow.dtLastSearch = datetime.now()
-                        pow.save()
+                        if len(result)==0 or (len(result)>0 and not bFindMovie):
+                            n_films=n_films+1
+                            pow.dtLastSearch = datetime.now()
+                            pow.save()
 
                     # TODO: a réétudier car des mises a jour de fiche pourrait nous faire rater des films
                     # il faudrait désindenter le code ci-dessous mais du coup il faudrait retrouver le pow
 
-                except Exception as inst:
-                    log("Impossible d'enregistrer le film: "+str(inst.args))
+                    except Exception as inst:
+                        log("Impossible d'enregistrer le film: "+str(inst.args))
             else:
-                log("Impossible de retrouver le film: "+str(film))
+                log("Impossible de retrouver le film")
 
 
             if not pow is None:
@@ -1580,6 +1613,12 @@ def exec_batch(profils,refresh_delay_profil=31,
                 Work.objects.filter(profil_id=profil.id,source__contains="auto").delete()
 
             rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
+
+            if content["unifrance"] and not infos is None:
+                if "prix" in infos:
+                    for a in infos["prix"]:
+                        add_award(a["title"],profil,desc=a["desc"],film_title=a["pow"],year=a["year"],win=a["winner"])
+
             if imdb_profil_url:
                 n_add_award=0
                 awards=extract_awards_from_imdb(imdb_profil_url,profil.fullname)
@@ -1591,10 +1630,12 @@ def exec_batch(profils,refresh_delay_profil=31,
                         film_title=award["film_title"],
                         year=award["year"],
                         win=award["winner"],
-                        url=imdb_profil_url+"/awards",
+                        url=imdb_profil_url+"awards",
                         film_url=award["film_id"]
                     ) is None:
                         n_add_award+=1
+
+
 
 
             n_films=n_films+rc_films
