@@ -3,8 +3,9 @@
   <app-hourglass [message]="message" style="color: white"></app-hourglass>
 
   <br>
-  <mat-card class="app-card" *ngIf="message.length==0" style="display: inline-block;width:85%;max-width: 1200px;text-align: left;">
-    <table style="padding: 0;margin-left:0;width: 100%;border: none;border-spacing: 0;" *ngIf="profil">
+  <mat-card class="app-card" *ngIf="message.length==0"
+            style="display: inline-block;width:85%;max-width: 1200px;text-align: left;">
+    <table style="padding: 0;margin-left:0;width: 100%;background: none;border: none;border-spacing: 0;" *ngIf="profil">
       <tr style="width: 100%;margin:0;">
         <td *ngIf="profil?.public_photo" style="width: 150px;">
           <div style="text-align: center;object-fit: cover;" >

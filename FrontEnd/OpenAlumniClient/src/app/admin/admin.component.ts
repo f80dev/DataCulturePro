@@ -18,7 +18,6 @@ export class AdminComponent implements OnInit {
 
   message: string;
   users:any[];
-  info_server: any;
   profils: tProfilPerms[]=[];
   backup_files: any[]=[];
   sel_backup_file:string="";
@@ -29,7 +28,6 @@ export class AdminComponent implements OnInit {
               public router:Router,
               public dialog:MatDialog,
               public toast:MatSnackBar) {
-
     this.config.user_update.subscribe(()=>{
       this.profils=Object.values(this.config.profils);
     })
@@ -46,7 +44,6 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refresh_server();
     this.refresh_backup();
     this.refresh();
     this.profils=Object.values(this.config.profils);
@@ -96,9 +93,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false,filter="*") {
+  batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false,filter="*",offline=false) {
     let catalog="imdb,unifrance,lefilmfrancais";
-    let params="remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page+"&filter="+filter;
+    let params="remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page+"&filter="+filter+"&offline="+offline;
 
     this.api._post("batch/",params,this.config.values.catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
@@ -161,12 +158,14 @@ export class AdminComponent implements OnInit {
 
   analyzer(ope="profils,films") {
     this.message="Traitement qualite sur les "+ope;
-    this.api._get("quality_analyzer","ope="+ope).subscribe(()=>{
+    this.api._get("quality_analyzer","ope="+ope).subscribe((r)=>{
       this.message="";
     })
   }
 
   openServer(url: string) {
+    url=url.substring(0,url.lastIndexOf(":"))+":9090/system/terminal"
+    if(!url.startsWith("http"))url="http://"+url;
     open(url,"terminal");
   }
 
@@ -176,14 +175,24 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  cancel_ask(u: any) {
+  async cancel_ask(u: any) {
+    let motif=await _prompt(this,"Motiver le refus","Profil réservé","Une phrase suffit","text","Envoyer","Annuler",false);
+    this.api.sendmail(u.user.email,"Refus de profil","cancel_profil_update",{motif:motif}).subscribe(()=>{
+      u.ask="";
+      this.api.setuser(u).subscribe(()=>{
+        showMessage(this,"Message envoyé");
+        this.refresh();
+      })
+    })
   }
 
-  send_email(u: any) {
+  async send_email(u: any) {
+    let message=await _prompt(this,"Message","Bonjour, ","","text","Envoyer","Annuler",false);
+    this.api.sendmail(u.user.email,"Message de Data Culture","mail_message",{message:message}).subscribe(()=>{
+      showMessage(this,"Message envoyé");
+    })
   }
 
-  accept_ask(u: any) {
-  }
 
   export_dict() {
     open(environment.domain_server+"/api/export_dict");
@@ -201,11 +210,6 @@ export class AdminComponent implements OnInit {
     });
   }
 
-    refresh_server() {
-      this.api._get("infos_server").subscribe((infos:any)=>{
-        this.info_server=infos;
-      });
-    }
 
   load_backup() {
     this.message="Chargement en cours ... le processus peut être très long";
@@ -243,13 +247,12 @@ export class AdminComponent implements OnInit {
   }
 
 
-  fast_batch() {
+  fast_batch(refresh_delay_profil=3,refresh_delay_page=200,step=2) {
     let alphabet="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,,x,y,z".split(",");
-    let step=2
     for(let i=0;i<alphabet.length;i=i+step){
       let filter=alphabet.slice(i,i+step);
       $$("Lancement du batch avec "+filter.join(","))
-      this.batch(30,200,false,filter.join(","))
+      this.batch(refresh_delay_profil,refresh_delay_page,false,filter.join(","),false)
     }
   }
 
@@ -269,6 +272,8 @@ export class AdminComponent implements OnInit {
             last_name: fullname.replace(firstname+" ",""),
           }).subscribe((res: any) => {
             this.refresh();
+          },(err)=>{
+            showError(this,err);
           });
         }
       })

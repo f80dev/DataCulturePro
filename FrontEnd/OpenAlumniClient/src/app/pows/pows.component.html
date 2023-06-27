@@ -7,9 +7,8 @@
 
 <div class="mainform">
 
-  <app-tuto label="Vous pouvez également consulter la liste des élèves de la FEMIS (anciens et actuels), via le menu latéral"></app-tuto>
-  <app-tuto [delay]="0.5" label="Pour chaque film, il est possible de naviguer vers les sites IMDB ou UniFrance" ></app-tuto>
-  <app-tuto [delay]="1" label="La recherche d'un film peut se faire via le casting, l'année de sortie, le titre"></app-tuto>
+  <app-tuto [if]="pows?.length>0" label="Pour chaque film, il est possible de naviguer vers les sites IMDB ou UniFrance" ></app-tuto>
+
 
   <br><br>
   <mat-form-field appearance="outline" class="search_zone" autofocus>
@@ -21,11 +20,16 @@
               matSuffix style="cursor: pointer"
               (click)="clearQuery()">cancel</mat-icon>
   </mat-form-field>
-
-  <mat-icon (click)="advanced=true" *ngIf="!advanced" style="cursor: pointer" title="Recherche en mode avancée">add_circle</mat-icon>
+  <mat-icon (click)="advanced=true" *ngIf="!advanced"
+            style="cursor: pointer;margin-bottom: -7px;"
+            title="Recherche en mode avancée">add_circle</mat-icon>
   <mat-checkbox *ngIf="advanced" [(ngModel)]="all" ><div class="bloc-bouton">Tous les<br>termes</div></mat-checkbox>
 
-  <br><br>
+  <br>
+  <div style="font-size:medium;opacity: 0.6;"
+       *ngIf="!query.value || query.value==''">parmi les {{config.infos_server.content.films}} films référencés</div>
+
+  <br>
 
   <div class="div-center" *ngIf="message.length==0">
     <div *ngIf="pows.length==limit">+ de {{pows.length}} films</div>
@@ -63,7 +67,7 @@
                   <table style="color:white;text-align: left;width:100%;">
                     <tr>
                       <td class="mat-body-1 label">
-                        {{pow.nature}}/{{pow.category}} - {{pow.year}}<br>
+                        {{pow.nature}} - {{pow.category}} - {{pow.year}}<br>
                         <div style="font-size: small;line-height: 97%;text-align: left;padding:5px;width: 90%;display: inline-block;"
                              *ngIf="config.hasPerm('r_movie_synopsis')">
                           {{pow.description}}

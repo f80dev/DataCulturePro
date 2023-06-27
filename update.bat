@@ -5,10 +5,9 @@ python manage.py migrate --settings OpenAlumni.settings_dev
 set PYTHONIOENCODING=utf-8
 
 echo "Deployer le dev"
-copy CNAME-dev CNAME
-
 c:
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni\frontend\openalumniclient
+copy .\src\CNAME-dev .\src\CNAME
 start npm run dev
 
 cd C:\Users\hhoar\PycharmProjects\OpenAlumni

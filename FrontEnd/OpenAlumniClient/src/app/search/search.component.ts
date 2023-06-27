@@ -5,7 +5,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigService} from "../config.service";
 import {Location} from "@angular/common"
-import {PromptComponent} from "../prompt/prompt.component";
+import {_prompt, PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {tProfil} from "../types";
@@ -23,7 +23,7 @@ export class SearchComponent implements OnInit {
   limit=250;
   perm: string="";
   dtLastSearch: number=0;
-  filter_with_pro: boolean=true;
+  filter_with_pro:boolean=true;
 
   constructor(public api:ApiService,
               public dialog:MatDialog,
@@ -37,6 +37,7 @@ export class SearchComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.filter_with_pro=(localStorage.getItem("pro_filter") || "true")=="true";
     getParams(this.routes).then((params:any)=>{
       this.query.value=params.filter || params.query || "";
       if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
@@ -62,11 +63,12 @@ export class SearchComponent implements OnInit {
 
       if(this.searchInTitle)prefixe="works__title:"
 
-      this.message="Chargement des profils";
+      this.message="Recherche des profils";
 
-      let search_engine="search";
-      if(this.query.value && this.query.value.length==4 && Number(this.query.value).toString()==this.query.value)search_engine="promo";
-      if(this.query.value.indexOf("*")>-1)search_engine="search_simple_query_string"
+      //Voir https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.16.3/search_backends.html?highlight=simple_query_string_options#generated-query-3
+      let search_engine="search_simple_query_string";
+      //if(this.query.value && this.query.value.length==4 && Number(this.query.value).toString()==this.query.value)search_engine="promo";
+      //if(this.query.value.indexOf("*")>-1)search_engine="search_simple_query_string"
       param=translateQuery(prefixe+this.query.value,false,search_engine);
 
       if(this.advanced_search.length>0){
@@ -81,12 +83,12 @@ export class SearchComponent implements OnInit {
 
       //Ajout du tri
       if(this.order)localStorage.setItem("ordering",this.order);
-      if(this.order!="-lastname" && this.order!="order_score"){
-        param=param+"&ordering="+this.order;
-      }else{
-        this.limit=limit;
-      }
-      param=param+"&limit="+this.limit+"&profil__school=FEMIS";
+      // if(this.order!="-lastname" && this.order!="order_score"){
+      //   param=param+"&ordering="+this.order;
+      // }else{
+      //   this.limit=limit;
+      // }
+      param=param+"&limit="+limit+"&profil__school=FEMIS";
       $$("Appel de la recherche avec param="+param);
 
       this.api._get("profilsdoc",param).subscribe((r:any) =>{
@@ -107,9 +109,9 @@ export class SearchComponent implements OnInit {
 
           if(item.cursus=="S")item.backgroundColor="#81C784";
           if(item.cursus=="P")item.backgroundColor="#5471D2";
-          if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#072c00";
+          if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#f1e627";
 
-          if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S")){
+          if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S") && (this.config.show_student || item.backgroundColor!="#f1e627")){
 
             if(item.department && item.department.length>60){
               item.department=abrege(item.department,this.config.abreviations);
@@ -126,7 +128,14 @@ export class SearchComponent implements OnInit {
             this.router.navigate(["import"]);
           }
 
-          if(search_engine=="search")this.refresh(this.query.value+"*");
+          if(search_engine=="search_simple_query_string" && !this.query.value.endsWith("*")){
+            this.refresh(this.query.value+"*");
+            showMessage(this,"L'usage de l'astérisque permet de faire la recherche sur le début d'un mot")
+          }
+
+          if(this.query.value.indexOf("*")>-1 && this.profils.length==0){
+            showMessage(this,"Aucun profil ne correspond à cette recherche")
+          }
 
           if(!this.filter_with_pro){
             this.filter_with_pro=true;
@@ -136,6 +145,8 @@ export class SearchComponent implements OnInit {
         } else {
           if(this.order=="lastname")this.profils.sort((x:any,y:any)=>{if(x.lastname[0]>y.lastname[0])return 1; else return -1;})
           if(this.order=="order_score")this.profils.sort((x:any,y:any)=>{if(x.order_score<y.order_score)return 1; else return -1;})
+          if(this.order=="-degree_year")this.profils.sort((x:any,y:any)=>{if(Number(x.degree_year)<Number(y.degree_year))return 1; else return -1;})
+          if(this.order=="degree_year")this.profils.sort((x:any,y:any)=>{if(Number(x.degree_year)>Number(y.degree_year))return 1; else return -1;})
           this.config.query_cache=this.profils;
         }
       },(err)=>{
@@ -153,15 +164,14 @@ export class SearchComponent implements OnInit {
   searchInTitle: boolean = false;
   fields=[
     {field:"Pertinance",value:"order_score"},
-    {field:"Nouvelles Promos",value:"-promo"},
+    {field:"Nouvelles Promos",value:"-degree_year"},
     {field:"Alphabétique",value:"-lastname"},
-    {field:"Anciennes promos",value:"promo"}
+    {field:"Anciennes promos",value:"degree_year"}
   ]
 
   order=this.fields[0].value;
 
   advanced_search=[];
-  add_pro: boolean = true;
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
@@ -177,22 +187,14 @@ export class SearchComponent implements OnInit {
     this.refresh();
   }
 
-  deleteProfil(profil: any) {
-    this.dialog.open(PromptComponent,{data: {
-        title: 'Confirmation',
-        question: 'Supprimer ce profil ?',
-        onlyConfirm: true,
-        canEmoji: false,
-        lbl_ok: 'Oui',
-        lbl_cancel: 'Non'
-      }}).afterClosed().subscribe((result_code) => {
-      if (result_code != 'no') {
-        this.api._delete("profils/"+profil.id).subscribe(()=>{
-          showMessage(this,"Profil supprimé");
-          this.refresh();
-        })
-      }
-    });
+  async deleteProfil(profil: any) {
+    let rep=await _prompt(this,'Confirmation',"",'Supprimer ce profil ?')
+    if (rep == 'yes') {
+      this.api._delete("profils/"+profil.id).subscribe(()=>{
+        showMessage(this,"Profil supprimé");
+        this.refresh();
+      })
+    }
   }
 
   askfriend(profil: any) {
@@ -212,16 +214,14 @@ export class SearchComponent implements OnInit {
     ).then(()=>{
       window.location.reload();
     });
-
   }
-
 
   switch_motor() {
     if(this.advanced_search.length==0){
       this.advanced_search=[
         {id:"txtFirstname",type:"text",label:"Prénom",width:"150px",value:"",field:"firstname",title:"Paul, Pa*, Fr?d?ri*"},
         {id:"txtLastname",type:"text",label:"Nom",width:"150px",value:"",field:"lastname",title:"Un nom ou le début du nom et *"},
-        {id:"txtPromo",type:"text",label:"Promo",width:"100px",value:"",field:"promo",title:"2001,20*,19??"}
+        {id:"txtPromo",type:"text",label:"Promotion",width:"150px",value:"",field:"promo",title:"2001,20*,19??"}
       ]
 
       //TODO: formation à réinclure
@@ -259,6 +259,11 @@ export class SearchComponent implements OnInit {
     }
     this.order=rc.value;
     showMessage(this,"Tri par "+rc.field);
+    this.refresh();
+  }
+
+  update_pro_filter() {
+    localStorage.setItem("pro_filter",this.filter_with_pro ? "true" : "false");
     this.refresh();
   }
 }

@@ -28,7 +28,7 @@
     <div *ngIf="!data?.onlyConfirm && !data?.options">
 
 
-        <app-input *ngIf="_type!='memo' && _type!='options'" id="txtPrompt" [value_type]="_type"
+        <app-input *ngIf="_type!='memo' && _type!='list'" id="txtPrompt" [value_type]="_type"
                    [max]="_max" [min]="_min"
                    [value]="data.result" (valueChange)="data.result=$event"
                    [placeholder]="data.placeholder"
@@ -52,7 +52,7 @@
   </div>
 
 
-    <app-input [label]="data?.question || ''" *ngIf="_type=='options' || _type=='list'"
+    <app-input [label]="data?.question || ''" *ngIf="_type=='list'"
                value_type="list" [value]="data.result"
                (valueChange)="data.result=$event"
                [options]="data.options || []"></app-input>

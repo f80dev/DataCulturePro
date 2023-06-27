@@ -33,6 +33,7 @@ export class StatsComponent implements OnInit {
   sel_instant_report_to_copy: any={};
   sel_table: string="work";
   bLimitData: boolean = true;
+  filter_report:string=""
 
   constructor(public _location:Location,
               public api:ApiService,
@@ -76,7 +77,6 @@ export class StatsComponent implements OnInit {
         if(i.prod)this.instant_reports.push(i);
       }
 
-
       let open=this.routes.snapshot.queryParamMap.get("open");
       if(open){
         for(let r of this.instant_reports)
@@ -114,12 +114,9 @@ export class StatsComponent implements OnInit {
     }
   }
 
-
-
   openSocialGraph() {
     this.router.navigate(["visgraph"]);
   }
-
 
 
   eval_params(inst_report){

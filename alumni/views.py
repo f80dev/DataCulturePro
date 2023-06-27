@@ -27,8 +27,9 @@ pd.options.plotting.backend = "plotly"
 from django.http import JsonResponse, HttpResponse
 
 from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
-from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, DefaultOrderingFilterBackend, \
-    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
+from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, \
+    DefaultOrderingFilterBackend, \
+    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend, MultiMatchSearchFilterBackend
 from django_elasticsearch_dsl_drf.pagination import LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -50,8 +51,8 @@ from rest_framework import viewsets, generics
 
 from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
     profils_importer, idx, raz
-from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
-    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string, init_dict, now
+from OpenAlumni.Tools import dateToTimestamp,  reset_password, log, sendmail, to_xml, translate, \
+    levenshtein, getConfig,   index_string, init_dict
 from OpenAlumni.nft import NFTservice
 
 
@@ -400,8 +401,15 @@ def resend(request):
     email=request.GET.get("email")
     users=User.objects.filter(email=email)
     if len(users)==1:
-        users[0].set_password(reset_password(users[0].email,users[0].username))
+        code=reset_password(users[0].email,users[0].username)
+        users[0].set_password(code)
         users[0].save()
+        sendmail("Renvoi de votre code",email,"resend_code.html",{
+            "email":email,
+            "appname":APPNAME,
+            "code":code,
+            "url_appli":DOMAIN_APPLI
+        })
     return Response({"message":"Check your email"})
 
 
@@ -597,9 +605,11 @@ def batch(request):
     filter:str= request.GET.get("filter", "*")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
+    offline=request.GET.get("offline", False)
     profils=Profil.objects.order_by("dtLastSearch").all()
     refresh_delay_profil=int(request.GET.get("refresh_delay_profil", 31))
     refresh_delay_page=int(request.GET.get("refresh_delay_page", 31))
+
     n_films=0
     n_works=0
     if filter!="*":
@@ -611,7 +621,8 @@ def batch(request):
                 profils=Profil.objects.filter(lastname__istartswith=f.strip(),school="FEMIS").order_by("dtLastSearch")
                 n_f,n_w=exec_batch(profils,refresh_delay_profil,
                                            refresh_delay_page,int(limit),int(limit_contrib),
-                                           content=content,remove_works=request.GET.get("remove_works","false")=="true")
+                                           content=content,
+                                   remove_works=request.GET.get("remove_works","false")=="true",offline=offline)
                 n_films+=n_f
                 n_works+=n_w
 
@@ -672,6 +683,7 @@ def quality_filter(request):
     filter= request.GET.get("filter", "*")
     ope = request.GET.get("ope", "profils,films")
     profils=Profil.objects.order_by("dtLastSearch").all()
+    report_email=request.GET.get("report_email", "")
     n_profils=0
     n_pows=0
     if filter!="*":
@@ -688,6 +700,9 @@ def quality_filter(request):
             _p=Profil.objects.get(id=id)
             log("Suppression du profil "+_p.name)
             _p.delete()
+
+        if len(report_email)>0:
+            sendmail("DataCulture: Traitement qualité sur les profils",report_email,"quality_report.html",{"log":log})
 
 
     if "awards" in ope:
@@ -751,6 +766,15 @@ def initdb(request):
 @permission_classes([IsAuthenticatedOrReadOnly])
 def helloworld(request):
     return Response({"message": "Hello world"})
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def api_sendmail(request):
+    body=request.data
+    sendmail(body["subject"],body["to"],body["template"],body["replacement"])
+    return Response("ok",200)
+
 
 
 #test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
@@ -1196,9 +1220,9 @@ def export_all(request):
         if table.startswith("festival"): data = Festival.objects.all().values(*values)
         if table.startswith("award"): data = Award.objects.all().values(*values)
 
-        df=pd.DataFrame.from_records(data)
-        if len(data)>0:
-            df.columns=list(request.GET.get("cols").split(","))
+        df=pd.DataFrame.from_records(data,columns=values)
+        # if len(data)>0:
+        #     df.columns=list(request.GET.get("cols").split(","))
 
     if limit>0:
         df=df[:limit]
@@ -1226,7 +1250,10 @@ def export_all(request):
             cursor=connection.cursor()
             cursor.execute(sql)
             rows=cursor.fetchall()
-            df=pd.DataFrame.from_records(rows,columns=cols.split(","))
+            if cols is None:
+                df=pd.DataFrame.from_records(rows)
+            else:
+                df=pd.DataFrame.from_records(rows,columns=cols.split(","))
 
 
     if not df is None:
@@ -1438,11 +1465,12 @@ def movie_importer(request):
 
 
 #http://localhost:8000/api/importer/
-#profils importer
+#profils importer profil_importer profils_importer
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def api_importer(request):
     """
+
     Importation des profils /import
     :param request:
     :param format:
@@ -1495,7 +1523,6 @@ class FestivalDocumentView(DocumentViewSet):
     lookup_field = "id"
     filter_backends = [
         FilteringFilterBackend,
-        CompoundSearchFilterBackend,
         DefaultOrderingFilterBackend,
         SimpleQueryStringSearchFilterBackend,
         # MultiMatchSearchFilterBackend
@@ -1512,7 +1539,11 @@ class FestivalDocumentView(DocumentViewSet):
         'description':{'boost':1}
     }
 
-    search_fields = ('title','year',"award__pow__title","description","award__profil__lastname")
+    simple_query_string_options = {
+        "default_operator": "and",
+    }
+
+    #search_fields = ('title','year',"award__pow__title","description","award__profil__lastname")
 
 
 
@@ -1525,41 +1556,56 @@ class ProfilDocumentView(DocumentViewSet):
     lookup_field = "id"
     filter_backends = [
         FilteringFilterBackend,
-        CompoundSearchFilterBackend,
+        # CompoundSearchFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
         SimpleQueryStringSearchFilterBackend,
-        # MultiMatchSearchFilterBackend
+        #MultiMatchSearchFilterBackend
     ]
-    filter_fields ={
-        "firstname":"firstname.raw"
-    }
-
-
     #voir la documentation : https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.22.2/search_backends.html
+    #
 
+    #On utilisera dans la requete : search_simple_query_string
     simple_query_string_search_fields = {
         'lastname': {'boost': 4},
-        'firstname': {'boost': 3},
+        'department_category': {'boost': 4},
+        'degree_year': {'boost': 4},
+        'firstname': {'boost': 1},
         'department': {'boost': 3},
-        'department_category': {'boost': 3},
+        'town':{'boost':1},
         'works__job': {'boost': 2},
         'works__pow__title': {'boost': 2},
-        'awards__year': {'boost': 1}
+        'awards__title': {'boost': 2},
+        # 'awards__year': {'boost': 1}
     }
 
-    search_fields = ('lastname',
-                     'firstname',
-                     'department',
-                     'degree_year'
-                     'department_category',
-                     'works__job',
-                     'works__pow__title',
-                     'awards__festival__title',
-                     'awards__description',
-                     'awards__year'
-                     )
+    simple_query_string_options = {
+        "default_operator": "and",
+    }
 
+    # multi_match_search_fields = {
+    #     'lastname': {'boost': 4},
+    #     'degree_year': {'boost': 4},
+    #     'department_category': {'boost': 3},
+    # }
+
+    #voir https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#type-phrase
+    # multi_match_options = {
+    #     'type': 'best_fields'
+    # }
+
+
+    # search_fields = ('lastname',
+    #                  'firstname',
+    #                  'department',
+    #                  'degree_year'
+    #                  'department_category',
+    #                  'works__job',
+    #                  'works__pow__title',
+    #                  'awards__festival__title',
+    #                  'awards__description',
+    #                  'awards__year'
+    #                  )
 
     filter_fields = {
         'profil':'id',
@@ -1575,21 +1621,18 @@ class ProfilDocumentView(DocumentViewSet):
     }
 
     ordering_fields = {
-        'lastname':'lastname',
-        'promo':'degree_year',
-        'update':'dtLastUpdate'
+        'lastname':None,
+        'degree_year':None,
+        'update':None
     }
 
-    simple_query_string_options = {
-        "default_operator": "or",
-    }
 
-    suggester_fields = {
-        'name_suggest': {
-            'field': 'lastname',
-            'suggesters': [SUGGESTER_COMPLETION,],
-        },
-    }
+    # suggester_fields = {
+    #     'name_suggest': {
+    #         'field': 'lastname',
+    #         'suggesters': [SUGGESTER_COMPLETION,],
+    #     },
+    # }
 
 
 

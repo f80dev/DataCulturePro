@@ -215,13 +215,14 @@ def levenshtein(s:str, t:str):
 
 def sendmail(subject, _to, template, field):
     field["appname"]=APPNAME
-    field["email"]=_to
+    field["equipe"]=TEAM
     html=open_html_file(template,field)
     log("Envoi de "+html)
     _dest=[]
     if type(_to)==str:_to=[_to]
     for c in _to:
-        if c in EMAIL_TESTER or len(EMAIL_TESTER) == 0:
+        field["email"]=c
+        if not c in EMAIL_TESTER or len(EMAIL_TESTER) == 0:
             _dest.append(c)
 
     if len(EMAIL_HOST_USER)>0:
@@ -241,6 +242,9 @@ def sendmail(subject, _to, template, field):
 def open_html_file(name:str,replace=dict(),domain_appli=DOMAIN_APPLI):
     if not name.endswith("html"):name=name+".html"
     name=STATIC_ROOT+"/"+name
+
+    log("Ouverture du fichier de mail "+name)
+
     with open(name, 'r', encoding='utf-8') as f: body = f.read()
 
     style="""
@@ -600,12 +604,12 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
         code=remove_string_between_delimiters(code,"<"+balise,"</"+balise+">")
 
     gain=100-100*len(code)/lenCode
-    log("Compression de "+str(gain)+"%")
+    #log("Compression de "+str(gain)+"%")
 
     return code
 
 
-def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mozilla/5.0'):
+def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mozilla/5.0',offline=False):
 
     if url is None:return None
     if url.startswith("/"):url="https://www.imdb.com/"+url
@@ -624,7 +628,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mo
             delay = 0
 
     if  isWindows() and exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
-        log("Utilisation du fichier cache "+filename+" pour "+url)
+        #log("Utilisation du fichier cache "+filename+" pour "+url)
         try:
             with open(PAGEFILE_PATH + filename, 'r', encoding='utf8') as f:
                 html=f.read()
@@ -646,22 +650,23 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mo
 
         return page
     else:
-        log("Chargement de la page "+url)
         rc=None
-        for itry in range(5):
-            try:
-                sleep(random.randint(1000, 2000) / 1000)
-                if bot:
-                    rc = wikipedia.BeautifulSoup(bot.download_page(url), "html5lib")
-                else:
-                    rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': agent}).text, "html5lib")
-                break
-            except:
-                pass
+        if not offline:
+            log("Chargement de la page "+url)
+            for itry in range(5):
+                try:
+                    sleep(random.randint(1000, 2000) / 1000)
+                    if bot:
+                        rc = wikipedia.BeautifulSoup(bot.download_page(url), "html5lib")
+                    else:
+                        rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': agent}).text, "html5lib")
+                    break
+                except:
+                    pass
 
         if not rc is None and save and isWindows():
             path=PAGEFILE_PATH + filename
-            log("Enregistrement sur  " + path)
+            #log("Enregistrement sur  " + path)
             with open(path, 'w', encoding='utf8') as f:
                 f.write(clean_page(rc))
                 f.close()

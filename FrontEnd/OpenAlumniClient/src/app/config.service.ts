@@ -20,12 +20,15 @@ export class ConfigService {
   width_screen: number;
   ready=false;
   icons:any=null;
+
   profils:any={};
   jobs:any=null;
   query_cache: any[]; //Conserve le contenu de la dernière requete
   perms: any;
   abreviations: any;
   user_update=new Subject<tUser>();
+  infos_server: any;
+  show_student: boolean = false;
 
   constructor(private location: Location,
               private http: HttpClient,
@@ -35,7 +38,7 @@ export class ConfigService {
 
 
   public async getJson(jsonFile:string): Promise<any> {
-    return Promise.resolve((await this.http.get(jsonFile).toPromise()));
+    return Promise.resolve((await this.http.get(jsonFile)));
   }
 
 
@@ -58,7 +61,8 @@ export class ConfigService {
 
   private async getConfig(): Promise<any> {
     if (!this.config) {
-      this.config = (await this.api.getyaml("",environment.config_file).toPromise());
+      this.config = await this.api.getyaml("",environment.config_file);
+      this.refresh_server()
       $$("Chargement de la configuration "+environment.name);
     }
     return Promise.resolve(this.config);
@@ -126,31 +130,37 @@ export class ConfigService {
   }
 
 
-  async init_user(email=null) : Promise<any> {
-    if(!email)return(email);
-    $$("Initialisation de l'utilisateur "+email);
-    this.api.getextrauser(email).subscribe((r:any)=>{
-      if(r.count>0){
-        $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
-        this.user=r.results[0];
-        this.user_update.next(this.user);
-        if(!this.user.profil){
-          $$("Si l'utilisateur n'existe pas dans les profils des anciens");
-          this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
-            showMessage(this,"Message:"+r.result);
-          })
-        }
-
-        return(this.user);
-      } else {
-        $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")
-        if(email){
-          this.api.logout();
-        }
+  async init_user(email=null) :Promise<any> {
+    return new Promise((resolve, reject) => {
+      if(!email){
         this.raz_user();
-        return;
+        resolve(this.user);
       }
+      $$("Initialisation de l'utilisateur "+email);
+      this.api.getextrauser(email).subscribe((r:any)=>{
+        if(r.count>0){
+          $$("Le compte existe déjà. Chargement de l'utilisateur ",r.results[0]);
+          this.user=r.results[0];
+          this.user_update.next(this.user);
+          if(!this.user.profil){
+            $$("Si l'utilisateur n'existe pas dans les profils des anciens");
+            this.api._get("update_extrauser","email="+this.user.user.email).subscribe((rany)=>{
+              showMessage(this,"Message:"+r.result);
+            })
+          }
+
+          resolve(this.user);
+        } else {
+          $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")
+          if(email){
+            this.api.logout();
+          }
+          this.raz_user();
+          resolve(this.user)
+        }
+      });
     });
+
   }
 
 
@@ -180,5 +190,12 @@ export class ConfigService {
 
   isMobile() {
     return this.platform.IOS || this.platform.ANDROID;
+  }
+
+
+  refresh_server() {
+    this.api._get("infos_server").subscribe((infos:any)=>{
+      this.infos_server=infos;
+    });
   }
 }

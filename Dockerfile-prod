@@ -7,7 +7,7 @@ FROM python
 
 #prod
 #fabrication: docker build -t f80hub/openalumni . & docker push f80hub/openalumni:latest
-#installation: docker rm -f openalumni && docker pull f80hub/openalumni:latest && docker run --restart=always -v /root/certs:/certs -p 8000:8000 --name openalumni --env DJANGO_SETTINGS_MODULE=OpenAlumni.settings -d f80hub/openalumni:latest
+#installation: docker rm -f openalumni && docker pull f80hub/openalumni:latest && docker run --restart=always -v /root/certs_dataculture:/certs -p 8000:8000 --name openalumni --env DJANGO_SETTINGS_MODULE=OpenAlumni.settings -d f80hub/openalumni:latest
 
 
 

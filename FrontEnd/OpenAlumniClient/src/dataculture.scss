@@ -4,7 +4,7 @@
 html {font-size: 1.1vw;}
 @media(max-width: 1500px) { html {font-size: 1.6vw;} }
 @media(max-width: 1000px) { html {font-size: 1.9vw;} }
-@media(max-width: 600px) { html {font-size: 2.4vw;} }
+@media(max-width: 600px) { html {font-size: 2.8vw;} }           //Agrandir l'ensemble des polices pour les mobiles
 
 $dataculture-typography: mat.define-typography-config(
         $headline-1: mat.define-typography-level(3.8rem,3.8rem, $font-weight: 600, $font-family: Roboto),
@@ -98,6 +98,7 @@ $dataculture-secondary-color: mat.define-palette($dataculture-grey-palette, 200)
 $dataculture-accent-color:mat.define-palette($dataculture-red-palette, 700);
 $dataculture-warn-color: mat.define-palette($dataculture-red-palette, 900);
 $dataculture-green: #81C784;
+$dataculture-yellow: #eee117;
 $dataculture-blue: #5471D2;
 $dataculture-red: #CC4137;
 $dataculture-orange: #E4983C;
@@ -178,8 +179,16 @@ $dataculture-theme:mat.define-dark-theme((
         color: $dataculture-green;
 }
 
+.fa-color {
+        color: $dataculture-yellow;
+}
+
 .material-icon.fi-color {
         color: $dataculture-green;
+}
+
+.material-icon.fa-color {
+        color: $dataculture-yellow;
 }
 
 .material-icon.fc-color {

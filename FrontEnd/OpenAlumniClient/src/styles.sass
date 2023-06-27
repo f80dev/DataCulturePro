@@ -61,12 +61,16 @@
 
   //https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 .wrap-item
-  margin: 10px
+  margin: 5px
   max-width: 500px
   min-width: 250px
   width: 80%
 
-
+.wrap-align
+  display: flex
+  width: 100%
+  flex-wrap: wrap
+  justify-items: center
 
 .wrap-list
   display: flex
@@ -123,8 +127,6 @@
 
 mat-drawer-container
   background: none !important
-
-
 
 
 .sidenav
@@ -197,6 +199,19 @@ mat-icon
 
 a
   text-decoration: none
+
+a:link
+  color: gray
+
+a:visited
+  color: gray
+
+a:hover
+  color: lightgray
+
+a:active
+  color: gray
+
 
 
 .app-mat-panel-title

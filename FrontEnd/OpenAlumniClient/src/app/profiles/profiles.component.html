@@ -21,7 +21,7 @@
           <p>{{profil.presentation}}</p>
 
           <div style="text-align: left;color:lightgrey;line-height: 120%;">
-            Ce profil vous donnes accès:
+            Accès:
             <div [innerHTML]="show_perm(profil.id)"></div>
             <br>
           </div>
@@ -35,6 +35,7 @@
             <button mat-raised-button
                     name="cmdAskProfil"
                     class="app-button"
+                    *ngIf="profil.subscription!='offline'"
                     (click)="sel_profil(profil)">
 
               <span *ngIf="profil.subscription=='online' || profil.subscription=='secure'">Souscrire</span>

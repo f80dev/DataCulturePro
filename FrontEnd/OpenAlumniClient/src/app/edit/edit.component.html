@@ -12,20 +12,25 @@
           Civilité
         </mat-expansion-panel-header>
 
-        <div style="height:175px;padding:5px;display: inline-block;">
+        <div style="height:175px;padding:5px;display: inline-block;position:relative;">
           <app-upload-file (uploaded)="change_photo($event)"
-                           [zone]="true" icon="edit" [src]="profil.photo"
-                           width="150px" height="200px" [maxsize]="100000000"
+                           [zone]="true" icon="edit"
+                           *ngIf="profil.photo==''"
+                           width="150px" height="175px" [maxsize]="100000000"
                            title="Associer aux visuels un fichier de descriptions / attributs"
                            extensions=".jpg,.png,.jpeg">
-<!--            <mat-icon>edit</mat-icon>-->
-<!--            <img [src]="profil.photo" mat-card-avatar class="image-photo" style="width:100%;">-->
           </app-upload-file>
+          <mat-icon style="position:absolute;left:5px;top:10px;display:block;cursor:pointer;"
+                    *ngIf="profil.photo.length>0"
+                    (click)="profil.photo=''">cancel</mat-icon>
+          <img [src]="profil.photo" style="height: 100%;" *ngIf="profil.photo.length>0">
         </div>
         <br><br>
 
+
         <mat-checkbox
                 (change)="save_profil($event,'public_photo')"
+                style="margin-top: 15px;"
                 title="Cliquez sur cette photo pour la mettre a jour"
                 [(ngModel)]="profil.public_photo">
           Photo visible sur ma page publique
@@ -278,7 +283,9 @@
           <tr *ngFor="let work of works" style="width:100%;text-align: left;">
             <td>-</td>
             <td style="line-height: 100%;width: fit-content;">
-              {{work.year}} :
+              <span *ngIf="work.year">{{work.year}}</span>
+              <span *ngIf="!work.year">En cours</span>
+              :
               {{work.job}} sur
               <a [title]="work.source" (click)="open_movie(work.title)">{{work.title}}</a>
               <br>

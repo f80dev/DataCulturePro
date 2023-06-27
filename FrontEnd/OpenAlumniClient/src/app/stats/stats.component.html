@@ -13,31 +13,38 @@
     Rapport en cours de construction
   </div>
 
-  <mat-tab-group style="height: 87vh;text-align: center;" id="tabStats" #tabGroup mat-align-tabs="start">
+  <mat-tab-group style="height: 87vh;text-align: center;width:100%;" id="tabStats" #tabGroup mat-align-tabs="start">
     <mat-tab name="tabs" label="Rapports pré-définis">
-      <br>
-      <mat-form-field appearance="fill" style="width: 80%;max-width: 500px; margin-top:25px;">
-        <mat-label>Sélectionner un rapport</mat-label>
-        <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
-          <mat-option *ngFor="let report of instant_reports" [value]="report">
-            {{report.title}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div style="display: inline-flex;justify-content: space-between;width:600px;margin-top: 25px;">
+        <app-input label="Filtre" [value]="filter_report"
+                   (valueChange)="filter_report=$event" width="150px"></app-input>
 
-
-      <div *ngIf="filter_values?.length>0" style="display: inline-block;">
-        <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >
-          <mat-label>{{filter_name}}</mat-label>
-          <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">
-            <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>
+        <mat-form-field appearance="fill" style="width: 60%;max-width: 500px; ">
+          <mat-label>Sélectionner un rapport</mat-label>
+          <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
+            <mat-option *ngFor="let report of instant_reports | filter:['title',filter_report]" [value]="report">
+              {{report.title}}
+            </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-icon style="cursor: pointer;font-size: small;"
-                  *ngIf="sel_filter?.length>0"
-                  (click)="cancel_filter()">cancel</mat-icon>
+
+
+        <div *ngIf="filter_values?.length>0" style="display: inline-block;">
+          <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >
+            <mat-label>{{filter_name}}</mat-label>
+            <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">
+              <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-icon style="cursor: pointer;font-size: small;"
+                    *ngIf="sel_filter?.length>0"
+                    (click)="cancel_filter()">cancel</mat-icon>
+        </div>
+        <mat-icon [title]="sel_report.description" style="cursor: help;margin-left:20px;"
+                  *ngIf="sel_report.description?.length>0">help</mat-icon>
+
       </div>
-      <mat-icon [title]="sel_report.description" style="cursor: help;" *ngIf="sel_report.description?.length>0">help</mat-icon>
+
 
 
       <div style="width: 100%;text-align: center;position: relative;">
@@ -50,8 +57,8 @@
         </div>
 
         <iframe *ngIf="sel_report?.html_code"
-                class="mat-elevation-z4"
-                style="padding: 0px;width: 95%;height:69vh;border:None;display: inline-block;margin:0;"
+                class="mat-elevation-z4 primary-color"
+                style="padding: 0;width: 95%;height:69vh;border:None;display: inline-block;margin:0;overflow: hidden;background-color: gray;"
                 [title]="sel_report.description"
                 [srcdoc]="sel_report.html_code | safe">
         </iframe>

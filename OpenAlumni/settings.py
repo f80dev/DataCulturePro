@@ -24,7 +24,7 @@ from django.contrib import admindocs
 PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = []
-
+TEAM="L'équipe Data Culture"
 EMAIL_PERM_VALIDATOR="hhoareau@gmail.com"
 LOCAL_FEDORA_SERVER='172.30.11.56'
 VERSION="0.1"
@@ -150,8 +150,6 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 #         'options': '-c statement_timeout=5000'
 #     }
 # },
-
-
 
 # 'sqllite': {
 #     'ENGINE': 'django.db.backends.sqlite3',

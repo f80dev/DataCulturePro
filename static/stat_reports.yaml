@@ -12,7 +12,8 @@ Version: 1.0
 #Documentation de la librairie graphique
 #camembert : https://plotly.com/python-api-reference/generated/plotly.express.pie.html
 
-
+#cols : désigne le nom des colonnes du tableau
+#x doit faire référence à col
 
 Reports:
   - title: Répartition des étudiants par formation
@@ -133,7 +134,7 @@ Instant_reports:
     sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=True GROUP BY Festival ORDER BY -Awards LIMIT 15
     prod: True
 
-  - title: Prix le plus obtenus
+  - title: Prix les plus obtenus par les anciens étudiants formation pro et initiale
     id: name_award_by_department
     chart: pie
     x: Prix
@@ -190,23 +191,29 @@ Instant_reports:
     sql: SELECT formation, promotion,count(id) as etudiants FROM df WHERE cursus='S' GROUP BY formation,promotion
     prod: True
 
+  - title: Ancien stagiaires de la FEMIS sans expériences professionnelles référencées
+    description:
+    id: noexp_pro
+    chart: none
+    filter: department
+    table: sql
+    cols: ID,Prénom,Nom,department,Categorie
+    sql: SELECT id,firstname, lastname,department,department_category FROM alumni_profil WHERE cursus='P' AND id NOT IN (select profil_id FROM alumni_work)
+    prod: True
 
 
   - title: Dates de dernière mise a jour des profils
     description: Indicateur d'obsolescence de la base des profils
     id: student_by_lastmodification
-    table: profil
-    data_cols: cursus,dtLastSearch,id
-    cols: cursus,last_search,id
-    sql: SELECT cursus, DATE(last_search) AS lastsearch,count(id) as n_profils FROM df GROUP BY cursus,lastsearch
-    chart: bar
-    x: lastsearch
-    y: n_profils
-    color: cursus
+    table: sql
+    cols: Formation,Dernière mise a jour,Nombre de profils
+    sql: SELECT cursus,DATE("dtLastSearch") as "Dernière mise a jour",count(id) as "Nombre de profils" FROM alumni_profil GROUP BY cursus,"Dernière mise a jour" ORDER BY "Dernière mise a jour"
+
+    chart: none
     visibility: admin
     replace:
-      P: Formation pro
-      S: Formation initiale
+      P: Pro
+      S: Initiale
     prod: True
 
 
@@ -222,6 +229,7 @@ Instant_reports:
     x: Dernière mise a jour
     y: n_pow
     prod: True
+
 
 
 
@@ -276,8 +284,9 @@ Instant_reports:
     y: nb
     color: description
     table: Award
-    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df WHERE pow__nature='Long-métrage' GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
+    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df WHERE pow__nature='Film' or pow__nature="Long-métrage" GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
     prod: True
+
 
 
 
@@ -402,15 +411,15 @@ Instant_reports:
     sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title AS 'Film/Court-métrage/Série',ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY Nom,profil__degree_year
     prod: True
 
-
-  - title: Ancien stagiaires de la FEMIS sans expériences professionnelles référencées
+  - title: Nombre de travaux sur des films
     description:
-    id: noexp_pro
+    id: exp_film
     chart: none
-    filter: department
-    table: sql
-    cols: ID,Prénom,Nom,department,Categorie
-    sql: SELECT id,firstname, lastname,department,department_category FROM alumni_profil WHERE cursus='P' AND id NOT IN (select profil_id FROM alumni_work)
+    table: work
+    cols: Nom,Formation,Promotion,nbFilms
+    sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Formation,profil__degree_year AS Promotion, COUNT(pow__id) AS nbFilms FROM df WHERE profil__cursus='S' AND (pow__nature='Film' OR pow__nature='Long-métrage') GROUP BY profil__id ORDER BY nbFilms
     prod: True
+
+
 
 

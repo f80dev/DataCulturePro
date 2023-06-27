@@ -343,8 +343,10 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   _private(work: any) {
     work.public=!work.public;
-    this.api._patch("works/"+work.id+"/","", {"public":work.public}).subscribe(()=>{
-    });
+    for(let id of work.works) {
+      this.api._patch("works/" + id + "/", "", {"public": work.public}).subscribe(() => {
+      });
+    }
   }
 
 

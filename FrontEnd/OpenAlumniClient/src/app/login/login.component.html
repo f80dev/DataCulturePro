@@ -11,30 +11,41 @@
   <div *ngIf="wait_message.length==0">
     <div style="width: 100%;text-align: center;">
       <div *ngIf="messageCode.length==0">
+        <br>
         <button class="app-button login-button"
                 id="cmdGoogle"
+                title="Authentification simplifiée en utilisant votre mail google"
                 mat-raised-button
                 (click)="socialSignIn('google')">
           Google
         </button>
-        <br>
 <!--        <button class="app-button login-button"-->
 <!--                mat-raised-button-->
 <!--                id="cmdFacebook"-->
 <!--                (click)="socialSignIn('facebook')">-->
 <!--          Facebook-->
 <!--        </button>-->
+
         <br>
+        <button class="app-button login-button"
+                title="Un code d'accès vous sera envoyé sur votre mail"
+                mat-raised-button
+                id="cmdEmail"
+                (click)="email_login()">
+          Email
+        </button>
+        <br>
+
+        <button class="app-button login-button"
+                mat-raised-button
+                id="cmdAnonymous"
+                title="Rester hors connexion"
+                (click)="cancel()">
+          Rester anonyme
+        </button>
+        <br>
+
       </div>
-      <br>
-      <button class="app-button login-button"
-              *ngIf="messageCode.length==0"
-              mat-raised-button
-              id="cmdEmail"
-              (click)="email_login()">
-        Email
-      </button>
-      <br>
 
       <div *ngIf="messageCode.length>0">
         <br>

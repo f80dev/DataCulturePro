@@ -5,11 +5,7 @@
     <mat-accordion [multi]="false" style="text-align: left;display:inline-block;min-width: 1000px;">
 
         <mat-expansion-panel  [expanded]="true">
-            <mat-expansion-panel-header>
-
-                Général
-
-            </mat-expansion-panel-header>
+            <mat-expansion-panel-header>Général</mat-expansion-panel-header>
             <button mat-raised-button class="app-button" (click)="router.navigate(['search'])">Recherche</button>
 
             <button mat-raised-button class="app-button" (click)="openQuery()">Extraction</button>
@@ -38,8 +34,8 @@
 
             <app-upload-file  [zone]="true" extensions=".json"
                               [maxsize]="10000000000"
-                             height="100px" width="200px"
-                             (uploaded)="upload_backup($event)">
+                              height="100px" width="200px"
+                              (uploaded)="upload_backup($event)">
                 Charger une sauvegarde
             </app-upload-file>
             <br>
@@ -49,7 +45,7 @@
                     (click)="save_backup()" >Enregistrer</button>
         </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="show_server">
+        <mat-expansion-panel [expanded]="show_server">
             <mat-expansion-panel-header>
 
                 Serveur
@@ -57,20 +53,23 @@
             </mat-expansion-panel-header>
 
             <div style="width: 90%;background-color: #c4c4c4;padding: 10px;margin-left: 5%;min-height: 500px;" class="mat-elevation-z4">
-                <ngx-json-viewer [expanded]="true" [json]="info_server"></ngx-json-viewer>
+                <ngx-json-viewer [expanded]="true" [json]="config.infos_server"></ngx-json-viewer>
             </div>
 
-            <button mat-raised-button class="app-button" (click)="refresh_server()">Refresh</button>
+            <button mat-raised-button class="app-button" (click)="config.refresh_server()">Refresh</button>
             <button mat-raised-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
 
-            <button mat-raised-button class="app-button" (click)="openServer('https://207.180.198.227:9090/system/terminal')">
+            <button mat-raised-button class="app-button" (click)="openServer(config.infos_server.domain.server)">
                 Connexion serveur Django
             </button>
 
-            <button mat-raised-button class="app-button" (click)="openServer('https://161.97.75.165:9090/system/terminal')">
+            <button mat-raised-button class="app-button" (click)="openServer(config.infos_server.database.default.HOST)">
                 Connexion serveur Postgre
             </button>
 
+            <button mat-raised-button class="app-button" (click)="openServer(config.infos_server.search.server.default.hosts)">
+                Connexion a ElasticSearch
+            </button>
 
         </mat-expansion-panel>
 
@@ -78,12 +77,16 @@
 
 
         <mat-expansion-panel  [expanded]="true">
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header>Gestion des profils</mat-expansion-panel-header>
+            <ul>
+                <li><a [routerLink]="['/stats']" [queryParams]="{open:'student_by_lastmodification'}">Avancement des mises a jours</a><br><br></li>
+                <li><a [routerLink]="['/stats']" [queryParams]="{open:'prostudent_by_depyear'}">Répartition de la formation pro</a><br><br></li>
+            </ul>
 
-                Gestion des profils
+            <br>
+            <mat-slide-toggle [(ngModel)]="config.show_student">Inclure les étudiants</mat-slide-toggle><br><br>
 
-            </mat-expansion-panel-header>
-            <a routerLink="stats" [queryParams]="{open:'student_by_lastmodification'}">Avancement des mises a jours</a><br><br>
+
             <button mat-raised-button class="app-button" (click)="export_profils('S')">Export FI</button>
             <button mat-raised-button class="app-button" (click)="export_profils('P')">Export FPro</button>
             <button mat-raised-button class="app-button" (click)="raz('profils')">RAZ profils</button>
@@ -114,11 +117,7 @@
         </mat-expansion-panel>
 
         <mat-expansion-panel  [expanded]="true" (afterExpand)="refresh()">
-            <mat-expansion-panel-header>
-
-                Gestion des utilisateurs
-
-            </mat-expansion-panel-header>
+            <mat-expansion-panel-header>Gestion des utilisateurs</mat-expansion-panel-header>
             <table style="font-s0ize: small;line-height: 85%;text-align: center;width:100%;padding: 10px;" class="mat-elevation-z4">
                 <tr>
                     <th>Login</th>
@@ -135,8 +134,10 @@
                     <td style="width: 15%;">{{u.ask}}</td>
                     <td>
                         <mat-icon title="Supprimer le compte" class="mini-icon-button" (click)="del_user(u)">delete</mat-icon>
-                        <mat-icon title="Accepter la demande de profil" style="font-size: 15px;cursor: pointer;" (click)="accept_ask(u)">checkmark</mat-icon>
-                        <mat-icon title="Refuser la demande de profil" style="font-size: 15px;cursor: pointer;" (click)="cancel_ask(u)">cancel</mat-icon>
+                        <mat-icon title="Refuser la demande de profil"
+                                  *ngIf="u.ask!=''"
+                                  style="font-size: 15px;cursor: pointer;"
+                                  (click)="cancel_ask(u)">cancel</mat-icon>
                         <mat-icon style="font-size: 15px;cursor: pointer;" (click)="send_email(u)">email</mat-icon>
                     </td>
                 </tr>
@@ -155,7 +156,7 @@
         </mat-expansion-panel>
 
 
-        <mat-expansion-panel  [expanded]="true">
+        <mat-expansion-panel [expanded]="true">
             <mat-expansion-panel-header>
 
                 Gestion du catalogue de film
@@ -163,71 +164,84 @@
             </mat-expansion-panel-header>
 
 
-            <mat-checkbox [(ngModel)]="config?.values?.catalog.imdb" >
-                IMDB
-            </mat-checkbox>
-            &nbsp;&nbsp;&nbsp;
+            <div class="wrap-align" *ngIf="config.values && config.values.catalog">
 
-            <mat-checkbox [(ngModel)]="config?.values?.catalog.unifrance" >
-                unifrance
-            </mat-checkbox>
-            &nbsp;&nbsp;&nbsp;
 
-            <mat-checkbox [(ngModel)]="config?.values?.catalog.senscritique">
-                senscritique
-            </mat-checkbox>
-            &nbsp;&nbsp;&nbsp;
+                <mat-checkbox [(ngModel)]="config?.values?.catalog.imdb" >
+                    IMDB
+                </mat-checkbox>
+                &nbsp;&nbsp;&nbsp;
 
-            <mat-checkbox [(ngModel)]="config?.values?.catalog.lefilmfrancais">
-                lefilmfrancais
-            </mat-checkbox>
-            &nbsp;&nbsp;&nbsp;
-            <mat-checkbox [(ngModel)]="config?.values?.catalog.cnc">
-                Le CNC
-            </mat-checkbox>
+                <mat-checkbox [(ngModel)]="config?.values?.catalog.unifrance" >
+                    unifrance
+                </mat-checkbox>
+                &nbsp;&nbsp;&nbsp;
+
+                <mat-checkbox [(ngModel)]="config?.values?.catalog.senscritique">
+                    senscritique
+                </mat-checkbox>
+                &nbsp;&nbsp;&nbsp;
+
+                <mat-checkbox [(ngModel)]="config?.values?.catalog.lefilmfrancais">
+                    lefilmfrancais
+                </mat-checkbox>
+                &nbsp;&nbsp;&nbsp;
+                <mat-checkbox [(ngModel)]="config?.values?.catalog.cnc">
+                    Le CNC
+                </mat-checkbox>
+            </div>
 
             <br><br>
 
-            <button mat-raised-button mat-button
-                    class="app-button" (click)="batch(1,200,false)">Mise a jour
-            </button>
+            <div class="wrap-align">
 
-            <button mat-raised-button mat-button
-                    class="app-button" (click)="ask_for_filter()">
-                MAJ filtrée
-            </button>
 
-          <button mat-raised-button mat-button
-                    class="app-button" (click)="fast_batch()">
-                MAJ rapide
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="batch(1,200,false)">Mise a jour
+                </button>
 
-            <button mat-raised-button mat-button
-                    class="app-button" (click)="batch(0,31,true)">
-                <div class="bloc-bouton">Mise a<br>jour forcée des profils</div>
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="ask_for_filter()">
+                    MAJ filtrée
+                </button>
 
-            <button mat-raised-button mat-button
-                    class="app-button" (click)="batch(0,0)">
-                <div class="bloc-bouton">Mise a<br>jour forcée totale</div>
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="fast_batch(30,150,2)">
+                    MAJ rapide
+                </button>
 
-            <button mat-raised-button mat-button
-                    title="Analyse film par film pour éventuel complément via d'autres sources"
-                    class="app-button" (click)="batch_movies()">Complete Movies
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="fast_batch(5,300,1)">
+                    Ultra rapide
+                </button>
 
-            <button mat-raised-button mat-button
-                    title="Réindexation elasticsearch"
-                    class="app-button" (click)="update_index()">Réindexer
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="batch(0,31,true)">
+                    <div class="bloc-bouton">Mise a<br>jour forcée des profils</div>
+                </button>
 
-            <button mat-raised-button mat-button
-                    title="Traitement qualité des films"
-                    class="app-button" (click)="analyzer('films')">Traitement Qualite
-            </button>
+                <button mat-raised-button mat-button
+                        class="app-button" (click)="batch(0,0)">
+                    <div class="bloc-bouton">Mise a<br>jour forcée totale</div>
+                </button>
 
-            <button mat-raised-button class="app-button" (click)="raz('pows')">Effacer les Films</button>
+                <button mat-raised-button mat-button
+                        title="Analyse film par film pour éventuel complément via d'autres sources"
+                        class="app-button" (click)="batch_movies()">Complete Movies
+                </button>
+
+                <button mat-raised-button mat-button
+                        title="Réindexation elasticsearch"
+                        class="app-button" (click)="update_index()">Réindexer
+                </button>
+
+                <button mat-raised-button mat-button
+                        title="Traitement qualité des films"
+                        class="app-button" (click)="analyzer('films')">Traitement Qualite
+                </button>
+
+                <button mat-raised-button class="app-button" (click)="raz('pows')">Effacer les Films</button>
+            </div>
 
         </mat-expansion-panel>
 

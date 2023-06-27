@@ -48,7 +48,7 @@ export interface DialogData {
   max:number,
   emojis:boolean;
   lbl_ok:string,
-  type:string,
+  type:"text" | "number" | "memo" | "list" | "listimages" | "boolean" | "images" | "slide" | "slider",
   lbl_cancel:string,
   lbl_sup:string,
   options:any[],
@@ -65,7 +65,7 @@ export interface DialogData {
 export class PromptComponent  {
 
   showEmoji=false;
-  _type="text";
+  _type:"text" | "number" | "memo" | "list" | "listimages" | "boolean" | "images" | "slide" | "slider"="text";
   _min: number=0;
   _max: number=0;
 
@@ -73,7 +73,7 @@ export class PromptComponent  {
     public dialogRef_prompt: MatDialogRef<PromptComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData)
   {
-    if(this._type=="oui/non")data.onlyConfirm=true;
+    if(this._type=="boolean")data.onlyConfirm=true;
     if(this._type=="images")data.result=[];
     if(data.onlyConfirm)data.result="yes";
     if(data.min){
@@ -87,7 +87,6 @@ export class PromptComponent  {
     if(data.hasOwnProperty("type"))this._type=data.type;
     if(!data.result)data.result="";
     if(!data.n_rows)data.n_rows=4;
-    if(this._type=="string" || this._type=="str")this._type="text";
   }
 
   onNoClick(): void {

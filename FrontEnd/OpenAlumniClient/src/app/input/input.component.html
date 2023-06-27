@@ -1,9 +1,20 @@
-<div class="input-elements" [style.width]="width" [style.max-width]="maxwidth">
+<div class="input-elements" [style.width]="width" [style.max-width]="maxwidth" [ngClass]="fontname">
+
+  <div style="padding:5px;">
+    <mat-checkbox [(ngModel)]="value"
+                      style="width: 100%;"
+                      color="primary"
+                      *ngIf="value_type=='boolean'"
+                      (ngModelChange)="on_validate()"
+                      [title]="infobulle">
+      {{label}}
+    </mat-checkbox>
+  </div>
 
   <!-- input standard -->
-  <mat-form-field appearance="fill" class="mat-body-2" [title]="help_input" style="width: 100%;padding: 0;"
-                  *ngIf="value_type!='slider' && value_type!='list' && options.length==0 && cols==0 && rows==0">
-    <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
+  <mat-form-field appearance="fill"  [title]="help_input" style="width: 100%;padding: 0;"
+                  *ngIf="(value_type=='text' || value_type=='number') && options.length==0">
+    <mat-label *ngIf="label && label.length>0" class="mat-caption">{{label}}</mat-label>
     <input matInput
            [max]="max"
            [min]="min"
@@ -12,16 +23,30 @@
            [(ngModel)]="value"
            [placeholder]="placeholder"
            [title]="infobulle"
-           (focusin)="showHelp=true" (focusout)="showHelp=false" (keyup)="on_key($event)">
+           (focusin)="showHelp=true"
+           (focusout)="showHelp=false"
+           (keyup)="on_key($event)">
 
-    <mat-icon matSuffix *ngIf="showClear && value_type!='number' && value && value!.length>0"
-              style="opacity: 0.6;"
-              (click)="on_clear()">cancel</mat-icon>
-    <mat-hint *ngIf="showHelp" class="mat-body-2 help-input">{{help}}</mat-hint>
+
+    <div matSuffix style="margin-right: 5px;">
+      <mat-icon *ngIf="value_type=='text' && value && value.toString().startsWith('http')"
+                title="Vérifier votre lien en l'ouvrant"
+                style="opacity: 0.4;display: inline-block;"
+                (click)="explore(value)">explorer</mat-icon>
+
+      <mat-icon *ngIf="showClear && value_type!='number' && value && value!.length>0"
+                style="opacity: 0.6;" title="Effacer"
+                (click)="on_clear()">cancel</mat-icon>
+    </div>
+
+    <mat-hint *ngIf="showHelp" class="mat-body-1 help-input">{{help}}</mat-hint>
   </mat-form-field>
 
+
+
+
   <!-- input de type textarea-->
-  <mat-form-field style="width: 100%;" *ngIf="cols>0 && rows>0" appearance="fill" class="mat-body-2">
+  <mat-form-field style="width: 100%;" *ngIf="cols>0 && rows>0" appearance="fill">
     <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
 
     <textarea [placeholder]="placeholder" title="infobull" matInput
@@ -31,15 +56,15 @@
     </textarea>
 
     <mat-icon matSuffix *ngIf="showClear && value && value!.length>0" (click)="on_clear()" style="opacity: 0.7;">cancel</mat-icon>
-    <mat-hint *ngIf="showHelp" class="mat-body-2 help-input">
+    <mat-hint *ngIf="showHelp" class="mat-body-1 help-input">
       {{help}}
     </mat-hint>
   </mat-form-field>
 
   <button mat-raised-button mat-button
           *ngIf="label_button.length>0"
-          style="height: 40px;"
-          [disabled]="value.length==0"
+          style="height: 40px;margin-left:10px;"
+          [disabled]="!value || value.length==0"
           [title]="help_button"
           (click)="on_validate()">
     {{label_button}}
@@ -52,17 +77,33 @@
     {{cancel_button}}
   </button>
 
-<!--options list-->
+  <!--options list-->
   <mat-form-field  style="width:100%;" appearance="fill"
-                  *ngIf="value_type=='list' || options.length>0">
+                   *ngIf="value_type=='list' && options.length>0">
 
     <mat-label *ngIf="label.length>0" class="mat-caption">{{label}}</mat-label>
-    <mat-select [(value)]="value" (selectionChange)="sel_change($event)" class="mat-body-2" [multiple]="multiselect" >
-      <mat-option *ngFor="let option of options" [value]="option.value" class="mat-body-2">
+    <mat-select [compareWith]="compareFn" [formControl]="valueCtrl" (valueChange)="sel_change($event)" [multiple]="multiselect" >
+      <mat-option *ngFor="let option of options" [value]="option" class="mat-body-2">
         {{option.label}}
       </mat-option>
     </mat-select>
   </mat-form-field>
+
+
+  <!--options list images / images-->
+  <div  style="width:100%;text-align: left;" *ngIf="(value_type=='images' || value_type=='listimages') && options.length>0" class="mat-elevation-z2">
+    <div *ngIf="label.length>0" style="margin:10px;" class="mat-caption">{{label}}</div>
+    <div style="overflow: scroll;" [style.height]="height">
+      <mat-selection-list (selectionChange)="sel_change($event)" [multiple]="multiselect" >
+        <mat-list-option *ngFor="let option of options" [value]="option.value" class="mat-body-2">
+          <img matListItemAvatar [src]="option.image" >
+          {{option.label}}
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
+  </div>
+
+
 
   <!--  Slider -->
   <div *ngIf="value_type=='slider' || value_type=='slide'" style="width: 100%;">
@@ -77,8 +118,8 @@
       </td>
     </tr></table>
     <mat-slider [max]="max" [min]="min" [step]="step"
-                 style="margin-left: -3px;width:95%;margin-top: -10px;" *ngIf="max>min"
-                 (focusin)="showHelp=true" (focusout)="showHelp=false">
+                style="margin-left: -3px;width:95%;margin-top: -10px;" *ngIf="max>min"
+                (focusin)="showHelp=true" (focusout)="showHelp=false">
       <input matSliderThumb [(ngModel)]="value" (ngModelChange)="sel_change({value:$event})">
     </mat-slider>
     <div class="mat-body-1" style="margin-top:-5px;text-align: left;" [style.opacity]="showHelp ? 0.7 : 0">{{help}}</div>

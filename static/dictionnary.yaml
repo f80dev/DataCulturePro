@@ -133,7 +133,7 @@ jobs:
   Soundtrack: Compositeur
   Executive in charge of production: Production
   Artistic production manager: Production
-  Sound department: Ing. son
+  Sound department: Son
   Foley artist: Assistant son
   First assistant camera: Assistant caméra
   Creative director: Directeur de création
@@ -145,7 +145,7 @@ jobs:
   Lighting Technician: Décor
   Casting Assistant: Casting
   Visual Effects: Effets spéciaux
-  Associate producer: Production associée
+  Associate producer: Production
   Second assistant camera: Ass. caméra
   Re-recording mixer: Ing. son
   Script supervisor: Scripte
@@ -405,7 +405,7 @@ jobs:
   Series film editing: Montage
   Series thanks: Autres
   Translation assistant: Scripte
-  Ingénieures du son: Ing.son
+  Ingénieures du son: Ing. son
   Assistant to producer: Ass. production
   Thanks: Remerciements
   Writing credits  in alphabetical order: Scénario
@@ -428,9 +428,9 @@ jobs:
   Secrétaire de production: Production
   Ingénieure du son: Ing. son
   Ingénieur du son: Ing. son
-  Monteur son / chef opérateur son auditorium: Ing. son
+  Monteur son / chef opérateur son auditorium: Son
   Réalisateur scénariste et directeur de la photographie: Scénario/Réalisation/Image
-  Superviseur sonore: Ing. son
+  Superviseur sonore: Son
   Réalisateur scénariste enseignant en cinéma: Réalisation
   Assistantes opérateur: Ass. op
   Assistante son: Ass. son
@@ -439,7 +439,7 @@ jobs:
   Chef opérateur: Image
   Colorisation: Post Prod
   Scénariste réalisateur producteur: Scénario/Réalisation/Production
-  Chef monteur son et chef opérateur du son: Ing. son
+  Chef monteur son et chef opérateur du son: Montage Son
   Chefs électriciens: Chef(fe) électricien
   The director thanks: Remerciements
   Art advisor: Conseiller artistique

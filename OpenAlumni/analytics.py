@@ -29,6 +29,12 @@ class StatGraph:
         if style=="none":
             self.fig=""
 
+        if x is None:x="0"
+        if x.isnumeric(): x=self.df.columns[int(x)]
+
+        if y is None:y="1"
+        if y.isnumeric(): y=self.df.columns[int(y)]
+
         if style=="bar100":
             self.fig = px.bar(self.df, x=x, y=y, color=color,height=height,template=template,title=title,text_auto=True)
 

@@ -2,28 +2,34 @@
 
   <br>
 
-  <div class="titleform" *ngIf="config && config.user && config.user.user">
-    {{config.user.user.email}}
+  <div class="main-message" *ngIf="config && config.user && config.user.user">
+   Bonjour,
   </div>
 
-  <mat-accordion style="display: inline-block;width:90%;max-width: 1200px;">
+  <app-tuto label="Cet écran vous présente les informations liées à votre compte d'utilisateur de Data Culture"></app-tuto>
+
+  <mat-accordion style="display: inline-block;width:90%;max-width: 800px;">
     <mat-expansion-panel  style="text-align: left;" id="pnlGeneral" [expanded]="true">
       <mat-expansion-panel-header>Général</mat-expansion-panel-header>
-      <table>
+      <table style="border-spacing: 5px;">
         <tr>
           <th>Votre email </th>
           <td>{{config.user.user.email}}</td>
         </tr>
+        <tr></tr>
         <tr>
-          <th>Profil </th>
-          <td>{{config.config.appname}} associé: {{config.profils[config.user.profil_name]?.title}}</td>
+          <th>Profil d'utilisateur</th>
+          <td>
+            {{config.profils[config.user.profil_name]?.title}}<br>
+            <span style="opacity: 0.6">{{config.profils[config.user.profil_name]?.presentation}}</span>
+          </td>
         </tr>
       </table>
 
     </mat-expansion-panel>
 
     <mat-expansion-panel  style="text-align: left;" id="pnlPerm">
-      <mat-expansion-panel-header>Permissions</mat-expansion-panel-header>
+      <mat-expansion-panel-header>Permissions associées à votre profil</mat-expansion-panel-header>
       <div style="width: 96%;margin:2%;">
         <app-tuto label="Les permissions permettent de voir tout ce que votre profil vous permet de faire sur DataCulture"></app-tuto>
         <br>
@@ -32,8 +38,8 @@
         <br>
         <br>
 
-        <button mat-raised-button (click)="open_perms()">
-          Modifier vos permissions
+        <button mat-raised-button (click)="open_perms()" title="Si votre profil n'est pas adapté à votre usage de Data Culture">
+          Changer de profil
         </button>
 
         <app-tuto label="Certaines données de Data Culture sont en accès restreint. Pour y avoir accès il peut être nécéssaire d'en faire la demande à la FEMIS"></app-tuto>

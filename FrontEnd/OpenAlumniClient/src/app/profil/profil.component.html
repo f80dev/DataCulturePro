@@ -43,10 +43,10 @@
             <!--            </div>-->
 
 
-            <table style="width:100%;margin-top: 10px;">
+            <table style="width:100%;">
                 <tr class="mat-subheading-1">
                     <td style="text-align: left;overflow: hidden;">
-                        <div name="lblName" style="margin-top: 10px" class="mat-subheading-1">
+                        <div name="lblName" style="margin-top: 18px" class="mat-subheading-1">
                             <span >{{profil?.firstname}}</span>
                             <span > {{profil?.lastname.toUpperCase()}}</span>
                         </div>
@@ -73,7 +73,10 @@
         </div>
 
         <div class="flip-card-back" name="cardAction">
-            <div style="margin-top: 5px;" class="mat-subheading-1">{{profil.firstname+" "+profil.lastname.toUpperCase()}}</div>
+            <div style="margin: 7px;opacity: 0.6;" class="mat-subheading-1">
+                {{profil.firstname+" "+profil.lastname.toUpperCase()}}
+            </div>
+
             <div *ngIf="profil?.cursus=='P'"
                  (click)="openQuery($event,profil?.department)"
                  name="lblCursus"

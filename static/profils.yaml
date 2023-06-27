@@ -1,4 +1,5 @@
 #Listes des profils
+#subscription peut prendre les valeurs : online / secure / email
 version: 1.0
 profils:
   - id: anonyme
@@ -6,7 +7,7 @@ profils:
     level: 0
     presentation: Ce profil est attribué par défaut à tous les visiteurs anonymes de {{appname}}
     description: Profil par défaut affecté au personne non connecté
-    perm: r_promo r_lastname r_firstname share r_department r_works r_photo r_unifrance r_imdb
+    perm: r_promo r_lastname r_firstname share r_department r_works r_photo r_unifrance r_imdb advanced_search
     price: 0
     subscription: offline
 
@@ -16,7 +17,7 @@ profils:
     presentation: Consultation des profils en mode authentifié (par email / compte google).
     description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
     perm:
-      r_photo r_lastname r_firstname r_linkedin prof r_works r_promo r_address r_department
+      r_photo r_lastname r_firstname r_linkedin r_works r_promo r_department advanced_search
       r_unifrance r_imdb
     price: 0
     subscription: online
@@ -25,7 +26,7 @@ profils:
     title: Employeur
     level: 1
     presentation: Vous chercher des profils pour un projet
-    description: Profil destiné aux employeur
+    description: Profil destiné aux employeurs à la recherche de profil pour un projet
     perm: r_photo r_address r_lastname r_firstname r_linkedin r_works r_promo advanced_search publish
     price: 0
     subscription: online
@@ -63,12 +64,12 @@ profils:
     subscription: email
 
   - id: school
-    title: Personnel de l'école
-    level: 1
+    title: Interne FEMIS
+    level: 5
     presentation: Vous faites partie de la FEMIS
-    description: profil destiné aux organisme en charge de statistique
+    description: profil destiné aux personnes habitués aux vocabulaire FEMIS et utilisant l'annuaire
     perm:
-      stats r_cp r_firstname r_promo r_lastname r_works ask_friend add_movies publish validate
+      stats r_cp r_firstname r_promo r_lastname r_works ask_friend validate
       r_photo r_linkedin w_firstname w_linkedin edit_profil r_crm
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
       write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
@@ -82,7 +83,7 @@ profils:
     description: Profil destiné aux anciens élève
     perm:
       r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email
-      r_department advanced_search ask_friend ask_tutor publish
+      r_department advanced_search ask_friend ask_tutor publish stats
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
     price: 0
     subscription: email

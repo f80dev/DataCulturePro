@@ -92,7 +92,7 @@ export class PowsComponent implements OnInit {
       }
       if(r.results.length==1){
         setTimeout(()=>{
-          this.pows[0].expanded=true;
+          if(this.pows.length>0)this.pows[0].expanded=true;
         },1000);
       }
     },(err)=>{
@@ -171,7 +171,6 @@ export class PowsComponent implements OnInit {
   }
 
   award_filter(awards: any[], winner: boolean) {
-    debugger
     return awards.filter(i=>i.winner==winner)
   }
 }

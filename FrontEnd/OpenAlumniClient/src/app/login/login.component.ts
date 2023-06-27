@@ -56,8 +56,8 @@ export class LoginComponent implements OnInit {
     let email=localStorage.getItem("email");
     $$("Chargement de la configuration si l'email est dans les cookies");
     this.config.init_user(email).then( (result)=> {
-      this.email=result;
-      if (result) {
+      this.email=result.user.email;
+      if (email && email.length>0) {
         $$("L'utilisateur est déjà loggé");
         this.quit();
       } else {
@@ -292,5 +292,9 @@ export class LoginComponent implements OnInit {
         }
       }
     );
+  }
+
+  cancel() {
+    this._location.back();
   }
 }

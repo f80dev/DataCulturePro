@@ -110,7 +110,7 @@ class WorkSerializer(serializers.ModelSerializer):
     class Meta:
         model=Work
         fields=["profil","pow",
-                "duration","comment","job","title",
+                "duration","comment","job","title","year",
                 "public","creator","id","validate",
                 "score_salary","score_school","score_skill",
                 "source","state"]
@@ -250,7 +250,7 @@ class AwardSerializer(serializers.ModelSerializer):
 
 
 class ExtraProfilSerializer(serializers.ModelSerializer):
-    works = ExtraWorkSerializer(many=True,read_only=True)
+    works = WorkSerializer(many=True,read_only=True)
     sponsor = ProfilSerializer(many=False,read_only=True)
     award=AwardSerializer(many=True,read_only=True)
     class Meta:

@@ -29,6 +29,20 @@ MOVIES={
 
 PROFILS=[
 	{
+		"name":"Emmanuelle Bercot",
+		"unifrance":{"links":41},
+		"imdb":{"links":36}
+	},
+	{
+		"name":"Frédéric Chansel",
+		"unifrance":{"links":4},
+		"imdb":{"links":4}
+	},
+	{
+		"name":"Agnès nordmann"
+	},
+
+	{
 		"name":"julia ducournau",
 		"unifrance":{"links":3},
 		"imdb":{"links":4},
@@ -61,10 +75,10 @@ PROFILS=[
 
 
 
-def test_search_imdb(names=["julia ducournau","françois ozon","cyril nakash","hervé hadmar"]):
+def test_search_imdb(profils=PROFILS):
 	rc=""
-	for name in names:
-		rc=imdb_search(name,refresh_delay=1)
+	for p in profils:
+		rc=imdb_search(p["name"],refresh_delay=1)
 		assert len(rc)>0
 	return rc[0]
 
@@ -96,7 +110,7 @@ def test_extract_movies_from_profil(query=PROFILS[0], refresh_delay=10):
 
 def test_extract_imdb_awards_from_profils(profils=PROFILS):
 	for p in profils:
-		url=test_search_imdb([p["name"]])
+		url=test_search_imdb([p])
 		log("Extract award pour "+p["name"])
 		awards=extract_awards_from_imdb("https://imdb.com"+url["href"],p["name"])
 		assert not awards is None
@@ -149,7 +163,7 @@ def test_remove_string_between_delimiters():
 	assert remove_string_between_delimiters("avant<a>milieu</p>apres","<a>","</a>")=="avant<a>milieu</p>apres"
 
 
-def test_extract_movies(title="titane",url="",refresh_delay=3,src="unifrance"):
+def test_extract_movies(title="titane",url="",refresh_delay=3,src="imdb"):
 	if "imdb" in url or src=="imdb": rc=extract_film_from_imdb(url=url,title=title,refresh_delay=refresh_delay)
 	if "unifrance" in url or src=="unifrance": rc=extract_film_from_unifrance(url=url,title=title,refresh_delay=refresh_delay)
 

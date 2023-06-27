@@ -22,12 +22,9 @@ PAGEFILE_PATH="g://Projets/DataCulturePro/Temp/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EMAIL_TESTER = ["hhoareau@gmail.com",
                 "juan.neardesign@gmail.com"
-                "paul.dudule@gmail.com",
                 "roger.legumes@gmail.com",
-                "j.lecanu@femis.fr",
                 "rv@f80lab.com",
                 "herve.hoareau@f80lab.com",
-                "sophie.dudule@gmail.com"
                 ]
 
 EMAIL_PERM_VALIDATOR="paul.dudule@gmail.com"
@@ -301,6 +298,7 @@ EMAIL_HOST_USER ="contact.dcp@femis.fr"
 #EMAIL_HOST_PASSWORD ="" se trouve dans password.py
 
 APPNAME="Data Culture Pro (beta)"
+TEAM="L'équipe Data Culture"
 DOMAIN_APPLI="http://localhost:4200"
 DOMAIN_SERVER="http://localhost:8000"
 

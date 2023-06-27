@@ -322,12 +322,8 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
             rc["casting"]=extract_casting_from_unifrance(section)
 
         if "Synopsis" in section_title:
-            rc["synopsis"]=section.find("p").text
-
-
-
-
-
+            zone=section.find("p")
+            if zone: rc["synopsis"]=section.find("p").text
 
         idx_div=idx_div+1
 
@@ -395,21 +391,25 @@ def extract_profil_from_bellefaye(firstname,lastname):
 
 
 
-def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31):
-    page=load_page("https://www.unifrance.org/recherche/personne?q=$query&sort=pertinence".replace("$query",parse.quote(name)),refresh_delay=refresh_delay)
+def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31,offline=False):
+    page=load_page("https://www.unifrance.org/recherche/personne?q=$query&sort=pertinence".replace("$query",parse.quote(name)),refresh_delay=refresh_delay,offline=offline)
+    if page is None: return None
+
     links=page.findAll('a', attrs={'href': wikipedia.re.compile("^https://www.unifrance.org/annuaires/personne/")})
 
     rc=list()
+    photo = ""
     awards=list()
     if len(links)>0:
         u=links[0].get("href")
-        page=wikipedia.BeautifulSoup(wikipedia.requests.get(u, headers={'User-Agent': 'Mozilla/5.0'}).text,"html5lib")
+        page=load_page(u,refresh_delay=refresh_delay)
+        if page is None: return None
 
         sections=page.findAll("div",{"class":"collapse-wrapper"})+page.find("div",{"class":"js-summary-source"}).findAll("div",{"class":"page-sheet-section"})
         for section in sections:
             section_title=section.find("div").text
             if "Filmographie" in section_title:
-                photo = ""
+
                 _photo = section.find('div', attrs={'class': "profil-picture pull-right"})
                 if not _photo is None: photo = _photo.find("a").get("href")
 
@@ -631,27 +631,28 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_pr
     page = load_page(infos["url"], refresh_delay=refresh_delay) if "url" in infos else None
     if page is None:return None
 
-    film_zone=page.find("section",{"class":"ipc-page-section ipc-page-section--base"})
+    film_zone=page.find("div",{"data-testid":"Filmography"})
     if film_zone is None:film_zone=page
 
     #Contient l'ensemble des liens qui renvoi vers une oeuvre
     links = film_zone.findAll('a', attrs={'href': wikipedia.re.compile("^/title/tt")})
+    links=list(set([l.get("href").split("?")[0] for l in links]))
     for l in links:
-        log("Analyse d'une oeuvre "+str(l))
+        #log("Analyse d'une oeuvre "+str(l))
 
-        url = "https://www.imdb.com" + l.get("href")
+        url = "https://www.imdb.com" + l
         url = url.split("?")[0]
 
-        title_section=list(l.parent.parent.children)[1]
-        title:str=list(title_section.children)[0].text
-        years=extract_years(title_section.text)
+        # title_section=list(l.parent.parent.children)[1]
+        # title:str=list(title_section.children)[0].text
+        # years=extract_years(title_section.text)
 
         tmp_page=load_page(url,refresh_delay)
         episode_links=tmp_page.find("div",attrs={"data-testid":"hero-subnav-bar-left-block"}).find("a",attrs={'href': wikipedia.re.compile("^episodes")})
 
         #Le film analysé n'est pas une série
         nature="Série" if episode_links else ""
-        link={"url":url,"fullname":firstname+" "+lastname,"text":title.strip(),"job":"","nature":nature,"year":"" if len(years)==0 else years[0]}
+        link={"url":url,"fullname":firstname+" "+lastname,"text":"","job":"","nature":nature,"year":""}
         if not link["url"] in [x["url"] for x in infos["links"]]:
             infos["links"].append(link)
 
@@ -1266,7 +1267,7 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 standard_replace_dict={"nan":"","[vide]":""}
                 cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1)
 
-                department = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
+                department = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation,FC_SCHOLARSHIP", row, "", 60,replace_dict=standard_replace_dict,header=header)
                 if cursus=="P":
                     department_category=translate(department,["department_category"])
                 else:
@@ -1525,7 +1526,8 @@ def exec_batch(profils,refresh_delay_profil=31,
                refresh_delay_pages=31,limit=2000,
                limit_contrib=10,
                content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False},
-               remove_works=False) -> (int,int):
+               remove_works=False,
+               offline=False) -> (int,int):
     """
     Scan des profils
     :param profils:
@@ -1563,9 +1565,15 @@ def exec_batch(profils,refresh_delay_profil=31,
             try:
                 imdb_profil_url=None
                 if content is None or content["imdb"]:
-                    infos = extract_profil_from_imdb(firstname=profil.firstname, lastname=profil.lastname.lower(),refresh_delay=refresh_delay_pages,url_profil=profil.get_home("IMDB"))
+                    infos = extract_profil_from_imdb(
+                        firstname=profil.firstname, lastname=profil.lastname.lower(),
+                        refresh_delay=refresh_delay_pages,
+                        url_profil=profil.get_home("IMDB"))
                     if infos is None:
-                        infos=extract_profil_from_imdb(firstname=remove_accents(profil.firstname), lastname=remove_accents(profil.lastname),refresh_delay=refresh_delay_pages,url_profil=profil.get_home("IMDB"))
+                        infos=extract_profil_from_imdb(
+                            firstname=remove_accents(profil.firstname), lastname=remove_accents(profil.lastname),
+                            refresh_delay=refresh_delay_pages,
+                            url_profil=profil.get_home("IMDB"))
                     log("Extraction d'imdb " + str(infos))
                     if "url" in infos:
                         profil.add_link(infos["url"], "IMDB")
@@ -1614,7 +1622,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
 
-            if content["unifrance"] and not infos is None:
+            if content and content["unifrance"] and not infos is None:
                 if "prix" in infos:
                     for a in infos["prix"]:
                         add_award(a["title"],profil,desc=a["desc"],film_title=a["pow"],year=a["year"],win=a["winner"])

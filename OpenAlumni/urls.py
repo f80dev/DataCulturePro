@@ -73,6 +73,7 @@ urlpatterns = [
     path('api/ask_perms/', views.ask_perms),
     path('api/set_perms/', views.set_perms),
     path('api/send_report_by_email/', views.send_report_by_email),
+    path('api/sendmail/', views.api_sendmail),
     path('api/get_students/', views.get_students),
     path('api/social_graph/json/', views.social_graph),
     path('api/export_dict/', views.export_dict),

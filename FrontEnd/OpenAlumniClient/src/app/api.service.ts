@@ -192,6 +192,16 @@ export class ApiService {
     return this._post("send_to/","",obj);
   }
 
+  sendmail(_to:string,subject:string,modele:string,dict:any) {
+    let obj={
+      to:_to,
+      template:modele,
+      replacement:dict,
+      subject:subject
+    }
+    return this._post("sendmail/","",obj);
+  }
+
 
   searchImage(result: any, number: number, access_token: any) {
 

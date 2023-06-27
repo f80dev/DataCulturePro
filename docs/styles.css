@@ -217,7 +217,7 @@ html {
 }
 @media (max-width: 600px) {
   html {
-    font-size: 2.4vw;
+    font-size: 2.8vw;
   }
 }
 .mat-ripple-element {
@@ -4102,8 +4102,16 @@ select.mat-mdc-form-field-input-control:not(.mat-mdc-native-select-inline) optio
   color: #81C784;
 }
 
+.fa-color {
+  color: #eee117;
+}
+
 .material-icon.fi-color {
   color: #81C784;
+}
+
+.material-icon.fa-color {
+  color: #eee117;
 }
 
 .material-icon.fc-color {
@@ -4332,7 +4340,7 @@ html {
 }
 @media (max-width: 600px) {
   html {
-    font-size: 2.4vw;
+    font-size: 2.8vw;
   }
 }
 .mat-ripple-element {
@@ -8220,8 +8228,16 @@ select.mat-mdc-form-field-input-control:not(.mat-mdc-native-select-inline) optio
   color: #81C784;
 }
 
+.fa-color {
+  color: #eee117;
+}
+
 .material-icon.fi-color {
   color: #81C784;
+}
+
+.material-icon.fa-color {
+  color: #eee117;
 }
 
 .material-icon.fc-color {
@@ -8342,10 +8358,17 @@ select.mat-mdc-form-field-input-control:not(.mat-mdc-native-select-inline) optio
 }
 
 .wrap-item {
-  margin: 10px;
+  margin: 5px;
   max-width: 500px;
   min-width: 250px;
   width: 80%;
+}
+
+.wrap-align {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-items: center;
 }
 
 .wrap-list {
@@ -8472,6 +8495,22 @@ mat-dialog-title {
 
 a {
   text-decoration: none;
+}
+
+a:link {
+  color: gray;
+}
+
+a:visited {
+  color: gray;
+}
+
+a:hover {
+  color: lightgray;
+}
+
+a:active {
+  color: gray;
 }
 
 .app-mat-panel-title {

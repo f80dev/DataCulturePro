@@ -46,21 +46,16 @@ content:
     content:
       "
         <p>
-          Data Culture Pro permet de faire des recherches particulièrement précises parmi les profils:
-          <table style='width:100%;padding-left:15px;'>
-            <tr style='text-align:middle;'>
-              <th>Principe</th><th>Exemple</th>
-            </tr>
-            <tr>
-              <td>un champs particulier</td><td>nom:dudule</td>
-            </tr>
-            <tr>
-              <td>plusieurs mots obligatoires</td><td>chiens&chats</td>
-            </tr>
-            <tr>
-              <td>plusieurs mots possibles</td><td>chiens chats</td>
-            </tr>
-          </table>
+          Data Culture Pro permet des recherches rapides et précises sur l'ensembl des profils:
+          <ul>
+          <li>Recherche par nom: ducournau</li>
+          <li>Recherche par début du nom: ducou*
+          <li>Recherche par promotion: 2012</li>
+          <li>Recherche par département: réalisation</li>
+          <li>Recherche croisée : 2012 réalisation ou 2012 réal*</li>
+          </ul>
+          <br>
+          Pour l'instant, {{appname}} n'est pas sensible au Majuscules/Minuscules mais sensible aux accents
         </p>
         "
 
@@ -85,6 +80,31 @@ content:
       Chaque fiche de film contient les informations essentielles pour le film : titre, synopsis, années de sortie<br>
       mais également la liste des étudiants FEMIS ayant contribué à la réalisation ainsi que des liens complémentaires
       pour avoir plus d'information sur le film
+      </p>
+      "
+
+  - index: data_quality
+    title: Que font précisément les traitements qualité sur les profils et les oeuvres ?
+    order: 0
+    format: html
+    content:
+      "
+      <p>
+      Sur les profils et les récompenses, le traitement qualité consiste à 
+      <ul>
+        <li>Normaliser la casse</li>
+        <li>Appliquer le dictionnaire</li>
+        <li>Fusionner les doublons sur les récompenses</li>
+        <li>Effacer les profils incorrects</li>
+        <li>Supprimer les redondances dans les liens vers les sites externes</li>
+      </ul>
+      </p>
+      <p>
+            Sur les oeuvres, le traitement qualité consiste à 
+            <ul>
+              <li>Fusionner les doublons</li>
+              <li>Supprimer les redondances dans les liens vers les sites externes</li>
+            </ul>
       </p>
       "
 

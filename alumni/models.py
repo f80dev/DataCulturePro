@@ -56,7 +56,7 @@ class Profil(models.Model):
     department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie / code de regroupement de la formation")
 
     job=models.CharField(max_length=60,null=True,default="",blank=True,help_text="Profession actuelle")
-    degree_year=models.IntegerField(null=True,help_text="Année de sortie de l'école (promotion)")
+    degree_year=models.CharField(null=True,max_length=4, help_text="Année de sortie de l'école (promotion)")
 
     linkedin = models.URLField(blank=True, null=True,help_text="Adresse de la page public linkedin du profil")
     email=models.EmailField(null=True,unique=False,help_text="@email du profil")
@@ -154,6 +154,11 @@ class Profil(models.Model):
     @property
     def fullname(self):
         return '%s %s' % (self.firstname, self.lastname.upper())
+
+    @property
+    def promotion(self) -> str :
+        return str(self.degree_year)
+
 
     @property
     def promo(self):
@@ -306,6 +311,11 @@ class Work(models.Model):
     @property
     def title(self):
         return self.pow.title
+
+    @property
+    def year(self):
+        return self.pow.year
+
 
     @property
     def lastname(self):

@@ -2,16 +2,17 @@ import {AfterViewInit, Component, HostListener, OnInit, ViewChild} from '@angula
 import {ConfigService} from "./config.service";
 import {ApiService} from "./api.service";
 import {Location} from "@angular/common";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {environment} from "../environments/environment";
 import {MatDrawerMode, MatSidenav} from "@angular/material/sidenav";
 import {ChatAdapter} from "ng-chat";
 import { MyAdapter } from './MyAdapter';
-import {$$} from "./tools";
-import {PromptComponent} from "./prompt/prompt.component";
+import {$$, getParams} from "./tools";
 import {MatDialog} from "@angular/material/dialog";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {DeviceService} from "./device.service";
+
+declare const gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit,AfterViewInit {
 
   public adapter: ChatAdapter = new MyAdapter();
 
+
   innerWidth: number=400;
   sidemenu_mode: MatDrawerMode="side";
   simple_screen=false;
@@ -39,9 +41,13 @@ export class AppComponent implements OnInit,AfterViewInit {
               public routes:ActivatedRoute,
               public router:Router){
     this.appVersion=environment.appVersion;
-    config.init().then(() => {
-      this.config.init_user(localStorage.getItem("email"));
-    });
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        gtag('config', 'G-4H77LPR3FC', { 'page_path': event.urlAfterRedirects });
+      }
+    })
+
     this.responsive.observe([Breakpoints.Small,Breakpoints.XSmall,Breakpoints.HandsetPortrait]).subscribe((result)=>{
       this.simple_screen=result.matches;
     })
@@ -80,42 +86,42 @@ export class AppComponent implements OnInit,AfterViewInit {
 
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.config.init()
+    await this.config.init_user(localStorage.getItem("email"));
+
     setTimeout(()=>{
       this.onResize({currentTarget:{innerWidth:window.innerWidth}});
     },1000);
   }
 
-  ngAfterViewInit(): void {
-
-    setTimeout(()=>{
-      if(this.routes.snapshot.queryParamMap.has("login") && this.routes.snapshot.queryParamMap.has("password")){
+  async ngAfterViewInit() {
+      let params:any=await getParams(this.routes);
+      if(params.login || params.password){
         this.router.navigate(["login"],{queryParams:{
-            login:this.routes.snapshot.queryParamMap.get("login"),
-            password:this.routes.snapshot.queryParamMap.get("password"),
+            login:params.login,password:params.password
           }});
-      } else {
-        if(!this.routes.snapshot.queryParamMap.has("no_auto_login")){
-          setTimeout(()=>{
-            if(!this.config.isLogin() && !this._location.isCurrentPathEqualTo("./login") && localStorage.getItem("propal_login")!="Done"){
-              $$("Proposition d'authentification");
-              localStorage.setItem("propal_login","Done");
-              this.dialog.open(PromptComponent,{data: {
-                  title: 'Se connecter',
-                  question: 'Vous souhaitez en savoir plus sur les profils. Connectez-vous !',
-                  onlyConfirm: true,
-                  lbl_ok: 'Oui',
-                  lbl_cancel: 'Non'
-                }}).afterClosed().subscribe((result_code) => {
-                if (result_code == 'yes') {
-                  this.router.navigate(["login"]);
-                }
-              });
-            }
-          },60000);
-        }
       }
-    },500);
+
+        // if(!this.routes.snapshot.queryParamMap.has("no_auto_login")){
+        //   setTimeout(()=>{
+        //     if(!this.config.isLogin() && !this._location.isCurrentPathEqualTo("./login") && localStorage.getItem("propal_login")!="Done"){
+        //       $$("Proposition d'authentification");
+        //       localStorage.setItem("propal_login","Done");
+        //       this.dialog.open(PromptComponent,{data: {
+        //           title: 'Se connecter',
+        //           question: 'Vous souhaitez en savoir plus sur les profils. Connectez-vous !',
+        //           onlyConfirm: true,
+        //           lbl_ok: 'Oui',
+        //           lbl_cancel: 'Non'
+        //         }}).afterClosed().subscribe((result_code) => {
+        //         if (result_code == 'yes') {
+        //           this.router.navigate(["login"]);
+        //         }
+        //       });
+        //     }
+        //   },60000);
+        // }
 
   }
 

@@ -49,7 +49,6 @@ export class PublicComponent implements OnInit {
   create_works_timeline(p:any,works:any[]){
     p.expe={};
     let rc=[];
-
     for(let _w of works){
       _w.job=_w.jobs.join(" / ")
       _w.icon=this.config.icons["Movie"];
@@ -60,9 +59,7 @@ export class PublicComponent implements OnInit {
       _w.subtitle=_w.title;
       _w.label="<div class='mat-subheading-2'>"+_w.job+" pour <a class='primary-color' href='./pows?query=\""+_w.title+"\"'>"+_w.title+"</a></div>"
 
-      // if(_w.public)
-
-      rc.push(_w);
+      if(_w.public)rc.push(_w);
 
       p.expe[_w.job]=p.expe.hasOwnProperty(_w.job) ? p.expe[_w.job]+1 : 1;
 
@@ -96,7 +93,10 @@ export class PublicComponent implements OnInit {
 
   load_items(p){
     this.message="Chargement des expériences";
-
+    for(let i=0;i<p.works.length;i++){
+      p.works[i].pow=this.pows[p.works[i].pow]
+      p.works[i].profil=p
+    }
     let works=group_works(p.works);
     let lastYear="";
     for(let i=0;i<works.length;i++){
@@ -165,7 +165,7 @@ export class PublicComponent implements OnInit {
           this.profil=p;
           this.works=this.profil.works;
           for(let w of this.works){
-            this.pows[w.pow.id]=w.pow;
+            this.pows[w.pow]={title:w.title,year:w.year,id:w.pow};
           }
           this.url=this._location.path();
           this.title = p.firstname + " " + p.lastname;

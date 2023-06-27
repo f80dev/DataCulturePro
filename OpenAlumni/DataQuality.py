@@ -73,17 +73,19 @@ class ProfilAnalyzer:
 
             if len(profil.address)>0 and len(profil.address.replace(" ",""))==0:
                 profil.address=""
+                self.add_bad_profil(profil,"Adresse manquante")
                 bSave=True
 
             if profil.email=="nan":
                 profil.email=""
                 bSave=True
+                self.add_bad_profil(profil,"Email manquant")
 
             if profil.cursus=="S" and profil.department_category=="":
                 if len(profil.department)>0:
                     profil.department_category=profil.department
                 else:
-                    log("Profil "+profil.lastname+" incomplet")
+                    self.add_bad_profil(profil,"Formation manquante")
 
             if str(profil.lastname+profil.firstname).strip()=="":
                 log("Profil "+profil.id+" sans nom ni prénom donc suppression")
@@ -141,8 +143,8 @@ class PowAnalyzer:
             log(str(total)+" - Recherche sur "+str(p1))
             for p2 in self.pows:
                 d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
-                seuil=0.97
-                if p1.nature=="Série" and p2.nature=="Série": seuil=0.995
+                seuil=0.98
+                if p1.nature=="Série" and p2.nature=="Série": seuil=0.999995
                 if not p1.year is None and not p2.year is None and  d>seuil and abs(int(p1.year)-int(p2.year))<2 and p1.id!=p2.id:
                     log("Suspission de doublon entre avec "+str(p2))
                     if with_fusion:
