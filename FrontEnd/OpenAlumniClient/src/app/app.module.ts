@@ -19,7 +19,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import { AdminComponent } from './admin/admin.component';
 import {MatInputModule} from '@angular/material/input';
 import {MatIconModule} from '@angular/material/icon';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AboutComponent } from './about/about.component';
 import { FaqsComponent } from './faqs/faqs.component';
 import { HourglassComponent } from './hourglass/hourglass.component';
@@ -166,6 +166,7 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
             placeholder: 'votre article ici'
         }),
         BrowserAnimationsModule,
+        ReactiveFormsModule,
         MatNativeDateModule,
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
         MatCardModule,
@@ -182,6 +183,7 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         MatDialogModule,
         MatButtonModule,
         MatIconModule,
+
         FormsModule,
         MatProgressSpinnerModule,
         MatSelectModule,

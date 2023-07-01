@@ -3,6 +3,7 @@ import {WebcamUtil} from "ngx-webcam";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {SocialServiceConfig} from "ngx-social-button";
 import {ActivatedRoute} from "@angular/router";
+import {ApiService} from "./api.service";
 
 declare var EXIF: any;
 export const ADMIN_PASSWORD="hh4271";
@@ -18,7 +19,7 @@ export function showError(vm:any,err:any){
 
 
 export function translateQuery(text:string,all_term=false,query="search_simple_query_string"):string {
-  if(text.length==0)return "";
+  if(!text || text.length==0)return "";
   let dict={
     "nom":"lastname",
     "prenom":"firstname",
@@ -100,6 +101,46 @@ export function encrypt(s:string) : string {
   return btoa(s);
 }
 
+export function eval_params(inst_report:any,filter_value=""){
+  let param="color="+inst_report.color+"&chart="+inst_report.chart;
+  if(inst_report.cols)param=param+"&cols="+inst_report.cols;
+  if(inst_report.sql)param=param+"&sql="+inst_report.sql;
+  if(inst_report.percent)param=param+"&percent=True";
+  if(inst_report.table)param=param+"&table="+inst_report.table;
+  if(inst_report.x)param=param+"&x="+inst_report.x+"&y="+inst_report.y;
+  if(inst_report.group_by)param=param+"&group_by="+inst_report.group_by;
+  if(inst_report.template)param=param+"&template="+inst_report.template;
+  if(inst_report.replace)param=param+"&replace="+JSON.stringify(inst_report.replace);
+  if(inst_report.func)param=param+"&func="+inst_report.fun;
+  if(inst_report.title)param=param+"&title="+inst_report.title;
+
+  if(inst_report.filter){
+    param=param+"&filter="+inst_report.filter;
+  }
+  if(inst_report.filter)param=param+"&filter_value="+filter_value;
+
+  if(inst_report.data_cols){
+    param=param+"&data_cols="+inst_report.data_cols+"&cols="+inst_report.cols+"&table="+inst_report.table;
+  }
+  param=param+"&height="+Math.trunc(window.screen.availHeight*0.6);
+  return {
+    param: param,
+    url: api("export_all", param + "&out=graph_html&height=" + Math.trunc(window.screen.availHeight * 0.9) + "&title=" + inst_report.title, false, "")
+  }
+}
+
+
+export function open_report(report_id:string,_api:any,section="Instant_reports"){
+  _api._get("getyaml","name=stat_reports").subscribe((r:any)=>{
+    for(let report of r[section]){
+      if(report.prod && report.id==report_id){
+        let obj=eval_params(report)
+        open(obj.url,"Stats")
+      }
+    }
+  })
+}
+
 
 export function setParams(_d:any,prefix="") : string {
   let rc=[];
@@ -176,6 +217,8 @@ export function extract_id(url:string):string {
   return url.substr(lastPos+1);
 }
 
+
+
 //Permet de regrouper les travaux lorsque sur un meme film
 export function group_works(wrks) {
   let jobs={}
@@ -197,7 +240,6 @@ export function group_works(wrks) {
     if(works[pow_id].indexOf(w.id)==-1)works[pow_id].push(w.id);
   }
 
-  debugger
   let rc=[];
   for(let k of Object.keys(jobs)){ //k pointe les films
     rc.push({title:pows[k].title,jobs:jobs[k],year:pows[k].year,pow:pows[k].pow,works:works[k],public:pows[k].public})
@@ -409,7 +451,6 @@ export function subscribe_socket(vm:any,event_name:string,func=null){
     });
   } else {
     $$("Impossibilité d'installer la socket pour "+event_name);
-    debugger;
   }
 }
 

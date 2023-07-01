@@ -21,6 +21,7 @@
     Rechercher des anciens de la FEMIS par nom, métier, promotion, titre de film ou récompense
     <br>
     <span *ngIf="config?.infos_server?.content" style="margin-top:15px;font-size:medium;opacity: 0.6;">parmi les {{config.infos_server.content.profils}} profils disponibles</span>
+    <mat-icon style="display: inline-block;margin-bottom: -5px;cursor: pointer;" (click)="open_chart()">bar_chart</mat-icon>
   </div>
 
 

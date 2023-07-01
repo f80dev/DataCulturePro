@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {$$, getParams, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
+import {$$, getParams, open_report, remove_ponctuation, showError, showMessage, translateQuery, uniq} from "../tools";
 import {ConfigService} from "../config.service";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
@@ -172,5 +172,9 @@ export class PowsComponent implements OnInit {
 
   award_filter(awards: any[], winner: boolean) {
     return awards.filter(i=>i.winner==winner)
+  }
+
+  open_chart() {
+    open_report("award_by_department",this.api)
   }
 }

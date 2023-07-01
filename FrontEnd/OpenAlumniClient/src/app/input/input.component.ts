@@ -51,6 +51,7 @@ export class InputComponent implements OnChanges,OnInit {
   @Input() showClear: boolean=true
   @Input() fontname="mat-body-2"
   @Input() height="200px"
+  @Input() unity: string="";
 
 
   constructor() { }
@@ -75,7 +76,8 @@ export class InputComponent implements OnChanges,OnInit {
 
   sel_change($event: any) {
     if($event.hasOwnProperty("options")){
-      this.value=$event["options"][0]
+      let values= $event.options
+      this.value=values[0].value
     }else {
       if(this.value_type=="slide" || this.value_type=="slider"){
         this.value=$event.value
@@ -96,7 +98,15 @@ export class InputComponent implements OnChanges,OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if(this.value_type=="list" || this.value_type=="listimages" || this.value_type=="images") {
-      if (changes.hasOwnProperty("value")) this.valueCtrl.setValue(changes["value"].currentValue)
+      if(changes["value"]){
+        if(this.value_field==""){
+          this.valueCtrl.setValue(changes["value"].currentValue)
+        }else{
+          for(let o of this.options){
+            if(o[this.value_field]==changes["value"].currentValue)this.valueCtrl.setValue(o);
+          }
+        }
+      }
 
       if (typeof (changes["options"]) == "string") { // @ts-ignore
         changes["options"] = changes["options"].split(",")

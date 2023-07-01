@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ApiService} from "../api.service";
-import {$$, abrege, getParams, normaliser, showError, showMessage, translateQuery} from "../tools";
+import {$$, abrege, getParams, normaliser, open_report, showError, showMessage, translateQuery} from "../tools";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigService} from "../config.service";
@@ -265,6 +265,11 @@ export class SearchComponent implements OnInit {
   update_pro_filter() {
     localStorage.setItem("pro_filter",this.filter_with_pro ? "true" : "false");
     this.refresh();
+  }
+
+  open_chart() {
+    open_report("student_by_depyear",this.api)
+    open_report("prostudent_by_depyear",this.api)
   }
 }
 

@@ -378,16 +378,26 @@ def update_extrauser(request):
     """
     email=request.GET.get("email","")
     if len(email)>0:
+        user=ExtraUser.objects.get(user__email=email)
         log("Recherche du nouvel utilisateur dans les profils FEMIS")
         profils=Profil.objects.filter(email__exact=email)
         if len(profils)>0:
             log("Mise a jour du profil de l'utilisateur se connectant")
-            user=ExtraUser.objects.get(user__email=email)
             if not user is None:
                 log("On enregistre un lien vers le profil FEMIS de l'utilisateur")
                 user.profil=profils.first()
-                user.save()
-                return JsonResponse({"message":"Profil FEMIS lié"})
+                user.profil_name="student"
+        else:
+            user.profil_name="standard"     #Connecté
+
+        perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
+        for p in perms["profils"]:
+            if p["id"]==user.profil_name:
+                user.perm=p["perm"]
+                break
+
+        user.save()
+        return JsonResponse({"message":"Profil FEMIS lié"})
 
     return JsonResponse({"message": "Pas de profil FEMIS identifié"})
 

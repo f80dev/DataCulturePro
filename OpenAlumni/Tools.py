@@ -559,6 +559,7 @@ def index_string(s):
     if not s is None:
         while " " in s: s=s.replace(" ","")
         s=remove_accents(remove_ponctuation(s)).upper()
+        while " " in s: s=s.replace(" ","")
     return s
 
 

@@ -1,13 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
-import {$$, api, checkLogin, showError, showMessage} from "../tools";
+import {$$, api, checkLogin, eval_params, showError, showMessage} from "../tools";
 import {ConfigService} from "../config.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
 import {environment} from "../../environments/environment";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
-import {delay, retry} from "rxjs/operators";
 
 @Component({
   selector: 'app-stats',
@@ -119,33 +118,6 @@ export class StatsComponent implements OnInit {
   }
 
 
-  eval_params(inst_report){
-    let param="color="+inst_report.color+"&chart="+inst_report.chart;
-    if(inst_report.cols)param=param+"&cols="+inst_report.cols;
-    if(inst_report.sql)param=param+"&sql="+inst_report.sql;
-    if(inst_report.percent)param=param+"&percent=True";
-    if(inst_report.table)param=param+"&table="+inst_report.table;
-    if(inst_report.x)param=param+"&x="+inst_report.x+"&y="+inst_report.y;
-    if(inst_report.group_by)param=param+"&group_by="+inst_report.group_by;
-    if(inst_report.template)param=param+"&template="+inst_report.template;
-    if(inst_report.replace)param=param+"&replace="+JSON.stringify(inst_report.replace);
-    if(inst_report.func)param=param+"&func="+inst_report.fun;
-    if(inst_report.title)param=param+"&title="+inst_report.title;
-    if(inst_report.filter){
-      param=param+"&filter="+inst_report.filter;
-      this.filter_name="Filtrer par "+inst_report.filter;
-    }
-    if(this.sel_filter)param=param+"&filter_value="+this.sel_filter;
-    //if(inst_report.filter)param=param+"&filter="+inst_report.filter.replace(">","_sup_").replace("<","_inf_").replace("=","_is_");
-    if(inst_report.data_cols){
-      param=param+"&data_cols="+inst_report.data_cols+"&cols="+inst_report.cols+"&table="+inst_report.table;
-    }
-    param=param+"&height="+Math.trunc(window.screen.availHeight*0.6);
-    return {
-      param: param,
-      url: api("export_all", param + "&out=graph_html&height=" + Math.trunc(window.screen.availHeight * 0.9) + "&title=" + this.sel_report.title, false, "")
-    }
-  }
 
 
 
@@ -153,7 +125,9 @@ export class StatsComponent implements OnInit {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
-    let obj=this.eval_params(this.sel_report)
+    let obj=eval_params(this.sel_report,this.sel_filter)
+    this.filter_name="Filtrer par "+this.sel_report.filter;
+
     if(this.sel_report.html_code=="" || this.sel_report.html_code==""){
       this.sel_report.url=obj.url;
 
@@ -176,7 +150,7 @@ export class StatsComponent implements OnInit {
     rc=rc+"<tr style='padding:5px'><th>Titre du rapport</th><th></th><th>Description</th>"
     for(let ir of this.instant_reports){
       if(this.sel_instant_report_to_copy.indexOf(ir.id)>-1){
-        let obj=this.eval_params(ir);
+        let obj=eval_params(ir);
         rc=rc+"<tr>\n";
         rc=rc+"<td style='padding:5px'>"+ir.title+"</td>\n";
         rc=rc+"<td style='padding:5px'><a href='"+encodeURI(obj.url)+"'>Ouvrir</a></td>\n";

@@ -5,6 +5,7 @@ from OpenAlumni.Tools import equal_str, log, remove_string_between_delimiters, i
 from OpenAlumni.settings import MOVIE_NATURE
 
 MOVIES={
+	"Si tu t'imagines":{"url":"https://www.imdb.com/title/tt7374550/"},
 	"un si grand soleil":{"url":"https://www.imdb.com/title/tt8883922/"},
 	"servant":{"url":"https://www.imdb.com/title/tt8068860/?ref_=nv_sr_srsg_0","casting":9},
 	"sam":{"url":"https://www.imdb.com/title/tt5085178/?ref_=ttep_ep_tt","episodes":14,"casting":9},
@@ -29,10 +30,21 @@ MOVIES={
 
 PROFILS=[
 	{
+		"name":"Leyla BOUZID",
+		"unifrance":{"links":1},
+		"imdb":{"links":1}
+	},
+	{
+		"name":"Marie Mars Prieur",
+		"unifrance":{"links":1},
+		"imdb":{"links":1}
+	},
+	{
 		"name":"Emmanuelle Bercot",
 		"unifrance":{"links":41},
 		"imdb":{"links":36}
 	},
+
 	{
 		"name":"Frédéric Chansel",
 		"unifrance":{"links":4},
@@ -141,7 +153,7 @@ def test_extract_episode_from_profil(name="Claire Lemaréchal",title="sam"):
 
 
 
-def test_extract_casting_from_imdb(titles=["Grave","sam","servant","Liberté"]):
+def test_extract_casting_from_imdb(titles=["Si tu t'imagines","Grave","sam","servant","Liberté"]):
 	for title in titles:
 		casting=extract_casting_from_imdb(MOVIES[title]["url"],refresh_delay=1)
 		assert not casting is None

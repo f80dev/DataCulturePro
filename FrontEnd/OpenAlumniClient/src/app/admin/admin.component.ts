@@ -49,18 +49,26 @@ export class AdminComponent implements OnInit {
     this.profils=Object.values(this.config.profils);
   }
 
-  raz(table:string) {
-    _prompt(this,"Confirmer l'effacement total ?").then(()=>{
+  async raz(table:string) {
+    let rep=await _prompt(this,"Confirmer l'effacement total ?")
+    if(rep=="yes"){
       this.message="Effacement de la base de données";
-      this.api._get("raz/","tables="+table+"&password=oui",200).subscribe(()=>{
-        showMessage(this,"Base de données effacée");
-        this.message="";
-        this.initdb();
-        this.router.navigate(["import"]);
-      },(err)=>{
-        showError(this,"Echec d'effacement de la base");
-      })
-    })
+      try {
+        await this.save_backup();
+        this.api._get("raz/","tables="+table+"&password=oui",200).subscribe(()=>{
+          showMessage(this,"Base de données effacée");
+          this.message="";
+          this.initdb();
+          this.router.navigate(["import"]);
+        },(err)=>{
+          showError(this,"Echec d'effacement de la base");
+        })
+      }catch (e){
+        showError(this,e);
+      }
+
+    }
+
   }
 
   openQuery() {
@@ -238,11 +246,17 @@ export class AdminComponent implements OnInit {
   }
 
   save_backup() {
-    this.message="Backup en cours";
-    this.api._get("backup","command=save").subscribe((r:any)=>{
-      this.message="";
-      this.refresh_backup();
-      showMessage(this,"Enregistrement terminé")
+    return new Promise((resolve, reject) => {
+      this.message="Backup en cours";
+      this.api._get("backup","command=save").subscribe((r:any)=>{
+        this.message="";
+        this.refresh_backup();
+        showMessage(this,"Enregistrement terminé")
+        resolve(true);
+      },(err)=>{
+        showError(this,err)
+        reject();
+      })
     })
   }
 

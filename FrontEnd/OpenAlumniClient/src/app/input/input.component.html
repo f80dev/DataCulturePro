@@ -28,14 +28,15 @@
            (keyup)="on_key($event)">
 
 
-    <div matSuffix style="margin-right: 5px;">
+    <div matSuffix style="margin-right: 5px;opacity: 0.4;">
       <mat-icon *ngIf="value_type=='text' && value && value.toString().startsWith('http')"
                 title="Vérifier votre lien en l'ouvrant"
-                style="opacity: 0.4;display: inline-block;"
-                (click)="explore(value)">explorer</mat-icon>
+                style="display: inline-block;font-size: 20px;"
+                (click)="explore(value)">visibility</mat-icon>
 
       <mat-icon *ngIf="showClear && value_type!='number' && value && value!.length>0"
-                style="opacity: 0.6;" title="Effacer"
+                title="Effacer"
+                style="display: inline-block;font-size: 20px;"
                 (click)="on_clear()">cancel</mat-icon>
     </div>
 
@@ -95,8 +96,8 @@
     <div *ngIf="label.length>0" style="margin:10px;" class="mat-caption">{{label}}</div>
     <div style="overflow: scroll;" [style.height]="height">
       <mat-selection-list (selectionChange)="sel_change($event)" [multiple]="multiselect" >
-        <mat-list-option *ngFor="let option of options" [value]="option.value" class="mat-body-2">
-          <img matListItemAvatar [src]="option.image" >
+        <mat-list-option *ngFor="let option of options" [value]="option" class="mat-body-2">
+          <img matListItemAvatar [src]="option.image" [style.width]="size_image" [style.height]="size_image">
           {{option.label}}
         </mat-list-option>
       </mat-selection-list>
@@ -116,6 +117,7 @@
                (focusout)="direct_change_slider()"
                style="max-width:60px;border: none;background:none;font-size: large;text-align: right;">
       </td>
+      <td style="text-align: left" *ngIf="unity.length>0" class="mat-caption color-primary">{{unity}}</td>
     </tr></table>
     <mat-slider [max]="max" [min]="min" [step]="step"
                 style="margin-left: -3px;width:95%;margin-top: -10px;" *ngIf="max>min"

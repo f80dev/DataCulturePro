@@ -9,16 +9,19 @@ export function awards_timeline(awards,config,profil,pows,winner=true){
     awards=awards.sort( (a,b) => a.year>b.year ? -1 : 1);
     for(let a of awards){
         if(a.winner==winner){
-            awards_timeline.push({
-                year:old_year==a.year ? "" : ""+a.year,
-                title:a.festival.title+" : "+a.description,
-                subtitle:pows[a.pow].title,
-                icon: config.icons["Award"],
-                sources:a.source,
-                type:"award",
-                label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ pows[a.pow].title+"</span></div>"
-            })
-            old_year=a.year;
+            let pow=pows[a.pow];
+            if(pow){
+                awards_timeline.push({
+                    year:old_year==a.year ? "" : ""+a.year,
+                    title:a.festival.title+" : "+a.description,
+                    subtitle:pow.title,
+                    icon: config.icons["Award"],
+                    sources:a.source,
+                    type:"award",
+                    label:"<div class='mat-subheading-1'>"+a.description + " - " + a.festival.title + " pour <span class='primary-color'>"+ pow.title+"</span></div>"
+                })
+                old_year=a.year;
+            }
         }
     }
 
