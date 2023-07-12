@@ -52,7 +52,6 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import { WorksComponent } from './works/works.component';
 import { SplashComponent } from './splash/splash.component';
-import {QuillModule} from 'ngx-quill';
 import { WriteComponent } from './write/write.component';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import { StatsComponent } from './stats/stats.component';
@@ -156,15 +155,15 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         HttpClientModule,
         MglTimelineModule,
         ScrollingModule,
-        QuillModule.forRoot({
-            modules: {
-                syntax: false,
-            },
-            theme: 'snow',
-            format: 'html',
-            readOnly: false,
-            placeholder: 'votre article ici'
-        }),
+        // QuillModule.forRoot({
+        //     modules: {
+        //         syntax: false,
+        //     },
+        //     theme: 'snow',
+        //     format: 'html',
+        //     readOnly: false,
+        //     placeholder: 'votre article ici'
+        // }),
         BrowserAnimationsModule,
         ReactiveFormsModule,
         MatNativeDateModule,
@@ -198,7 +197,6 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         MatRadioModule,
         MatChipsModule,
         MatAutocompleteModule,
-        QuillModule,
         MatSliderModule,
         GoogleChartsModule,
         ShareButtonsModule,

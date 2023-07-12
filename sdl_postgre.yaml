@@ -17,7 +17,7 @@ profiles:
     postgres:
       resources:
         cpu:
-          units: 0.5
+          units: 1
         memory:
           size: 1Gi
         storage:

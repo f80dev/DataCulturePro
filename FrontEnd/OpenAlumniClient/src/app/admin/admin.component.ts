@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
 import {$$, api, showError, showMessage} from "../tools";
 import {Router} from "@angular/router";
@@ -14,10 +14,10 @@ import {MatDialog} from "@angular/material/dialog";
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.sass']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit,AfterViewInit {
 
   message: string;
-  users:any[];
+  users:any[]=[];
   profils: tProfilPerms[]=[];
   backup_files: any[]=[];
   sel_backup_file:string="";
@@ -33,19 +33,22 @@ export class AdminComponent implements OnInit {
     })
   }
 
+  ngAfterViewInit(): void {
+        setTimeout(()=>{this.refresh();},1500);
+    }
+
   refresh(){
     this.api._get("extrausers").subscribe((r:any)=>{
       this.profils=Object.values(this.config.profils);
       this.users=r.results;
       for(let i=0;i<this.users.length;i++){
-        this.users[i].profil=this.profils[this.users[i].profil_name]
+        this.users[i].profil=this.config.profils[this.users[i].profil_name]
       }
     })
   }
 
   ngOnInit(): void {
     this.refresh_backup();
-    this.refresh();
     this.profils=Object.values(this.config.profils);
   }
 
@@ -138,9 +141,9 @@ export class AdminComponent implements OnInit {
 
   update_index() {
     this.message="Le moteur de recherche est en cours de réinidexation (ce processus peut être long)" ;
-    this.api._get("rebuild_index","name=profils",600).subscribe((r:any)=>{
-      this.message="";
-      showMessage(this,r.message);
+    this.api._get("rebuild_index","name=profils",600).subscribe({
+      next:(r:any)=>{this.message="";showMessage(this,r.message);},
+      error:(r:any)=>{this.message="";showMessage(this,r.message);}
     });
   }
 
@@ -207,12 +210,10 @@ export class AdminComponent implements OnInit {
   }
 
 
-  update_profil(u: any,sel_profil:string) {
-    u.profil_name=sel_profil
-    for(let p of this.profils){
-      if(p.id==sel_profil)u.perm = p.perm;
-    }
-
+  update_profil(u: any,sel_profil:any) {
+    u.profil_name=sel_profil.id
+    u.perm=sel_profil.perm;
+    u.profil=null;
     this.api.setuser(u).subscribe(() => {
       showMessage(this,"Profil mise a jour");
     });
@@ -242,7 +243,6 @@ export class AdminComponent implements OnInit {
     this.api._post("backup_files/","",file).subscribe(()=>{
       this.refresh_backup();
     })
-
   }
 
   save_backup() {

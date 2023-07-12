@@ -14,10 +14,12 @@
             <button mat-raised-button class="app-button" (click)="initdb()">Initialisation</button>
             <button mat-raised-button class="app-button" color="warn" (click)="raz('all')">Effacement TOTAL</button>
 
-            <button mat-raised-button class="app-button" (click)="export_dict()">Dictionnaire sous Excel</button>
+            <button mat-raised-button class="app-button" (click)="export_dict()">Dictionnaire<br>sous Excel</button>
 
             <button mat-raised-button class="app-button" (click)="apply_dict()"
-                    title="Uniformiser la terminologie en réappliquant le dictionnaire">Appliquer le<br>dictionnaire</button>
+                    title="Uniformiser la terminologie en réappliquant le dictionnaire aux expériences et aux oeuvres">
+              Appliquer le<br>dictionnaire
+            </button>
 
             <hr>
             <button mat-raised-button class="app-button" (click)="send_update()"
@@ -100,8 +102,6 @@
                 Traitement Qualite
             </button>
 
-
-
             <p>Gestion des contributions</p>
             <button mat-raised-button class="app-button" (click)="raz('works imdb')">RAZ IMDB</button>
             <button mat-raised-button class="app-button" (click)="raz('works unifrance')">RAZ Unifrance</button>
@@ -128,8 +128,7 @@
                 <tr *ngFor="let u of users" style="width: 100%">
                     <td style="width: 40%;">{{u.user.username}}</td>
                     <td style="width: 15%;">
-                        <app-input [options]="profils" [value]="u.profil_name" value_type="list"
-                                   value_field="id"
+                        <app-input [options]="profils" [value]="u.profil" value_type="list"
                                    (valueChange)="update_profil(u,$event)"></app-input>
                     </td>
                     <td style="width: 15%;">{{u.ask}}</td>

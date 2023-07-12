@@ -58,8 +58,7 @@ export interface DialogData {
 
 @Component({
   selector: 'app-prompt',
-  templateUrl: './prompt.component.html',
-  styleUrls: ['./prompt.component.css']
+  templateUrl: './prompt.component.html'
 })
 
 export class PromptComponent  {

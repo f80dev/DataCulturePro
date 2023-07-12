@@ -24,8 +24,9 @@
                         </span>
                         </div>
                     </td>
-                    <td style="width: 15px">
-                        <mat-icon [style.color]="backgroundColor" style="font-size: small;">circle</mat-icon>
+                    <td style="width: 35px">
+                        <mat-icon *ngIf="profil?.department" style="font-size: small;display:inline;" class="fi-color">circle</mat-icon>
+                        <mat-icon *ngIf="profil?.department_pro" style="font-size: small;display: inline;" class="fc-color">circle</mat-icon>
                     </td>
                 </tr>
             </table>
@@ -77,11 +78,16 @@
                 {{profil.firstname+" "+profil.lastname.toUpperCase()}}
             </div>
 
-            <div *ngIf="profil?.cursus=='P'"
-                 (click)="openQuery($event,profil?.department)"
-                 name="lblCursus"
+          <div *ngIf="profil.department"
+               (click)="openQuery($event,profil?.department)"
+               style="color: white;line-height: 95%;cursor: pointer;">
+            {{profil.department}}
+          </div>
+
+            <div *ngIf="profil.department_pro"
+                 (click)="openQuery($event,profil?.department_pro)"
                  style="color: white;line-height: 95%;cursor: pointer;">
-                {{profil.department}}
+                {{profil.department_pro}}
             </div>
             <br>
 

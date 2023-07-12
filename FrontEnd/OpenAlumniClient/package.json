@@ -39,7 +39,6 @@
     "ngx-clipboard": "^15.1.0",
     "ngx-image-cropper": "^2.1.2",
     "ngx-json-viewer": "^3.2.1",
-    "ngx-quill": "^20.0.1",
     "ngx-sharebuttons": "^11.0.0",
     "ngx-social-button": "^1.0.4",
     "ngx-webcam": "^0.4.1",

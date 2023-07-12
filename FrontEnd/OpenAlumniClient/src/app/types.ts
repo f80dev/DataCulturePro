@@ -29,6 +29,7 @@ export interface tProfil {
     nationality: string
 
     department: string
+    department_pro: string
     department_category: string
 
     job: string

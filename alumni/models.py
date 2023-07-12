@@ -53,6 +53,7 @@ class Profil(models.Model):
     nationality=models.CharField(blank=True,max_length=30,null=False,default="Française",help_text="Nationnalité du profil")
 
     department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
+    department_pro=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
     department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie / code de regroupement de la formation")
 
     job=models.CharField(max_length=60,null=True,default="",blank=True,help_text="Profession actuelle")

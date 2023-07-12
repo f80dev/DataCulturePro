@@ -1266,16 +1266,16 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
 
                 standard_replace_dict={"nan":"","[vide]":""}
                 cursus=idx("cursus",row,default="P" if idx("internship_type",row,"",header=header).lower()=="stage" else "S",header=header,max_len=1)
-
-                department = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation,FC_SCHOLARSHIP", row, "", 60,replace_dict=standard_replace_dict,header=header)
+                formation = idx("CODE_FORMATION_FC,CODE_TRAINING,departement,department,formation,FC_SCHOLARSHIP", row, "", 60,replace_dict=standard_replace_dict,header=header)
                 if cursus=="P":
-                    department_category=translate(department,["department_category"])
+                    department_category=translate(formation,["department_category"])
+                    department_pro=formation
                 else:
                     department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
                     if department_category is None or len(department_category)==0:
-                        department_category=translate(department,sections=["department_category"],must_be_in_dict=True)
+                        department_category=translate(formation,sections=["department_category"],must_be_in_dict=True)
                     if department_category is None or department_category=="":
-                        log("Impossible de créer le department_category pour "+department)
+                        log("Impossible de créer le department_category pour "+formation)
 
                 profil=Profil(
                     firstname=firstname,
@@ -1287,7 +1287,8 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                     nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
                     country=idx("country,pays",row,"France",header=header),
                     birthdate=dt,
-                    department=translate(department,sections=["departements"]),
+                    department=translate(formation,sections=["departements"]) if cursus=="S" else "" ,
+                    department_pro=translate(formation,sections=["departements"]) if cursus=="P" else "",
                     job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
                     degree_year=promo,
                     address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),

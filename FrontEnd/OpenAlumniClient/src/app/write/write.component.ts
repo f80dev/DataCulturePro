@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {ConfigService} from "../config.service";
 import {ApiService} from "../api.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ContentChange} from "ngx-quill";
 import {checkLogin, showError, showMessage} from "../tools";
 import {Location} from "@angular/common";
 import {MatSnackBar} from "@angular/material/snack-bar";

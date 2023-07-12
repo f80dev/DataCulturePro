@@ -1582,6 +1582,7 @@ class ProfilDocumentView(DocumentViewSet):
         'degree_year': {'boost': 4},
         'firstname': {'boost': 1},
         'department': {'boost': 3},
+        'department_pro': {'boost': 3},
         'town':{'boost':1},
         'works__job': {'boost': 2},
         'works__pow__title': {'boost': 2},
@@ -1605,18 +1606,6 @@ class ProfilDocumentView(DocumentViewSet):
     # }
 
 
-    # search_fields = ('lastname',
-    #                  'firstname',
-    #                  'department',
-    #                  'degree_year'
-    #                  'department_category',
-    #                  'works__job',
-    #                  'works__pow__title',
-    #                  'awards__festival__title',
-    #                  'awards__description',
-    #                  'awards__year'
-    #                  )
-
     filter_fields = {
         'profil':'id',
         'name': 'name',
@@ -1627,7 +1616,8 @@ class ProfilDocumentView(DocumentViewSet):
         'promo':'degree_year',
         'school':'school',
         'town':'town',
-        'formation':'department'
+        'formation':'department',
+        'formation_pro':"department_pro"
     }
 
     ordering_fields = {

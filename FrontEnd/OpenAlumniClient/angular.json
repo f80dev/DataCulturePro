@@ -32,9 +32,7 @@
             ],
             "styles": [
               "src/dataculture.scss",
-              "src/styles.sass",
-              "./node_modules/quill/dist/quill.snow.css",
-              "./node_modules/quill/dist/quill.core.css"
+              "src/styles.sass"
             ],
             "scripts": [],
             "vendorChunk": true,

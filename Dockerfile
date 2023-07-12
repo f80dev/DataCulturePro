@@ -2,12 +2,14 @@
 #effacer toutes les images : docker rmi $(docker images -a -q)
 #effacer tous les containers : docker rm  $(docker ps -a -f status=exited -q) / podman rm  $(podman ps -a -f status=exited -q)
 
+#ajouter un certificat sous Akash : https://docs.akash.network/guides/cloudmos-deploy/wordpress-deployment-example
+
 
 FROM python
 
-#prod
-#fabrication: docker build -t f80hub/openalumni . & docker push f80hub/openalumni:latest
-#installation: docker rm -f openalumni && docker pull f80hub/openalumni:latest && docker run --restart=always -v /root/certs_dataculture:/certs -p 8000:8000 --name openalumni --env DJANGO_SETTINGS_MODULE=OpenAlumni.settings -d f80hub/openalumni:latest
+#dev
+#fabrication: docker build -t f80hub/openalumni-dev . & docker push f80hub/openalumni-dev:latest
+#installation: docker rm -f openalumni-dev && docker pull f80hub/openalumni-dev:latest && docker run --restart=always --env DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev -v /root/certs_dataculture:/certs -p 8100:8000 --name openalumni-dev -d f80hub/openalumni-dev:latest
 
 
 
@@ -64,6 +66,9 @@ RUN pip3 install openpyxl
 RUN pip3 install django-archive
 RUN pip3 install scipy
 
+
+
+#Création des répertoires
 ENV APP_HOME=/home/app
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
@@ -77,7 +82,8 @@ COPY ./OpenAlumni $APP_HOME/OpenAlumni
 COPY ./alumni $APP_HOME/alumni
 COPY ./manage.py $APP_HOME
 #COPY ./Temp $APP_HOME/Temp on ne fait pas la copie sur le serveur
-
+COPY ./certs/cert.pem $APP_HOME
+COPY ./certs/privkey.pem $APP_HOME
 
 # chown all the files to the app user
 #RUN addgroup -S app && adduser -S app -G app
@@ -86,10 +92,16 @@ COPY ./manage.py $APP_HOME
 
 EXPOSE 8000
 
-ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings
-ENV DEBUG=False
+ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings_dev
+ENV DEBUG=True
+
+#execution dans un environnement SSL
+#CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
+
+#Execution sans securité
+CMD ["python3", "manage.py", "runserver","0.0.0.0:8000"]
 
 
-CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
+#CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
 
 
