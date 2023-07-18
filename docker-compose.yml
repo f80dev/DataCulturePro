@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    command: bash -c "gunicorn --certfile=/root/certs/localhost.crt --keyfile=/root/certs/localhost.key openalumni.wsgi:application --bind 0.0.0.0:443"
+    container_name: openalumni
+    env_file:
+      - ./config/web/web-variables.env
+    volumes:
+      - ./code:/src
+      - ./config/nginx/certs/:/etc/certs
+    expose:
+      - "443"
+
+  nginx:
+    image: f80hub/nginx-openalumni
+    ports:
+      - 1337:80
+    depends_on:
+        - web
+
+

@@ -1,0 +1,31 @@
+#test :
+version: '2.0'
+services:
+  dataculture:
+    image: f80hub/openalumni-dev
+    expose:
+      - port: 8100
+        as: 8100
+        to:
+          - global: true
+profiles:
+  compute:
+    dataculture:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 1Gi
+        storage:
+          - size: 1Gi
+  placement:
+    dcloud:
+      pricing:
+        dataculture:
+          denom: uakt
+          amount: 1000
+deployment:
+  dataculture:
+    dcloud:
+      profile: dataculture
+      count: 1

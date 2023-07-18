@@ -1,0 +1,41 @@
+version: 1
+appname: "Data Culture Pro (beta)"
+anonymousOffer: 0
+logo: /assets/icons/icon-144x144.png
+
+profil_code: hh4271
+
+search:
+  limit: 50
+
+catalog:
+  imdb: true
+  lefilmfrancais: false
+  unifrance: true
+  senscritique: false
+
+support:
+  forum: "http://kerberus.les-forums.com/"
+  email: "contact@f80lab.com"
+  facebook: "https://www.facebook.com/kerberus/"
+  faq: "./faq.html?from=appli"
+  website: ""
+
+editor:
+  name: "F80"
+  website: "https://f80lab.com"
+  author:
+    - "F80 pour la FEMIS"
+  link_author:
+    - "https://www.linkedin.com/in/hhoareau/"
+  contact: "herve.hoareau@f80lab.com"
+
+licence: "MIT"
+
+users:
+  admins:
+    - "hhoareau@gmail.com"
+    - "juan.neardesign@gmail.com"
+    - "j.lecanu@femis.fr"
+    - "paul.dudule@gmail.com"
+    - "roger.legumes@gmail.com"

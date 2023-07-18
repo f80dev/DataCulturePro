@@ -1,0 +1,15 @@
+{
+  "name": "OpenAlumni GraphQL Schema",
+  "schemaPath": "profil",
+  "extensions": {
+    "endpoints": {
+      "Default GraphQL Endpoint": {
+        "url": "http://localhost:8000/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      }
+    }
+  }
+}

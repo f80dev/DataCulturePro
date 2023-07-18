@@ -1,0 +1,103 @@
+#Listes des profils
+#subscription peut prendre les valeurs : online / secure / email
+version: 1.0
+profils:
+  - id: anonyme
+    title: Anonyme
+    level: 0
+    presentation: Ce profil est attribué par défaut à tous les visiteurs anonymes de {{appname}}
+    description: Profil par défaut affecté au personne non connecté
+    perm: r_promo r_lastname r_firstname share r_department r_works r_photo r_unifrance r_imdb advanced_search
+    price: 0
+    subscription: offline
+
+  - id: standard
+    title: Connecté
+    level: 0
+    presentation: Consultation des profils en mode authentifié (par email / compte google).
+    description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
+    perm:
+      r_photo r_lastname r_firstname r_linkedin r_works r_promo r_department advanced_search
+      r_unifrance r_imdb
+    price: 0
+    subscription: online
+
+  - id: employeur
+    title: Employeur
+    level: 1
+    presentation: Vous chercher des profils pour un projet
+    description: Profil destiné aux employeurs à la recherche de profil pour un projet
+    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works r_promo advanced_search publish
+    price: 0
+    subscription: online
+
+  - id: femis_cdi
+    level: 1
+    title: Responsable catalogue
+    presentation: Vous avez la charge d'entretenir le catalogue des films
+    description: Profil destiné aux personnes en charge du catalogue des films
+    perm:
+      r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
+    price: 0
+    subscription: secure
+
+  - id: admin
+    title: Administrateur
+    level: 5
+    description: Profil destiné aux administrateurs
+    perm:
+        r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo export_stats
+        r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
+        w_linkedin write_email r_address r_lastname admin_sort job_search r_crm
+        publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
+    price: 0
+    subscription: secure
+
+  - id: statistique
+    title: Statisticien
+    level: 0
+    presentation: vous avez besoin de données anonymisées pour produire des analyses statistiques sur les élèves de l'école
+    description: profil destiné aux organisme en charge de statistique
+    perm: r_cp r_firstname r_works stats r_promo r_department share
+    price: 0
+    subscription: email
+
+  - id: school
+    title: Interne FEMIS
+    level: 5
+    presentation: Vous faites partie de la FEMIS
+    description: profil destiné aux personnes habitués aux vocabulaire FEMIS et utilisant l'annuaire
+    perm:
+      stats r_cp r_firstname r_promo r_lastname r_works ask_friend validate
+      r_photo r_linkedin w_firstname w_linkedin edit_profil r_crm
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
+      write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
+    price: 0
+    subscription: secure
+
+  - id: student
+    title: Eleve / ancien
+    level: 0
+    presentation: vous êtes un ancien élève et souhaitez retrouver des anciens de votre école
+    description: Profil destiné aux anciens élève
+    perm:
+      r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin prof r_works write_email
+      r_department advanced_search ask_friend ask_tutor publish stats
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
+    price: 0
+    subscription: email
+
+
+  - id: dev
+    title: Developpeur
+    level: 0
+    presentation: Vous souhaitez vous interfacer avec DataCulturePro via les API
+    description: Profil destiné aux anciens élève
+    perm:
+      r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin
+      prof r_works write_email r_department advanced_search dev
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
+    price: 0
+    subscription: secure
+

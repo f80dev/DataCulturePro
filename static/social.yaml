@@ -1,0 +1,75 @@
+version: 1.0
+services:
+  - name: linkedin
+    input: Votre page Linkedin
+    format: https://www.linkedin.com/in/
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - school
+      - employeur
+      - standard
+
+  - name: facebook
+    input: Votre page facebook
+    format: https://facebook.com
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - school
+      - employeur
+
+  - name: youtube
+    input: Votre chaine youtube
+    format: https://youtube.com
+    description: consultable depuis votre profil public
+    profils:
+      - student
+      - school
+      - employeur
+
+  - name: vimeo
+    input: Votre chaine vimeo
+    format: https://vimeo.com
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - school
+      - employeur
+
+  - name: instagram
+    input: Votre page instagram
+    format: https://www.instagram
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - school
+      - employeur
+
+  - name: telegram
+    input: L'adresse de votre messagerie télégram
+    format: https://t.me/
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - employeur
+
+  - name: twitter
+    input: Votre fil d'actualité twitter
+    format: https://twitter.com/
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - employeur
+
+
+  - name: tiktok
+    input: Votre chaine tiktok
+    format: https://www.twitter
+    description: consultable depuis votre profil
+    profils:
+      - student
+      - employeur
+
+
+

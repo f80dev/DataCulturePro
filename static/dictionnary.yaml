@@ -1,0 +1,505 @@
+#Le dictionnaire permet de traduire les données extraites d'internet vers le referentiel unique utilisé par DCP
+#La syntaxe du dictionnaire est A:B, signifiant qu'il remplace systématiquement A par B
+
+#On distingue deux catégories de données:
+#categories: désigne la nature des oeuvres
+#jobs: désigne le référentiel des métiers du cinéma utilisé par DCP
+
+#Le dictionnaire est modifiable par les personnes autorisés sur https://github.com/f80dev/DataCulturePro/blob/master/static/dictionnary.yaml
+
+
+#abrevation principalement utilisé pour raccourcir les noms de formations
+abreviations:
+  directeur: Dir.
+  direction: Dir.
+  Direction: Dir.
+  Directeur: Dir.
+  cinématographique: ciné.
+  Cinématographique: Ciné.
+  Expertiser: Exp.
+  d'exploitation: exp.
+  additionnal: ""
+  special: ""
+  head: Dir.
+  Wishes: ""
+  Wish: ""
+  The: ""
+  Additional: ""
+
+
+#Permet le regroupement des département sur leur categorie
+department_category:
+  Ecriture et création de séries: Séries
+  Initiation à l'adaptation de romans: Scénario
+  Expertiser un scénario de long métrage: Scénario
+  Direction d'exploitation cinématographique: Exploitation
+  Pitcher promouvoir son documentaire: Documentaire
+  Le son direct au cinéma: Son
+  Son: Son
+  Scripte: Scripte
+  Montage: Montage
+  Documentaire: Documentaire
+  Décor: Décor
+  Script: Script
+  Distribution: Distribution
+  Réalisation: Réalisation
+  Séries: Séries
+  Scénario: Scénario
+  Exploitation: Exploitation
+  Production: Production
+  Montage et récit: Montage
+  Archidoc: Documentaire
+  Concevoir un projet documentaire: Documentaire
+  Pitcher, promouvoir son documentaire: Documentaire
+  Atelier réécriture: Scénario
+  Atelier scénario: Scénario
+  Série TV: Série
+  Image: Image
+  La Résidence: La Résidence
+  Grand Atelier Scénario / Comédie: Scénario
+  parcours personnalisé Direction d'Exploitation Cinématographique - bloc 1: Exploitation
+  Management d'exploitation cinématographique: Exploitation
+  Gestion d'exploitation cinématographique: Exploitation
+  Post-production image: Montage
+  Post-Production Image: Montage
+  Production outils et stratégie: Production
+  Vae scénariste: Scénario
+  Initiation au cinéma: Autres
+  'Initiation au documentaire de création : le point de vue': Documentaire
+  VAE Directeur d'exploitation cinématographique: Exploitation
+  Atelier ludwigsburg-paris: Production
+  Expertiser un projet de série: Séries
+  Réalisation d’un court-métrage de fiction: Réalisation
+  Atelier documentaire: Documentaire
+
+
+#Permet le regroupement des départements pour la formation professionnelle
+departements:
+  Initiation à l'adaptation de romans: Initiation à l'adaptation de romans
+
+#Permet de dédoublonner certains festivals
+festivals:
+  Cannes film festival: Festival international du film de Cannes
+
+
+
+#Normalisation des categories
+categories:
+  Tv mini series: série
+  Documentary: documentaire
+  Movie: film
+  Short: court-métrage
+  Tv: télévision
+  Tv series: série
+  Tv short: court-métrage
+  Long: film
+  Comedy: comédie
+  Biography: biopic
+  Drama: drame
+  Sci-fi: science-fiction
+  History: historique
+  Musical: comédie musicale
+  Romance: comédie romantique
+  War: guerre
+  Mystery: thriller
+  Family: comédie familiale
+  Fantasy: héroïque fantaisie
+  Writer: scénariste
+  Serie: série
+  Fiction, expérimental: fiction
+  Expérimental, animation: expérimental
+  Crime: policier
+  Documentaire, fiction: documentaire
+  Documentary short: documentaire
+  Expérimental, documentaire: documentaire
+  Travaux de fin d'études (TFE): TFE
+
+  Fiction 35: Fiction
+  Masterclass 2006: Masterclass
+  Masterclass 2008: Masterclass
+  Documentaire argentin: Documentaire
+  Documentaire 2e année: Documentaire
+
+
+
+
+#Normalisation des métiers
+jobs:
+  Written: Scénario
+  Camera_department: Caméra
+  Production_manager: Production
+  Music_department: Musique
+  Artistic director: Direction artistique
+  Assistant_director: Ass. réalisation
+  Script_department: Scénario
+  Soundtrack: Compositeur
+  Executive in charge of production: Production
+  Artistic production manager: Direction de Production
+  Sound department: Son
+  Foley artist: Assistant son
+  First assistant camera: Assistant caméra
+  Creative director: Directeur de création
+  Assistant director: Ass. réalisation
+  Director of photography: Direction photo
+  Camera operator: Caméra
+  Sound Supervisor: Son
+  Key Grip: "?"
+  Lighting Technician: Décor
+  Casting Assistant: Casting
+  Visual Effects: Effets spéciaux
+  Associate producer: Production
+  Second assistant camera: Ass. caméra
+  Re-recording mixer: Ing. son
+  Script supervisor: Scripte
+  Colorist: Post-production
+  Colourist: Post-production
+  Adiditional colorist: Post-production
+  Color grader: Post-production
+  Digital colorist: Post-production
+  Di colorist: Post-production
+  Lustre colorist: Post-production
+  Digital film colorist & Digital colorist: Post-production
+  Adr recordist: Son
+  Foley recordist: Son
+  Cast in credits order: Casting
+  Music mixer: Son
+  Producers: Production
+  Music Supervisor: Musique
+  Costume Supervisor: Costume
+  Additional Camera: Caméra
+  Additional Electrician: Décor
+  Post-production coordinator: Post-production
+  Production manager only nrw: Direction de Production
+  Boom operator: Assistant son
+  Unit manager: Production
+  First assistant director: Ass. réalisation
+  Second unit director or assistant director: Ass. réalisation
+  Editor: Montage
+  Monteur: Montage
+  Scénaristes: Scénario
+  Assistant editor: Ass. montage
+  Sound editor: Montage son
+  Assistante editor: Ass. montage
+  Director: Réalisation
+  Réalisateur: Réalisation
+  Réalisatrice: Réalisation
+  Dialogue editor: Montage son
+  Assistant sound editor: Ass. montage
+  Additional editor: Montage
+  Writer: Scénario
+  Monitor technician: Caméra
+  Writing consultant: Scénario
+  co-producer: Production
+  Edited: Production
+  casting children: Casting
+  producer produced: Production
+  Special makeup effects artist: Maquillage
+  Key hair stylist: Maquillage
+  sound trainee: Son
+  first assistant director: Ass. Réalisation
+  third assistant director: Ass. Réalisation
+  post-production supervisor: Production
+  Set_decorator: Décor
+  Production_designer: Production
+  Head writer: Scénario
+  Visual_effects: Effets spéciaux
+  Craft service: Effets spéciaux
+  Title designer: Designer
+  Titles design: Designer
+  Technical consultant: Consult.technique
+  Art_director: Décor
+  Art_department: Décor
+  Casting_department: Casting
+  Casting_director: Casting
+  Storyboardeur: Storyboard
+  production assistant: Ass. Production
+  second assistant director: Ass. Réalisation
+  Composer: Compositeur
+  Auteur de la musique: Compositeur
+  Assistante à la réalisation: Ass. Réalisation
+  Assistant à la réalisation: Ass. Réalisation
+  Auteurs de la musique: Compositeur
+  Attaché de presse film: Relations presse
+  Assistant réalisateur: Ass. Réalisation
+  Directeur de production: Direction de production
+  Actress: "Acteur(trice)"
+  Producer: Production
+  Directeur de la photo: Direction Photo
+  Directrice de la photo: Direction Photo
+  Directeurs de la photo: Direction Photo
+  Cinematographer: Direction Photo
+  Ingénieur du son  monteur son  sound designer  mixeur: Ing. son
+  Ingénieur du son monteur son mixeur: Ing. son
+  Ingénieurs du son: Ing. son
+  Monteur son: Montage son
+  Art department: Décor
+  Décorateur: Décor
+  Décoratrice: Décor
+  Décoratrices: Décor
+  Additional crew: Assistant
+  Scénariste: Scénario
+  Mixeur monteur son: Mixeur
+  Attachées de presse film: Relations presse
+  Attachés de presse film: Relations presse
+  Chef opérateur du son et monteur son: Ing. son
+  Directrice de production: Direction de Production
+  Production designer: Production
+  Responsable de la post-production: Post-production
+  Monteur son - ingénieur du son: Ing. son
+  Producteurs délégués: Production
+  Assistants opérateurs: Caméra
+  Co-producer tetra media fiction: Co-production
+  Delegate producer: Producteur délégué
+  Executive producer: Producteur executif
+  Producteurs: Production
+  Producteurs exécutifs: Production exécutive
+  Producteur exécutif: Production exécutive
+  Producteur délégué: Production
+  Sound mixer: Ing. son
+  Electrician: Electricien
+  Second camera operator: Assistant caméra
+  Assistant camera: Assistant caméra
+  Monteur son et mixeur: Son 
+  Distributrice france: Distribution
+  Scriptes: Scripte
+  Production manager: Direction de Production
+  Producteur étranger: Production
+  Script and continuity department: Scripte
+  Agents (presse france): Relations presse
+  Chef monteuse: Montage
+  Assistante opérateur: Ass.Caméra
+  Productrice déléguée: Production
+  Animation department: Animation
+  Directeurs de production: Direction de Production
+  Monteuse: Montage
+  Art director: Décor
+  Décorateur / ensemblier: Décor
+  Chef operateur son monteur son: Ing. son
+  Scénariste réalisateur: Réalisation/Scénario
+  Producteur associé: Production
+  Editorial department: Montage
+  Assistante monteuse: Ass. montage
+  Actor: "Acteur(trice)"
+  Chef opérateur et réalisateur: Réalisation
+  Directrices de la photo: Image
+  Monteuse son et assistante mixage: Montage son
+  Special thanks: Participation
+  Chef opératrice: Image
+  Cadre: Caméra
+  Self: Elle/Lui même
+  Assistants son: Ass. son
+  Second sound assistant: Ass. son
+  Assistant monteur: Ass. montage
+  Directrices de production: Direction de production
+  Coproducteur: Coproduction
+  Camera and electrical department: Caméra
+  Premier assistant opv / directeur photo: Image
+  Costume designer: Costumes
+  Location management: Repérages
+  Productrices: Production
+  Productrice: Production
+  Département animation: Animation
+  Directrice artistique: Direction artistique
+  Opératrice du son: Ing. son
+  Photographes de plateau: Photographe de Plateau
+  Effets visuels: Effets spéciaux
+  Assistant de production: Production
+  Producteurs étrangers: Production
+  Pre-production sound: Ing. son
+  Sound: Ing. son
+  Graphic designer: Décor
+  Assistant art director: Décor
+  Supervising art director: Décor
+  Matte painter: Décor
+  Digital compositor: Décor
+  Concept artist: Décor
+  Assistant script supervisor: Script assistant
+  Sound_department: Ing. son
+  Auteur de l'œuvre originale: Auteur
+  Scénariste et réalisatrice: Scénario/Réalisation
+  Assistante opératrice: Ass. image
+  Régisseuse générale: Régie
+  Réalisateur chef-op auteur compositeur: Scénario/Réalisation
+  Narration: Scénario
+  Interprètes de la musique: Musique
+  Chef décoratrice: Décor
+  Interprète de la musique: Musique
+  Intern: Stagiaire
+  Segment team: Divers
+  Assistante décoratrice: Ass. Décor
+  Auteur réalisateur: Auteur/Réalisateur
+  Post: Postprod
+  Assistant set manager: Régie
+  Adaptation: Scénario
+  Productrice étrangère: Production
+  Visual consultant: Effets spéciaux
+  Participantes: Autre
+  Post-audio supervisor: Postprod Son
+  Assistant set manager - uncredited: Régie
+  Cast: "Acteur(trice)"
+  Production trainee: Production
+  Directed: Réalisation
+  Series directed: Réalisation
+  Music: Compositeur
+  Casting by: Casting
+  Production management: Direction de Production
+  Writing credits: Scénario
+  Writing credits in alphabetical order: Scénario
+  Series additional crew: Assistant
+  Series script and continuity department: Scripte
+  Series art department: Décorateur(trice)
+  Series produced: Production
+  Set decoration: Décor
+  Series production management: Production
+  Visual effects: Effets spéciaux
+  Production design: Décor
+  Assistants de production: Ass. Production
+  Series production desig: Décor
+  Series sound department: Ing. son
+  Series editorial department: Scénario
+  Costume design: Costumes
+  Attachée de presse film: Relations presse
+  Idées originales: Scénario
+  Coproductrices: CoProduction
+  Productrices déléguées: Production
+  Production coordinator: Production
+  Production staff: Production
+  Screenplay assistant: scénario ass.
+  Costume_designer: Costumes
+  Assistant to jean labadie: Production
+  Lui-même: "Acteur(trice)"
+  Writing Credits (in alphabetical order): Scénario
+  assistant production manager: Ass. production
+  Writing Credits in alphabetical order: Scénario
+  Series second unit director or assistant director: Ass. Réalisation
+  Directrice/responsable des ventes: Production
+  Series cinematography: Image
+  Dialogue coach: Coach
+  Head of legal and business affairs: Production
+  Compositeur réalisateur: Réalisation
+  Dialoguistes: Scénario
+  Dialoguiste: Scénario
+  Monteuse-  réalisatrice: Réalisation
+  Production secretary: Production
+  Series writing credits: Scénario
+  Film editing: Montage
+  Cinematography: Image
+  Assistant montage: Ass. montage
+  Produced: Production
+  Series cast: Casting
+  Series production design: Production
+  Autre: Autres
+  Assistanat réalisation: Ass. Réalisation
+  Postprod: Post-production
+  Art direction: Décor
+  Series art direction: Décor
+  Series camera and electrical department: Caméra
+  Acteurtrice: "Acteur(trice)"
+  Story consultant: Scénario
+  Responsables de la post-production: Post-production
+  Productrices associées: Production
+  Office production assistant: Ass. Production
+  France: Autres
+  Cheffe op: Image
+  Photographe: Image
+  Series casting department: Casting
+  Legal counsel: Droits
+  Series casting by: Casting
+  Series film editing: Montage
+  Series thanks: Autres
+  Translation assistant: Scripte
+  Ingénieures du son: Ing. son
+  Assistant to producer: Ass. production
+  Thanks: Remerciements
+  Writing credits  in alphabetical order: Scénario
+  Casting department: Casting
+  Editorial_department: Montage
+  Location_management: Repérages
+  Assitant(e) montage: Ass. montage
+  Photographie: Image
+  Décors: Décor
+  Direction artistique: Direction artistique
+  Assistante montage: Ass. montage
+  Assistantes à la réalisation: Ass. réalisation
+  Réalisatrice et cadreuse: Réalisation/Image
+  Assistante monteuses: Ass. montage
+  Auteure/réalisatrice/ scripte: Réalisation
+  Productrices exécutives: Production Exé.
+  Assistants monteurs: Ass. montage
+  Auteur/réalisateur: Scénario/Réalisation
+  Producteurs associés: Coproduction
+  Secrétaire de production: Production
+  Ingénieure du son: Ing. son
+  Ingénieur du son: Ing. son
+  Monteur son / chef opérateur son auditorium: Son
+  Réalisateur scénariste et directeur de la photographie: Scénario/Réalisation/Image
+  Superviseur sonore: Son
+  Réalisateur scénariste enseignant en cinéma: Réalisation
+  Assistantes opérateur: Ass. op
+  Assistante son: Ass. son
+  First assistant editor: Ass. scénario
+  Monteuse / assistante monteuse: Montage
+  Chef opérateur: Image
+  Colorisation: Post Prod
+  Scénariste réalisateur producteur: Scénario/Réalisation/Production
+  Chef monteur son et chef opérateur du son: Montage Son
+  Chefs électriciens: Chef(fe) électricien
+  The director thanks: Remerciements
+  Art advisor: Conseiller artistique
+  The directors wish to thank: Remerciements
+  Second second assistant director: Ass. réalisation
+  additional third assistant director: Ass. réalisation
+  Assistants à la réalisation: Ass. réalisation
+  Director of photography second unit: Photographie
+  Director of photography additional: Photographie
+  Additional director of photography: Photographie
+  Camera operator a camera: Ass. caméra
+  Camera operator second unit: Ass. caméra
+  Camera operator golden gate: Ass. caméra
+  First assistant camera third camera: Ass. caméra
+  Sound assistant: Son
+  Dubbing mixer: Son
+  Series Writing Credits: Scénario
+  Series Directed: Réalisation
+  Series Produced: Production
+  Series Music: Musique
+  Series Film Editing: Montage
+  Series Costume Design: Costume
+  Series Makeup Department: Maquillage
+  Series Art Department: Décor
+  Stunt performer: Cascadeur
+  Stunt coordinator: Coordinateur cascade
+  Stunt double: Doublure cascade
+  Stunt pilot: Cascadeur
+  Visual effects artist: Effets spéciaux
+  Visual effects supervisor: Effets spéciaux
+  Special effects technician: Effets spéciaux
+  Foley assistant: Ass. son
+  Original music: Compositeur
+
+
+Languages:
+  french: Français
+  english: Anglais
+  spannish: Espagnol
+  england: Angleterre
+
+
+Icons:
+  Réalisation: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/clapper-board_1f3ac.png"
+  Caméra: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/samsung/312/film-projector_1f4fd-fe0f.png"
+  Montage: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/film-frames_1f39e-fe0f.png"
+  Artistique: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/speaking-head_1f5e3-fe0f.png"
+  Son: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/speaker-medium-volume_1f509.png"
+  Scénario: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/scroll_1f4dc.png"
+  Script: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/scroll_1f4dc.png"
+  Production: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/samsung/312/money-bag_1f4b0.png"
+  Photographie: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/camera_1f4f7.png"
+  Casting: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/person-standing_1f9cd.png"
+  Electricien: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/light-bulb_1f4a1.png"
+  "Acteur(trice)": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/performing-arts_1f3ad.png"
+  Award: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/trophy_1f3c6.png"
+  Movie: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/film-frames_1f39e-fe0f.png"
+  School: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/graduation-cap_1f393.png"
+  Décor: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/artist-palette_1f3a8.png"
+  Mixage: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/control-knobs_1f39b-fe0f.png"

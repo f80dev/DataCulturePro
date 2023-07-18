@@ -1,0 +1,22 @@
+#date et version simplifie la gestion éventuelle de plusieurs versions de FAQ
+version: 1
+date: 04/09/2020
+test: http://localhost:8000/api/jobsites/
+
+content:
+  - name: Intermittent.fr
+    main_page: https://intermittent.fr/
+    description: "Un site dédié aux intermittents du spectacle"
+    login_page: https://intermittent.fr/cv-intermittent-du-spectacle/
+    job_page: https://intermittent.fr/recherche-offres-emplois-intermittents-spectacle/?search_keywords=%job%
+
+  - name: Indeed
+    main_page: https://fr.indeed.com/?r=us
+    description: "Le premier site en audience de recherche de job"
+    login_page: https://secure.indeed.com/account/register?hl=fr_FR&service=myind&co=FR&continue=https%3A%2F%2Fmy.indeed.com%2Fresume%3Ffrom%3Dgnav-homepage%26co%3DFR%26hl%3Dfr_FR%26src%3D-1
+    job_page: https://fr.indeed.com/jobs?q=%job%+cinema&l=Paris+%2875%29
+
+  - name: Monster
+    description: "Un site relativement complet mais très généraliste"
+    job_page: https://www.monster.fr/emploi/recherche?q=%job%%20cinema&,,=&cy=fr&rad=20
+    login_page: https://auth.monster.com/login?state=g6Fo2SBqZ1I0ZWZ1Q19XVFB4MzFyS2h2MnhBMDRNTE5KaFlwMaN0aWTZIERJRU5zdDhnY1NHOENRMUtWT0s3TS1zRTNLN2l3Uzlwo2NpZNkgUGhmY1dZbVkzQmR2Vmo4aTEyYjNjdVBDZmpZdUdKeUo&client=PhfcWYmY3BdvVj8i12b3cuPCfjYuGJyJ&protocol=oauth2&redirect_uri=https%3A%2F%2Flogin20.monster.fr%2FLogin%2FAuthZeroCallback%3Fch%3DFRFR%26redirect%3Dhttp%253a%252f%252fprofile.monster.fr%252f&response_type=code&scope=openid%20profile%20email&response_mode=form_post&nonce=637510714850245358.YmQ2MmNhODItYjM0OC00YmNmLWJhODUtODYxZTg3Zjk5YzM0NmRhNjVmOTYtZWU3Zi00ZjdiLTk0MDgtMDhmOTkxMTY0NmJm&monster_channel=FRFR&signup_url=https%3A%2F%2Flogin20.monster.fr%2FBecome-Member%2FCreate-Account%3Fredirect%3Dhttp%253a%252f%252fprofile.monster.fr%252f%26landedFrom%3DSignIn&x-client-SKU=ID_NET451&x-client-ver=5.5.0.0
