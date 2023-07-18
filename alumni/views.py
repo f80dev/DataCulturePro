@@ -690,6 +690,7 @@ def api_doc(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def quality_filter(request):
+    global log
     filter= request.GET.get("filter", "*")
     ope = request.GET.get("ope", "profils,films")
     profils=Profil.objects.order_by("dtLastSearch").all()
@@ -723,8 +724,8 @@ def quality_filter(request):
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
-        n_pows=pow_analyzer.find_double()
 
+        log("Recherche des films a supprimer")
         to_delete=pow_analyzer.quality()
         count=0
         for id in to_delete:
@@ -732,6 +733,9 @@ def quality_filter(request):
             _p=PieceOfWork.objects.get(id=id)
             #log("Destruction de "+str(count)+"/"+str(len(to_delete)))
             _p.delete()
+
+        log("Fusion des doubles")
+        n_pows=pow_analyzer.find_double()
 
 
 
@@ -1175,6 +1179,7 @@ def compare(lst,val,ope):
 @permission_classes([AllowAny])
 def export_all(request):
     """
+    tags: stats stat statistique report
     Exportation statistiques pour consolidation /stats /stat
     :param request:
     :return:
@@ -1195,7 +1200,7 @@ def export_all(request):
         awards = Award.objects.all()
         df: pd.DataFrame = pd.DataFrame.from_records(list(awards.values(
             "profil__id", "profil__gender", "profil__lastname",
-            "profil__firstname", "profil__department", "profil__cursus",
+            "profil__firstname", "profil__department","profil__department_pro", "profil__cursus",
             "profil__degree_year", "profil__cp", "profil__town", "profil__dtLastUpdate", "profil__dtLastSearch",
 
             "pow__id", "pow__title", "pow__nature",
@@ -1211,7 +1216,7 @@ def export_all(request):
         works=Work.objects.all()
         df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
             "profil__id","profil__gender","profil__lastname",
-            "profil__firstname","profil__department","profil__cursus",
+            "profil__firstname","profil__department","profil__department_pro", "profil__cursus",
             "profil__degree_year","profil__cp","profil__town","profil__dtLastUpdate","profil__dtLastSearch",
 
             "pow__id","pow__title","pow__nature",
@@ -1489,7 +1494,6 @@ def api_importer(request):
     dictionnary=request.data["dictionnary"]
     rows,total_record=importer_file(request.data["file"])
     record,non_import=profils_importer(rows,total_record,dictionnary)
-    if record>0: reindex()
 
     return JsonResponse({"imports":str(record),"abort":non_import})
 

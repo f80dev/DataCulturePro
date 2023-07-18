@@ -10,7 +10,7 @@ import { environment } from '../environments/environment';
 import { ImportComponent } from './import/import.component';
 import {ApiService} from './api.service';
 import {HttpClientModule} from '@angular/common/http';
-
+import {GOOGLE_CLIENT_ID} from './constantes';
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButtonModule} from '@angular/material/button';
@@ -36,11 +36,11 @@ import { PromptComponent } from './prompt/prompt.component';
 import { WorkComponent } from './work/work.component';
 import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 import {
-  FacebookLoginProvider,
-  GoogleLoginProvider,
-  SocialAuthServiceConfig, SocialLoginModule
-} from 'angularx-social-login';
-import {getAuthServiceConfigs} from './tools';
+    GoogleLoginProvider,
+    GoogleSigninButtonModule,
+    SocialAuthServiceConfig,
+    SocialLoginModule
+} from "@abacritt/angularx-social-login"
 import { LoginbarComponent } from './loginbar/loginbar.component';
 import { ProfilesComponent } from './profiles/profiles.component';
 import { EditComponent } from './edit/edit.component';
@@ -63,7 +63,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { PowsComponent } from './pows/pows.component';
-import {NgChatModule} from 'ng-chat';
+//import {NgChatModule} from 'ng-chat';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {MatRadioModule} from '@angular/material/radio';
 import { DevComponent } from './dev/dev.component';
@@ -84,7 +84,7 @@ import { IssuesComponent } from './issues/issues.component';
 import { SettingsComponent } from './settings/settings.component';
 import { RgpdComponent } from './rgpd/rgpd.component';
 
-import { MglTimelineModule } from 'angular-mgl-timeline';
+//import { MglTimelineModule } from 'angular-mgl-timeline';
 import { EditAwardComponent } from './edit-award/edit-award.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import {WebcamModule} from "ngx-webcam";
@@ -153,7 +153,7 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         AppRoutingModule,
         MatTabsModule,
         HttpClientModule,
-        MglTimelineModule,
+        //MglTimelineModule,
         ScrollingModule,
         // QuillModule.forRoot({
         //     modules: {
@@ -178,7 +178,7 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         SocialLoginModule,
         MatFormFieldModule,
         MatInputModule,
-        NgChatModule,
+        // NgChatModule,
         MatDialogModule,
         MatButtonModule,
         MatIconModule,
@@ -202,7 +202,8 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         ShareButtonsModule,
         ShareIconsModule,
         NgxJsonViewerModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        GoogleSigninButtonModule
     ],
   providers: [
     ApiService,
@@ -210,17 +211,16 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
-        autoLogin: true,
+        autoLogin: false,
         providers: [
           {
-            id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('794055474370-qrdn0gb051k774mtetvo7lifcslmlpgg.apps.googleusercontent.com'),
-            //provider: new GoogleLoginProvider('167299914377-p8vuf2f6npqnigl5kpqrh34cqjd81eko.apps.googleusercontent.com'),
-          },
-          {
-            id: FacebookLoginProvider.PROVIDER_ID,
-                provider: new FacebookLoginProvider('1064548794002409'),
-          },
+              id: GoogleLoginProvider.PROVIDER_ID,
+              provider: new GoogleLoginProvider(GOOGLE_CLIENT_ID),
+          }
+          // {
+          //   id: FacebookLoginProvider.PROVIDER_ID,
+          //       provider: new FacebookLoginProvider('1064548794002409'),
+          // },
         ],
       } as SocialAuthServiceConfig,
     },

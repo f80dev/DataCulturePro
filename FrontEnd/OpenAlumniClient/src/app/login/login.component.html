@@ -12,13 +12,19 @@
     <div style="width: 100%;text-align: center;">
       <div *ngIf="messageCode.length==0">
         <br>
-        <button class="app-button login-button"
-                id="cmdGoogle"
-                title="Authentification simplifiée en utilisant votre mail google"
-                mat-raised-button
-                (click)="socialSignIn('google')">
-          Google
-        </button>
+            <div class="login-button" style="display: inline-block;">
+              <asl-google-signin-button type='standard'
+                                        size='medium' theme="outline"
+                                        width="200"></asl-google-signin-button>
+            </div>
+
+<!--        <button class="app-button login-button"-->
+<!--                id="cmdGoogle"-->
+<!--                title="Authentification simplifiée en utilisant votre mail google"-->
+<!--                mat-raised-button-->
+<!--                (click)="socialSignIn('google')">-->
+<!--          Google-->
+<!--        </button>-->
 <!--        <button class="app-button login-button"-->
 <!--                mat-raised-button-->
 <!--                id="cmdFacebook"-->

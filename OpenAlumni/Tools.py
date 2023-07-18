@@ -611,7 +611,17 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
 
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mozilla/5.0',offline=False):
-
+    """
+    tags #open_page open page
+    :param url:
+    :param refresh_delay:
+    :param save:
+    :param bot:
+    :param timeout:
+    :param agent:
+    :param offline:
+    :return:
+    """
     if url is None:return None
     if url.startswith("/"):url="https://www.imdb.com/"+url
 

@@ -37,21 +37,29 @@ Instant_reports:
     color: Formation
     y: Awards
     table: Awards
-    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE Promotion>=2000 AND profil__cursus='S' GROUP BY Formation ORDER BY -Awards LIMIT 10
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE Promotion>=2000 AND profil__department!='' GROUP BY Formation ORDER BY -Awards LIMIT 10
     prod: True
 
-  - title: Films et séries impliquant des anciens de la FEMIS par cursus (FP et FI) depuis 2010
+
+  - title: Films et séries impliquant des anciens de la FEMIS en Formation Initiale depuis 2010
     description:
     id: avg_work
     chart: bar
     x: Annee
     y: Projets
-    color: Cursus
-    replace:
-      P: Formation professionnelle
-      S: Formation initiale
-    filter: Formation
-    sql: SELECT count(id) as Projets, profil__department as Formation, profil__cursus AS Cursus, pow__year AS Annee FROM df WHERE Annee>=2010 GROUP BY Cursus, Annee
+    color: Formation
+    sql: SELECT count(id) as Projets, profil__department as Formation, pow__year AS Annee FROM df WHERE Formation!='' AND Annee>=2010 GROUP BY Formation, Annee
+    prod: True
+
+
+  - title: Films et séries impliquant des anciens de la FEMIS en Formation professionnelle depuis 2010
+    description:
+    id: avg_work_pro
+    chart: bar
+    x: Annee
+    y: Projets
+    color: Formation
+    sql: SELECT count(id) as Projets, profil__department_pro as Formation, pow__year AS Annee FROM df WHERE Formation!='' AND Annee>=2010 GROUP BY Formation, Annee
     prod: True
 
 
@@ -64,12 +72,12 @@ Instant_reports:
     color: Formation
     y: Awards
     table: Awards
-    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE profil__degree_year>=2000 GROUP BY Formation,Promotion ORDER BY -Awards LIMIT 40
+    sql: SELECT profil__department AS Formation,count(id) AS Awards,CAST(profil__degree_year AS int) AS Promotion FROM df WHERE profil__degree_year>=2000 GROUP BY Formation,Promotion ORDER BY -Awards LIMIT 40
     prod: True
 
 
 
-  - title: Liste des métiers les plus exercés par les anciens étudiants et stagiaires
+  - title: Liste des métiers les plus exercés par les anciens étudiants
     description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
     id: job_by_formation
     chart: pie
@@ -77,11 +85,11 @@ Instant_reports:
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE profil__cursus='S' GROUP BY Job ORDER BY -nb LIMIT 15
+    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE Formation!='' GROUP BY Job ORDER BY -nb LIMIT 15
     prod: True
 
 
-  - title: Liste des métiers les plus exercés par les stagiaires (formation pro)
+  - title: Liste des métiers les plus exercés par les anciens de la formation professionnelle
     description: Cette liste de métier est obtenue indépedemment de leur formation
     id: job_by_formation
     chart: pie
@@ -89,7 +97,7 @@ Instant_reports:
     y: nb
     filter: Formation
     color: Job
-    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE profil__cursus='P' GROUP BY Job ORDER BY -nb LIMIT 15
+    sql: SELECT job as 'Job', count(id) as nb,profil__department_pro as 'Formation' FROM df WHERE profil__department_pro!='' GROUP BY Job ORDER BY -nb LIMIT 15
     prod: True
 
   - title: Les événements qui recompensent le plus les anciens de la FEMIS
@@ -159,7 +167,7 @@ Instant_reports:
     x: Departement
     y: Profils
     table: Awards
-    sql: SELECT count(profil__id) AS Profils,profil__department AS Departement FROM df WHERE winner=True AND profil__cursus='S' GROUP BY profil__id,Departement
+    sql: SELECT count(profil__id) AS Profils,profil__department AS Departement FROM df WHERE winner=True AND Departement!='' GROUP BY profil__id,Departement
     prod: True
 
 
@@ -189,18 +197,6 @@ Instant_reports:
     prod: True
 
 
-  - title: Répartition des etudiants (formation pro) par département
-    description:
-    id: prostudent_by_depyear
-    chart: bar
-    x: promotion
-    y: etudiants
-    color: formation
-    cols: formation,promotion,etudiants
-    filter: formation
-    table: sql
-    sql: SELECT department AS formation, degree_year AS promotion,count(id) as etudiants FROM alumni_profil WHERE cursus='P' GROUP BY formation,promotion ORDER BY promotion
-    prod: True
 
 
 
@@ -242,8 +238,6 @@ Instant_reports:
     x: Dernière mise a jour
     y: n_pow
     prod: True
-
-
 
 
   - title: Répartition par promotion des éleves de la FEMIS entre formation initiale et formation professionnelle
@@ -302,8 +296,6 @@ Instant_reports:
 
 
 
-
-
   #http://localhost:4200/stats?open=prostudent_by_depyear
   - title: Répartition des stagiaires de la formation profesionnelle
     description: Regroupement par année et par atelier
@@ -314,7 +306,7 @@ Instant_reports:
     color: Stage
     filter: Stage
     cols: Stage,Promotion,Stagiaires
-    sql: SELECT department AS Stage, degree_year AS Promotion,count(id) as Stagiaires FROM alumni_profil WHERE cursus='P' GROUP BY Stage,Promotion
+    sql: SELECT department_pro AS Stage, CAST(degree_year AS int) AS Promotion,count(id) as Stagiaires FROM alumni_profil WHERE department_pro!='' GROUP BY Stage,Promotion ORDER BY Promotion
     prod: True
 
 
@@ -421,7 +413,7 @@ Instant_reports:
     id: exp_pro
     chart: none
     table: work
-    sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Stage, ROUND(profil__degree_year,0) AS Promo,pow__title AS 'Film/Court-métrage/Série',ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__cursus='P' AND profil__degree_year<=pow__year ORDER BY Nom,profil__degree_year
+    sql: SELECT profil__lastname || ' ' || profil__firstname AS Nom,profil__department AS Stage, CAST(profil__degree_year AS int) AS Promo,pow__title AS 'Film/Court-métrage/Série',ROUND(pow__year,0) AS Annee,job FROM df WHERE profil__department_pro!='' AND Promo<=CAST(pow__year AS int) ORDER BY Nom,Promo
     prod: True
 
   - title: Nombre de travaux sur des films

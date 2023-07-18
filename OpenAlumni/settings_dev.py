@@ -219,7 +219,7 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': 'localhost',
+        'HOST': '192.168.1.62',
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -231,7 +231,7 @@ DATABASES = {
 #Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'                  #Serveur prestashop: 173.249.41.158:9210
+        'hosts': '192.168.1.62:9200'                  #Serveur prestashop: 173.249.41.158:9210
     },
 }
 

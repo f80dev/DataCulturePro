@@ -74,6 +74,7 @@ export class HourglassComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   handle:any=0;
+
   decompte(current:any){
     if(current>=100){
       this.current=0;

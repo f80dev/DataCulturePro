@@ -12,31 +12,17 @@ test: http://localhost:8000/api/faqs
 #- format est optionnel et par défaut à txt, il peut être à HTML si 'content\" contient des balises
 
 content:
-  - index: setup
-    title: Comment installer DCP sur son téléphone ?
+  - index: data_culture_pro
+    title: Qu'est ce que "{{appname}}" ?
     order: 0
     format: html
-    content: "
-      <p>
-      Il est possible d'installer {{appname}} sur son téléphone comme pour n'importe quelle application.<br>
-      Il suffit d'ouvrir le menu du navigateur de votre téléphone et de sélectionner 'Installer ...'
-      L'icone de {{appname}} devrait se retrouver parmi vos applications déjà installées
-      </p>
+    content:
       "
-
-
-  - index: authent
-    title: Pourquoi s'authentifier sur {{appname}} ?
-    order: 0
-    format: html
-    content: "
-      <p>
-      Les anciens étudiants présents sur {{appname}} peuvent être consultés en mode anonyme.
-      Cependant l'authentification permet de sélectionner des profils d'utilisateurs accédant à plus d'informations sur les étudiants, des statistiques sur les promotions
-      et parfois de contacter directement les anciens.
-      </p>
-      "
-
+          <p>
+            Data Culture Pro est l'annuaire intéractif des anciens étudiant de la FEMIS. 
+            Il rassemble à la fois les étudiants du cursus classique et la formation professionnelle.
+          </p>
+        "
 
 
   - index: query
@@ -46,7 +32,7 @@ content:
     content:
       "
         <p>
-          Data Culture Pro permet des recherches rapides et précises sur l'ensembl des profils:
+          Data Culture Pro permet des recherches rapides et précises sur l'ensemble des profils référencés :
           <ul>
           <li>Recherche par nom: ducournau</li>
           <li>Recherche par début du nom: ducou*
@@ -57,18 +43,13 @@ content:
           <br>
           Pour l'instant, {{appname}} n'est pas sensible au Majuscules/Minuscules mais sensible aux accents
         </p>
+        
+        <p>
+        Dans la rubrique films et séries, il est également possible de faire des recherches par titre ou année de sortie
+        </p>
         "
 
-  - index: data_culture_pro
-    title: Qu'est ce que "data culture pro" ?
-    order: 0
-    format: html
-    content:
-      "
-        <p>
-          Data Culture Pro est l'annuaire intéractif des anciens de la FEMIS
-        </p>
-      "
+
 
   - index: fiche_film
     title: Quelles sont les infos diposnibles pour chaque film ?
@@ -80,6 +61,17 @@ content:
       Chaque fiche de film contient les informations essentielles pour le film : titre, synopsis, années de sortie<br>
       mais également la liste des étudiants FEMIS ayant contribué à la réalisation ainsi que des liens complémentaires
       pour avoir plus d'information sur le film
+      </p>
+      "
+
+  - index: web_scrapping
+    title: Comment sont collectées les données des profils ?
+    order: 0
+    format: html
+    content:
+      "
+      <p>
+    
       </p>
       "
 
@@ -107,6 +99,35 @@ content:
             </ul>
       </p>
       "
+
+
+  - index: setup
+    title: Comment installer {{appname}} sur son téléphone ?
+    order: 0
+    format: html
+    content: "
+      <p>
+      Il est possible d'installer {{appname}} sur son téléphone comme pour n'importe quelle application.<br>
+      Il suffit d'ouvrir le menu du navigateur de votre téléphone et de sélectionner 'Installer ...'
+      L'icone de {{appname}} devrait se retrouver parmi vos applications déjà installées
+      </p>
+      "
+
+
+  - index: authent
+    title: Pourquoi s'authentifier sur {{appname}} ?
+    order: 0
+    format: html
+    content: "
+      <p>
+      Les anciens étudiants présents sur {{appname}} peuvent être consultés en mode anonyme.
+      Cependant l'authentification permet de sélectionner des profils d'utilisateurs accédant à plus d'informations sur les étudiants, des statistiques sur les promotions
+      et parfois de contacter directement les anciens.
+      </p>
+      "
+
+
+
 
   - index: export_stat
     title: Comment analyser les statistiques ?

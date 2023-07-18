@@ -44,7 +44,7 @@ def reindex(index_name=""):
     #test http://localhost:8000/api/reindex/?index_name=festivals
     log("Ré-indexage de la base")
     if len(index_name)==0:
-        return management.call_command("search_index","--rebuild","-f")
+        return management.call_command("search_index","--rebuild","-f","--parallel")
     else:
         index:Index=Index(index_name)
         if index.exists(): index.delete()
@@ -524,8 +524,8 @@ def extract_awards_from_imdb(profil_url,fullname):
     for award in awards:
         festival_title=list(award.children)[0].text
         if len(list(award.children))>1:
-            desc=list(list(award.children)[1].find_all("a"))[1].text
             links=list(list(award.children)[1].find_all("a"))
+            desc=links[1].text if len(links)>1 else ""
             if len(links)>2:
                 film_title=links[2].text
                 film_id=links[2].attrs["href"].split("/title/")[1].split("/")[0] if "/title/" in links[2].attrs["href"] else ""
@@ -620,7 +620,7 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_pr
         if len(peoples)==0: log(lastname+" inconnu sur IMDB")
         for p in peoples:
             name=remove_accents(remove_ponctuation(p["name"].upper()))
-            if (remove_accents(firstname).upper() in name and remove_accents(lastname).upper() in name) or equal_str(lastname+firstname,name):
+            if equal_str(firstname+lastname,name):
                 url_profil = "https://imdb.com" + p["href"]
                 break
 
@@ -1313,7 +1313,7 @@ def profils_importer(data_rows,limit=10,dictionnary={}) -> (int,int):
                 )
 
                 try:
-                    if profil.department is None or profil.degree_year is None:
+                    if (profil.department is None and profil.department_pro is None) or profil.degree_year is None:
                         raise RuntimeError("Données manquantes")
 
                     if len(profil.email)>0:
@@ -1526,7 +1526,7 @@ def exec_batch_movies(pows,refresh_delay=31):
 def exec_batch(profils,refresh_delay_profil=31,
                refresh_delay_pages=31,limit=2000,
                limit_contrib=10,
-               content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False},
+               content=None,
                remove_works=False,
                offline=False) -> (int,int):
     """
@@ -1546,6 +1546,7 @@ def exec_batch(profils,refresh_delay_profil=31,
     #         all_links.append(l["url"])
 
     log("Lancement du batch sur "+str(len(profils))+" profils. Obsolescence des pages "+str(refresh_delay_pages))
+    if content is None: content={"unifrance":True,"imdb":True,"lefilmfrancais":False,"senscritique":False}
 
     for profil in profils:
         limit=limit-1
@@ -1565,7 +1566,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             try:
                 imdb_profil_url=None
-                if content is None or content["imdb"]:
+                if content["imdb"]:
                     infos = extract_profil_from_imdb(
                         firstname=profil.firstname, lastname=profil.lastname.lower(),
                         refresh_delay=refresh_delay_pages,
@@ -1595,7 +1596,7 @@ def exec_batch(profils,refresh_delay_profil=31,
                 log("Probleme d'extration du profil pour "+profil.lastname+" sur imdb"+str(inst.args))
 
             try:
-                if not content is None and content["lefilmfrancais"]:
+                if content["lefilmfrancais"]:
                     infos=extract_profil_from_lefimlfrancais(firstname=profil.firstname,lastname=profil.lastname)
                     if "url" in infos:profil.add_link(infos["url"],"LeFilmF")
                     if len(infos["links"])>0:
@@ -1604,7 +1605,7 @@ def exec_batch(profils,refresh_delay_profil=31,
             except:
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
-            if not content is None and content["unifrance"]:
+            if content["unifrance"]:
                 infos = extract_profil_from_unifrance(remove_accents(profil.firstname + " " + profil.lastname), refresh_delay=refresh_delay_pages)
                 log("Extraction d'un profil d'unifrance "+str(infos))
                 if infos is None:
@@ -1623,7 +1624,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
 
-            if content and content["unifrance"] and not infos is None:
+            if content["unifrance"] and not infos is None:
                 if "prix" in infos:
                     for a in infos["prix"]:
                         add_award(a["title"],profil,desc=a["desc"],film_title=a["pow"],year=a["year"],win=a["winner"])

@@ -42,7 +42,16 @@ export class SearchComponent implements OnInit {
       this.query.value=params.filter || params.query || "";
       if(localStorage.getItem("filter_with_pro"))this.filter_with_pro=(localStorage.getItem("filter_with_pro")=="true");
       this.refresh();
+      this.update_placeholder();
     })
+  }
+
+  update_placeholder(){
+    if(this.query.value==""){
+      let props=["julia","duc*","ozon","2016","réalisation","scénario 2012","atelier réécriture"]
+      this.placeholder="Exemple: "+props[Math.trunc(Math.random()*props.length)]
+      setTimeout(()=>{this.update_placeholder()},1000);
+    }
   }
 
 
@@ -57,7 +66,7 @@ export class SearchComponent implements OnInit {
     }
 
     if(this.api.token)this.perm="mail";else this.perm="";
-    if(this.query.value.length>3 || this.advanced_search.length>0){
+    if(this.query.value.length>=3 || this.advanced_search.length>0){
       let param="/";
       let prefixe="";
 
@@ -111,13 +120,13 @@ export class SearchComponent implements OnInit {
           if(item.cursus=="P")item.backgroundColor="#5471D2";
           if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#f1e627";
 
-          if(item.school=="FEMIS" && (this.filter_with_pro || item.cursus=="S") && (this.config.show_student || item.backgroundColor!="#f1e627")){
+          if(item.school=="FEMIS" && (this.filter_with_pro || item.department) && (this.config.show_student || item.backgroundColor!="#f1e627")){
 
             if(item.department && item.department.length>60){
               item.department=abrege(item.department,this.config.abreviations);
             }
 
-            if(item.department)this.profils.push(item);
+            this.profils.push(item);
           } else {
 
           }
@@ -172,6 +181,7 @@ export class SearchComponent implements OnInit {
   order=this.fields[0].value;
 
   advanced_search=[];
+    placeholder="";
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);

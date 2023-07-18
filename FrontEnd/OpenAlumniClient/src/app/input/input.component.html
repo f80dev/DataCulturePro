@@ -1,12 +1,11 @@
 <div class="input-elements" [style.width]="width" [style.max-width]="maxwidth" [ngClass]="fontname">
 
-  <div style="padding:5px;">
+  <div style="padding:0px;margin:2px;" *ngIf="value_type=='boolean'">
     <mat-checkbox [(ngModel)]="value"
-                      style="width: 100%;"
+                      style="width: 100%;padding:0;margin:0;"
                       color="primary"
-                      *ngIf="value_type=='boolean'"
                       (ngModelChange)="on_validate()"
-                      [title]="infobulle">
+                      [title]="infobulle || help">
       {{label}}
     </mat-checkbox>
   </div>
@@ -38,6 +37,9 @@
                 title="Effacer"
                 style="display: inline-block;font-size: 20px;"
                 (click)="on_clear()">cancel</mat-icon>
+
+      <div *ngIf="value_type=='number' && unity && unity.length>0"
+           style="display:inline-block;margin-top:8px;margin-right: 7px;opacity: 0.7;">{{unity}}</div>
     </div>
 
     <mat-hint *ngIf="showHelp" class="mat-body-1 help-input">{{help}}</mat-hint>
@@ -96,7 +98,7 @@
     <div *ngIf="label.length>0" style="margin:10px;" class="mat-caption">{{label}}</div>
     <div style="overflow: scroll;" [style.height]="height">
       <mat-selection-list (selectionChange)="sel_change($event)" [multiple]="multiselect" >
-        <mat-list-option *ngFor="let option of options" [value]="option" class="mat-body-2">
+        <mat-list-option *ngFor="let option of options | filter:['label',filter]" [value]="option" class="mat-body-2">
           <img matListItemAvatar [src]="option.image" [style.width]="size_image" [style.height]="size_image">
           {{option.label}}
         </mat-list-option>

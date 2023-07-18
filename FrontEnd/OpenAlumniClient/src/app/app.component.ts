@@ -5,8 +5,8 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {environment} from "../environments/environment";
 import {MatDrawerMode, MatSidenav} from "@angular/material/sidenav";
-import {ChatAdapter} from "ng-chat";
-import { MyAdapter } from './MyAdapter';
+// import {ChatAdapter} from "ng-chat";
+// import { MyAdapter } from './MyAdapter';
 import {$$, getParams} from "./tools";
 import {MatDialog} from "@angular/material/dialog";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit,AfterViewInit {
   appVersion: any;
   @ViewChild('drawer', {static: false}) drawer: MatSidenav;
 
-  public adapter: ChatAdapter = new MyAdapter();
+  //public adapter: ChatAdapter = new MyAdapter();
 
 
   innerWidth: number=400;

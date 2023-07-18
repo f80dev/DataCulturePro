@@ -41,8 +41,7 @@ class Profil(models.Model):
     id=models.AutoField(primary_key=True)
     #company=models.ForeignKey("Company",on_delete=models.DO_NOTHING,null=True)
 
-    gender = models.CharField(max_length=1, blank=True, default="M",
-                              choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
+    gender = models.CharField(max_length=1, blank=True, default="M",choices=(('M', 'Male'), ('F', 'Female'), ('A', 'Autre'), ('', 'NSP')),help_text="Genre du profil")
     firstname=models.CharField(max_length=40, null=False, default='',help_text="Prénom du profil")
     lastname = models.CharField(max_length=70, null=False, default='', help_text="Nom du profil")
     name_index=models.CharField(max_length=70, null=False, default='', help_text="Index du prenom+nom du profil sans accent, sans espace")
@@ -83,7 +82,7 @@ class Profil(models.Model):
 
     photo=models.TextField(blank=True,default="/assets/img/anonymous.png",help_text="Photo du profil au format Base64")
 
-    cursus=models.CharField(max_length=1,blank=False,default="S",choices=(('S','Standard'),('P','Professionnel')),help_text="Type de formation")
+    cursus=models.CharField(max_length=1,blank=True,default="S",choices=(('S','Standard'),('P','Professionnel')),help_text="Type de formation")
     address=models.CharField(null=True,blank=True,max_length=200,help_text="Adresse postale au format numéro / rue / batiment")
     town = models.CharField(null=True,blank=True,max_length=50, help_text="Ville de l'adresse postale de résidence")
     cp=models.CharField(null=True,blank=True,max_length=5,help_text="code postal de résidence")
@@ -396,7 +395,7 @@ class PieceOfWork(models.Model):
 
     reference=models.CharField(null=False,default="",blank=True,max_length=50,help_text="Reference de l'oeuvre")
     budget = models.IntegerField(default=0, help_text="Coût total de réalisation de l'oeuvre")
-    production=models.CharField(null=False,default="",blank=True,max_length=100,help_text="Production de l'oeuvre")
+    production=models.CharField(null=False,default="",blank=True,max_length=200,help_text="Production de l'oeuvre")
 
     #Structure : "url" du document, "text" du lien
     links=JSONField(null=True,help_text="Liens vers des références externes à l'oeuvre")

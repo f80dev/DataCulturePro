@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  appname:"Data Culture Pro Local",
   name: "local",
   domain_server:"http://localhost:8000",
   config_file:"config",

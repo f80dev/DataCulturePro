@@ -31,14 +31,17 @@
               <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.degree_year}})" style="cursor: pointer;">{{profil?.degree_year}}</td>
             </tr>
 
-            <tr>
-              <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'" class="label">
-                <span *ngIf="profil.cursus=='S'">Département</span>
-                <span *ngIf="profil.cursus=='P'">Stage</span>
-              </td>
-              <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})"
-                  style="cursor: pointer;">
+            <tr *ngIf="profil.department">
+              <td [title]="'En savoir plus sur le département '+profil.department+' de la FEMIS'" class="label">Département</td>
+              <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department}})" style="cursor: pointer;">
                 {{profil?.department}}
+              </td>
+            </tr>
+
+            <tr *ngIf="profil.department_pro">
+              <td [title]="'En savoir plus sur le département '+profil.department_pro+' de la FEMIS'" class="label">Stage</td>
+              <td (dblclick)="router.navigate(['search'],{queryParams:{query:profil.department_pro}})" style="cursor: pointer;">
+                {{profil?.department_pro}}
               </td>
             </tr>
 
@@ -66,7 +69,7 @@
 
     <br>
 
-    <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0">
+    <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0 && profil.works.length+profil.awards.length>0">
 
       <mat-tab-group>
         <mat-tab label="FILMOGRAPHIE" *ngIf="profil?.works?.length>0">
@@ -104,7 +107,7 @@
       </mat-tab-group>
 
       <br>
-      <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);">
+      <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);" >
         <button mat-icon-button
                 title="Partager ce profil"
                 *ngIf="!config.isDesktop()"
@@ -119,7 +122,7 @@
                        [include]="['facebook','twitter','linkedin','telegram','messenger','whatsapp','email','copy']"
                        [show]="8"
                        [url]="url"
-                       description="Mon profil et mes réalisations sur l'annuaire de la FEMIS"
+                       [description]="profil.fullname+' sur l\'annuaire de la FEMIS'"
                        tags="FEMIS"
                        [title]="title">
         </share-buttons>

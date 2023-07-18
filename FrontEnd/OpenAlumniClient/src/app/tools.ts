@@ -236,8 +236,8 @@ export function group_works(wrks) {
     if(!jobs.hasOwnProperty(pow_id))jobs[pow_id]=[];
     if(!works.hasOwnProperty(pow_id))works[pow_id]=[];
 
-    if(jobs[pow_id].indexOf(w.job)==-1)jobs[pow_id].push(w.job);
-    if(works[pow_id].indexOf(w.id)==-1)works[pow_id].push(w.id);
+    if(jobs[pow_id].indexOf(w.job)==-1 && w.state!="D")jobs[pow_id].push(w.job);
+    if(works[pow_id].indexOf(w.id)==-1  && w.state!="D")works[pow_id].push(w.id);
   }
 
   let rc=[];

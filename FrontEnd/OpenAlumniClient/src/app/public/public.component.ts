@@ -57,7 +57,8 @@ export class PublicComponent implements OnInit {
       }
       _w.type="work";
       _w.subtitle=_w.title;
-      _w.label="<div class='mat-subheading-2'>"+_w.job+" pour <a class='primary-color' href='./pows?query=\""+_w.title+"\"'>"+_w.title+"</a></div>"
+      let title=encodeURIComponent(_w.title.replace("'"," "))
+      _w.label="<div class='mat-subheading-2'>"+_w.job+" pour <a class='primary-color' href='./pows?query="+title+"'>"+_w.title+"</a></div>"
 
       if(_w.public)rc.push(_w);
 
@@ -169,6 +170,7 @@ export class PublicComponent implements OnInit {
           }
           this.url=this._location.path();
           this.title = p.firstname + " " + p.lastname;
+          if(!this.profil.hasOwnProperty("awards"))this.profil.awards=[]
 
           this.load_items(this.profil);
         },(err)=>{
@@ -200,7 +202,7 @@ export class PublicComponent implements OnInit {
 
 
   open_price(a: any,movie_title) {
-    let url="https://www.google.com/search?q="+a.title+" "+movie_title;
+    let url="https://www.google.com/search?q="+encodeURIComponent(a.title+" "+movie_title);
     open(url.replace(" ","+"),"search");
   }
 

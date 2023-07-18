@@ -4,6 +4,7 @@
 
     <mat-expansion-panel [expanded]="faq.visible" togglePosition="before"
                           style="margin:5px;"
+                         (expandedChange)="open_faq($event,faq)"
                          *ngFor="let faq of faqs"
                          name="faq">
 

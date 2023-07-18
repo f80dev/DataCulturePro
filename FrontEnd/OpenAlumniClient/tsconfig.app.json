@@ -10,7 +10,8 @@
   "files": [
     "src/main.ts",
     "src/polyfills.ts",
-    "node_modules/@types/node/globals.d.ts"
+    "node_modules/@types/node/globals.d.ts",
+    "src/app/constantes.ts"
   ],
   "include": [
     "src/**/*.d.ts"

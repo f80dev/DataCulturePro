@@ -33,8 +33,10 @@ department_category:
   Initiation à l'adaptation de romans: Scénario
   Expertiser un scénario de long métrage: Scénario
   Direction d'exploitation cinématographique: Exploitation
+  Pitcher promouvoir son documentaire: Documentaire
   Le son direct au cinéma: Son
   Son: Son
+  Scripte: Scripte
   Montage: Montage
   Documentaire: Documentaire
   Décor: Décor
@@ -132,7 +134,7 @@ jobs:
   Script_department: Scénario
   Soundtrack: Compositeur
   Executive in charge of production: Production
-  Artistic production manager: Production
+  Artistic production manager: Direction de Production
   Sound department: Son
   Foley artist: Assistant son
   First assistant camera: Assistant caméra
@@ -167,7 +169,7 @@ jobs:
   Additional Camera: Caméra
   Additional Electrician: Décor
   Post-production coordinator: Post-production
-  Production manager only nrw: Production
+  Production manager only nrw: Direction de Production
   Boom operator: Assistant son
   Unit manager: Production
   First assistant director: Ass. réalisation
@@ -244,7 +246,7 @@ jobs:
   Production designer: Production
   Responsable de la post-production: Post-production
   Monteur son - ingénieur du son: Ing. son
-  Producteurs délégués: Production déléguée
+  Producteurs délégués: Production
   Assistants opérateurs: Caméra
   Co-producer tetra media fiction: Co-production
   Delegate producer: Producteur délégué
@@ -252,7 +254,7 @@ jobs:
   Producteurs: Production
   Producteurs exécutifs: Production exécutive
   Producteur exécutif: Production exécutive
-  Producteur délégué: Production déléguée
+  Producteur délégué: Production
   Sound mixer: Ing. son
   Electrician: Electricien
   Second camera operator: Assistant caméra
@@ -260,13 +262,13 @@ jobs:
   Monteur son et mixeur: Son 
   Distributrice france: Distribution
   Scriptes: Scripte
-  Production manager: Production
+  Production manager: Direction de Production
   Producteur étranger: Production
   Script and continuity department: Scripte
   Agents (presse france): Relations presse
   Chef monteuse: Montage
   Assistante opérateur: Ass.Caméra
-  Productrice déléguée: Production déléguée
+  Productrice déléguée: Production
   Animation department: Animation
   Directeurs de production: Direction de Production
   Monteuse: Montage
@@ -295,6 +297,7 @@ jobs:
   Costume designer: Costumes
   Location management: Repérages
   Productrices: Production
+  Productrice: Production
   Département animation: Animation
   Directrice artistique: Direction artistique
   Opératrice du son: Ing. son
@@ -358,7 +361,7 @@ jobs:
   Attachée de presse film: Relations presse
   Idées originales: Scénario
   Coproductrices: CoProduction
-  Productrices déléguées: Production déléguée
+  Productrices déléguées: Production
   Production coordinator: Production
   Production staff: Production
   Screenplay assistant: scénario ass.

@@ -90,9 +90,9 @@
       <!--      Réseau sociaux -->
       <mat-expansion-panel  style="text-align: left;" id="pnlSocial">
         <mat-expansion-panel-header>
-          
-            Réseaux sociaux
-          
+
+          Réseaux sociaux
+
         </mat-expansion-panel-header>
         Vos adresses sur les réseaux sociaux<br>
         <table style="width: 100%;vertical-align: text-top;">
@@ -131,9 +131,9 @@
       <!--      Mentorat-->
       <mat-expansion-panel  style="text-align: left;" id="pnlTutorat" *ngIf="config.hasPerm('tutorat')">
         <mat-expansion-panel-header>
-          
-            Tutorat
-          
+
+          Tutorat
+
 
         </mat-expansion-panel-header>
 
@@ -215,9 +215,9 @@
       <!--      Job-->
       <mat-expansion-panel  style="text-align: left;" id="pnlJob" *ngIf="config.hasPerm('job_search')">
         <mat-expansion-panel-header>
-          
-            Offres d'emplois
-          
+
+          Offres d'emplois
+
         </mat-expansion-panel-header>
 
         <mat-form-field appearance="outline" class="app-field" style="width: 70%;max-width: 250px;font-size: small;">
@@ -252,9 +252,9 @@
       <!--      Présence sur Internet -->
       <mat-expansion-panel [expanded]="expanded_internet_pnl" id="pnlInternet">
         <mat-expansion-panel-header>
-          
-            Présence internet
-          
+
+          Présence internet
+
         </mat-expansion-panel-header>
         <div class="mat-body-1 label">Voir et optimiser sa présence sur Internet</div>
         <table style="width:100%;">
@@ -271,9 +271,9 @@
       <!--      Expérience -->
       <mat-expansion-panel  [expanded]="expanded_experience_pnl" id="pnlExperience">
         <mat-expansion-panel-header>
-          
-            Expériences
-          
+
+          Expériences
+
         </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
           <div *ngIf="works.length==0 && message.length==0">
@@ -298,9 +298,9 @@
             <td style="text-align: right;width:70px;" name="experience_panel">
 
               <mat-icon
-                        name="cmdEdit"
-                        title="Editer cette expérience"
-                        (click)="edit_work(work)">
+                      name="cmdEdit"
+                      title="Editer cette expérience"
+                      (click)="edit_work(work)">
                 edit
               </mat-icon>
 
@@ -347,7 +347,7 @@
       <!-- Récompenses-->
       <mat-expansion-panel  [expanded]="false" id="pnlRecompenses">
         <mat-expansion-panel-header>
-            Nominations / Récompenses
+          Nominations / Récompenses
         </mat-expansion-panel-header>
         <br>
         <table style="width: 100%;font-size: small;">
@@ -394,9 +394,9 @@
       <!--      Relations -->
       <mat-expansion-panel  [expanded]="false" id="pnlRelations" *ngIf="relations?.length>0">
         <mat-expansion-panel-header>
-          
-            Réseau pro
-          
+
+          Réseau pro
+
         </mat-expansion-panel-header>
         Vous avez travaillé avec:<br>
         <div *ngFor="let relation of relations" style="cursor: pointer" (click)="open_profil(relation)">
@@ -512,69 +512,70 @@
   <!--    </div>-->
   <!--  </div>-->
 
-  <div *ngIf="showAddWork==2 || showAddWork==3" style="width:100%;text-align: center;">
+  <div *ngIf="add_works.length>0">
     <h3>
-      Précisez votre contribution sur "{{add_work.movie}}"
-      <span *ngIf="add_work.year"> ({{add_work.year}})</span>
+      Précisez votre contribution sur "{{current_work.title}}"
+      <span *ngIf="current_work.year"> ({{current_work.year}})</span>
     </h3>
-    <div style="max-width: 500px;display: inline-block;width:90%;">
-      <app-input [options]="config.jobs" label="Poste occupé" [value]="job" (valueChange)="job=$event"
-                 help="Sélectionner le poste que vous aviez sur le projet"></app-input>
-      <br>
+    <br>
+    <div *ngFor="let add_work of add_works" class="mat-elevation-z4">
+      <div *ngIf="showAddWork==2 || showAddWork==3 && add_work.state!='D'" style="width:100%;text-align: center;margin-top: 15px;">
 
-      <app-input label="Heures travaillées" value_type="number" width="150px"
-                 [value]="duration" (valueChange)="duration=$event"
-                 help="Nombre d'heures de travail réalisé sur le projet"></app-input>
+        <div style="display: flex;width:100%;justify-content: center;">
+          <app-input [options]="config.jobs" label="Poste occupé" value_type="list"
+                     [value]="add_work.job" (valueChange)="add_work.job=$event"
+                     help="Sélectionner le poste que vous aviez sur le projet"></app-input>
 
-      <app-input label="Revenu total" [value]="earning" (valueChange)="earning=$event"
-                 help="Revenu brut pour toute la durée" width="150px"></app-input>
-      <mat-icon title="Donnée anonymisée uniquement utilisée sous forme de moyenne pour les statistiques">help</mat-icon>
-      <br>
+          <app-input label="Heures travaillées" value_type="number" width="100px"
+                     [value]="add_work.duration" (valueChange)="add_work.duration=$event;add_work.state='E';"
+                     title="Nombre d'heures de travail réalisé sur le projet"></app-input>
 
-      <app-input label="Commentaires" [value]="comment" (valueChange)="comment=$event"
-                 maxlength="200"
-                 help="Détailler l'expérience, difficultés rencontrées, bénéfices"></app-input>
-      <br>
+          <app-input label="Revenu total" [value]="add_work.earning" (valueChange)="add_work.earning=$event;add_work.state='E';"
+                     title="Revenu brut pour toute la durée (Donnée anonymisée uniquement utilisée sous forme de moyenne pour les statistiques)" width="100px"></app-input>
+
+          <app-input label="Commentaires" [value]="add_work.comment" (valueChange)="add_work.comment=$event;add_work.state='E';"
+                     maxlength="200"
+                     title="Détailler l'expérience, difficultés rencontrées, bénéfices"></app-input>
+
+          <button mat-raised-button *ngIf="add_work.state!='D'" (click)="add_work.state='D'">Supprimer</button>
+          <mat-icon *ngIf="add_work.state=='E'">edit</mat-icon>
+
+        </div>
+
+        <br>
+
+        <div style="display: flex;margin-top: 10px;width:90%;justify-content: space-around;">
+          <app-scoring [value]="add_work.score_school" (valueChange)="add_work.score_school=$event;add_work.state='E'">
+            Votre formation à la FEMIS vous a-t'elle aidé pour cette expérience ?
+          </app-scoring><br>
+
+          <app-scoring [value]="add_work.score_salary" (valueChange)="add_work.score_salary=$event;add_work.state='E'">
+            Votre rémunération etait elle au niveau de vos attentes ?
+          </app-scoring><br>
+
+          <app-scoring [value]="add_work.score_skill" (valueChange)="add_work.score_skill=$event;add_work.state='E'">
+            Votre rémunération etait elle au niveau de vos attentes ?
+          </app-scoring>
+
+        </div>
+      </div>
 
     </div>
 
+
+
     <br>
 
-    <div style="display: inline-block;margin-top: 10px;width:90%;">
-      <app-scoring [value]="score_school" (valueChange)="score_school=$event">
-        Votre formation à la FEMIS vous a-t'elle aidé pour cette expérience ?
-      </app-scoring><br>
-
-      <app-scoring [value]="score_salary" (valueChange)="score_salary=$event">
-        Votre rémunération etait elle au niveau de vos attentes ?
-      </app-scoring><br>
-
-      <app-scoring [value]="score_skill" (valueChange)="score_skill=$event">
-        Votre rémunération etait elle au niveau de vos attentes ?
-      </app-scoring>
-
-    </div>
-
-
-
-
-    <hr>
-    <br>
-
-    <button class="app-button"
-            mat-raised-button
-            (click)="this.showAddWork=0">
+    <button class="app-button" mat-raised-button
+            (click)="cancel()">
       Anuler
     </button>
 
-    <button class="app-button" color="primary"
-            mat-raised-button
+    <button class="app-button" color="primary" mat-raised-button
             title="Ajouter ce projet à votre expérience"
             (click)="save_newwork()">
-      <div class="bloc-bouton">Enregistrer cette<br>expérience</div>
+      <div class="bloc-bouton">Enregistrer</div>
     </button>
-
   </div>
-
 
 </div>

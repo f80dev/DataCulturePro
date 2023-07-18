@@ -52,7 +52,7 @@
     <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"
-           placeholder="Votre requête"
+           [placeholder]="placeholder"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
       <mat-icon *ngIf="query.value?.length>0" style="margin-right: 15px;"
@@ -157,7 +157,6 @@
     <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
     <app-profil *ngFor="let profil of profils"
             name="profils" class="app-card"
-            [backgroundColor]="profil.backgroundColor"
             (delete)="deleteProfil(profil)"
             [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
             (askfriend)="askfriend(profil)"

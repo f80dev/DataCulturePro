@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1688031797769,
+  "timestamp": 1689677673154,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -11,7 +11,6 @@
         "ignoreVary": true
       },
       "urls": [
-        "/786.js",
         "/favicon.ico",
         "/index.html",
         "/main.js",
@@ -100,6 +99,7 @@
         "/assets/search_black_24dp.svg",
         "/assets/share_black_24dp.svg",
         "/assets/theaters_black_24dp.svg",
+        "/assets/tips.png",
         "/assets/visibility_black_24dp.svg"
       ],
       "patterns": []
@@ -149,7 +149,6 @@
     }
   ],
   "hashTable": {
-    "/786.js": "647aa362e090f71e894dde4cd6d3eb93f518e62f",
     "/assets/Reporting.xlsx": "c1c0d06e32155034ed44631082191f125f0cd8d5",
     "/assets/Reporting_local.xlsx": "3eeea79914897a86ec1e96881b63cb4ae3613a14",
     "/assets/add_black_24dp.svg": "11995169007069a036e8ff5b20176954fe56d26c",
@@ -220,14 +219,15 @@
     "/assets/search_black_24dp.svg": "5c7fded8e3ac1c20f8fe5f675cece05c6308d10a",
     "/assets/share_black_24dp.svg": "adfdac62c43beb15aa2f5645432a57d71bc41a01",
     "/assets/theaters_black_24dp.svg": "fc393acb8b1c5fbadb03ae3e30598ef1b300253d",
+    "/assets/tips.png": "b7832ac8a831f94cd9b656f48bc0d75a5cd587ca",
     "/assets/visibility_black_24dp.svg": "a73738806afd9c018cc55b88dbc181d2bfea49c6",
     "/favicon.ico": "5ed7cef36e6adeae1ecbc86b90bf03e526e5c365",
     "/index.html": "109775f9133dc6a68437f680d6bdd7a0bd6363df",
-    "/main.js": "0fc496f1e1318b215425a087156375cf014be525",
+    "/main.js": "0d97e2740fd8dc4215e4b6cf1eb0310dc011f805",
     "/manifest.webmanifest": "5430bb03fa346e338146a0956939e110243e7d40",
-    "/polyfills.js": "e1928887b4ebb555085efe028b9930cc893a166d",
-    "/runtime.js": "5bdbf412b46ff6a59f57bf628d4500bd04442914",
-    "/styles.css": "004050a6a40e1b47ff802164994d216905c87c83"
+    "/polyfills.js": "68cc49cbc9c663e86ac18ea4956105bf7fab53f5",
+    "/runtime.js": "c304b439d1113505689a5fc42b9f5dec1393d457",
+    "/styles.css": "7c04016d7e43671a0ac8d646bdada2ce3af87104"
   },
   "navigationUrls": [
     {

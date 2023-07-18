@@ -1,14 +1,18 @@
-import { SocialAuthService } from 'angularx-social-login';
-import { FacebookLoginProvider, GoogleLoginProvider } from 'angularx-social-login';
 import {$$, getParams, showError, showMessage} from '../tools';
 import {ApiService} from '../api.service';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute,  Router} from '@angular/router';
 import {ConfigService} from '../config.service';
 import {Location} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {_prompt, PromptComponent} from '../prompt/prompt.component';
+import {_prompt} from '../prompt/prompt.component';
+import {
+  FacebookLoginProvider,
+  GoogleLoginProvider,
+  SocialAuthService,
+  SocialUser
+} from "@abacritt/angularx-social-login";
 
 
 
@@ -55,6 +59,7 @@ export class LoginComponent implements OnInit {
 
     let email=localStorage.getItem("email");
     $$("Chargement de la configuration si l'email est dans les cookies");
+
     this.config.init_user(email).then( (result)=> {
       this.email=result.user.email;
       if (email && email.length>0) {
@@ -80,6 +85,20 @@ export class LoginComponent implements OnInit {
 
           this.messageCode=""
           this.email="";
+
+          //Détection de la connexion à Google:
+          this.socialAuthService.authState.subscribe((socialUser:SocialUser)=>{
+            this.initUser({
+              email: socialUser.email,
+              first_name: socialUser.firstName,
+              last_name: socialUser.lastName,
+              url: socialUser.id,
+              photo: socialUser.photoUrl,
+              provider: socialUser.provider,
+              provider_id: socialUser.id,
+            }, false);
+            //if(!this.redirect)this.router.navigate(["settings"]);
+          })
       })
     }
   });
@@ -217,12 +236,12 @@ export class LoginComponent implements OnInit {
         this.quit();
       }
     }, (err) => {
-      $$('Problème technique');
+      $$('Problème technique',err);
       this.config.raz_user();
       this.wait_message = '';
       this.code = '';
       window.location.reload();
-      //showMessage(this, 'Code incorrect, veuillez recommencer la procédure');
+      showMessage(this, 'Code incorrect, veuillez recommencer la procédure');
     });
   }
 
@@ -245,9 +264,10 @@ export class LoginComponent implements OnInit {
             first_name: data.first_name,
             last_name: data.last_name,
           }).subscribe((res: any) => {
-            this.updateCode(data.provider_id);
+
             this.messageCode = 'Veuillez saisir le code qui vous a été envoyé sur votre adresse mail';
             this.wait_message = '';
+            setTimeout(()=>{this.config.init_user(this.email).then(()=>{this.router.navigate(["settings"])});},1000)
           }, (err) => {
             showMessage(this, 'Problème d\'authentification. Faites une authentification par mail');
             this.wait_message = '';
@@ -259,39 +279,40 @@ export class LoginComponent implements OnInit {
 
 
   public socialSignIn(socialPlatform: string) {
+    //Voir https://www.npmjs.com/package/@abacritt/angularx-social-login#subscribe-to-the-authentication-state
     let servicePlatform = GoogleLoginProvider.PROVIDER_ID;
     if (socialPlatform == 'facebook') {servicePlatform = FacebookLoginProvider.PROVIDER_ID; }
 
     $$('Appel de la plateforme d\'authentification ' + socialPlatform);
     this.wait_message = 'Récupération de votre adresse mail via ' + socialPlatform;
-    this.socialAuthService.signIn(servicePlatform).then((socialUser) => {
-        this.wait_message = '';
-        this.message = '';
-        localStorage.setItem("email",socialUser.email);
-        $$("Resultat de l'authentification ", socialUser);
-        this.initUser({
-          email: socialUser.email,
-          first_name: socialUser.firstName,
-          last_name: socialUser.lastName,
-          url: socialUser.id,
-          photo: socialUser.photoUrl,
-          provider: socialUser.provider,
-          provider_id: socialUser.id,
-        }, false);
-        if(!this.redirect)this.router.navigate(["settings"]);
-      },
-      (err) => {
-        this.n_try = this.n_try + 1;
-        $$('!Echec de connexion ' + this.n_try + 'eme essai');
-        if (this.n_try < 2) {
-          setTimeout(() => {this.socialSignIn(socialPlatform); }, 500);
-        } else {
-          this.wait_message = '';
-          showMessage(this,"Pas d'authentification");
-          this._location.back();
-        }
-      }
-    );
+    // this.socialAuthService.signIn(servicePlatform).then((socialUser) => {
+    //     this.wait_message = '';
+    //     this.message = '';
+    //     localStorage.setItem("email",socialUser.email);
+    //     $$("Resultat de l'authentification ", socialUser);
+    //     this.initUser({
+    //       email: socialUser.email,
+    //       first_name: socialUser.firstName,
+    //       last_name: socialUser.lastName,
+    //       url: socialUser.id,
+    //       photo: socialUser.photoUrl,
+    //       provider: socialUser.provider,
+    //       provider_id: socialUser.id,
+    //     }, false);
+    //     if(!this.redirect)this.router.navigate(["settings"]);
+    //   },
+    //   (err) => {
+    //     this.n_try = this.n_try + 1;
+    //     $$('!Echec de connexion ' + this.n_try + 'eme essai');
+    //     if (this.n_try < 2) {
+    //       setTimeout(() => {this.socialSignIn(socialPlatform); }, 500);
+    //     } else {
+    //       this.wait_message = '';
+    //       showMessage(this,"Pas d'authentification");
+    //       this._location.back();
+    //     }
+    //   }
+    // );
   }
 
   cancel() {

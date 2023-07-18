@@ -172,12 +172,11 @@ class PowAnalyzer:
                     p.year=p.year[0]
 
 
-            if p.year is None or int(p.year)<1970 or p.title is None:
+            if p.year is None or int(p.year)<1970 or int(p.year)>2100 or p.title is None:
+                log(str(p.id)+" a supprimer par absence de date")
                 to_delete.append(p.id)
             else:
                 rc=[]
-                log("Traitement qualité de "+p.title)
-
                 #traitement des doublons dans les links
                 for l in p.links:
                     l["url"]=l["url"].split("?")[0]
@@ -188,13 +187,8 @@ class PowAnalyzer:
                     p.links=rc
                     p.save()
 
-                #traitement des doublons sur les awards
-                # rc=[]
-                # for a in p.award.all():
-                #      pass
-
                 if len(list(p.works.all()))==0:
-                    log("A supprimer")
+                    log(p.title+" a supprimer car aucun travaux associés")
                     to_delete.append(p.id)
 
         return to_delete

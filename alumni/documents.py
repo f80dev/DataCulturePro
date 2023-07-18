@@ -98,7 +98,9 @@ class ProfilDocument(Document):
                 "acceptSponsor",
                 "school",
                 "email",
-                "department","department_category",
+                "department",
+                "department_pro",
+                "department_category",
                 "cp","cursus",
                 "mobile","photo","address",
                 "town","degree_year","dtLastUpdate"]

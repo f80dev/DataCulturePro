@@ -25,7 +25,7 @@ export class TutoComponent implements OnInit,OnChanges {
   @Input("background-color") bkColor="black";
   @Input('if') _if=true;
   @Input('fullscreen') fullscreen=true;
-  @Input('image') image: string="./assets/img/tips.png";
+  @Input('image') image: string="./assets/tips.png";
   @Input('main_button') labelButton: string="Continuez";
   @Input('icon') icon:string="";
   @Input('color') color:string="white";

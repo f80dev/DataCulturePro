@@ -79,8 +79,8 @@
 
 
         <mat-expansion-panel  [expanded]="true">
-            <mat-expansion-panel-header>Gestion des profils</mat-expansion-panel-header>
-            <ul>
+            <mat-expansion-panel-header>Profils</mat-expansion-panel-header>
+            <ul *ngIf="config.isLogin()">
                 <li><a [routerLink]="['/stats']" [queryParams]="{open:'student_by_lastmodification'}">Avancement des mises a jours</a><br><br></li>
                 <li><a [routerLink]="['/stats']" [queryParams]="{open:'prostudent_by_depyear'}">Répartition de la formation pro</a><br><br></li>
             </ul>
@@ -117,7 +117,7 @@
         </mat-expansion-panel>
 
         <mat-expansion-panel  [expanded]="true" (afterExpand)="refresh()">
-            <mat-expansion-panel-header>Gestion des utilisateurs</mat-expansion-panel-header>
+            <mat-expansion-panel-header>Utilisateurs</mat-expansion-panel-header>
             <table style="font-s0ize: small;line-height: 85%;text-align: center;width:100%;padding: 10px;" class="mat-elevation-z4">
                 <tr>
                     <th>Login</th>
@@ -128,7 +128,8 @@
                 <tr *ngFor="let u of users" style="width: 100%">
                     <td style="width: 40%;">{{u.user.username}}</td>
                     <td style="width: 15%;">
-                        <app-input [options]="profils" [value]="u.profil" value_type="list"
+                        <app-input [options]="profils" [value]="u.profil_name" value_type="list"
+                                   value_field="id"
                                    (valueChange)="update_profil(u,$event)"></app-input>
                     </td>
                     <td style="width: 15%;">{{u.ask}}</td>

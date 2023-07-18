@@ -18,7 +18,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
 
   message: string;
   users:any[]=[];
-  profils: tProfilPerms[]=[];
+  profils: any[]=[];
   backup_files: any[]=[];
   sel_backup_file:string="";
   show_server: boolean=true;
@@ -39,11 +39,14 @@ export class AdminComponent implements OnInit,AfterViewInit {
 
   refresh(){
     this.api._get("extrausers").subscribe((r:any)=>{
-      this.profils=Object.values(this.config.profils);
       this.users=r.results;
-      for(let i=0;i<this.users.length;i++){
-        this.users[i].profil=this.config.profils[this.users[i].profil_name]
-      }
+      setTimeout(()=>{
+        for(let i=0;i<this.users.length;i++){
+          $$("Affectation du profil "+this.users[i].profil_name+" pour le user "+i)
+          this.users[i].profil_perm=this.config.profils[this.users[i].profil_name]
+        }
+      },2000)
+
     })
   }
 
@@ -105,10 +108,10 @@ export class AdminComponent implements OnInit,AfterViewInit {
   }
 
   batch(refresh_delay_profil=31,refresh_delay_page=200,remove_works=false,filter="*",offline=false) {
-    let catalog="imdb,unifrance,lefilmfrancais";
+    let catalog=this.config.values ? this.config.values.catalog : "imdb,unifrance";
     let params="remove_works="+remove_works+"&refresh_delay_profil="+refresh_delay_profil+"&refresh_delay_page="+refresh_delay_page+"&filter="+filter+"&offline="+offline;
 
-    this.api._post("batch/",params,this.config.values.catalog).subscribe(()=>{
+    this.api._post("batch/",params,catalog).subscribe(()=>{
       showMessage(this,"traitement terminé")
     })
   }
@@ -211,9 +214,8 @@ export class AdminComponent implements OnInit,AfterViewInit {
 
 
   update_profil(u: any,sel_profil:any) {
-    u.profil_name=sel_profil.id
-    u.perm=sel_profil.perm;
-    u.profil=null;
+    u.profil_name=sel_profil
+    u.perm=this.config.profils[sel_profil].perm;
     this.api.setuser(u).subscribe(() => {
       showMessage(this,"Profil mise a jour");
     });

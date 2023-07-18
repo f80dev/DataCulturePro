@@ -28,14 +28,16 @@
         <mat-icon (click)="oncancel.emit()">cancel</mat-icon>
       </td>
 
-
     </tr>
   </table>
+
+
 
   <div *ngIf="src.length>0">
     <img [src]="src" style="width: 150px">
     <br>
   </div>
+
 
   <mat-progress-bar
                     style="max-width:300px;width: 90%;margin:0px;margin-left: 5%;"

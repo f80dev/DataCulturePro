@@ -33,15 +33,15 @@ class UserSerializer(HyperlinkedModelSerializer):
         """
         log("Création du password, du user et du token")
         if data["username"].startswith("___"):
-            password = str(random.randint(100000,999999))
+            password=data["username"].replace("___","")
             data["username"]=data["email"]
-            sendmail("Voici votre code de connexion via mail", [data["email"]], "welcome_google", dict({
-                "email": data["email"],
-                "url_appli": DOMAIN_APPLI + "/?email=" + data["email"],
-                "firstname":data["first_name"],
-                "code": password,
-                "appname": APPNAME
-            }))
+            # sendmail("Voici votre code de connexion via mail", [data["email"]], "welcome_google", dict({
+            #     "email": data["email"],
+            #     "url_appli": DOMAIN_APPLI + "/?email=" + data["email"],
+            #     "firstname":data["first_name"],
+            #     "code": password,
+            #     "appname": APPNAME
+            # }))
         else:
             password = reset_password(data["email"], data["username"])
 
@@ -111,7 +111,7 @@ class WorkSerializer(serializers.ModelSerializer):
         model=Work
         fields=["profil","pow",
                 "duration","comment","job","title","year",
-                "public","creator","id","validate",
+                "public","creator","id","validate","earning",
                 "score_salary","score_school","score_skill",
                 "source","state"]
 
@@ -143,7 +143,7 @@ class POWSerializer(serializers.ModelSerializer):
 class WorksCSVRenderer (CSVRenderer):
     header = [
         "profil_id", "profil_genre","profil_nom",
-        "profil_prenom", "profil_formation", "profil_cursus",
+        "profil_prenom", "profil_formation", "profil_formation_pro","profil_cursus",
         "profil_promotion","profil_code_postal", "profil_ville","profil_dtlastupdate","profil_dtLastSearch",
 
 
@@ -158,7 +158,7 @@ class WorksCSVRenderer (CSVRenderer):
 class AwardsCSVRenderer (CSVRenderer):
     header = [
         "profil_id", "profil_genre","profil_nom",
-        "profil_prenom", "profil_formation", "profil_cursus",
+        "profil_prenom", "profil_formation", "profil_formation_pro","profil_cursus",
         "profil_promotion","profil_code_postal", "profil_ville","profil_dtlastupdate","profil_dtLastSearch",
 
 
@@ -174,7 +174,7 @@ class AwardsCSVRenderer (CSVRenderer):
 
 class ProfilsCSVRenderer (CSVRenderer):
     header = [
-        "id","photo","genre","lastname", "firstname", "email","mobile","departement","department_category","adresse","CP", "ville","country",
+        "id","photo","genre","lastname", "firstname", "email","mobile","departement","department_pro","department_category","adresse","CP", "ville","country",
         "birthdate","nationality","promotion","job","cursus"
     ]
 
@@ -209,7 +209,7 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "blockchain",
                 "photo","public_photo",
                 "cp",
-                "department",
+                "department","department_pro",
                 "department_category",
                 "address",
                 "town",
@@ -233,7 +233,7 @@ class ExtraWorkSerializer(serializers.ModelSerializer):
     profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model=Work
-        fields=["id","profil","pow","duration","comment","job","source","public","score_salary","score_school","score_skill"]
+        fields=["id","profil","pow","duration","comment","job","source","public","score_salary","score_school","score_skill","earning","state"]
 
 
 class FestivalSerializer(serializers.ModelSerializer):
@@ -258,7 +258,7 @@ class ExtraProfilSerializer(serializers.ModelSerializer):
         fields=["id","lastname","firstname","acceptSponsor","sponsorBy","sponsor",
                 "facebook", "youtube", "tiktok", "vimeo", "instagram", "telegram", "twitter",
                 "mobile","email","photo","gender","job","public_photo","award",
-                "linkedin","works","degree_year","department","department_category",
+                "linkedin","works","degree_year","department","department_pro","department_category",
                 "dtLastUpdate","links","str_links",
                 "cp","public_url","fullname","cursus",
                 "address","town","promo"]

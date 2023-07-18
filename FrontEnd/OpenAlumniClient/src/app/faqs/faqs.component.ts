@@ -4,6 +4,7 @@ import {ApiService} from '../api.service';
 import {Location} from '@angular/common';
 import {ConfigService} from '../config.service';
 import {checkConfig} from '../tools';
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-faqs',
@@ -29,12 +30,12 @@ export class FaqsComponent implements OnInit {
       for (const faq of rc.content) {
         if (!params.has('open') || faq.index.indexOf(params.get('open')) > -1) {
           faq.visible = params.has('open');
-          if (this.config.values){
+
             for (let i = 0; i < 5; i++){
-              faq.title = faq.title.replace('{{appname}}', this.config.values.appname);
-              faq.content = faq.content.replace('{{appname}}', this.config.values.appname);
+              faq.title = faq.title.replace('{{appname}}', environment.appname);
+              faq.content = faq.content.replace('{{appname}}', environment.appname);
             }
-          }
+
 
           this.faqs.push(faq);
         }
@@ -42,4 +43,7 @@ export class FaqsComponent implements OnInit {
     });
   }
 
+  open_faq($event: any,faq:any) {
+    if($event)this._location.replaceState("faqs","open="+faq.index)
+  }
 }

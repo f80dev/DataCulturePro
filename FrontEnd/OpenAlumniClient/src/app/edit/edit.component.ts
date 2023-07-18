@@ -28,7 +28,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   works: any[]=[];
   add_work:any;
   mustSave=false;
-  showAddWork=-1;
+  showAddWork=-1;         //Indique le mode edition ou ajout
   current_work:any=null;
   socials:any[]=[];
   projects: any[];
@@ -48,6 +48,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   query: string = "";
   awards: any[]=[];
   pows:any[]=[];
+  raw_works: any[]=[];
 
 
   constructor(public _location:Location,
@@ -61,7 +62,6 @@ export class EditComponent implements OnInit,OnDestroy  {
       this.socials=r.services;
     })
   }
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -120,13 +120,18 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   refresh_works(){
     let id=this.routes.snapshot.queryParamMap.get("id")
+    this.add_works=[];
+    this.works=[];
     this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
       //TODO: ouvrir la fenetre works si non vide
+      this.raw_works=r.results;
       this.works=group_works(r.results);
       for(let w of this.works) {
-        w.job=w.jobs.join(" & ");
-        this.pows.push(w);
+        if(w.state!='D'){
+          w.job=w.jobs.join(" & ");
+          this.pows.push(w);
+        }
       }
 
     },(err)=>{
@@ -138,6 +143,7 @@ export class EditComponent implements OnInit,OnDestroy  {
   score_school: number=0;
   score_salary: number=0;
   score_skill: number = 0;
+  add_works: any[]=[];
 
   refresh_relations(){
     this.api._get("social_distance","profil_id="+this.profil.id,600).subscribe((r:any)=> {
@@ -205,43 +211,46 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
 
-  select(element: any,next_step=2) {
-    this.add_work={
-      movie:element.title,
-      year:element.year,
-      movie_id:element.pow.id
-    };
-    if(element.year && Number(element.year)>1900){
-      this.dtStart=new Date(Number(element.year),1,1);
-      this.dtEnd=new Date(Number(element.year),31,12);
-    }
-    this.score_salary=element.score_salary;
-    this.score_school=element.score_school;
-    this.score_skill=element.score_skill;
-    this.earning=element.earning;
-    this.comment=element.comment;
+  select(work: any,next_step=2) {
 
-    $$("Selection du film ",element);
+    // for(let element of elements){
+    //   this.add_work={
+    //     movie:element.title,
+    //     year:element.year,
+    //     movie_id:element.pow.id
+    //   };
+    //   if(element.year && Number(element.year)>1900){
+    //     this.dtStart=new Date(Number(element.year),1,1);
+    //     this.dtEnd=new Date(Number(element.year),31,12);
+    //   }
+    //   this.score_salary=element.score_salary;
+    //   this.score_school=element.score_school;
+    //   this.score_skill=element.score_skill;
+    //   this.earning=element.earning;
+    //   this.comment=element.comment;
+    // }
+
     this.showAddWork=next_step;
+    this.current_work=work;
   }
 
 
   save_newwork() {
-    this.add_work={
-      profil:this.profil.id,
-      pow:this.add_work.movie_id,
-      job:this.job,
-      state:"E",
-      score_shool:this.score_school,
-      score_skill:this.score_skill,
-      score_salary:this.score_salary,
-      earning:this.earning,
-      comment:this.comment,
-      dtStart:this.dtStart.toISOString().split("T")[0],
-      dtEnd:this.dtEnd.toISOString().split("T")[0],
-      duration:this.duration,
-      source:"man_"+this.config.user.user.id,
-    };
+    // this.add_work={
+    //   profil:this.profil.id,
+    //   pow:this.current_work.pow,
+    //   job:this.job,
+    //   state:"E",
+    //   score_shool:this.score_school,
+    //   score_skill:this.score_skill,
+    //   score_salary:this.score_salary,
+    //   earning:this.earning,
+    //   comment:this.comment,
+    //   dtStart:this.dtStart.toISOString().split("T")[0],
+    //   dtEnd:this.dtEnd.toISOString().split("T")[0],
+    //   duration:this.duration,
+    //   source:"man_"+this.config.user.user.id,
+    // };
 
     // if(this.showAddWork==3){
     //   this.api._delete("works/"+this.current_work.id,"").subscribe(()=>{
@@ -249,25 +258,34 @@ export class EditComponent implements OnInit,OnDestroy  {
     //   })
     // }
 
-    if(this.current_work.id){
-      $$("Insertion de ",this.add_work);
-      this.api._patch("works/"+this.current_work.id,"",this.add_work).subscribe((r:any)=>{
-        this.showAddWork=0;
-        this.loadProfil();
-        this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
-        showMessage(this,"Travail enregistré");
-      },(err)=>{
-        showError(this,err);
-      })
-    } else {
-      this.api._post("works/","",this.add_work).subscribe((r:any)=>{
-        this.showAddWork=0;
-        this.loadProfil();
-        this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
-        showMessage(this,"Travail enregistré");
-      },(err)=>{
-        showError(this,err);
-      })
+
+    $$("Insertion de ",this.add_work);
+    for(let w of this.add_works){
+      if(w.id) {
+        w.source = "man_" + this.config.user.user.id
+        w.dtStart = new Date(Number(this.current_work.year),1,1).toISOString().split("T")[0]
+        w.dtEnd = new Date(Number(this.current_work.year),31,12).toISOString().split("T")[0]
+        w.pow=w.pow.id
+        w.profil=w.profil.id
+        w.job=w.job.value
+        this.api._patch("works/" + w.id, "", w).subscribe((r: any) => {
+          if(this.add_works.indexOf(w)==this.add_works.length-1){
+            this.showAddWork=0;
+            this.refresh_works();
+          }
+        }, (err) => {
+          showError(this, err);
+        })
+      } else {
+        this.api._post("works/","",w).subscribe((r:any)=>{
+          this.showAddWork=0;
+          this.loadProfil();
+          this.router.navigate(["edit"],{queryParams:{id:this.profil.id},replaceUrl:true});
+          showMessage(this,"Travail enregistré");
+        },(err)=>{
+          showError(this,err);
+        })
+      }
     }
 
   }
@@ -405,10 +423,15 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   edit_work(work: any) {
-    this.current_work=work;
-    for(let j of this.config.jobs){
-      if(work.job==j.value)this.job=j;
-    }
+    this.add_works=[]
+    for(let w of this.raw_works)
+      if(work.works.indexOf(w.id)>-1){
+        // for(let j of this.config.jobs){
+        //   if(w.job==j.value)w.job=j;
+        // }
+        w.job={label:w.job,value:w.job}
+        if(w.state!="D")this.add_works.push(w);
+      }
     this.select(work,3);
   }
 
@@ -548,6 +571,11 @@ export class EditComponent implements OnInit,OnDestroy  {
 
   open_faqs(rubrique:string) {
     this.router.navigate(["faqs"],{queryParams:{open:'ref_'+rubrique}})
+  }
+
+  cancel() {
+    this.showAddWork=0;
+    this.refresh_works();
   }
 }
 

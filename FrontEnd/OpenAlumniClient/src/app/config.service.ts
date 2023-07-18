@@ -132,7 +132,8 @@ export class ConfigService {
 
   async init_user(email=null) :Promise<any> {
     return new Promise((resolve, reject) => {
-      if(!email){
+      if(!email || email==""){
+        $$("L'email est vide")
         this.raz_user();
         resolve(this.user);
       }
@@ -148,7 +149,6 @@ export class ConfigService {
               showMessage(this,"Message:"+r.result);
             })
           }
-
           resolve(this.user);
         } else {
           $$("Aucun compte disponible a l'adresse mail"+email+" on réinitialise le compte")

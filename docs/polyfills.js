@@ -1,7 +1,7 @@
 "use strict";
 (self["webpackChunkOpenAlumniClient"] = self["webpackChunkOpenAlumniClient"] || []).push([[429],{
 
-/***/ 23443:
+/***/ 7435:
 /*!**************************!*\
   !*** ./src/polyfills.ts ***!
   \**************************/
@@ -2773,7 +2773,7 @@ Zone.__load_patch('PromiseRejectionEvent', (global, Zone) => {
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(23443));
+/******/ var __webpack_exports__ = (__webpack_exec__(7435));
 /******/ }
 ]);
 //# sourceMappingURL=polyfills.js.map
