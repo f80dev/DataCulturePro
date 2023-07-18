@@ -1,1 +1,0 @@
-python -Xutf8 manage.py dumpdata --settings OpenAlumni.settings_dev > ./static/db_backup.json

@@ -1,12 +1,0 @@
-
-spython:S1542"TRename function "stringToUrl" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(¤¿ô‚8’ãÐ“Ò.
-Hpython:S1481³"(Remove the unused local variable "inst".(ËÞü8’ãÐ“Ò.
-lpython:S1192·"GDefine a constant instead of duplicating this literal "{{faq:" 3 times.(Øü¦îúÿÿÿÿ8’ãÐ“Ò.
-hpython:S56440"DFix this code; this expression does not have a "__getitem__" method.(ÒÛ­òûÿÿÿÿ8›…‘šÒ.
-tpython:S3776ô"TRefactor this function to reduce its Cognitive Complexity from 25 to the 15 allowed.(‡¸ßØ8’ãÐ“Ò.
-spython:S3776X"TRefactor this function to reduce its Cognitive Complexity from 24 to the 15 allowed.(Çáã¤8’ãÐ“Ò.
->python:S125À"Remove this commented out code.(Î„Ûý8’ãÐ“Ò.
-spython:S3776#"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(Ö¨ÊÃ8ÚõÙ˜Ò.
-[python:S5754f"<Specify an exception class to catch or reraise the exception(ˆÊÉ·8’ãÐ“Ò.
-xpython:S1542ô"XRename function "dateToTimestamp" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(‡¸ßØ8’ãÐ“Ò.
-gpython:S1192_"HDefine a constant instead of duplicating this literal "{{link:" 3 times.(ÛšÜÕ8’ãÐ“Ò.

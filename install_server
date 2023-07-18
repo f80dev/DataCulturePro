@@ -1,4 +1,0 @@
-docker pull f80hub/openalumni:latest
-docker ps -q --filter "name=openalumni" | grep -q . && docker rm -f openalumni
-docker run --restart=always -v /root/certs_dataculture:/certs -p 8000:8000 --name openalumni --env DJANGO_SETTINGS_MODULE=OpenAlumni.settings -d f80hub/openalumni:latest
-exit
