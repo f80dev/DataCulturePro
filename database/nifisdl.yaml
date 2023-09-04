@@ -1,0 +1,35 @@
+---
+version: '2.0'
+services:
+  nifi:
+    image: apache/nifi
+    expose:
+      - port: 8443
+        as: 8443
+        to:
+          - global: true
+    env:
+      - SINGLE_USER_CREDENTIALS_PASSWORD=hh427142714271
+      - 'NIFI_WEB_HTTP_HOST=0.0.0.0:8443'
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+profiles:
+  compute:
+    nifi:
+      resources:
+        cpu:
+          units: 0.7
+        memory:
+          size: 1Gi
+        storage:
+          - size: 2Gi
+  placement:
+    dcloud:
+      pricing:
+        nifi:
+          denom: uakt
+          amount: 1000
+deployment:
+  nifi:
+    dcloud:
+      profile: nifi
+      count: 1

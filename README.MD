@@ -40,6 +40,11 @@ python manage.py flush --settings OpenAlumni.settings
 python manage.py search_index --rebuild
 </pre>
 
+##Installation d'une version locale de mongodb
+<pre>
+docker run -ti -p 27017:27017 --name mongodb -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=hh4271 mongo:latest
+</pre>
+
 ##Installation
 Après avoir récupérer le code, on installe une version locale de postgres
 puis on execute
@@ -50,8 +55,7 @@ python manage.py migrate --settings OpenAlumni.settings_dev
 python manage.py search_index --rebuild --settings OpenAlumni.settings_dev
 </pre><br>
 
-##Création de la base de données et du compte admin
-###Création de la base de données
+##Création de la base de données et du compte
 
 Le compte de super utilisateur permet une gestion fine de la plateforme d'exposition des API
 
@@ -75,6 +79,24 @@ python manage.py createsuperuser --settings OpenAlumni.settings_dev
 
 #Installation sur un serveur
 ## La base de données
+### L'importation de gros fichiers via nifi
+Lancement de NIFI
+
+<pre>
+cp /root/certs/cert.pem /root/certs/server-cert.pem 
+cp /root/certs/privkey.pem /root/certs/server-key.pem 
+ufw allow 8443
+docker rm -f nifi
+docker pull apache/nifi:latest
+docker rm -f nifi && docker run --name nifi --memory 1024Mb -v /root/nifi/conf:/opt/conf -v /root/nifi/state:/data/nifi/state -p 8443:8443 -e SINGLE_USER_CREDENTIALS_USERNAME=admin -e NIFI_WEB_HTTP_HOST=0.0.0.0 -e NIFI_WEB_HTTP_PORT=8443 -e SINGLE_USER_CREDENTIALS_PASSWORD=hh427142714271 -ti apache/nifi:latest
+</pre>
+
+pour windows : 
+<pre>
+docker run --name nifi --memory 1024Mb -p 8443:8443 -v c:/temp/nifi_files:/mnt -e SINGLE_USER_CREDENTIALS_USERNAME=admin -e NIFI_WEB_HTTP_HOST=127.0.0.1:8443 -e SINGLE_USER_CREDENTIALS_PASSWORD=hh427142714271 -d apache/nifi:latest
+</pre>
+
+### Installation de la base
 Executer la commande 
 <pre>
 firewall-cmd --zone=public --add-port=5432/tcp ou ufw allow 5432
@@ -86,6 +108,12 @@ setenforce 0
 mkdir /root/postgre
 docker rm -f postgre
 docker run --name postgre -p 5432:5432  -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
+</pre>
+
+Depuis windows
+<pre>
+docker rm -f postgre
+docker run --name postgre -p 5432:5432  -v c:/temp/postgre:/var/lib/postgresql/data -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
 </pre>
 
 Si probléme d'accès au répertoire /root/postgres, il faut fixer avec su -c "setenforce 0"

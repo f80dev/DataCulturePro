@@ -1,0 +1,24 @@
+services:
+  nifi:
+    container_name: nifi
+    image: apache/nifi:latest
+    network_mode: bridge
+    environment:
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      - NIFI_WEB_HTTP_HOST=0.0.0.0
+      - NIFI_WEB_HTTP_PORT=8443
+      - SINGLE_USER_CREDENTIALS_PASSWORD=hh427142714271
+      - NIFI_HOME=/opt/nifi/nifi-current
+      - NIFI_LOG_DIR=/opt/nifi/nifi-current/logs
+      - NIFI_PID_DIR=/opt/nifi/nifi-current/run
+      - NIFI_BASE_DIR=/opt/nifi
+    ports:
+      - "8443:8443"
+      - "16543:16543"
+    volumes:
+      - /root/nifi/database_repository:/opt/nifi/nifi-current/database_repository
+      - /root/nifi/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - /root/nifi/content_repository:/opt/nifi/nifi-current/content_repository
+      - /root/nifi/provenance_repository:/opt/nifi/nifi-current/provenance_repository
+      - /root/nifi/state:/opt/nifi/nifi-current/state
+      - /root/nifi/logs:/opt/nifi/nifi-current/logs
