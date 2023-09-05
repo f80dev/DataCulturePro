@@ -24,6 +24,7 @@ from OpenAlumni.Bot import Bot
 from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, fusion, remove_ponctuation, \
     equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp, \
     apply_dictionnary_on_each_words, init_dict
+from OpenAlumni.mongo_tools import MongoBase
 
 from OpenAlumni.settings import STATIC_ROOT
 from alumni.documents import FestivalDocument
@@ -613,8 +614,18 @@ def extract_episodes_for_profil(episodes, fullname:str) -> list:
     return rc
 
 
-def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_profil=""):
+def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_profil="",imdbBase:MongoBase=None):
     infos={"links":[]}
+
+    if imdbBase:
+        profils=imdbBase.find_profils(firstname=firstname,lastname=lastname)
+        if len(profils)>0:
+            for m in imdbBase.find_movies(profils[0]["nconst"]):
+                infos["links"].append({"url":"https://www.imdb.com/title/"+m["tconst"]})
+            infos["url"]="https://www.imdb.com/name/"+profils[0]["nconst"]
+            infos["fullname"]=firstname+" "+lastname
+            return infos
+
     if url_profil is None or url_profil=="":
         peoples=imdb_search(firstname+" "+lastname)
         if len(peoples)==0: log(lastname+" inconnu sur IMDB")
@@ -805,11 +816,24 @@ def extract_nature_from_imdb(url_or_page:str,refresh_delay=31) -> str:
 
 
 #http://localhost:8000/api/batch
-def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh_delay=31,exclude_episode=False):
+def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh_delay=31,exclude_episode=False,imdbBase:MongoBase=None):
     """
     :return:
     """
     url=url.split("/?ref_=ttep_ep")[0]
+    if not imdbBase is None and "title/tt" in url:
+        movie=imdbBase.get_movie("tt"+url.split("title/tt")[1])
+        if movie:
+            return {
+                "source":"auto:IMDB",
+                "casting":[],
+                "url":url,
+                "nature":translate(movie["titleType"],"categories"),
+                "genres":movie["genres"],
+                "title":movie["title"]
+            }
+
+
     years=[]
     if not url.startswith("http"):
         if not url.startswith("/title"):
@@ -1354,7 +1378,7 @@ def extract_movie_from_filmdoc(title):
     return ""
 
 
-def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=None,user:User=None):
+def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=None,user:User=None,imdbBase:MongoBase=None):
     """
     Ajoute des oeuvres au profil
     :param profil:
@@ -1379,7 +1403,14 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
             films.append(extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot))
 
         if "imdb" in l["url"]:
-            film=extract_film_from_imdb(l["url"], l["text"],job=l["job"],casting_filter=profil.name_index,refresh_delay=refresh_delay_page)
+            film=extract_film_from_imdb(
+                l["url"],
+                l["text"] if "text" in l else "",
+                job=l["job"] if "job" in l else "",
+                casting_filter=profil.name_index,
+                refresh_delay=refresh_delay_page,
+                imdbBase=imdbBase
+            )
             if film:
                 if len(film["episodes"])>0:
                     episodes=extract_episodes_for_profil(film["episodes"], profil.fullname)
@@ -1539,6 +1570,7 @@ def exec_batch(profils,refresh_delay_profil=31,
     n_films = 0
     n_works=0
     rc_articles=list()
+    imdbBase=MongoBase()
 
     # all_links=list()
     # for pow in PieceOfWork.objects.all():
@@ -1570,7 +1602,7 @@ def exec_batch(profils,refresh_delay_profil=31,
                     infos = extract_profil_from_imdb(
                         firstname=profil.firstname, lastname=profil.lastname.lower(),
                         refresh_delay=refresh_delay_pages,
-                        url_profil=profil.get_home("IMDB"))
+                        url_profil=profil.get_home("IMDB"),imdbBase=imdbBase)
                     if infos is None:
                         infos=extract_profil_from_imdb(
                             firstname=remove_accents(profil.firstname), lastname=remove_accents(profil.lastname),
@@ -1622,7 +1654,7 @@ def exec_batch(profils,refresh_delay_profil=31,
             if remove_works:
                 Work.objects.filter(profil_id=profil.id,source__contains="auto").delete()
 
-            rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot)
+            rc_films,rc_works=add_pows_to_profil(profil,links,job_for=job_for,refresh_delay_page=refresh_delay_pages,bot=bot,imdbBase=imdbBase)
 
             if content["unifrance"] and not infos is None:
                 if "prix" in infos:

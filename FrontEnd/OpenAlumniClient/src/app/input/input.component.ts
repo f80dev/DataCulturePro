@@ -132,8 +132,6 @@ export class InputComponent implements OnChanges,OnInit {
           }
           this.options.push(option);
         }
-        if (this.options.length == 1)
-          this.sel_change({value: this.options[0]})
       }
     }
   }

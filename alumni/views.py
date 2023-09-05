@@ -1,19 +1,24 @@
 import base64
-import csv
+from os.path import exists
 
-from datetime import datetime, timedelta
+from OpenAlumni.passwords import RESET_PASSWORD
+from datetime import datetime
 from io import StringIO, BytesIO
-from json import loads
+from json import loads, load
+from urllib.parse import  quote
 
 from urllib.request import urlopen
 
 import pandasql
 import yaml
 import pandas as pd
-from django.utils.http import urlencode
-from github import Github
+from django.core import management
+from django.db import connection
 
-from OpenAlumni.DataQuality import  ProfilAnalyzer, PowAnalyzer
+from github import Github
+from numpy import inf
+
+from OpenAlumni.DataQuality import ProfilAnalyzer, PowAnalyzer, AwardAnalyzer
 from OpenAlumni.analytics import StatGraph
 from OpenAlumni.giphy_search import ImageSearchEngine
 
@@ -21,18 +26,16 @@ pd.options.plotting.backend = "plotly"
 
 from django.http import JsonResponse, HttpResponse
 
-from django_elasticsearch_dsl import Index
-from django_elasticsearch_dsl_drf.constants import LOOKUP_QUERY_IN, \
-    SUGGESTER_COMPLETION, LOOKUP_FILTER_TERMS, \
-    LOOKUP_FILTER_PREFIX, LOOKUP_FILTER_WILDCARD, LOOKUP_QUERY_EXCLUDE, LOOKUP_FILTER_TERM, LOOKUP_QUERY_STARTSWITH
-from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, IdsFilterBackend, \
-    OrderingFilterBackend, DefaultOrderingFilterBackend, SearchFilterBackend, MultiMatchSearchFilterBackend, \
-    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend
-from django_elasticsearch_dsl_drf.pagination import PageNumberPagination, LimitOffsetPagination
+from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
+from django_elasticsearch_dsl_drf.filter_backends import FilteringFilterBackend, OrderingFilterBackend, \
+    DefaultOrderingFilterBackend, \
+    SimpleQueryStringSearchFilterBackend, CompoundSearchFilterBackend, MultiMatchSearchFilterBackend
+from django_elasticsearch_dsl_drf.pagination import LimitOffsetPagination
 from django_elasticsearch_dsl_drf.viewsets import  DocumentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
+
 from rest_framework.decorators import api_view,  permission_classes, renderer_classes
 
 from rest_framework.filters import SearchFilter
@@ -46,31 +49,48 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, generics
 
-from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion,  analyse_pows
-from OpenAlumni.Tools import dateToTimestamp, stringToUrl, reset_password, log, sendmail, to_xml, translate, \
-    levenshtein, getConfig, remove_accents, remove_ponctuation, index_string
+from OpenAlumni.Batch import exec_batch, exec_batch_movies, fusion, analyse_pows, reindex, importer_file, \
+    profils_importer, idx, raz
+from OpenAlumni.Tools import dateToTimestamp,  reset_password, log, sendmail, to_xml, translate, \
+    levenshtein, getConfig,   index_string, init_dict
+from OpenAlumni.nft import NFTservice
+
+
+
 import os
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev_server": from OpenAlumni.settings_dev_server import *
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev": from OpenAlumni.settings_dev import *
+if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings": from OpenAlumni.settings import *
+
 
 if os.environ.get("DEBUG"):
-    from OpenAlumni.settings_dev import *
-
     import logging
-
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
     # logging.getLogger('engineio.server').setLevel(logging.ERROR)
     # logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
     # logging.getLogger('environments').setLevel(logging.ERROR)
-else:
-    from OpenAlumni.settings import *
 
 
 from OpenAlumni.social import SocialGraph
-from alumni.documents import ProfilDocument, PowDocument
+from alumni.documents import ProfilDocument, PowDocument, FestivalDocument
 from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 from alumni.serializers import UserSerializer, GroupSerializer, ProfilSerializer, ExtraUserSerializer, POWSerializer, \
     WorkSerializer, ExtraPOWSerializer, ExtraWorkSerializer, ProfilDocumentSerializer, \
     PowDocumentSerializer, WorksCSVRenderer, ArticleSerializer, ExtraProfilSerializer, ProfilsCSVRenderer, \
-    CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer
+    CompanySerializer, AwardSerializer, FestivalSerializer, ExtraAwardSerializer, FestivalDocumentSerializer
+
+STYLE_TABLE="""
+                <style>
+                    table {width:100%;}
+                    tr {width:100%;}
+                    td {color: black;padding:7px;text-align:center;background-color: lightgray;}
+                    th {color: white;padding:10px;text-align:center;background-color:black;}
+                    
+                    .mainform {
+                        padding: 5px;
+                    }
+                </style>
+            """
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -83,7 +103,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["email","id"]
-    filter_fields =("email",)
+    filterset_fields =("email",)
 
 
 
@@ -96,7 +116,7 @@ class ExtraUserViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields=["user__email"]
-    filter_fields = ("user__email","id")
+    filterset_fields = ("user__email","id")
 
     def partial_update(self, request, pk=None):
         pass
@@ -124,12 +144,12 @@ class ProfilViewSet(viewsets.ModelViewSet):
     """
     API de gestion des profils
     """
-    queryset = Profil.objects.all()
+    queryset = Profil.objects.all().order_by('-lastname')
     serializer_class = ProfilSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["email"]
-    filter_fields=("school","email","firstname",)
+    filterset_fields=("school","email","firstname",)
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -137,16 +157,19 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,)
-    filter_fields=("name","siret",)
+    filterset_fields=("name","siret",)
 
 
 class ExtraProfilViewSet(viewsets.ModelViewSet):
+    """
+    http://localhost:8000/api/extraprofils/12
+    """
     queryset = Profil.objects.all()
     serializer_class = ExtraProfilSerializer
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ["lastname","email","degree_year","department","department_category"]
-    filter_fields=("lastname","firstname","email","degree_year","department","department_category",)
+    filterset_fields=("id","lastname","firstname","email","degree_year","department","department_category",)
 
 
 
@@ -166,17 +189,16 @@ class POWViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields=["title","category","nature","year"]
-    filter_fields = ("id", "title","owner", "category", "year","nature",)
+    filterset_fields = ["id", "title","owner", "category", "year","nature",]
 
 
 #http://localhost:8000/api/extraworks/
 class ExtraWorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = ExtraWorkSerializer
-    filter_backends = (DjangoFilterBackend,)
     permission_classes = [AllowAny]
-    filter_fields = ['pow__id','profil__id']
-    #search_fields=["pow__id","profil__id"]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ['pow__id','profil__id',]
 
 
 class WorkViewSet(viewsets.ModelViewSet):
@@ -184,7 +206,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     serializer_class = WorkSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","job")
+    filterset_fields=("profil","pow","job")
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class AwardViewSet(viewsets.ModelViewSet):
@@ -192,22 +214,29 @@ class AwardViewSet(viewsets.ModelViewSet):
     serializer_class = AwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","festival")
+    filterset_fields=("profil","pow","festival")
+
 
 class ExtraAwardViewSet(viewsets.ModelViewSet):
+    """
+    voir https://server.f80lab.com:8100/api/extraawards/?format=json&profil=3017
+
+    """
     queryset = Award.objects.all().order_by("-year")
     serializer_class = ExtraAwardSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields=("profil","pow","festival")
+    filterset_fields=["profil__id","profil__lastname","profil__name_index","pow__title","festival__title","description","winner"]
+
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class FestivalViewSet(viewsets.ModelViewSet):
     queryset = Festival.objects.all().order_by("title")
     serializer_class = FestivalSerializer
     permission_classes = [AllowAny]
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields=("title","country",)
+    filter_backends = (DjangoFilterBackend,SearchFilter,)
+    filterset_fields =["title","country","id",]
+    search_fields=["title"]
 
 
 #http://localhost:8000/api/extrapows
@@ -232,17 +261,110 @@ def getyaml(request):
         f=open(STATIC_ROOT+"/"+name+".yaml", "r",encoding="utf-8")
     else:
         f=urlopen(url)
+
     result=yaml.safe_load(f.read())
     return JsonResponse(result,safe=False)
+
+#http://localhost:8000/api/backup_files
+@api_view(["GET","POST"])
+@permission_classes([AllowAny])
+def list_backup_file(request):
+    prefix=request.GET.get("prefix","dataculture_db_")
+    work_dir=request.GET.get("work_dir","./dbbackup")
+
+    if request.method=="GET":
+        rc=[]
+        for f in os.listdir(work_dir):
+            if f.startswith(prefix):
+                rc.append({"filename":f,"label":f,"value":f})
+        return JsonResponse({"files":rc})
+
+    if request.method=="POST":
+        file=loads(request.body)
+        path=work_dir+"/"+prefix+file["filename"]
+        hFile=open(path,"wb")
+        hFile.write(base64.b64decode(file["file"].split("base64,")[1]))
+        hFile.close()
+
+        return JsonResponse({"path":path})
+
+
+
+
+
+
+#http://localhost:8000/api/backup?command=save
+#http://localhost:8000/api/backup?command=load
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def run_backup(request):
+    command=request.GET.get("command","save")
+    prefix=request.GET.get("prefix","dataculture_db_")
+    work_dir=request.GET.get("work_dir","./dbbackup")
+    filename=request.GET.get(
+        "file",
+        prefix+datetime.now().strftime("%d-%m-%Y_%H%M")+".json"
+    )
+
+    backup_file=request.GET.get("file",filename)
+    if not backup_file.endswith(".json"):backup_file=backup_file+".json"
+
+    url=request.build_absolute_uri('/')
+    exclude_table=["auth.permission","contenttypes","alumni.extrauser"]
+    if command=="save":
+        log("Enregistrement de la base dans "+backup_file)
+        with open(work_dir+"/"+backup_file, 'w',encoding="utf8") as f:
+            management.call_command("dumpdata","alumni",
+                                    stdout=f,exclude=exclude_table,
+                                    indent=2)
+
+        return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
+
+    if command=="load":
+        if Profil.objects.count()>0 or PieceOfWork.objects.count()>0 or Work.objects.count()>0:
+            return JsonResponse({"message":"La base doit avoir été préalablement vidé"},status=500)
+
+        if exists(work_dir+"/"+backup_file):
+            management.call_command("loaddata",work_dir+"/"+backup_file,verbosity=3,app_label="alumni")
+            return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
+        else:
+            return JsonResponse({"message":"fichier de backup introuvable"},status=500)
+
+
 
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def infos_server(request):
+    """
+    tags: /info /server_info
+    voir https://server.f80lab.com:8100/api/infos_server
+    voir http://localhost:8000/api/infos_server
+
+    :param request:
+    :return:
+    """
     rc=dict()
-    rc["films"]["nombre"]=PieceOfWork.objects.count()
-    rc["profils"]["nombre"]=Profil.objects.count()
+    rc["domain"]={"appli":DOMAIN_APPLI,"server":DOMAIN_SERVER}
+    rc["search"]={"server":ELASTICSEARCH_DSL}
+    rc["settings_file"]=SETTINGS_FILENAME
+    rc["server_version"]=VERSION
+    rc["database"]=DATABASES
+    rc["debug"]=DEBUG
+    try:
+        rc["content"]={
+            "articles":Article.objects.count(),
+            "users":User.objects.count(),
+            "films":PieceOfWork.objects.count(),
+            "works":Work.objects.count(),
+            "festivals":Festival.objects.count(),
+            "awards":Award.objects.count(),
+            "profils":Profil.objects.count()}
+        rc["message"]="Tout est ok"
+    except:
+        rc["message"]="Connexion impossible à la base de données "+rc["database"]
+
     return JsonResponse(rc)
 
 
@@ -256,16 +378,26 @@ def update_extrauser(request):
     """
     email=request.GET.get("email","")
     if len(email)>0:
+        user=ExtraUser.objects.get(user__email=email)
         log("Recherche du nouvel utilisateur dans les profils FEMIS")
         profils=Profil.objects.filter(email__exact=email)
         if len(profils)>0:
             log("Mise a jour du profil de l'utilisateur se connectant")
-            user=ExtraUser.objects.get(user__email=email)
             if not user is None:
                 log("On enregistre un lien vers le profil FEMIS de l'utilisateur")
                 user.profil=profils.first()
-                user.save()
-                return JsonResponse({"message":"Profil FEMIS lié"})
+                user.profil_name="student"
+        else:
+            user.profil_name="standard"     #Connecté
+
+        perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
+        for p in perms["profils"]:
+            if p["id"]==user.profil_name:
+                user.perm=p["perm"]
+                break
+
+        user.save()
+        return JsonResponse({"message":"Profil FEMIS lié"})
 
     return JsonResponse({"message": "Pas de profil FEMIS identifié"})
 
@@ -279,8 +411,15 @@ def resend(request):
     email=request.GET.get("email")
     users=User.objects.filter(email=email)
     if len(users)==1:
-        users[0].set_password(reset_password(users[0].email,users[0].username))
+        code=reset_password(users[0].email,users[0].username)
+        users[0].set_password(code)
         users[0].save()
+        sendmail("Renvoi de votre code",email,"resend_code.html",{
+            "email":email,
+            "appname":APPNAME,
+            "code":code,
+            "url_appli":DOMAIN_APPLI
+        })
     return Response({"message":"Check your email"})
 
 
@@ -391,11 +530,11 @@ def refresh_jobsites(request):
     job=request.GET.get("job","")
     if len(job)==0:job=profil.job
 
-    text = text.replace("%job%", urlencode(job))
-    text = text.replace("%lastname%", urlencode(profil.lastname))
-    text = text.replace("%firstname%", urlencode(profil.firstname))
+    text = text.replace("%job%", quote(job))
+    text = text.replace("%lastname%", quote(profil.lastname))
+    text = text.replace("%firstname%", quote(profil.firstname))
 
-    sites=yaml.load(text)
+    sites=yaml.load(text,Loader=yaml.Loader)
     return JsonResponse({"sites":sites,"job":profil.job})
 
 
@@ -440,22 +579,19 @@ def search(request):
 
 
 
-#http://localhost:8000/api/reindex/
+#http://localhost:8000/api/reindex
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def rebuild_index(request):
     """
     Relance l'indexation d'elasticsearch
-    TODO: en chantier
+    TODO: mettre en place un échéancier pour déclenchement régulier
+    voir
     :param request:
     :return:
     """
-    p=ProfilDocument()
-    p.init("profils")
-
-    m=PowDocument()
-    m.init("pows")
-
+    index_name=request.GET.get("index_name","")
+    reindex(index_name)
     return JsonResponse({"message":"Re-indexage terminé"})
 
 
@@ -466,47 +602,86 @@ def rebuild_index(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def batch(request):
-    content=loads(str(request.body,"utf8"))
-    filter= request.GET.get("filter", "*")
+    """
+
+    :param request:
+    :return:
+    """
+    try:
+        content=loads(str(request.body,"utf8"))
+    except:
+        content=None
+
+    filter:str= request.GET.get("filter", "*")
     limit= request.GET.get("limit", 2000)
     limit_contrib=request.GET.get("contrib", 2000)
+    offline=request.GET.get("offline", False)
     profils=Profil.objects.order_by("dtLastSearch").all()
     refresh_delay_profil=int(request.GET.get("refresh_delay_profil", 31))
     refresh_delay_page=int(request.GET.get("refresh_delay_page", 31))
+
+    n_films=0
+    n_works=0
     if filter!="*":
-        profils=Profil.objects.filter(id=filter,school="FEMIS")
-        profils.update(auto_updates="0,0,0,0,0,0")
-        refresh_delay=0.1
+        if filter.isnumeric():
+            profils=Profil.objects.filter(id=filter,school="FEMIS").order_by("dtLastSearch")
+            profils.update(auto_updates="0,0,0,0,0,0")
+        else:
+            for f in filter.split(","):
+                profils=Profil.objects.filter(lastname__istartswith=f.strip(),school="FEMIS").order_by("dtLastSearch")
+                n_f,n_w=exec_batch(profils,refresh_delay_profil,
+                                           refresh_delay_page,int(limit),int(limit_contrib),
+                                           content=content,
+                                   remove_works=request.GET.get("remove_works","false")=="true",offline=offline)
+                n_films+=n_f
+                n_works+=n_w
 
-    f=open(STATIC_ROOT+"/news_template.yaml", "r",encoding="utf-8")
-    templates=yaml.safe_load(f.read())
-    f.close()
+            return Response({"message":"ok","films":n_films,"works":n_works})
 
-    profils=profils.order_by("dtLastSearch")
 
-    n_films,n_works,articles=exec_batch(profils,refresh_delay_profil,
-                                        refresh_delay_page,int(limit),int(limit_contrib),
-                                        templates["templates"],
-                                        content=content,remove_works=request.GET.get("remove_works","false")=="true")
-    articles=[x for x in articles if x]
+    n_films,n_works=exec_batch(profils,refresh_delay_profil,
+                                    refresh_delay_page,int(limit),int(limit_contrib),
+                                    content=content,remove_works=request.GET.get("remove_works","false")=="true")
 
-    return Response({"message":"ok","films":n_films,"works":n_works,"articles":articles})
+    return Response({"message":"ok","films":n_films,"works":n_works})
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def api_doc(request):
+    complete=request.GET.get("complete",False)
+    format=request.GET.get("out","json")
     rc=[]
+    old_table=""
     for field in list(Profil._meta.fields)+list(Work._meta.fields)+list(PieceOfWork._meta.fields)+list(Award._meta.fields)+list(Festival._meta.fields):
         help_text=field.help_text
-        if len(help_text)>0 and not help_text.startswith("@"):
-            rc.append({
-                "field":field.name,
-                "description":help_text,
-                "table":str(field).split(".")[1]
-            })
+        if len(help_text)>0 and not help_text.startswith("@") and not help_text.startswith("!"):
+            table=str(field).split(".")[1]
+            if old_table==table:
+                if not complete: table=""
+            else:
+                old_table=table
 
-    return JsonResponse({"version":"1","content":rc},safe=False)
+            if format=="json":
+                rc.append({
+                    "field":field.name,
+                    "description":help_text,
+                    "table":table
+                })
+            else:
+                rc.append(field.name+";"+help_text+";"+table)
+
+    if format=="json":
+        return JsonResponse({"version":"1","content":rc},safe=False)
+
+    if format=="csv":
+        output=StringIO()
+        output.write("\r".join(rc))
+        output.seek(0)
+        response = HttpResponse(content=output.getvalue(),content_type='text/csv; charset=utf-8')
+        response["Content-Disposition"] = 'attachment; filename=dictionnaire_data.csv'
+        return response
+
 
 
 
@@ -518,18 +693,50 @@ def quality_filter(request):
     filter= request.GET.get("filter", "*")
     ope = request.GET.get("ope", "profils,films")
     profils=Profil.objects.order_by("dtLastSearch").all()
+    report_email=request.GET.get("report_email", "")
     n_profils=0
     n_pows=0
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
+
     if "profils" in ope:
         profil_filter = ProfilAnalyzer()
-        n_profils,log=profil_filter.analyse(profils)
+
+        n_profils,log,to_delete=profil_filter.analyse(profils)
+        to_delete=to_delete+profil_filter.find_double(profils)
+
+        for id in to_delete:
+            _p=Profil.objects.get(id=id)
+            log("Suppression du profil "+_p.name)
+            _p.delete()
+
+        if len(report_email)>0:
+            sendmail("DataCulture: Traitement qualité sur les profils",report_email,"quality_report.html",{"log":log})
+
+
+    if "awards" in ope:
+        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
+        to_delete=award_analyzer.find_double()
+        for a in to_delete:
+            a.delete()
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())
         n_pows=pow_analyzer.find_double()
+
+        to_delete=pow_analyzer.quality()
+        count=0
+        for id in to_delete:
+            count=count+1
+            _p=PieceOfWork.objects.get(id=id)
+            #log("Destruction de "+str(count)+"/"+str(len(to_delete)))
+            _p.delete()
+
+
+
+
+
 
     return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows})
 
@@ -571,6 +778,27 @@ def helloworld(request):
     return Response({"message": "Hello world"})
 
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def api_sendmail(request):
+    body=request.data
+    sendmail(body["subject"],body["to"],body["template"],body["replacement"])
+    return Response("ok",200)
+
+
+
+#test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
+#Accepter la demande de changement de status
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def send_report_by_email(request):
+    user_id=int(request.GET.get("userid",None))
+    if not user_id is None:
+        _user=ExtraUser.objects.filter(user_id=user_id).get()
+        sendmail("Vos rapports",_user.user.email,"instant_report",request.data)
+        return Response("ok",200)
+    else:
+        return Response("Utilisateur inconnu",500)
 
 
 #test: http://localhost:8000/api/set_perms/?user=6&perm=statistique&response=accept
@@ -627,6 +855,8 @@ def ask_perms(request):
     for p in profils["profils"]:
         if p["id"]==perm_id:
             sel_profil=p
+            ext_user.ask=p["id"]
+            ext_user.save()
             break
 
     sendmail("Votre demande d'acces à DataCulturePro'", ext_user.user.email, "confirm_ask_perm", dict(
@@ -644,6 +874,7 @@ def ask_perms(request):
                                 "url_cancel": getConfig("API_SERVER") + "/api/set_perms/?user=" + str(ext_user.user.id) + "&perm=" + perm_id + "&response=refuse"
                               })
              )
+
 
     return Response({"message": "Hello world"})
 
@@ -692,7 +923,6 @@ def ask_perms(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_analyse_pow(request):
-
     ids=[]
     if request.GET.get("id",None):ids=[request.GET.get("id")]
     if request.GET.get("ids", None):ids = request.GET.get("ids").split(",")
@@ -704,6 +934,8 @@ def get_analyse_pow(request):
     else:
         pows=PieceOfWork.objects.filter(id__in=ids).order_by("dtLastSearch")
 
+    PowAnalyzer(pows).quality()
+
     return JsonResponse({"message":"ok","pow":analyse_pows(pows,search_with=search_by,cat=cat)})
 
 
@@ -711,34 +943,12 @@ def get_analyse_pow(request):
 #http://localhost:8000/api/raz/
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def raz(request):
+def api_raz(request):
     filter=request.GET.get("tables","all")
-    log("Effacement de "+filter)
+    if request.GET.get("password","")!=RESET_PASSWORD:
+        return Response({"message":"Password incorrect","error":1})
 
-    if "profils" in filter or filter=="all":
-        log("Effacement des profils")
-        Profil.objects.all().delete()
-
-    if "users" in filter  or filter=="all":
-        log("Effacement des utilisateurs")
-        User.objects.all().delete()
-
-    if "pows" in filter  or filter=="all":
-        log("Effacement des contributions")
-        Work.objects.all().delete()
-        log("Effacement des awards")
-        Award.objects.all().delete()
-        log("Effacement des oeuvres")
-        PieceOfWork.objects.all().delete()
-
-    if "work" in filter or filter=="all":
-        log("Effacement des contributions")
-        if "imdb" in filter:
-            Work.objects.filter(source="imdb").delete()
-        elif "unifrance" in filter:
-            Work.objects.filter(source="unifrance").delete()
-        else:
-            Work.objects.all().delete()
+    raz(filter)
 
     log("Effacement de la base terminée")
     return Response({"message":"Compte effacé"})
@@ -784,7 +994,7 @@ def ask_for_update(request):
     return Response("Message envoyé à "+str(count)+" comptes", status=200)
 
 
-#http://localhost:8000/api/importer/
+#http://localhost:8000/api/send/
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_to(request):
@@ -815,6 +1025,29 @@ def send_to(request):
     return Response("Message envoyé", status=200)
 
 
+
+#Exemple : http://localhost:8000/api/social_distance/?profil_id=1
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def social_distance(request):
+    profils=Profil.objects.filter(department__iexact=request.GET.get("department","")) if request.GET.get("department","")!="" else Profil.objects.all()
+    if len(profils)>0:
+        G = SocialGraph(profils)
+        matrix=G.distance()
+
+        idx=G.idx_node(request.GET.get("profil_id"))
+        if idx:
+            rc=list()
+            for id in range(1,len(profils)):
+                _d=G.G.nodes[id]
+                _d["distance"]=matrix[idx][id] if matrix[idx][id]!=inf else -1
+                rc.append(_d)
+            return Response(rc)
+
+    return Response("Error")
+
+
+
 #Exemple : http://localhost:8000/api/social_graph/
 @api_view(["GET"])
 @renderer_classes((WorksCSVRenderer,))
@@ -827,13 +1060,12 @@ def social_graph(request,format="json"):
     """
 
     log("Extraction des profils")
-    filter=request.GET.get("filter")
+    filter=request.GET.get("filter","0")
     degree_filter = filter.split("_")[0]
-    department_filter = filter.split("_")[1]
+    department_filter = "" if not "_" in filter else filter.split("_")[1]
 
-    profils = None
-    if degree_filter != "0":
-        profils = Profil.objects.filter(degree_filter=int(degree_filter), department__contains=department_filter)
+    if degree_filter != "0" and degree_filter!="null":
+        profils = Profil.objects.filter(degree_year=int(degree_filter), department__contains=department_filter)
     else:
         profils = Profil.objects.filter(department__contains=department_filter)
 
@@ -845,7 +1077,7 @@ def social_graph(request,format="json"):
     G.load(profils,request.GET.get("film")!="false")
     log("Chargement des profils dans le graphe ok")
 
-    G.eval(request.GET.get("eval"))
+    G.eval(request.GET.get("eval",""))
     log("Evaluation du critère ok")
 
     G.filter("pagerank",0.0005)
@@ -863,7 +1095,31 @@ def social_graph(request,format="json"):
 
 
 
-#http://localhost:8000/api/export_profils/
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def export_dict(request):
+    """
+    test:
+    :param request:
+    :return:
+    """
+    _d=init_dict()
+    df=pd.DataFrame(data=_d["jobs"].values(),index=_d["jobs"].keys(),columns=["dest"])
+
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer,sheet_name="Dictionnaire")
+    writer.save()
+    output.seek(0)
+
+    response = HttpResponse(content=output.getvalue(),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response["Content-Disposition"] = 'attachment; filename=dictionnaire.xlsx'
+    return response
+
+
+
+#http://localhost:8000/api/export_profils/?cursus=P
+#http://localhost:8000/api/export_profils/?cursus=S
 @api_view(["GET"])
 @renderer_classes((ProfilsCSVRenderer,))
 @permission_classes([AllowAny])
@@ -890,9 +1146,9 @@ def export_profils(request):
     df["nationality"]=df["nationality"].replace("","France")
     df["source"]="DCP"
 
-    response = HttpResponse(content_type='text/csv; charset=ansi')
-    response["Content-Disposition"]='attachment; filename="profils.csv"'
-    df.to_csv(response,sep=";",encoding="utf8")
+    response = HttpResponse(content_type='application/vnd.ms-excel; charset=utf-8')
+    response["Content-Disposition"]='attachment; filename="profils.xlsx"'
+    df.to_excel(response,encoding="utf8")
     return response
 
 def compare(lst,val,ope):
@@ -910,7 +1166,6 @@ def compare(lst,val,ope):
     return rc
 
 
-from dict2xml import dict2xml as xmlify
 #http://localhost:8000/api/export_all/?out=json
 #http://localhost:8000/api/export_all/xls/
 #http://localhost:8000/api/export_all/xml/
@@ -920,12 +1175,19 @@ from dict2xml import dict2xml as xmlify
 @permission_classes([AllowAny])
 def export_all(request):
     """
-    Exportation statistiques pour consolidation
+    Exportation statistiques pour consolidation /stats /stat
     :param request:
     :return:
     """
 
     table = request.GET.get("table", "work").lower()
+    limit=int(request.GET.get("limit", "0"))
+    title=request.GET.get("title","Reporting FEMIS")
+    format=request.GET.get("out","json")
+    description=request.GET.get("description","")+"<br>"
+    cols=request.GET.get("cols")
+    sql:str=request.GET.get("sql")
+
     log("Chargement de la table "+table)
 
     df=None
@@ -959,33 +1221,25 @@ def export_all(request):
             "id","job","comment","validate","source","state"
         )))
 
-    if df is None:
+    if df is None and table!="sql":
         values = request.GET.get("data_cols").split(",")
 
         if table.startswith("profil"): data = Profil.objects.all().values(*values)
         if table.startswith("pieceofwork"): data = PieceOfWork.objects.all().values(*values)
         if table.startswith("work"): data = Work.objects.all().values(*values)
         if table.startswith("festival"): data = Festival.objects.all().values(*values)
+        if table.startswith("award"): data = Award.objects.all().values(*values)
 
-        df=pd.DataFrame.from_records(data)
-        if len(data)>0:
-            df.columns=list(request.GET.get("cols").split(","))
+        df=pd.DataFrame.from_records(data,columns=values)
+        # if len(data)>0:
+        #     df.columns=list(request.GET.get("cols").split(","))
+
+    if limit>0:
+        df=df[:limit]
 
     log("Chargement des données terminées")
 
-    if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
 
-    title=request.GET.get("title","Reporting FEMIS")
-    lib_columns=",".join(list(df.columns))
-
-    format=request.GET.get("out","json")
-
-    cols=request.GET.get("cols")
-    if not cols is None and cols!="undefined":
-        log("On ne conserve que "+cols+" dans "+","+lib_columns)
-        df=df[cols.split(",")].drop_duplicates()
-
-    sql:str=request.GET.get("sql")
     if not sql is None:
         log("Chargement de la requete "+sql)
         filter_clause=request.GET.get("filter_value","")
@@ -1002,6 +1256,23 @@ def export_all(request):
 
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
+        else:
+            cursor=connection.cursor()
+            cursor.execute(sql)
+            rows=cursor.fetchall()
+            if cols is None:
+                df=pd.DataFrame.from_records(rows)
+            else:
+                df=pd.DataFrame.from_records(rows,columns=cols.split(","))
+
+
+    if not df is None:
+        if len(df) == 0: return HttpResponse("Aucune donnée disponible", status=404)
+        lib_columns=",".join(list(df.columns))
+
+        if not cols is None and cols!="undefined":
+            log("On ne conserve que "+cols+" dans "+","+lib_columns)
+            df=df[cols.split(",")].drop_duplicates()
 
 
     if request.GET.get("percent","False")=="True":
@@ -1066,17 +1337,23 @@ def export_all(request):
         return response
 
     if format.startswith("graph"):
-        graph=StatGraph(df)
-        graph.trace(
-            request.GET.get("x",df.columns[0]),
-            request.GET.get("y",df.columns[1]),
-            request.GET.get("color",None),
-            request.GET.get("height",400),
-            style=request.GET.get("chart","bar"),
-            title=title,
-            template=request.GET.get("template","seaborn")
-        )
-        rc = graph.to_html()
+        if request.GET.get("chart","bar")=="none":
+            code=STYLE_TABLE+"<div class='mainform'><h3>"+title+"</h3><small>"+description+"</small>"+df.to_html(index=False,justify="center",border=0,render_links=True)+"</div>"
+            rc={"code":code,"values":code}
+        else:
+            graph=StatGraph(df)
+            height=request.GET.get("height","400").replace(",",".").split(".")[0]
+            graph.trace(
+                request.GET.get("x",df.columns[0]),
+                request.GET.get("y",df.columns[1]),
+                request.GET.get("color",None),
+                int(height),
+                style=request.GET.get("chart","bar"),
+                title=title,
+                template=request.GET.get("template","seaborn")
+            )
+            rc = graph.to_html()
+
         log("Construction du graph terminée")
 
         filter = request.GET.get("filter")
@@ -1090,35 +1367,6 @@ def export_all(request):
 
 
 
-
-def idx(col:str,row=None,default=None,max_len=100,min_len=0,replace_dict:dict={},header=list()):
-    """
-    Permet l'importation dynamique des colonnes
-    :param col:
-    :param row:
-    :param default:
-    :param max_len:
-    :param min_len:
-    :param replace_dict:
-    :param header:
-    :return:
-    """
-    for c in col.lower().split(","):
-        if c in header:
-            if row is not None and len(row)>header.index(c):
-                rc=str(row[header.index(c)])
-
-                #Application des remplacement
-                for old in replace_dict.keys():
-                    rc=rc.replace(old,replace_dict[old])
-
-                if max_len>0 and len(rc)>max_len:rc=rc[:max_len]
-                if min_len==0 or len(rc)>=min_len:
-                    return rc.strip()
-            else:
-                return header.index(c)
-
-    return default
 
 
 
@@ -1140,7 +1388,7 @@ def movie_importer(request):
     :param request:
     :return:
     """
-    d,total_record=importer_file(request)
+    d,total_record=importer_file(request.data["file"],request.data["filename"])
 
     i = 0
     record = 0
@@ -1224,183 +1472,24 @@ def movie_importer(request):
 
 
 
-def importer_file(request):
-    d=list()
-
-    log("Importation de fichier")
-    data = base64.b64decode(str(request.data["file"]).split("base64,")[1])
-
-    log("Analyse du document")
-    for _encoding in ["utf-8", "ansi"]:
-        try:
-            txt = str(data, encoding=_encoding)
-            break
-        except:
-            pass
-
-    txt = txt.replace("&#8217;", "")
-    log("Méthode d'encoding " + _encoding)
-
-    if str(request.data["filename"]).endswith("xlsx"):
-        res = pd.read_excel(data)
-        d.append(list(res))
-        for k in range(1, len(res)):
-            d.append(list(res.loc[k]))
-        total_record = len(d) - 1
-    else:
-        delimiter = ";"
-        text_delimiter = False
-        if "\",\"" in txt:
-            delimiter = ","
-            text_delimiter = True
-
-        log("Importation du CSV")
-        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
-        total_record = sum(1 for line in d)
-        log("Nombre d'enregistrements identifié " + str(total_record))
-
-        # Répétion de la ligne pour remettre le curseur au début du fichier
-        d = csv.reader(StringIO(txt), delimiter=delimiter, doublequote=text_delimiter)
-
-    return d,total_record
 
 
 #http://localhost:8000/api/importer/
-#Importation des profils
+#profils importer profil_importer profils_importer
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def importer(request):
+def api_importer(request):
     """
-    Importation des profils
+
+    Importation des profils /import
     :param request:
     :param format:
     :return:
     """
-    i = 0
-    record = 0
-    non_import=list()
-
-    d,total_record=importer_file(request)
-
-    l_department_category=[x.lower() for x in Profil.objects.values_list("department_category",flat=True)]
-    for row in d:
-
-        if i==0:
-            header=[x.lower().replace("[[","").replace("]]","").strip() for x in row]
-            log("Liste des colonnes disponibles "+str(header))
-        else:
-            s=request.data["dictionnary"].replace("'","\"").replace("\n","").strip()
-            dictionnary=dict() if len(s)==0 else loads(s)
-
-            firstname=idx("fname,firstname,prenom,prénom",row,max_len=40,header=header)
-            lastname=idx("lastname,nom,lname",row,max_len=100,header=header)
-            if i % 10 == 0:
-                log(firstname + " " + lastname + " - " + str(i) + "/" + str(total_record) + " en cours d'importation")
-
-            email=idx("email,mail,e-mail",row,header=header,max_len=50)
-            idx_photo=idx("photo,picture,image",header=header)
-
-            #Eligibilité et evoluation du genre
-            gender=idx("gender,genre,civilite,civilité",row,"",header=header)
-            if len(lastname)>1 and len(lastname)+len(firstname)>4:
-                if idx_photo is None or len(row[idx_photo])==0:
-                    photo=None
-
-                    if gender=="Monsieur" or gender=="M." or str(gender).startswith("Mr"):
-                        photo="/assets/img/boy.png"
-                        gender = "M"
-
-                    if str(gender).lower() in ["monsieur","mme","mademoiselle","mlle"]:
-                        photo="/assets/img/girl.png"
-                        gender = "F"
-
-                    if photo is None:
-                        photo = "/assets/img/anonymous.png"
-                        gender = ""
-
-                else:
-                    photo=stringToUrl(idx("photo",row,""))
-
-                #Calcul
-                dt_birthdate=idx("BIRTHDATE,birthday,anniversaire,datenaissance",row,header=header)
-                # if len(dt_birthdate)==8:
-                #     tmp=dt_birthdate.split("/")
-                #     if int(tmp[2])>50:
-                #         dt_birthdate=tmp[0]+"/"+tmp[1]+"/19"+tmp[2]
-                #     else:
-                #         dt_birthdate = tmp[0] + "/" + tmp[1] + "/20" + tmp[2]
-                dt=dateToTimestamp(dt_birthdate)
-
-                if not "promo" in dictionnary:dictionnary["promo"]=None
-                promo=idx("date_start,date_end,date_exam,promo,promotion,anneesortie,degree_year,fin,code_promotion",row,dictionnary["promo"],0,4,header=header)
-                if type(promo)!=str: promo=str(promo)
-                if not promo is None and len(promo)>4:
-                    promo=dateToTimestamp(promo)
-                    if not promo is None:promo=promo.year
-
-                standard_replace_dict={"nan":""}
-
-                department_category=idx("code_regroupement,regroupement",row,"",50,replace_dict=standard_replace_dict,header=header)
-                department = idx("CODE_TRAINING,departement,department,formation", row, "", 60,replace_dict=standard_replace_dict,header=header)
-                if department_category is None or len(department_category)==0:
-                    if department.lower() in l_department_category:
-                        department_category=department
-
-                profil=Profil(
-                    firstname=firstname,
-                    school="FEMIS",
-                    lastname=lastname,
-                    name_index=index_string(firstname+lastname),
-                    gender=gender,
-                    mobile=idx("mobile,telephone,tel2,téléphones",row,"",20,replace_dict=standard_replace_dict,header=header),
-                    nationality=idx("nationality",row,"Francaise",replace_dict=standard_replace_dict,header=header),
-                    country=idx("country,pays",row,"France",header=header),
-                    birthdate=dt,
-                    department=department,
-                    job=idx("job,metier,competences",row,"",60,replace_dict=standard_replace_dict,header=header),
-                    degree_year=promo,
-                    address=idx("address,adresse",row,"",200,replace_dict=standard_replace_dict,header=header),
-                    department_category=department_category,
-                    town=idx("town,ville",row,"",50,replace_dict=standard_replace_dict,header=header),
-                    source=idx("source", row, "FEMIS",50,replace_dict=standard_replace_dict,header=header),
-                    cp=idx("zip,cp,codepostal,code_postal,postal_code,postalcode",row,"",5,replace_dict=standard_replace_dict,header=header),
-                    website=stringToUrl(idx("website,siteweb,site,url",row,"",replace_dict=standard_replace_dict,header=header)),
-                    biography=idx("biographie",row,"",header=header),
-                    crm=idx("crm,oasis",row,header=header),
-
-                    facebook=idx("facebook",row,"",header=header),
-                    instagram=idx("instagram",row,"",header=header),
-                    vimeo=idx("vimeo",row,"",header=header),
-                    tiktok=idx("tiktok",row,"",header=header),
-                    linkedin=idx("linkedin", row, "",header=header),
-
-                    email=email,
-                    photo=photo,
-
-                    cursus=idx("cursus",row,default=dictionnary["cursus"],header=header,max_len=1),
-                )
-
-                try:
-                    if len(profil.email)>0:
-                        res=Profil.objects.filter(email__iexact=profil.email,lastname__iexact=profil.lastname).all()
-                        hasChanged=True
-                        if len(res)>0:
-                            #log("Le profil existe déjà")
-                            profil,hasChanged=fusion(res.first(),profil)
-
-                    if hasChanged:
-                        log("Mise a jour de "+firstname+" "+lastname)
-                        profil.save()
-
-                    #log(profil.lastname + " est enregistré")
-                    record=record+1
-                except Exception as inst:
-                    log("Probléme d'enregistrement de "+email+" :"+str(inst))
-                    non_import.append(str(profil))
-            else:
-                log("Le profil "+str(row)+" ne peut être importée")
-                non_import.append(str(profil))
-        i=i+1
+    dictionnary=request.data["dictionnary"]
+    rows,total_record=importer_file(request.data["file"])
+    record,non_import=profils_importer(rows,total_record,dictionnary)
+    if record>0: reindex()
 
     return JsonResponse({"imports":str(record),"abort":non_import})
 
@@ -1436,9 +1525,39 @@ def oauth(request):
     return redirect("http://localhost:4200")
 
 
+@permission_classes([AllowAny])
+class FestivalDocumentView(DocumentViewSet):
+    document=FestivalDocument
+    serializer_class = FestivalDocumentSerializer
+    pagination_class = LimitOffsetPagination
+    lookup_field = "id"
+    filter_backends = [
+        FilteringFilterBackend,
+        DefaultOrderingFilterBackend,
+        SimpleQueryStringSearchFilterBackend,
+        # MultiMatchSearchFilterBackend
+    ]
+
+    filter_fields ={
+        "title":"title.raw",
+        "year":"year"
+    }
+
+    simple_query_string_search_fields = {
+        'title': {'boost': 4},
+        'year':{'boost':3},
+        'description':{'boost':1}
+    }
+
+    simple_query_string_options = {
+        "default_operator": "and",
+    }
+
+    #search_fields = ('title','year',"award__pow__title","description","award__profil__lastname")
 
 
 
+#http://localhost:8000/api/profilsdoc
 @permission_classes([AllowAny])
 class ProfilDocumentView(DocumentViewSet):
     document=ProfilDocument
@@ -1447,30 +1566,59 @@ class ProfilDocumentView(DocumentViewSet):
     lookup_field = "id"
     filter_backends = [
         FilteringFilterBackend,
-        IdsFilterBackend,
+        # CompoundSearchFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
         SimpleQueryStringSearchFilterBackend,
-        CompoundSearchFilterBackend
+        #MultiMatchSearchFilterBackend
     ]
+    #voir la documentation : https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.22.2/search_backends.html
+    #
 
+    #On utilisera dans la requete : search_simple_query_string
     simple_query_string_search_fields = {
         'lastname': {'boost': 4},
-        'firstname': {'boost': 2}
+        'department_category': {'boost': 4},
+        'degree_year': {'boost': 4},
+        'firstname': {'boost': 1},
+        'department': {'boost': 3},
+        'town':{'boost':1},
+        'works__job': {'boost': 2},
+        'works__pow__title': {'boost': 2},
+        'awards__title': {'boost': 2},
+        # 'awards__year': {'boost': 1}
     }
 
-    search_fields = ('lastname',
-                     'firstname',
-                     'department',
-                     'town',
-                     'department_category',
-                     'works__job',
-                     'works__pow__title',
-                     'award__festival__title',
-                     'award__description'
-                     )
+    simple_query_string_options = {
+        "default_operator": "and",
+    }
+
+    # multi_match_search_fields = {
+    #     'lastname': {'boost': 4},
+    #     'degree_year': {'boost': 4},
+    #     'department_category': {'boost': 3},
+    # }
+
+    #voir https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#type-phrase
+    # multi_match_options = {
+    #     'type': 'best_fields'
+    # }
+
+
+    # search_fields = ('lastname',
+    #                  'firstname',
+    #                  'department',
+    #                  'degree_year'
+    #                  'department_category',
+    #                  'works__job',
+    #                  'works__pow__title',
+    #                  'awards__festival__title',
+    #                  'awards__description',
+    #                  'awards__year'
+    #                  )
 
     filter_fields = {
+        'profil':'id',
         'name': 'name',
         'lastname':'lastname',
         'firstname': 'firstname',
@@ -1481,17 +1629,20 @@ class ProfilDocumentView(DocumentViewSet):
         'town':'town',
         'formation':'department'
     }
+
     ordering_fields = {
-        'id':'id',
-        'promo':'degree_year',
-        'update':'dtLastUpdate'
+        'lastname':None,
+        'degree_year':None,
+        'update':None
     }
-    suggester_fields = {
-        'name_suggest': {
-            'field': 'lastname',
-            'suggesters': [SUGGESTER_COMPLETION,],
-        },
-    }
+
+
+    # suggester_fields = {
+    #     'name_suggest': {
+    #         'field': 'lastname',
+    #         'suggesters': [SUGGESTER_COMPLETION,],
+    #     },
+    # }
 
 
 

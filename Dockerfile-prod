@@ -63,6 +63,7 @@ RUN pip3 install PyGithub
 RUN pip3 install openpyxl
 RUN pip3 install django-archive
 RUN pip3 install scipy
+RUN pip3 install pymongo
 
 ENV APP_HOME=/home/app
 RUN mkdir $APP_HOME

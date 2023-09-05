@@ -42,7 +42,7 @@ python manage.py search_index --rebuild
 
 ##Installation d'une version locale de mongodb
 <pre>
-docker run -ti -p 27017:27017 --name mongodb -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=hh4271 mongo:latest
+docker rm -f mongodb && docker run -d -p 27017:27017 -v /root/mongodb:/data/db --name mongodb -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=hh4271 mongo:4.4
 </pre>
 
 ##Installation
