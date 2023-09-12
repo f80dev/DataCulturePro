@@ -44,7 +44,6 @@ SECRET_KEY=_SECRET_KEY
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
@@ -288,7 +287,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
+IMDB_DATABASE_SERVER="mongodb://root:hh4271@192.168.1.62:27017/?authMechanism=DEFAULT"
 
 EMAIL_HOST ="smtp-mail.outlook.com"
 EMAIL_PORT = 587
@@ -345,5 +344,3 @@ ADMIN_PEMFILE="./femis.pem"
 NFT_CONTRACT="erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
 BC_PROXY="https://devnet-gateway.elrond.com"
 BC_EXPLORER="https://devnet-explorer.elrond.com"
-
-DEFAULT_PERMS_PROFIL="standard"

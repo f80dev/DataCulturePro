@@ -46,7 +46,6 @@ GRAPH_MODELS = {
 SECRET_KEY = ')0p@7b_kew8_w+jjuv=(zbn!sp!bm2*=7$s7#%@bvkwy0i--0p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
@@ -313,5 +312,3 @@ ADMIN_PEMFILE="./femis.pem"
 NFT_CONTRACT="erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
 BC_PROXY="https://devnet-gateway.elrond.com"
 BC_EXPLORER="https://devnet-explorer.elrond.com"
-
-DEFAULT_PERMS_PROFIL="standard"

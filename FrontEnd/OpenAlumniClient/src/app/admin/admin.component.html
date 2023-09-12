@@ -41,10 +41,22 @@
                 Charger une sauvegarde
             </app-upload-file>
             <br>
-            <button mat-raised-button class="app-button" *ngIf="sel_backup_file"
+
+
+          <button mat-raised-button class="app-button" *ngIf="sel_backup_file"
                     (click)="load_backup()" >Charger</button>
             <button mat-raised-button class="app-button"
                     (click)="save_backup()" >Enregistrer</button>
+
+          <div style="margin-top: 15px">
+            Connexion à la base IMDB: {{config.infos_server.imdb_database_server}}<br>
+            <a href="https://www.mongodb.com/docs/manual/release-notes/4.2-compatibility/#remove-support-for-the-copydb-and-clone-commands">
+              Déplacer une base mongoDB
+            </a>
+
+          </div>
+
+
         </mat-expansion-panel>
 
         <mat-expansion-panel [expanded]="show_server">

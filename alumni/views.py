@@ -55,8 +55,6 @@ from OpenAlumni.Tools import dateToTimestamp,  reset_password, log, sendmail, to
     levenshtein, getConfig,   index_string, init_dict
 from OpenAlumni.nft import NFTservice
 
-
-
 import os
 if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev_server": from OpenAlumni.settings_dev_server import *
 if os.environ.get("DJANGO_SETTINGS_MODULE")=="OpenAlumni.settings_dev": from OpenAlumni.settings_dev import *
@@ -351,6 +349,7 @@ def infos_server(request):
     rc["settings_file"]=SETTINGS_FILENAME
     rc["server_version"]=VERSION
     rc["database"]=DATABASES
+    rc["imdb_database_server"]=IMDB_DATABASE_SERVER
     rc["debug"]=DEBUG
     try:
         rc["content"]={

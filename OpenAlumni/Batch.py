@@ -16,7 +16,6 @@ from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import make_aware
 from django_elasticsearch_dsl import Index, Document
-from imdb import IMDb
 from pandas import read_excel
 from wikipedia import wikipedia, re
 
@@ -26,11 +25,15 @@ from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, 
     apply_dictionnary_on_each_words, init_dict
 from OpenAlumni.mongo_tools import MongoBase
 
-from OpenAlumni.settings import STATIC_ROOT
+import os
+if os.environ.get("DEBUG"):
+    from OpenAlumni.settings_dev import STATIC_ROOT,IMDB_DATABASE_SERVER
+else:
+    from OpenAlumni.settings import STATIC_ROOT,IMDB_DATABASE_SERVER
+
+
 from alumni.documents import FestivalDocument
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival, Article, ExtraUser
-
-ia=IMDb()
 
 def extract_movie_from_cnca(title:str):
     #title=title.replace(" ","+")
@@ -247,7 +250,7 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
 
     #r=wikipedia.requests.get(url, headers={'User-Agent': 'Mozilla/5.0',"accept-encoding": "gzip, deflate"})
     #page = wikipedia.BeautifulSoup(str(r.content,encoding="utf-8"),"html5lib")
-    page=load_page(url,refresh_delay)
+    page=load_page(url,refresh_delay=refresh_delay)
     main_section=page.find("div",attrs={'class':"jumbotron__content"})
 
     if main_section:
@@ -406,7 +409,9 @@ def extract_profil_from_unifrance(name="céline sciamma", refresh_delay=31,offli
         page=load_page(u,refresh_delay=refresh_delay)
         if page is None: return None
 
-        sections=page.findAll("div",{"class":"collapse-wrapper"})+page.find("div",{"class":"js-summary-source"}).findAll("div",{"class":"page-sheet-section"})
+        tmp=page.find("div",{"class":"js-summary-source"})
+        sections=page.findAll("div",{"class":"collapse-wrapper"})+(tmp.findAll("div",{"class":"page-sheet-section"}) if not tmp is None else [])
+
         for section in sections:
             section_title=section.find("div").text
             if "Filmographie" in section_title:
@@ -514,10 +519,10 @@ def add_award(festival_title:str,profil:Profil,desc:str,pow_id:int=0,film_title=
 
 
 
-def extract_awards_from_imdb(profil_url,fullname):
+def extract_awards_from_imdb(profil_url,fullname,refresh_delay=30):
     # Recherche des awards
     url=profil_url + "awards?ref_=nm_awd"
-    page = load_page(url,timeout=0,agent="Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.48 Mobile Safari/537.36")
+    page = load_page(url,refresh_delay=refresh_delay)
 
     awards = page.find_all("section",{"class":["ipx-page-section","ipc-page-section--base"]})
 
@@ -618,13 +623,17 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_pr
     infos={"links":[]}
 
     if imdbBase:
+        log("Recherche de "+lastname+" dans la base imdb")
         profils=imdbBase.find_profils(firstname=firstname,lastname=lastname)
         if len(profils)>0:
-            for m in imdbBase.find_movies(profils[0]["nconst"]):
+            if len(profils)>1: log("Attention il existe plusieurs profils "+firstname+" "+lastname)
+            for m in imdbBase.filter_movies(imdbBase.find_movies(profils[0]["nconst"])):
                 infos["links"].append({"url":"https://www.imdb.com/title/"+m["tconst"]})
-            infos["url"]="https://www.imdb.com/name/"+profils[0]["nconst"]
+            infos["url"]="https://www.imdb.com/name/"+profils[0]["nconst"]+"/"
             infos["fullname"]=firstname+" "+lastname
             return infos
+        else:
+            log("Impossible de trouve "+firstname+" "+lastname+" dans l'imdb database")
 
     if url_profil is None or url_profil=="":
         peoples=imdb_search(firstname+" "+lastname)
@@ -824,14 +833,26 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
     if not imdbBase is None and "title/tt" in url:
         movie=imdbBase.get_movie("tt"+url.split("title/tt")[1])
         if movie:
-            return {
+            movie=imdbBase.complete_movies([movie])[0]
+            casting=[]
+            for c in movie["casting"]:
+                job=translate(c["job"],["jobs"]) if c["job"]!="\\N" else translate(c["category"],["jobs"])
+                casting.append({"job":job,"fullname":c["profil"]["primaryName"],"id":c["profil"]["nconst"]})
+
+            rc= {
                 "source":"auto:IMDB",
-                "casting":[],
+                "duration":int(movie["runtimeMinutes"]) if movie["runtimeMinutes"]!="\\N" else 0,
+                "casting":casting,
                 "url":url,
-                "nature":translate(movie["titleType"],"categories"),
-                "genres":movie["genres"],
-                "title":movie["title"]
+                "synopsis":"",
+                "job":job,
+                "episodes":[],
+                "nature":translate(movie["titleType"],["categories"]),
+                "category":translate(movie["genres"].split(",")[0],["categories"]),
+                "title":movie["originalTitle"],
+                "year":movie["startYear"]
             }
+            return rc
 
 
     years=[]
@@ -1403,14 +1424,20 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
             films.append(extract_film_from_leFilmFrancais(l["url"], job_for=job_for, refresh_delay=refresh_delay_page,bot=bot))
 
         if "imdb" in l["url"]:
+            casting_filter=profil.name_index
+            if not imdbBase is None:
+                for ll in profil.links:
+                    if "https://www.imdb" in ll["url"]: casting_filter="nm"+ll["url"].split("/nm")[1]
+
             film=extract_film_from_imdb(
                 l["url"],
                 l["text"] if "text" in l else "",
                 job=l["job"] if "job" in l else "",
-                casting_filter=profil.name_index,
+                casting_filter=casting_filter,
                 refresh_delay=refresh_delay_page,
                 imdbBase=imdbBase
             )
+            if film["year"]=="\\N":film=None
             if film:
                 if len(film["episodes"])>0:
                     episodes=extract_episodes_for_profil(film["episodes"], profil.fullname)
@@ -1430,10 +1457,9 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
             #Recherche les métiers qu'a exercé la personne sur le film
             if not film is None:
                 if film["casting"]:
-                    for k in film["casting"].keys():
-                        for c in film["casting"][k]:
-                            if equal_str(c["index"],profil.name_index):
-                                jobs.append(k) #On ajoute le métier k à la personne
+                    for c in film["casting"]:
+                        if equal_str(c["fullname"],profil.name_index):
+                            jobs.append(c["job"]) #On ajoute le métier k à la personne
 
                 if len(jobs)>0:
                     #if not "nature" in film: film["nature"] = l["nature"]
@@ -1466,7 +1492,7 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
                     except Exception as inst:
                         log("Impossible d'enregistrer le film: "+str(inst.args))
             else:
-                log("Impossible de retrouver le film")
+                log("Impossible de retrouver le film "+l["url"])
 
 
             if not pow is None:
@@ -1570,7 +1596,7 @@ def exec_batch(profils,refresh_delay_profil=31,
     n_films = 0
     n_works=0
     rc_articles=list()
-    imdbBase=MongoBase()
+    imdbBase=MongoBase(IMDB_DATABASE_SERVER)
 
     # all_links=list()
     # for pow in PieceOfWork.objects.all():
@@ -1663,7 +1689,7 @@ def exec_batch(profils,refresh_delay_profil=31,
 
             if imdb_profil_url:
                 n_add_award=0
-                awards=extract_awards_from_imdb(imdb_profil_url,profil.fullname)
+                awards=extract_awards_from_imdb(imdb_profil_url,profil.fullname,refresh_delay=refresh_delay_pages)
                 for award in awards:
                     if not add_award(
                         festival_title=award["festival_title"],

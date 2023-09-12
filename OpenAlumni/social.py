@@ -1,17 +1,14 @@
 #Analyse des relations
-import io
 
 import networkx as nx
-import scipy.sparse as sp
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.db import connection
 from networkx import floyd_warshall_numpy
 from numpy import ndarray, save, load
-from numpy.core.multiarray import fromfile
 
 from OpenAlumni.Tools import log, now
-from alumni.models import Work, PieceOfWork
+from alumni.models import PieceOfWork
 
 
 class SocialGraph:

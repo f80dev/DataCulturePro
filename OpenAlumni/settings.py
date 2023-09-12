@@ -240,7 +240,7 @@ EMAIL_HOST_USER ="contact.dcp@femis.fr"
 APPNAME="Data Culture Pro"
 DOMAIN_APPLI="https://dcp.f80.fr"
 DOMAIN_SERVER="https://api.f80.fr:8000"
-
+IMDB_DATABASE_SERVER="mongodb://root:hh4271@api.f80.fr:27017/?authMechanism=DEFAULT"
 
 
 #Sécurisation

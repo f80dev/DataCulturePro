@@ -25,7 +25,6 @@ djangorestframework-csv
 djangorestframework-xml
 dict2xml
 django-dbbackup
-django-filter
 numpy
 pandas
 xlsxwriter
@@ -42,3 +41,5 @@ PyGithub
 openpyxl
 django-archive
 scipy
+pymongo
+django-cors-headers

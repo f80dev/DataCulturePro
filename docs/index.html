@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4H77LPR3FC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4H77LPR3FC');
+  </script>
+
+
+  <meta charset="utf-8">
+  <title>Data Culture Pro</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Data Culture Pro - La Femis">
+  <meta property="og:description" content="Ouvrir le lien consulter mon profil">
+  <meta property="og:image" content="https://www.femis.fr/squelettes/imgs/femis-blanc-2.png">
+  <meta property="og:url" content="http://testdcp.f80.fr/">
+
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="favicon.png">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!--  Ajout pour d3 : https://blog.logrocket.com/data-visualization-angular-d3/-->
+  <!--  <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">-->
+  <!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">-->
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1976d2">
+  <script async="" src="js/exif.js"></script>
+
+
+
+<link rel="stylesheet" href="styles.css"></head>
+<body class="mat-typography" style="margin:0;padding: 0;">
+<script>
+  (function () {
+    // Retrieve the URL the user was trying to access when receiving the 404.
+    var redirect = sessionStorage.redirect;
+    // Remove the URL from sessionStorage.
+    delete sessionStorage.redirect;
+    // Check if we actually need to redirect.
+    if (redirect && redirect != location.href) {
+      // We need to redirect to the URL the user was trying to access.
+      history.replaceState(null, null, redirect);
+    }
+  })();
+</script>
+
+<app-root></app-root>
+<noscript>Ce site ne peut fonctionner qu'avec l'option JavaScript activé sur votre navigateur</noscript>
+<script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="main.js" type="module"></script></body>
+</html>

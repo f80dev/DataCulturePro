@@ -335,7 +335,10 @@ def log(text:str,sep='\n'):
     global store_log
     delay=int(now()-start)
     line:str=str(int(delay/60))+":"+str(delay % 60)+" : "+text
-    print(line)
+    try:
+        print(line)
+    except:
+        pass
     store_log = line+sep+store_log[0:10000]
     return text
 
@@ -610,7 +613,8 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
     return code
 
 
-def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,agent='Mozilla/5.0',offline=False):
+def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
+              agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',offline=False):
     """
     tags #open_page open page
     :param url:

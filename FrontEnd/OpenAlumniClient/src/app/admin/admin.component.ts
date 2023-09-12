@@ -22,6 +22,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
   backup_files: any[]=[];
   sel_backup_file:string="";
   show_server: boolean=true;
+  mongdb_connexion_string: any=""
 
   constructor(private api:ApiService,
               public config:ConfigService,
