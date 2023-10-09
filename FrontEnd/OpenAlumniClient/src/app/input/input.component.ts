@@ -33,7 +33,7 @@ export class InputComponent implements OnChanges,OnInit {
   valueCtrl=new FormControl()
 
   @Output() valueChange=new EventEmitter<any>();
-
+  @Output() preview=new EventEmitter<any>();
   @Output() validate=new EventEmitter();
   @Output() cancel=new EventEmitter();
 
@@ -44,7 +44,7 @@ export class InputComponent implements OnChanges,OnInit {
   showHelp: boolean=false;
   @Input() cols: number=0;
   @Input() rows: number=0;
-
+  @Input() force_preview: boolean=false;
   @Input() max: number=1e18;
   @Input() min: number=0;
   @Input() step: number=1;
@@ -69,7 +69,7 @@ export class InputComponent implements OnChanges,OnInit {
     this.valueChange.emit(this.value);
   }
 
-  on_key($event: KeyboardEvent) {
+  on_key($event: any) {
     if($event.key=='Enter')
       this.on_validate();
     else
@@ -162,7 +162,10 @@ export class InputComponent implements OnChanges,OnInit {
   }
 
   explore(value: any) {
-    open(value,"Explorer")
+    if(this.force_preview)this.preview.emit(value)
+    if(value.startsWith("http")){
+      open(value,"Explorer")
+    }
   }
 }
 

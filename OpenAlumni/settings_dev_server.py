@@ -49,7 +49,7 @@ SECRET_KEY = ')0p@7b_kew8_w+jjuv=(zbn!sp!bm2*=7$s7#%@bvkwy0i--0p'
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
-    "server.f80lab.com",
+    "api.f80.fr",
     "localhost",
     "127.0.0.1",
     "testdcp.f80lab.com"
@@ -266,7 +266,7 @@ EMAIL_HOST_USER ="contact.dcp@femis.fr"
 
 APPNAME="Data Culture Pro (beta server)"
 DOMAIN_APPLI="https://testdcp.f80lab.com"
-DOMAIN_SERVER="https://server.f80lab.com:8100"
+DOMAIN_SERVER="https://api.f80.fr:8100"
 
 
 DEBUG = (sys.argv[1] == 'runserver')

@@ -1,6 +1,9 @@
 import base64
+import subprocess
 from os.path import exists
 
+from OpenAlumni.data_importer import DataImporter
+from OpenAlumni.mongo_tools import MongoBase
 from OpenAlumni.passwords import RESET_PASSWORD
 from datetime import datetime
 from io import StringIO, BytesIO
@@ -18,7 +21,7 @@ from django.db import connection
 from github import Github
 from numpy import inf
 
-from OpenAlumni.DataQuality import ProfilAnalyzer, PowAnalyzer, AwardAnalyzer
+from OpenAlumni.DataQuality import ProfilAnalyzer, PowAnalyzer, AwardAnalyzer, WorkAnalyzer
 from OpenAlumni.analytics import StatGraph
 from OpenAlumni.giphy_search import ImageSearchEngine
 
@@ -217,7 +220,7 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ExtraAwardViewSet(viewsets.ModelViewSet):
     """
-    voir https://server.f80lab.com:8100/api/extraawards/?format=json&profil=3017
+    voir https://api.f80.fr:8100/api/extraawards/?format=json&profil=3017
 
     """
     queryset = Award.objects.all().order_by("-year")
@@ -263,6 +266,7 @@ def getyaml(request):
     result=yaml.safe_load(f.read())
     return JsonResponse(result,safe=False)
 
+
 #http://localhost:8000/api/backup_files
 @api_view(["GET","POST"])
 @permission_classes([AllowAny])
@@ -290,7 +294,6 @@ def list_backup_file(request):
 
 
 
-
 #http://localhost:8000/api/backup?command=save
 #http://localhost:8000/api/backup?command=load
 @api_view(["GET"])
@@ -299,6 +302,7 @@ def run_backup(request):
     command=request.GET.get("command","save")
     prefix=request.GET.get("prefix","dataculture_db_")
     work_dir=request.GET.get("work_dir","./dbbackup")
+    engine=request.GET.get("engine","pg_dump")
     filename=request.GET.get(
         "file",
         prefix+datetime.now().strftime("%d-%m-%Y_%H%M")+".json"
@@ -311,10 +315,19 @@ def run_backup(request):
     exclude_table=["auth.permission","contenttypes","alumni.extrauser"]
     if command=="save":
         log("Enregistrement de la base dans "+backup_file)
-        with open(work_dir+"/"+backup_file, 'w',encoding="utf8") as f:
-            management.call_command("dumpdata","alumni",
-                                    stdout=f,exclude=exclude_table,
-                                    indent=2)
+        if engine=="dumpdata":
+            with open(work_dir+"/"+backup_file, 'w',encoding="utf8") as f:
+                management.call_command("dumpdata","alumni",
+                                        stdout=f,exclude=exclude_table,
+                                        indent=2)
+        if engine=="pg_dump":
+            args=["./dbbackup/pg_dump.exe", "--host=192.168.1.62","--port=5432","--username=hhoareau", "alumni_db"]
+            os.environ["PGPASSWORD"]="hh4271"
+            backup_file=backup_file.replace(".json",".out")
+            with open(work_dir+"/"+backup_file,'wb') as f:
+                subprocess_result = subprocess.run(args, stdout=f)
+            log("Enregistrement terminé, consulter "+work_dir)
+
 
         return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
 
@@ -322,8 +335,16 @@ def run_backup(request):
         if Profil.objects.count()>0 or PieceOfWork.objects.count()>0 or Work.objects.count()>0:
             return JsonResponse({"message":"La base doit avoir été préalablement vidé"},status=500)
 
+
         if exists(work_dir+"/"+backup_file):
-            management.call_command("loaddata",work_dir+"/"+backup_file,verbosity=3,app_label="alumni")
+
+            if engine=="django":
+                management.call_command("loaddata",work_dir+"/"+backup_file,verbosity=3,app_label="alumni")
+            else:
+                args=["./dbbackup/pg_restore.exe", "--host=192.168.1.62","--port=5432","--username=hhoareau", "alumni_db"]
+                subprocess_result = subprocess.run(args, stdout=f)
+
+
             return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
         else:
             return JsonResponse({"message":"fichier de backup introuvable"},status=500)
@@ -337,7 +358,7 @@ def run_backup(request):
 def infos_server(request):
     """
     tags: /info /server_info
-    voir https://server.f80lab.com:8100/api/infos_server
+    voir https://server.f80.fr:8100/api/infos_server
     voir http://localhost:8000/api/infos_server
 
     :param request:
@@ -538,8 +559,36 @@ def refresh_jobsites(request):
 
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def api_imdb_importer(request):
+    """
+    test : http://localhost:8000/api/imdb_importer/?files=title.ratings&update_delay=0
+    :param request:
+    :return:
+    """
+    files_to_import=request.GET.get("files","title.crew,title.episode,title.principals,title.ratings,name.basics,title.akas,title.basics")
+    update_delay=int(request.GET.get("update_delay","10"))
+    di=DataImporter()
+    log("Récupération des fichiers imdb")
+    imdbBase=MongoBase(IMDB_DATABASE_SERVER)
+    rc=""
+    for filename in files_to_import.split(","):
+        if di.download_file(filename, IMDB_FILES_DIRECTORY,update_delay=update_delay):
+            log("Intégration de "+filename)
+            rc=rc+imdbBase.import_csv(IMDB_FILES_DIRECTORY+filename,2e9,replace=True)
 
-#http://localhost:8000/api/update_dictionnary/
+    return Response({"log":rc})
+
+
+
+
+
+
+
+
+
+#http://localhost:8000/api/update_dictionnary/?levenshtein=3
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def update_dictionnary(request):
@@ -549,21 +598,36 @@ def update_dictionnary(request):
     :return:
     """
     log("Application du dictionnaire sur les métiers")
+    levenshtein_tolerance=int(request.GET.get("levenshtein","0"))
+    njob_analyzed=0
     for w in Work.objects.all():
-        job=translate(w.job)
+        njob_analyzed=njob_analyzed+1
+        job=translate(w.job,["jobs"],True,levenshtein_tolerance)
         if job!=w.job:
-            log("Traitement de "+str(w.job))
-            if not job is None:
-                w.job=job
-                w.save()
+            if job is None:
+                log(w.job+" absent du dictionnaire")
+            else:
+                log("Traitement de "+str(w.job))
+                if job!=w.job:
+                    w.job=job
+                    w.save()
+    log("Nombre de job analysé "+str(njob_analyzed))
 
     log("Application du dictionnaire sur les oeuvres")
     for p in PieceOfWork.objects.all():
-        category=translate(p.category)
-        if category!=p.category:
-            log("Traitement de " + str(p.title))
+        category=translate(p.category,["categories"],True,1)
+        if category and category!=p.category:
+            log("Changement de catégorie " + str(p.title))
             p.category=category
             p.save()
+
+        nature=translate(p.nature,["categories"],True,1)
+        if nature and nature!=p.nature:
+            log("Changement de nature pour " + str(p.title))
+            p.nature=nature
+            p.save()
+
+
 
     return Response({"message":"ok"})
 
@@ -597,7 +661,7 @@ def rebuild_index(request):
 
 
 #http://localhost:8000/api/batch
-#https://server.f80lab.com:8000/api/batch
+#https://api.f80.fr:8000/api/batch
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def batch(request):
@@ -685,18 +749,22 @@ def api_doc(request):
 
 
 #http://localhost:8000/api/quality_filter
-#https://server.f80lab.com:8000/api/quality_filter
+#https://api.f80.fr:8000/api/quality_filter
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def quality_filter(request):
     filter= request.GET.get("filter", "*")
-    ope = request.GET.get("ope", "profils,films")
+    ope = request.GET.get("ope", "profils,films,works")
     profils=Profil.objects.order_by("dtLastSearch").all()
     report_email=request.GET.get("report_email", "")
     n_profils=0
     n_pows=0
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
+
+    if "works" in ope:
+        work_analyzer=WorkAnalyzer()
+        work_analyzer.remove_bad_work(["?","Elle/lui même","Repérages","Droits","Collaboration"])
 
 
     if "profils" in ope:
@@ -731,10 +799,6 @@ def quality_filter(request):
             _p=PieceOfWork.objects.get(id=id)
             #log("Destruction de "+str(count)+"/"+str(len(to_delete)))
             _p.delete()
-
-
-
-
 
 
     return Response({"message":"ok","profils modifies":n_profils,"films modifiés":n_pows})
@@ -1179,7 +1243,7 @@ def export_all(request):
     :return:
     """
 
-    table = request.GET.get("table", "work").lower()
+    table = request.GET.get("table","sql").lower()
     limit=int(request.GET.get("limit", "0"))
     title=request.GET.get("title","Reporting FEMIS")
     format=request.GET.get("out","json")
@@ -1190,46 +1254,46 @@ def export_all(request):
     log("Chargement de la table "+table)
 
     df=None
-    if table.startswith("award"):
-        awards = Award.objects.all()
-        df: pd.DataFrame = pd.DataFrame.from_records(list(awards.values(
-            "profil__id", "profil__gender", "profil__lastname",
-            "profil__firstname", "profil__department", "profil__cursus",
-            "profil__degree_year", "profil__cp", "profil__town", "profil__dtLastUpdate", "profil__dtLastSearch",
+    # if table.startswith("award"):
+    #     awards = Award.objects.all()
+    #     df: pd.DataFrame = pd.DataFrame.from_records(list(awards.values(
+    #         "profil__id", "profil__gender", "profil__lastname",
+    #         "profil__firstname", "profil__department", "profil__cursus",
+    #         "profil__degree_year", "profil__cp", "profil__town", "profil__dtLastUpdate", "profil__dtLastSearch",
+    #
+    #         "pow__id", "pow__title", "pow__nature",
+    #         "pow__category", "pow__year", "pow__budget",
+    #         "pow__production",
+    #
+    #         "festival__id","festival__title","festival__country","festival__url",
+    #
+    #         "id", "description", "winner","year"
+    #     )))
+    #
+    # if table.startswith("work"):
+    #     works=Work.objects.all()
+    #     df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
+    #         "profil__id","profil__gender","profil__lastname",
+    #         "profil__firstname","profil__department","profil__cursus",
+    #         "profil__degree_year","profil__cp","profil__town","profil__dtLastUpdate","profil__dtLastSearch",
+    #
+    #         "pow__id","pow__title","pow__nature",
+    #         "pow__category","pow__year","pow__budget",
+    #         "pow__production",
+    #
+    #         "id","job","comment","validate","source","state"
+    #     )))
 
-            "pow__id", "pow__title", "pow__nature",
-            "pow__category", "pow__year", "pow__budget",
-            "pow__production",
-
-            "festival__id","festival__title","festival__country","festival__url",
-
-            "id", "description", "winner","year"
-        )))
-
-    if table.startswith("work"):
-        works=Work.objects.all()
-        df:pd.DataFrame = pd.DataFrame.from_records(list(works.values(
-            "profil__id","profil__gender","profil__lastname",
-            "profil__firstname","profil__department","profil__cursus",
-            "profil__degree_year","profil__cp","profil__town","profil__dtLastUpdate","profil__dtLastSearch",
-
-            "pow__id","pow__title","pow__nature",
-            "pow__category","pow__year","pow__budget",
-            "pow__production",
-
-            "id","job","comment","validate","source","state"
-        )))
-
-    if df is None and table!="sql":
-        values = request.GET.get("data_cols").split(",")
-
-        if table.startswith("profil"): data = Profil.objects.all().values(*values)
-        if table.startswith("pieceofwork"): data = PieceOfWork.objects.all().values(*values)
-        if table.startswith("work"): data = Work.objects.all().values(*values)
-        if table.startswith("festival"): data = Festival.objects.all().values(*values)
-        if table.startswith("award"): data = Award.objects.all().values(*values)
-
-        df=pd.DataFrame.from_records(data,columns=values)
+    # if df is None and table!="sql":
+    #     values = request.GET.get("data_cols").split(",")
+    #
+    #     if table.startswith("profil"): data = Profil.objects.all().values(*values)
+    #     if table.startswith("pieceofwork"): data = PieceOfWork.objects.all().values(*values)
+    #     if table.startswith("work"): data = Work.objects.all().values(*values)
+    #     if table.startswith("festival"): data = Festival.objects.all().values(*values)
+    #     if table.startswith("award"): data = Award.objects.all().values(*values)
+    #
+    #     df=pd.DataFrame.from_records(data,columns=values)
         # if len(data)>0:
         #     df.columns=list(request.GET.get("cols").split(","))
 
@@ -1241,17 +1305,25 @@ def export_all(request):
 
     if not sql is None:
         log("Chargement de la requete "+sql)
-        filter_clause=request.GET.get("filter_value","")
-        if len(filter_clause)>0:
-            title=title+" ("+request.GET.get("filter")+": "+filter_clause+")"
-            filter_clause=request.GET.get("filter")+"='"+filter_clause+"'"
-            sql=sql.replace("where","WHERE")
-            if "WHERE" in sql:
-                sql=sql.replace("WHERE ","WHERE "+filter_clause+" AND ")
-            else:
-                pos=sql.index(" FROM ")+6
-                pos=sql.index(" ",pos)
-                sql=sql[:pos]+" WHERE "+filter_clause+" "+sql[pos:]
+        filters=request.GET.get("filters","")
+        if len(filters)>0:
+            filter_clause=""
+            for f in filters.split(","):
+                if ":" in f and f.split(":")[1]!="undefined":
+                    if len(filter_clause)>0: filter_clause=filter_clause+" AND "
+                    filter_clause=filter_clause+f.split(":")[0]+"='"+f.split(":")[1]+"'"
+
+            if len(filter_clause)>0:
+                sql=sql.replace("where","WHERE")
+                if "WHERE" in sql:
+                    sql=sql.replace("WHERE ","WHERE "+filter_clause+" AND ")
+                else:
+                    pos=sql.index(" FROM ")+6
+                    try:
+                        pos=sql.index(" ",pos+1)
+                    except:
+                        pos=len(sql)
+                    sql=sql[:pos]+" WHERE "+filter_clause+" "+sql[pos:]
 
         if "from df" in sql.lower():
             df=pandasql.sqldf(sql)
@@ -1260,9 +1332,10 @@ def export_all(request):
             cursor.execute(sql)
             rows=cursor.fetchall()
             if cols is None:
-                df=pd.DataFrame.from_records(rows)
+                cols=[x.name for x in list(cursor.cursor.description)]
             else:
-                df=pd.DataFrame.from_records(rows,columns=cols.split(","))
+                cols=cols.split(",")
+            df=pd.DataFrame.from_records(rows,columns=cols)
 
 
     if not df is None:
@@ -1270,8 +1343,8 @@ def export_all(request):
         lib_columns=",".join(list(df.columns))
 
         if not cols is None and cols!="undefined":
-            log("On ne conserve que "+cols+" dans "+","+lib_columns)
-            df=df[cols.split(",")].drop_duplicates()
+            log("On ne conserve que "+",".join(cols)+" dans "+","+lib_columns)
+            df=df[cols].drop_duplicates()
 
 
     if request.GET.get("percent","False")=="True":
@@ -1328,7 +1401,7 @@ def export_all(request):
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         df.to_excel(writer,sheet_name="FEMIS")
-        writer.save()
+        writer.close()
         output.seek(0)
 
         response = HttpResponse(content=output.getvalue(),content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -1336,8 +1409,8 @@ def export_all(request):
         return response
 
     if format.startswith("graph"):
-        if request.GET.get("chart","bar")=="none":
-            code=STYLE_TABLE+"<div class='mainform'><h3>"+title+"</h3><small>"+description+"</small>"+df.to_html(index=False,justify="center",border=0,render_links=True)+"</div>"
+        if request.GET.get("chart","none")=="none" or request.GET.get("chart","none")=="undefined":
+            code=STYLE_TABLE+"<div class='mainform'><h3 style='color:grey'>"+title+"</h3><small>"+description+"</small>"+df.to_html(index=False,justify="center",border=0,render_links=True)+"</div>"
             rc={"code":code,"values":code}
         else:
             graph=StatGraph(df)
@@ -1357,7 +1430,12 @@ def export_all(request):
 
         filter = request.GET.get("filter")
         if filter:
-            rc["filter_values"] = list(set(df[filter].values))
+            col_filter=0
+            for i,cl in enumerate(sql.split(",")):
+                if filter in cl.split(" as ")[0]:
+                    col_filter=i
+                    break
+            rc["filter_values"] = list(set(df[cols[col_filter]].values))
 
         if format=="graph":
             return JsonResponse(rc)

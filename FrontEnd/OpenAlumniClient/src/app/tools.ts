@@ -101,8 +101,22 @@ export function encrypt(s:string) : string {
   return btoa(s);
 }
 
-export function eval_params(inst_report:any,filter_value=""){
+export function eval_params(inst_report:any){
   let param="color="+inst_report.color+"&chart="+inst_report.chart;
+
+  let title=inst_report.title
+  if(inst_report.filters){
+    param=param+"&filters="
+    for(let f of inst_report.filters){
+      if(f.value){
+        param=param+f.field+":"+f.value+","
+        title=title.replace("$"+f.field,f.value)
+      } else {
+        title=title.replace("$"+f.field,f.title_for_none)
+      }
+    }
+  }
+
   if(inst_report.cols)param=param+"&cols="+inst_report.cols;
   if(inst_report.sql)param=param+"&sql="+inst_report.sql;
   if(inst_report.percent)param=param+"&percent=True";
@@ -112,12 +126,8 @@ export function eval_params(inst_report:any,filter_value=""){
   if(inst_report.template)param=param+"&template="+inst_report.template;
   if(inst_report.replace)param=param+"&replace="+JSON.stringify(inst_report.replace);
   if(inst_report.func)param=param+"&func="+inst_report.fun;
-  if(inst_report.title)param=param+"&title="+inst_report.title;
+  if(inst_report.title)param=param+"&title="+title;
 
-  if(inst_report.filter){
-    param=param+"&filter="+inst_report.filter;
-  }
-  if(inst_report.filter)param=param+"&filter_value="+filter_value;
 
   if(inst_report.data_cols){
     param=param+"&data_cols="+inst_report.data_cols+"&cols="+inst_report.cols+"&table="+inst_report.table;
@@ -980,7 +990,7 @@ export function checkLogin(vm, func_success=null,func_abort=null,redirect="searc
   }, 1000);
 }
 
-export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://server.f80lab.com"){
+export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://api.f80.fr"){
   var graph_url=domain_server+":5500/api/getgraph/"+idshop+"/hh4271/gpickle/"+_type;
   var url=domain_server+":5000/graph/b64="
     +btoa(graph_url)+"/fr?algo_comm=self&dir=public&axis=False&notext=True&metrics=True&add_property=False&autorotate=False" +

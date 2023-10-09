@@ -15,13 +15,14 @@
 
   <mat-tab-group style="height: 87vh;text-align: center;width:100%;" id="tabStats" #tabGroup mat-align-tabs="start">
     <mat-tab name="tabs" label="Rapports pré-définis">
-      <div style="display: flex;;flex-wrap:wrap;justify-items:center;justify-content: space-around;width: 100%;margin-top: 25px;">
+      <div class="flex-content" style="justify-items:flex-start;width: 100%;margin-top: 15px;">
         <app-input label="Filtre" [value]="filter_report"
-                   (valueChange)="filter_report=$event" width="150px"></app-input>
+                   width="100px"
+                   (valueChange)="filter_report=$event"></app-input>
 
         <mat-form-field appearance="fill" style="width: 60%;max-width: 500px; ">
           <mat-label>Sélectionner un rapport</mat-label>
-          <mat-select [(value)]="sel_report" (selectionChange)="change_report($event)" id="lstReports">
+          <mat-select [(value)]="sel_report" (selectionChange)="change_report($event.value.id)" id="lstReports">
             <mat-option *ngFor="let report of instant_reports | filter:['title',filter_report]" [value]="report">
               {{report.title}}
             </mat-option>
@@ -29,17 +30,31 @@
         </mat-form-field>
 
 
-        <div *ngIf="filter_values?.length>0" style="display: inline-block;">
-          <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >
-            <mat-label>{{filter_name}}</mat-label>
-            <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">
-              <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-icon style="cursor: pointer;font-size: small;"
-                    *ngIf="sel_filter?.length>0"
-                    (click)="cancel_filter()">cancel</mat-icon>
+        <div *ngIf="filters.length>0" >
+          <div *ngFor="let filter of filters" style="display:inline-flex;">
+            <app-input [options]="filter.values" [label]="filter.label"
+                       value_type="list" [value]="filter.value"
+                       (valueChange)="update_filter_value(filter,$event)"></app-input>
+          </div>
+          <button mat-raised-button style="margin: 5px;margin-top: -15px;"
+                  (click)="clear_filters()">Pas de filtres</button>
+
         </div>
+
+
+
+<!--        <div *ngIf="filter_values?.length>0" style="display: inline-block;">-->
+<!--          <mat-form-field class="app-field" style="font-size: medium;max-width: 150px;" id="lstFilter" >-->
+<!--            <mat-label>{{filter_name}}</mat-label>-->
+<!--            <mat-select [(ngModel)]="sel_filter" (selectionChange)="refresh_stats()">-->
+<!--              <mat-option *ngFor="let filter_value of filter_values" [value]="filter_value">{{filter_value}}</mat-option>-->
+<!--            </mat-select>-->
+<!--          </mat-form-field>-->
+<!--          <mat-icon style="cursor: pointer;font-size: small;"-->
+<!--                    *ngIf="sel_filter?.length>0"-->
+<!--                    (click)="cancel_filter()">cancel</mat-icon>-->
+<!--        </div>-->
+
         <mat-icon [title]="sel_report.description" style="cursor: help;margin-left:20px;"
                   *ngIf="sel_report.description?.length>0">help</mat-icon>
 
@@ -48,6 +63,8 @@
 
 
       <div style="width: 100%;text-align: center;position: relative;">
+
+<!--        Zone de patiente-->
         <div *ngIf="sel_report?.html_values?.length==0"
              style="width:80%;display: inline-block;text-align: center;margin-top: 10%;">
           <img src="/assets/img/gears.gif" width="150">
@@ -58,13 +75,14 @@
 
         <iframe *ngIf="sel_report?.html_code"
                 class="mat-elevation-z4 primary-color"
-                style="padding: 0;width: 95%;height:69vh;border:None;display: inline-block;margin:0;overflow: hidden;background-color: gray;"
+                style="padding: 0;width: 95%;height:69vh;border:None;display: inline-block;margin:0;overflow: hidden;background:none;"
                 [title]="sel_report.description"
                 [srcdoc]="sel_report.html_code | safe">
         </iframe>
       </div>
 
       <br>
+<!--      -->
       <div *ngIf="sel_report?.html_values?.length>0" style="width:100%;min-width:350px;height: auto;margin:10px;overflow: scroll;">
         <mat-expansion-panel  style="display: inline-block;height: fit-content;width:100%;" [expanded]="false" >
           <mat-expansion-panel-header>

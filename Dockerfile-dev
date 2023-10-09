@@ -66,7 +66,7 @@ RUN pip3 install openpyxl
 RUN pip3 install django-archive
 RUN pip3 install scipy
 RUN pip3 install pymongo
-
+RUN pip3 install Levenshtein
 
 
 #Création des répertoires
@@ -76,6 +76,7 @@ RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 RUN mkdir $APP_HOME/Temp
 RUN mkdir $APP_HOME/dbbackup
+RUN mkdir $APP_HOME/Temp/imdb_files
 
 WORKDIR $APP_HOME
 COPY ./static $APP_HOME/static

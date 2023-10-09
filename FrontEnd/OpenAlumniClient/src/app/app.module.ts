@@ -172,7 +172,6 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         WebcamModule,
         MatTableModule,
         MatSnackBarModule,
-        ImageCropperModule,
         TextFieldModule,
         MatSliderModule,
         SocialLoginModule,

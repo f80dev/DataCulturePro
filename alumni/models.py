@@ -51,7 +51,7 @@ class Profil(models.Model):
     mobile=models.CharField(blank=True,max_length=20,null=True,default="06",help_text="@Numéro de mobile")
     nationality=models.CharField(blank=True,max_length=30,null=False,default="Française",help_text="Nationnalité du profil")
 
-    department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
+    department=models.CharField(blank=True,max_length=60,null=True,default="",help_text="département formation initiale suivi pendant les études")
     department_pro=models.CharField(blank=True,max_length=60,null=True,default="",help_text="Cursus (pro ou standard) suivi pendant les études")
     department_category=models.CharField(blank=True,max_length=30,null=True,default="",help_text="Categorie / code de regroupement de la formation")
 

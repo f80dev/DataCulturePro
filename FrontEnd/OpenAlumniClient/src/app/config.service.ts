@@ -61,8 +61,12 @@ export class ConfigService {
 
   private async getConfig(): Promise<any> {
     if (!this.config) {
-      this.config = await this.api.getyaml("",environment.config_file);
-      this.refresh_server()
+      this.api.getyaml("",environment.config_file).subscribe({
+        next:(r:any)=>{
+          this.config=r
+          this.refresh_server()
+        }
+      });
       $$("Chargement de la configuration "+environment.name);
     }
     return Promise.resolve(this.config);

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DataCulturePro.iml" filepath="$PROJECT_DIR$/DataCulturePro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FrontEnd/OpenAlumniClient/OpenAlumniClient.iml" filepath="$PROJECT_DIR$/FrontEnd/OpenAlumniClient/OpenAlumniClient.iml" />
+    </modules>
+  </component>
+</project>

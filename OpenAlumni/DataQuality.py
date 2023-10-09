@@ -1,8 +1,21 @@
 import csv
+
+from django.db import connection
+
 from OpenAlumni.Tools import log, equal_str
 import jellyfish
 
-from alumni.models import Award, PieceOfWork
+from alumni.models import Award, PieceOfWork,Work
+
+class WorkAnalyzer:
+    def remove_bad_work(self,remove_jobs:list):
+        for w in Work.objects.all():
+            if w.job in remove_jobs:
+                rc=w.delete()
+                if rc:
+                    log(w.job+" sur "+w.title +" supprimé")
+
+
 
 
 class ProfilAnalyzer:
@@ -137,25 +150,31 @@ class PowAnalyzer:
     def find_double(self,with_fusion=True):
         log("Recherche des doublons sur les films")
         rc=0
-        total=len(self.pows)
-        for p1 in self.pows:
-            total=total-1
-            log(str(total)+" - Recherche sur "+str(p1))
-            for p2 in self.pows:
-                d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
-                seuil=0.98
-                if p1.nature=="Série" and p2.nature=="Série": seuil=0.999995
-                if not p1.year is None and not p2.year is None and  d>seuil and abs(int(p1.year)-int(p2.year))<2 and p1.id!=p2.id:
-                    log("Suspission de doublon entre avec "+str(p2))
-                    if with_fusion:
-                        if p1.quality_score()>p2.quality_score():
-                            b=self.fusion(p2,p1)
-                        else:
-                            b=self.fusion(p1, p2)
-                        if b:
-                            log("Fusion réalisée")
-                            rc = rc + 1
-                            break
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM doublons")
+            for doublon in cursor.fetchall():
+                try:
+                    p1=PieceOfWork.objects.get(id=doublon[0])
+                    p2=PieceOfWork.objects.get(id=doublon[1])
+                except:
+                    p1=None
+                    p2=None
+
+                if not p1 is None and not p2 is None:
+                    d=jellyfish.jaro_similarity(p1.title.lower(),p2.title.lower())
+                    seuil=0.98
+                    if p1.nature=="série" and p2.nature=="série": seuil=0.99999995
+                    if not p1.year is None and not p2.year is None and  d>seuil and abs(int(p1.year)-int(p2.year))<=2 and p1.id!=p2.id:
+                        log(str(p1) + " en suspission de doublon avec "+str(p2))
+                        if with_fusion:
+                            if p1.quality_score()>p2.quality_score():
+                                b=self.fusion(p2,p1)
+                            else:
+                                b=self.fusion(p1, p2)
+                            if b:
+                                log("Fusion réalisée")
+                                rc = rc + 1
 
         return rc
 
@@ -171,9 +190,8 @@ class PowAnalyzer:
                 else:
                     p.year=p.year[0]
 
-
-            if p.year is None or int(p.year)<1970 or int(p.year)>2100 or p.title is None:
-                log(str(p.id)+" a supprimer par absence de date")
+            if p.year is None or int(p.year)<1985 or int(p.year)>2100 or p.title is None:
+                log(str(p.id)+" a supprimer par absence de date ou date incohénente")
                 to_delete.append(p.id)
             else:
                 rc=[]

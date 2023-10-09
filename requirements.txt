@@ -43,3 +43,4 @@ django-archive
 scipy
 pymongo
 django-cors-headers
+pytest-django

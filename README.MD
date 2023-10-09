@@ -41,9 +41,15 @@ python manage.py search_index --rebuild
 </pre>
 
 ##Installation d'une version locale de mongodb
+Instalation en local
 <pre>
 docker rm -f mongodb && docker run -d -p 27017:27017 -v /root/mongodb:/data/db --name mongodb -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=hh4271 mongo:4.4
 </pre>
+Instalation sur l'ordi home
+docker rm -f mongodb && docker run -d --cpus 2 -p 27017:27017 -v /root/mongodb:/data/db --name mongodb -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=hh4271 mongo:4.4
+
+
+
 
 ##Installation
 Après avoir récupérer le code, on installe une version locale de postgres
@@ -107,7 +113,7 @@ ou avec podman
 setenforce 0 
 mkdir /root/postgre
 docker rm -f postgre
-docker run --name postgre -p 5432:5432  -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
+docker run --name postgre -p 5432:5432 --cpus 2 -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
 </pre>
 
 Depuis windows
@@ -140,8 +146,8 @@ démarrer le noeud elasticsearch pour la production
 firewall-cmd --zone=public --add-port=9200/tcp ou ufw allow 9200
 firewall-cmd --zone=public --add-port=9300/tcp ou ufw allow 9300
 docker rm -f elastic_search_server
-Non SSL: docker run -p 9200:9200 -p 9300:9300 --restart=always -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
-SSL: docker run -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+Non SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
 </pre>
 
 

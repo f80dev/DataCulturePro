@@ -202,3 +202,21 @@ $dataculture-theme:mat.define-dark-theme((
 .primary-color {
         @extend .color-red500
 }
+
+.mat-caption {
+  font-size: medium !important;
+}
+
+.expansion-content {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.expansion-content-left {
+  @extend .expansion-content;
+  justify-content: flex-start;
+}

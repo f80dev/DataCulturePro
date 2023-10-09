@@ -13,69 +13,91 @@ class MongoBase:
         locale="fr",
         strength=CollationStrength.PRIMARY,
         alternate=CollationAlternate.SHIFTED,
-        maxVariable=CollationMaxVariable.PUNCT
+        maxVariable=CollationMaxVariable.PUNCT,
+        normalization=True
     )
 
     def __init__(self,server="mongodb://root:hh4271@192.168.1.62:27017/"):
+        logging.info("Initialisation de la base sur "+server)
         client = MongoClient(server, 27017)
         self.database=client["imdb"]
 
-    def import_csv(self,filename:str,records=2000,step=300000):
-        i=0
+    def import_csv(self,filename:str,records=2000,step=300000,replace=False):
+        if not filename.endswith(".csv"): filename=filename+".csv"
+        log=""
         collection_name=filename[filename.rindex("/")+1:]
+
+        if replace and collection_name in self.database.list_collection_names():
+            log=log+"Destruction de "+collection_name+"\n"
+            self.database[collection_name].drop()
+
         if collection_name not in self.database.list_collection_names():
-            self.indexes(collection_name)
+            log=log+"Création de l'index de "+collection_name+"\n"
+            self.create_indexes(collection_name)
 
         with open(filename, encoding="utf-8") as csvfile:
             csvreader = csv.DictReader(csvfile,delimiter="\t")
             rows=[]
             for row in csvreader:
-                # if len(str(row))>1000:
-                #     logging.error(row[k])
                 rows.append(row)
                 if len(rows)==step:
                     try:
                         result=self.database[collection_name].insert_many(rows,ordered=False,bypass_document_validation=False)
+                        log=log+str(len(rows))+" intégrées\n"
                     except Exception as e:
-                        logging.debug(e.args[0])
+                        log=log+"Error: "+e.args[0]+"\n"
+
                     records=records-len(rows)
                     rows=[]
                     if records<0: break
 
             try:
                 result=self.database[collection_name].insert_many(rows,ordered=False,bypass_document_validation=False)
+                log=log+str(len(rows))+" intégrées\n"
             except Exception as e:
-                logging.debug(e.args[0])
+                log=log+"Error: "+e.args[0]+"\n"
+
+        return log
 
 
 
+    def isFrench(self,nconst:str):
+        movies=self.find_movies(nconst,False)
+        for m in movies:
+            regions=[]
+            m_versions=list(self.database["title.akas.csv"].find({"titleId":m}))
+            for m_version in m_versions:
+                region=(m_version["region"]+m_version["language"]).replace("\\N","")
+                if len(region)>0 and not region in regions:regions.append(region)
+
+            if len(regions)==1 and regions[0]=="FR":
+                return True
+
+        return False
 
 
-    def find_profils(self,firstname="",lastname="",name_collection="name.basics.csv",only_first=True) -> [dict]:
+    def find_profils(self,firstname="",lastname="",name_collection="name.basics.csv",only_first=True,exclude=[]) -> [dict]:
         firstname=firstname[0].upper()+firstname[1:].lower()
         lastname=lastname[0].upper()+lastname[1:].lower()
 
         pattern = firstname+" "+lastname
 
-        query={"primaryName":pattern}
-        # else:
-        #     #voir
-        #     query = {"primaryName": {"$text":pattern,"$options":{"$caseSensitive":False}}}
+        query={"$text":{"$search":pattern}}
         if only_first:
-            profil=self.database[name_collection].find_one(query,collation=self.compare_strings)
+            profil=self.database[name_collection].find_one(query)
             if profil is None:return []
             profils=[profil]
         else:
-            profils=self.database[name_collection].find(query,collation=self.compare_strings)
-            txt=profils.explain()
+            result=list(self.database[name_collection].find({"$text":{"$search":"\""+pattern+"\""}}))
+            if len(result)==0: result=list(self.database[name_collection].find({"$text":{"$search":lastname}}))
+
+            profils=[]
+            for p in result:
+                prof=p["primaryProfession"]
+                if len(prof)==0 or not prof in exclude:
+                    profils.append(p)
 
         rc=list(profils)
-
-        if len(rc)==0 and len(lastname.split(" "))>1 and len(firstname.split(" "))==1:
-            firstname=firstname+" "+lastname.split(" ")[0]
-            lastname=lastname.split(" ")[1]
-            return self.find_profils(firstname,lastname,name_collection=name_collection,only_first=only_first)
-
 
         return rc
 
@@ -92,14 +114,16 @@ class MongoBase:
 
             for idx in indexes:
                 index_name=idx[0]
-                if "const" in idx[0]:
-                    #Aucune méthode strict à mettre en place
-                    self.database[table].create_index([(index_name,ASCENDING)],unique=idx[1])
+                if type(idx[0])==list:
+                    rc=self.database[table].create_index(idx[0],unique=idx[1])
                 else:
-                    self.database[table].create_index([(index_name,ASCENDING)],unique=idx[1],collation=self.compare_strings)
+                    if "const" in idx[0]:
+                        #Aucune méthode strict à mettre en place
+                        rc=self.database[table].create_index([(index_name,ASCENDING)],unique=idx[1])
+                    else:
+                        rc=self.database[table].create_index([(index_name,ASCENDING)],unique=idx[1],collation=self.compare_strings)
 
-        return True
-        #return list(self.database[table].getIndexes())
+        return rc
 
     def find_movies(self, profil:str,with_detail=True,collection_name="title.principals.csv"):
         query_results=self.database[collection_name].find({"nconst":profil})
@@ -134,7 +158,8 @@ class MongoBase:
                 if not m is None:
                     if m["movie"]["titleType"]=="tvEpisode":
                         serie=self.get_parent(m["tconst"])
-                        m["movie"]["primaryTitle"]=serie["parent"]["primaryTitle"] + " / "+ m["movie"]["primaryTitle"]
+                        title=serie["parent"]["primaryTitle"]
+                        m["movie"]["primaryTitle"]=title + " / "+ m["movie"]["primaryTitle"]
                         m["movie"]["originalTitle"]=serie["parent"]["originalTitle"] + " / "+ m["movie"]["originalTitle"]
 
                     rc.append(m)

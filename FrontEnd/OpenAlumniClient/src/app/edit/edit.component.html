@@ -287,7 +287,7 @@
               <span *ngIf="!work.year">En cours</span>
               :
               {{work.job}} sur
-              <a [title]="work.source" (click)="open_movie(work.title)">{{work.title}}</a>
+              <a [title]="work.source" (click)="open_movie(work.title)" class="primary-color">{{work.title}}</a>
               <br>
               <div *ngIf="work.dtEnd">
                 en {{work.dtEnd | date:'yyyy'}}
@@ -439,10 +439,7 @@
       <mat-icon style="font-size: x-large;">loop</mat-icon>
     </button>
 
-    <button mat-icon-button
-
-            class="icon-button"
-
+    <button mat-icon-button class="icon-button"
             title="Déclenche une recherche de vos expériences sur les principaux portail cinématographique"
             id="cmdAnalyse"
             (click)="analyse()">

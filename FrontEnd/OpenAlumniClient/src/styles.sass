@@ -9,6 +9,13 @@
   margin: 4px !important
   min-width: 100px !important
 
+.flex-content
+  display: flex
+  flex-wrap: wrap
+  justify-items: flex-start
+  justify-content: space-around
+  align-items: start
+
 .fake-button
   @extend .app-button
   width: 80px
@@ -199,6 +206,7 @@ mat-icon
 
 a
   text-decoration: none
+  cursor: pointer
 
 a:link
   color: gray
@@ -270,7 +278,7 @@ mat-action-row
 .search_zone
   max-width: 600px
   width: 60%
-  font-size: large
+  font-size: x-large
   padding-right: 20px
   margin-right: 10px
   //border: mat.get-color-from-palette($dataculture-grey-palette,700) solid 1px

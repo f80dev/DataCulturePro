@@ -41,7 +41,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
-    "server.f80lab.com",
+    "api.f80.fr",
     "localhost",
     "127.0.0.1",
     "dcp.f80lab.com"
@@ -162,7 +162,7 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': '109.205.183.200',
+        'HOST': '109.205.183.200',              #Dolibarr server:109.205.183.200
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -173,7 +173,7 @@ DATABASES = {
 #Pour l'installation d'delastic search voir le README
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '173.249.41.158:9200'
+        'hosts': '109.205.183.200:9200'             #Dolibarr server
     }
 }
 
@@ -240,7 +240,8 @@ EMAIL_HOST_USER ="contact.dcp@femis.fr"
 APPNAME="Data Culture Pro"
 DOMAIN_APPLI="https://dcp.f80.fr"
 DOMAIN_SERVER="https://api.f80.fr:8000"
-IMDB_DATABASE_SERVER="mongodb://root:hh4271@api.f80.fr:27017/?authMechanism=DEFAULT"
+IMDB_DATABASE_SERVER="mongodb://root:hh4271@109.205.183.200:27017/"         #Dolibarr server
+IMDB_FILES_DIRECTORY="./temp/imdb_files/"
 
 
 #Sécurisation
@@ -271,7 +272,7 @@ MOVIE_CATEGORIES=[
     "Sport"
 ]
 
-MOVIE_NATURE=["Serie","TV","Short","Long","Documentary","Court-métrage","Long-métrage","Film","Film TV","Série","Documentaire","Episode"]
+MOVIE_NATURE=["Serie","TV","Short","Long","Documentary","Court-métrage","Long-métrage","Film","Film TV","série","Documentaire","Episode"]
 MYDICT=None
 
 DELAY_TO_AUTOSEARCH=10   #10 jours

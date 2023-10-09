@@ -157,6 +157,11 @@ export class PublicComponent implements OnInit {
 
 
   //test http://localhost:4200/public/?id=3076
+  platforms:any[]=[
+    {logo:"./assets/logo_imdb.png",title:"Internet Movie DataBase",id:"imdb",color:"none"},
+    // {logo:"./assets/logo_FilmDoc.png",title:"Film Documentaire",id:"filmdoc",color:"white"},
+    {logo:"./assets/logo_unifrance.jpg",title:"UniFrance",id:"unifrance",color:"none"},
+  ]
   ngOnInit(): void {
     this.message="Chargement du profil";
     getParams(this.routes).then((params:any)=>{
@@ -209,5 +214,11 @@ export class PublicComponent implements OnInit {
 
   refresh() {
     this.load_items(this.profil)
+  }
+
+  open_platform(p: any) {
+    for(let l of this.profil.links){
+      if(p.id.toLowerCase()==l.text.toLowerCase())open(l.url,p.id)
+    }
   }
 }

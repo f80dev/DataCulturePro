@@ -8,6 +8,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {tProfilPerms} from "../types";
 import {_prompt} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
+import {wait_message} from "../hourglass/hourglass.component";
 
 @Component({
   selector: 'app-admin',
@@ -158,10 +159,8 @@ export class AdminComponent implements OnInit,AfterViewInit {
   }
 
   apply_dict() {
-    this.message="Uniformise la terminoloie"
-    this.api._get("update_dictionnary").subscribe(()=>{
-      this.message="";
-    })
+    wait_message("Uniformise la terminoloie")
+    this.api._get("update_dictionnary","",3600).subscribe(()=>{wait_message(this)})
   }
 
   init_nft() {
@@ -251,7 +250,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
   save_backup() {
     return new Promise((resolve, reject) => {
       this.message="Backup en cours";
-      this.api._get("backup","command=save").subscribe((r:any)=>{
+      this.api._get("backup","command=save",3600).subscribe((r:any)=>{
         this.message="";
         this.refresh_backup();
         showMessage(this,"Enregistrement terminé")
@@ -294,6 +293,18 @@ export class AdminComponent implements OnInit,AfterViewInit {
           });
         }
       })
+    }
+  }
+
+  update_imdb(i=0) {
+    let files="title.crew,title.episode,title.principals,title.ratings,name.basics,title.akas,title.basics".split(",")
+    if(files.length>i){
+      this.message="Importation de la collection "+files[i]
+      this.api._get("imdb_importer","files="+files[i]).subscribe({
+        next:()=>{this.update_imdb(i+1)}
+      })
+    } else {
+      this.message=""
     }
   }
 }

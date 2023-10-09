@@ -372,7 +372,7 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.message="Analyse en cours des principaux annuaires";
     let handle=setInterval(()=>{this.refresh_works();},10000);
     this.expanded_experience_pnl=true;
-    this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=20&refresh_delay_profil=0",
+    this.api._post("batch/","filter="+this.profil.id+"&refresh_delay_page=1&refresh_delay_profil=0",
       this.config.values.catalog,600,
     ).subscribe((r:any)=>{
       this.message="";

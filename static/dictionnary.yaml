@@ -85,14 +85,21 @@ festivals:
 
 #Normalisation des categories
 categories:
-  Tv mini series: série
+  Tv mini series: Série
   Documentary: documentaire
   Movie: film
   Short: court-métrage
-  Tvepisode: série
-  Tvepisodes: série
+  Tvepisode: Série
+  Tvepisodes: Série
+  Tvmovie: film
+  Tvspecial: Série
+  Tvminiseries: Série
+  Tvshort: court-métrage
   Tv: télévision
-  Tv series: série
+  Tv series: Série
+  Episode: Série
+  Long-métrage: film
+  Vidéo: court-métrage
   Tv short: court-métrage
   Long: film
   Comedy: comédie
@@ -106,8 +113,7 @@ categories:
   Mystery: thriller
   Family: comédie familiale
   Fantasy: héroïque fantaisie
-  Writer: scénariste
-  Serie: série
+  Serie: Série
   Fiction, expérimental: fiction
   Expérimental, animation: expérimental
   Crime: policier
@@ -115,12 +121,20 @@ categories:
   Documentary short: documentaire
   Expérimental, documentaire: documentaire
   Travaux de fin d'études (TFE): TFE
-
+  Romance/comedy/drama: drame
+  Crime/drama/mystery: drame
+  Short/drama: drame
+  Game-show/reality-tv: tv
+  Short drama: drame
+  Short/comedy: comédie
+  Documentary/short: documentaire
+  Drama/thriller: thriller
   Fiction 35: Fiction
   Masterclass 2006: Masterclass
   Masterclass 2008: Masterclass
   Documentaire argentin: Documentaire
   Documentaire 2e année: Documentaire
+  None: Inconnue
 
 
 
@@ -213,6 +227,10 @@ jobs:
   Art_department: Décor
   Casting_department: Casting
   Casting_director: Casting
+  Co-director: Production
+  Co-writer: Scénario
+  Coproduction: Production
+
   Storyboardeur: Storyboard
   production assistant: Ass. Production
   second assistant director: Ass. Réalisation
@@ -269,9 +287,24 @@ jobs:
   Script and continuity department: Scripte
   Agents (presse france): Relations presse
   Chef monteuse: Montage
+  Chef Monteuse Paroles & Son: Montage
+  Elle lui même: Acteur(trice)
+  Created: Scénario
+  Story: Scénario
+  Storyboard: Scripte
+  Adaptation and dialogue: Scripte
   Assistante opérateur: Ass.Caméra
   Productrice déléguée: Production
+  Production déléguée: Production
+  Original idea: Scénario
+  Scenario adaptation and dialogue: Scénario
+  Production associée: Production
+  Scenario: Scénario
+  Scenario & adaptation: Scénario
   Animation department: Animation
+  Contributing writer: Scénario
+  Scriptwriter: Scripte
+  Production exé.: Production
   Directeurs de production: Direction de Production
   Monteuse: Montage
   Art director: Décor
@@ -286,7 +319,7 @@ jobs:
   Directrices de la photo: Image
   Monteuse son et assistante mixage: Montage son
   Special thanks: Participation
-  Chef opératrice: Image
+  Chef opératrice: Chef op
   Cadre: Caméra
   Self: Elle/Lui même
   Assistants son: Ass. son
@@ -315,7 +348,7 @@ jobs:
   Matte painter: Décor
   Digital compositor: Décor
   Concept artist: Décor
-  Assistant script supervisor: Script assistant
+  Assistant script supervisor: Ass. Scripte
   Sound_department: Ing. son
   Auteur de l'œuvre originale: Auteur
   Scénariste et réalisatrice: Scénario/Réalisation
@@ -441,7 +474,7 @@ jobs:
   Assistante son: Ass. son
   First assistant editor: Ass. scénario
   Monteuse / assistante monteuse: Montage
-  Chef opérateur: Image
+  Chef opérateur: Chef op
   Colorisation: Post Prod
   Scénariste réalisateur producteur: Scénario/Réalisation/Production
   Chef monteur son et chef opérateur du son: Montage Son
@@ -478,6 +511,43 @@ jobs:
   Special effects technician: Effets spéciaux
   Foley assistant: Ass. son
   Original music: Compositeur
+  Scenario and adaptation: Scénario
+  Scenario and dialogue: Scénario
+  Scenario consultant: Scénario
+  Screenplay: Scripte
+  Screenplay consultant: Scripte
+  Script assistant: Ass. Scripte
+  Script writer: Scripte
+  Storyline consultant: Scripte
+  Text: Scripte
+  Texts: Scripte
+  Written in collaboration with: Scénario
+  Earlier script: Scripte
+  Dialogue: Scénario
+  Dialogue translation: Scénario
+  Dialogues: Scénario
+  Collaborating writer: Scénario
+  Collaboration in script: Scripte
+  Collaborator for adaptation: Scénario
+  Consult.technique: Technique
+  Consultant writer: Scénario
+  Consulting writer: Scénario
+  Doublure cascade: Acteur(trice)
+  Documentary director: Réalisation
+  Adaptation & dialogue: Scripte
+  Adaptation dialogue: Scripte
+  Additional dialogue and material: Scripte
+  Advising editor: Réalisation
+  Auteur: Scénario
+  From a scenario by: Scénario
+  Idea: Scénario
+  Script assistant: Ass. Scripte
+  Idea by: Scénario
+  Collaborating director: Réalisation
+  Chief editor: Réalisation
+  Main director: Réalisation
+  Ass.caméra: Image
+  Ass. son: Son
 
 
 Languages:
@@ -485,7 +555,6 @@ Languages:
   english: Anglais
   spannish: Espagnol
   england: Angleterre
-
 
 Icons:
   Réalisation: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/285/clapper-board_1f3ac.png"

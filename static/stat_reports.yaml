@@ -5,6 +5,12 @@ Version: 1.0
 #         "film_festival","film_award_id","film_récompense","film_année",
 #        "work_id", "work_job","work_comment","work_validate","work_source","work_state"
 
+#La section filters permet de décrire les filtres de personnalisation
+#        field: indique le champs a filtrer
+#        values: les valeurs possibles du filtre
+#        value: la valeur par défaut
+#        label: le nom du filtre dans l'interface
+#        title_for_none: le libellé à utiliser pour la personnalisation du titre quand le filtre est vide
 
 #liste des templates : voir https://plotly.com/python/templates/
 #simple_white, seaborn, ggplot2, plotly_dark
@@ -29,37 +35,292 @@ Reports:
 
 Instant_reports:
 
-  - title: Prix obtenus depuis 2000 par département (Formation Initiale)
+  - title: Combien d'étudiants par promotion ont $work_job dans leur expérience après une formation $department
+    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
+    id: who_make_film
+    chart: bar
+    x: Promotion
+    y: Nb étudiants
+    color: Formation
+
+    filters:
+      - field: work_job
+        values: Réalisation,Montage,Décor,Scénario,Scripte,Production
+        value: Réalisation
+        label: Métier exercé
+        title_for_none: tout type d'experience
+
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        value: Scénario
+        label: Département
+        title_for_none: standard
+        add_blank: true
+
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        label: Nature des oeuvres
+        value: Film
+        add_blank: true
+
+    sql: select department as "Formation",degree_year::INTEGER as "Promotion",count(distinct id) as "Nb étudiants" from "Works" where work_job!='' and department!='' group by department, degree_year::INTEGER order by degree_year::INTEGER,department
+    prod: True
+
+
+
+  - title: Première expérience des étudiants
+    description:
+    id: firstwork_of_student
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        label: Nature des oeuvres
+        value: Film
+        add_blank: true
+
+      - field: job
+        values: Réalisation,Montage,Décor,Scénario,Scripte,Production
+        value: Réalisation
+        label: Métier exercé
+
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        value: Scénario
+        label: Département
+
+    sql: select lastname,firstname,degree_year as "Promo",department,year as "Experience en",job as "Métier",nature,delay as "Délai" FROM "FirstWork_withProfil" ORDER BY lastname
+    prod: True
+
+
+
+
+
+
+  - title: Durée entre la sortie de la formation $department et la première expérience sur un(e) $nature
+    description:
+    id: fisrt_work_delay
+    chart: none
+
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        value:
+        label: Nature des oeuvres
+        add_blank: True
+        title_for_none: Oeuvre
+
+    sql: select COUNT(profil_id) as "Nombre de profils",department, nature, ROUND(AVG(delay),3) as "Délai (année)" FROM "FirstWork_withProfil" WHERE delay>0 AND department!='' GROUP BY nature,department ORDER BY -count(profil_id)
+    prod: True
+
+
+
+
+  - title: Répartition des étudiants en $departments
+    description:
+    id: student_by_depyear
+    chart: bar
+    x: Promotion
+    y: Etudiants
+    color: Formation
+
+    filters:
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        add_blank: true
+        label: Formation initiale
+        title_for_none: formation initiale
+
+    table: sql
+    sql: SELECT department AS "Formation", degree_year AS "Promotion",count(id) as "Etudiants" FROM alumni_profil WHERE department!='' GROUP BY department,degree_year ORDER BY degree_year::INTEGER
+    prod: True
+
+
+  - title: Nombre de projet par an par département et promotion
+    description:
+
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        value:
+        label: Nature des oeuvres
+        add_blank: True
+        title_for_none: Oeuvre
+
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        add_blank: true
+        label: Formation initiale
+        title_for_none: formation initiale
+
+    id: nb_projets
+    sql: SELECT count(DISTINCT id) as "Effectif", department AS "Département", degree_year AS "Promotion",nature,AVG(works_by_year) FROM "Works_by_Year" JOIN alumni_profil on "Works_by_Year".profil_id = alumni_profil.id WHERE department!='' GROUP BY department,degree_year,nature ORDER BY -count(DISTINCT id)
+    prod: True
+
+
+
+  - title: Qui a fait quoi après l'école
+    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
+    id: who_make_film_2
+    chart: none
+
+    filters:
+      - field: work_job
+        values: Réalisation,Montage,Décor,Scénario,Scripte,Production
+        value: Réalisation
+        label: Métier exercé
+
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        value: Scénario
+        label: Formation initiale
+        add_blank: true
+
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        add_blank: true
+        label: Nature des oeuvres
+
+    sql: select distinct lastname as "Nom",department as "Formation",degree_year as "Promotion" from "Works" where work_job!='' and department!='' order by degree_year,department
+    prod: False
+
+
+  - title: Liste des métiers les plus exercés par les anciens étudiants par promo
+    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
+    id: job_by_formation3
+    chart: bar
+    x: Promo
+    y: nb
+    filters:
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        label: Formation initiale
+
+    color: Job
+    sql: SELECT work_job AS "Job", count(id) as nb,degree_year::INTEGER as "Promo", department AS "Formation" FROM "Works" WHERE department!='' GROUP BY department,degree_year,work_job ORDER BY "Promo"
+    prod: False
+
+
+  - title: Les métiers les moins utilisés
+    id: not_used_job
+    chart: none
+    sql: SELECT work_job AS "Jobs", count(id) as nb FROM "Works" GROUP BY work_job ORDER BY count(id)
+    prod: True
+
+  - title: Les catégories les moins utilisées
+    id: not_used_categorie
+    chart: none
+    sql: SELECT category, count(id) as nb FROM alumni_pieceofwork GROUP BY category ORDER BY count(id)
+    prod: True
+
+  - title: Les type d'oeuvre les moins utilisées
+    id: not_used_nature
+    chart: none
+    sql: SELECT nature, count(id) as nb FROM alumni_pieceofwork GROUP BY nature  ORDER BY count(id)
+    prod: True
+
+
+
+  - title: Production impliquant des anciens de la FEMIS issue de $department depuis 1990
+    description:
+    id: avg_work
+    chart: bar
+    x: Annee
+    y: Projets
+
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        add_blank: true
+        label: Nature des oeuvres
+
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        add_blank: true
+        label: Type de métier
+        title_for_none: la formation initiale
+
+    color: Formation
+    sql: SELECT count(id) AS "Projets", department AS "Formation", year AS "Annee" FROM "Works" WHERE year::INTEGER>=2000 GROUP BY department, year ORDER BY year::INTEGER
+    prod: True
+
+
+
+  - title: Production impliquant les anciens des stages par type de formation
+    description:
+    id: avg_work_pro
+    chart: bar
+    x: Annee
+    y: Projets
+
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        add_blank: true
+        label: Nature des oeuvres
+        title_for_none: de tout type
+
+      - field: department_category
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        value: Réalisation
+        label: Type de métier
+
+
+    color: Stage
+    sql: SELECT count(id) AS "Projets", department_pro AS "Stage", year AS "Annee" FROM "Works" WHERE year::INTEGER>=2000 GROUP BY department_pro, year ORDER BY year::INTEGER
+    prod: True
+
+
+
+  - title: Liste des métiers les plus exercés par les anciens étudiants par département
+    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
+    id: job_by_formation2
+    chart: pie
+    x: Job
+    y: nb
+    filter: department
+    color: Job
+    sql: SELECT work_job as "Job", count(id) as nb,department AS "Formation" FROM "Works" WHERE department!='' GROUP BY department,work_job ORDER BY -count(id) LIMIT 15
+    prod: True
+
+
+
+
+  - title: Récompenses obtenus depuis 2000 par département (Formation Initiale)
     description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
     id: award_by_department
     chart: pie
     x: Formation
     color: Formation
     y: Awards
-    table: Awards
-    sql: SELECT profil__department AS Formation,count(id) AS Awards,profil__degree_year AS Promotion FROM df WHERE Promotion>=2000 AND profil__department!='' GROUP BY Formation ORDER BY -Awards LIMIT 10
+    sql: SELECT department AS "Formation",degree_year AS "Promotion",count(id_award) AS "Awards" FROM "ProfilAward" WHERE winner=true AND degree_year::INTEGER>=2000 AND department!='' GROUP BY department,degree_year ORDER BY -count(id_award) LIMIT 10
     prod: True
 
 
-  - title: Films et séries impliquant des anciens de la FEMIS en Formation Initiale depuis 2010
+  - title: Les 50 "$nature" impliquant la FEMIS les plus primés
+    category:
     description:
-    id: avg_work
+    id: awarded_by_film
+    filters:
+      - field: nature
+        values: Film,Documentaire,Court-métrage,Série
+        add_blank: true
+        label: Nature des oeuvres
+        title_for_none: productions
+
+    chart: none
+    sql: SELECT title AS Titre,nature,count(id) AS "Récompenses" FROM "FilmAwards" GROUP BY title,nature ORDER BY -count(id) LIMIT 50
+    prod: True
+
+
+
+  - title: Films et séries impliquant la FEMIS en Formation professionnelle depuis 2010
+    description:
+    id: avg_work_prof
     chart: bar
     x: Annee
     y: Projets
     color: Formation
-    sql: SELECT count(id) as Projets, profil__department as Formation, pow__year AS Annee FROM df WHERE Formation!='' AND Annee>=2010 GROUP BY Formation, Annee
-    prod: True
-
-
-  - title: Films et séries impliquant des anciens de la FEMIS en Formation professionnelle depuis 2010
-    description:
-    id: avg_work_pro
-    chart: bar
-    x: Annee
-    y: Projets
-    color: Formation
-    sql: SELECT count(id) as Projets, profil__department_pro as Formation, pow__year AS Annee FROM df WHERE Formation!='' AND Annee>=2010 GROUP BY Formation, Annee
+    sql: SELECT count(id) AS "Projets", department_pro as "Formation",CAST(year AS int) AS "Annee" FROM "Works" WHERE department_pro!='' AND CAST(year AS int)>=2010 GROUP BY "Formation", "Annee" ORDER BY "Annee"
     prod: True
 
 
@@ -77,38 +338,37 @@ Instant_reports:
 
 
 
-  - title: Liste des métiers les plus exercés par les anciens étudiants
-    description: Ce graphique consolide les métiers qu'exercent les étudiants et stagiaires lorsqu'il interviennent sur les films
-    id: job_by_formation
-    chart: pie
-    x: Job
-    y: nb
-    filter: Formation
-    color: Job
-    sql: SELECT job as 'Job', count(id) as nb,profil__department as 'Formation' FROM df WHERE Formation!='' GROUP BY Job ORDER BY -nb LIMIT 15
-    prod: True
-
-
-  - title: Liste des métiers les plus exercés par les anciens de la formation professionnelle
+  - title: Liste des métiers les plus exercés par la formation professionnelle depuis 2000
     description: Cette liste de métier est obtenue indépedemment de leur formation
     id: job_by_formation
     chart: pie
     x: Job
-    y: nb
-    filter: Formation
+    y: Projets
     color: Job
-    sql: SELECT job as 'Job', count(id) as nb,profil__department_pro as 'Formation' FROM df WHERE profil__department_pro!='' GROUP BY Job ORDER BY -nb LIMIT 15
+    sql: SELECT work_job as "Job", department_pro as "Stage",count(id) as "Projets" FROM "Works" WHERE year::INTEGER>=2000 AND department_pro!='' GROUP BY work_job,department_pro ORDER BY -count(id) LIMIT 30
     prod: True
 
-  - title: Les événements qui recompensent le plus les anciens de la FEMIS
+
+
+
+
+  - title: Les festivals qui récompensent le mieux les anciens de la FEMIS depuis 2000
     id: film_by_festival
     chart: pie
+    x: festival
+    y: Awards
+    filters:
+      - field: department
+        values: Réalisation,Scénario,Montage,Production,Documentaire,Image,Décor
+        add_blank: true
+        label: Formation
+        title_for_none: la formation initiale
+
     template: "plotly_dark"
-    x: Evenements
-    y: Films
-    table: Award
-    sql: SELECT * FROM (SELECT festival__title AS Evenements,count(pow__id) AS Films FROM df WHERE NOT Evenements='null' GROUP BY Evenements) ORDER BY -Films LIMIT 15
+    sql: select count(id_award) as "Awards",festival FROM "ProfilAward" WHERE year_award::INTEGER>=2000 GROUP BY festival ORDER BY -count(id_award) LIMIT 15
     prod: True
+
+
 
 
   - title: Nombre de récompenses par an, ventilées par département
@@ -120,7 +380,8 @@ Instant_reports:
     y: Awards
     table: Awards
     sql: SELECT profil__department AS Formation,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Formation,Année ORDER BY Année
-    prod: True
+    prod: False
+
 
   - title: Nombre de récompenses obtenues par an, ventilées par métier
     description: Prix, récompense obtenu par les anciens étudiants et stagiaires de la FEMIS durant leur carrière
@@ -133,14 +394,7 @@ Instant_reports:
     sql: SELECT work__job AS Metier,count(id) AS Awards,pow__year AS Année FROM df GROUP BY Metier,Année ORDER BY Année
     prod: False
 
-  - title: Nombre de récompenses pour la FEMIS par festival
-    id: award_by_festival
-    chart: pie
-    x: Festival
-    y: Awards
-    table: Awards
-    sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=True GROUP BY Festival ORDER BY -Awards LIMIT 15
-    prod: True
+
 
   - title: Prix les plus obtenus par les anciens étudiants formation pro et initiale
     id: name_award_by_department
@@ -149,7 +403,7 @@ Instant_reports:
     y: Awards
     table: Awards
     sql: SELECT description AS Prix,count(id) AS Awards FROM df WHERE winner=True GROUP BY Prix ORDER BY -Awards LIMIT 15
-    prod: True
+    prod: False
 
   - title: Nombre de nomination pour la FEMIS par festival
     id: nomination_by_festival
@@ -158,7 +412,7 @@ Instant_reports:
     y: Awards
     table: Awards
     sql: SELECT festival__title AS Festival,count(id) AS Awards FROM df WHERE winner=False GROUP BY Festival ORDER BY -Awards LIMIT 15
-    prod: True
+    prod: False
 
 
   - title: Nombre d'étudiant (formation initiale) primés par département
@@ -168,33 +422,12 @@ Instant_reports:
     y: Profils
     table: Awards
     sql: SELECT count(profil__id) AS Profils,profil__department AS Departement FROM df WHERE winner=True AND Departement!='' GROUP BY profil__id,Departement
-    prod: True
-
-
-  - title: Délai moyen pour travailler sur un long metrage par formation
-    description: Délai ob
-    id: delay_towork_onlong
-    #chart: bar
-    x: Profil
-    y: Year
-    table: Work
-    sql: SELECT Formation, AVG(Delay) AS Delay FROM (SELECT profil__id, profil__department AS Formation, MIN(pow__year-profil__degree_year) AS Delay FROM df WHERE pow__nature='Film' AND profil__cursus='S' GROUP BY profil__id) GROUP BY Formation
-    prod: True
+    prod: False
 
 
 
-  - title: Répartition des etudiants (formation initiale) par département
-    description:
-    id: student_by_depyear
-    chart: bar
-    x: promotion
-    y: etudiants
-    color: formation
-    cols: formation,promotion,etudiants
-    filter: formation
-    table: sql
-    sql: SELECT department AS formation, degree_year AS promotion,count(id) as etudiants FROM alumni_profil WHERE cursus='S' GROUP BY formation,promotion ORDER BY promotion
-    prod: True
+
+
 
 
 
@@ -282,17 +515,7 @@ Instant_reports:
     sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
     prod: True
 
-  - title: Les 50 longs métrage de la FEMIS les plus primés
-    category:
-    description:
-    id: most_award_by_film
-    chart: none
-    x: award
-    y: nb
-    color: description
-    table: Award
-    sql: SELECT pow__title AS Film,count(id) as Récompenses FROM df WHERE pow__nature='Film' or pow__nature="Long-métrage" GROUP BY pow__title ORDER BY -Récompenses LIMIT 50
-    prod: True
+
 
 
 

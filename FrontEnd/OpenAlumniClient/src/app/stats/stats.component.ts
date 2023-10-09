@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
-import {$$, api, checkLogin, eval_params, showError, showMessage} from "../tools";
+import {$$, api, checkLogin, eval_params, getParams, showError, showMessage} from "../tools";
 import {ConfigService} from "../config.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../api.service";
@@ -22,17 +22,16 @@ export class StatsComponent implements OnInit {
 
   @ViewChild('tabGroup') tabGroup: any;
 
-  _data:any=[];
   instant_reports: any[]=[];
   message: any="";
   rows: any=[];
-  filter_values=[];
-  sel_filter="";
+
   filter_name="Filtre";
   sel_instant_report_to_copy: any={};
   sel_table: string="work";
   bLimitData: boolean = true;
   filter_report:string=""
+  filters: any[]=[]
 
   constructor(public _location:Location,
               public api:ApiService,
@@ -48,17 +47,14 @@ export class StatsComponent implements OnInit {
     checkLogin(this,()=>{
       this.api._get("api_doc").subscribe((r:any)=>{
         this.rows=r.content;
-        this.refresh(()=>{
-          setTimeout(()=>{
-            this.eval_stat()
-          },500);
-        });
+        this.refresh()
       })
     });
   }
 
-  refresh(func=null){
+  refresh(){
     this.message="Chargement des reporting";
+    this.filters=[]
     this.api._get("getyaml","name=stat_reports").subscribe((r:any)=>{
       this.message="";
 
@@ -76,18 +72,10 @@ export class StatsComponent implements OnInit {
         if(i.prod)this.instant_reports.push(i);
       }
 
-      let open=this.routes.snapshot.queryParamMap.get("open");
-      if(open){
-        for(let r of this.instant_reports)
-          if(r.id==open){
-            this.sel_report=r;
-          }
-      } else {
-        this.sel_report=this.instant_reports[0];
-      }
-      this.sel_report.html_code="";
-      this.sel_report.html_values="";
-      if(func)func();
+      getParams(this.routes).then((param:any)=>{
+        this.change_report(param.open || "")
+      })
+
     });
   }
 
@@ -121,11 +109,12 @@ export class StatsComponent implements OnInit {
 
 
 
-  eval_stat(evt=null) {
+  eval_stat() {
     //voir https://github.com/karllhughes/angular-d3
     if(!this.sel_report)return;
     this._location.replaceState("stats","open="+this.sel_report.id);
-    let obj=eval_params(this.sel_report,this.sel_filter)
+    this.sel_report.filters=this.filters
+    let obj=eval_params(this.sel_report)
     this.filter_name="Filtrer par "+this.sel_report.filter;
 
     if(this.sel_report.html_code=="" || this.sel_report.html_code==""){
@@ -134,7 +123,6 @@ export class StatsComponent implements OnInit {
       this.api._get("export_all/",obj.param+"&out=graph",6000,"").subscribe((html:any)=>{
         this.sel_report.html_code=html.code || "";
         this.sel_report.html_values=html.values || "";
-        if(this.filter_values && this.filter_values.length==0)this.filter_values=html.filter_values;
       },(err)=>{
         showError(this,err);
         if(err.status==404){
@@ -205,21 +193,50 @@ export class StatsComponent implements OnInit {
       });
   }
 
-  change_report($event: any) {
-    this.sel_filter="";
+  change_report(report_id:string="") {
+    if(report_id=="")report_id=this.instant_reports[0].id
+
+    this.filters=[];
+    for(let r of this.instant_reports)
+      if(r.id==report_id){
+        this.sel_report=r;
+        if(r.filters){
+          for(let f of r.filters){
+            if(typeof(f.values)=="string")f.values=f.values.split(',')
+            if(f.add_blank)f.values.push("")
+            this.filters.push(f)
+          }
+        }
+      }
+
     this.sel_report.html_values="";
     this.sel_report.html_code="";
-    this.filter_values=[];
-    this.eval_stat($event);
+    this.eval_stat();
   }
 
-  cancel_filter() {
-    this.sel_filter="";
-    this.refresh_stats();
-  }
 
 
   export_doc(format="json",complete=true) {
     open(api("api_doc","complete="+complete+"&out="+format,false),"export");
+  }
+
+  update_filter_value(filter: any, $event: any) {
+    let must_refresh=false;
+    for(let f of this.filters){
+      if(f.field==filter.field){
+        f.value=$event.value
+        must_refresh=true;
+      }
+    }
+    if(must_refresh){
+      this.refresh_stats();
+    }
+  }
+
+  clear_filters() {
+    for(let f of this.filters){
+      f.value=undefined
+    }
+    this.refresh_stats()
   }
 }

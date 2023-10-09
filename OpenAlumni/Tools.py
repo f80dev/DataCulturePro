@@ -18,9 +18,11 @@ from django.core.mail import send_mail
 from django.db.models import Model
 from django.forms import model_to_dict
 from requests import get
+from selenium.webdriver.chrome.webdriver import WebDriver
 
 from OpenAlumni import passwords
 from OpenAlumni.Bot import Bot
+import Levenshtein
 
 if os.environ.get("DEBUG"):
     from OpenAlumni.settings_dev import *
@@ -472,7 +474,7 @@ def apply_dictionnary_on_each_words(section:str,text:str):
     return " ".join(rc)
 
 
-def translate(wrd:str,sections=["jobs","categories","abreviations","department_category","departements","languages","festivals"],must_be_in_dict=False):
+def translate(wrd:str,sections=["jobs","categories","abreviations","department_category","departements","languages","festivals"],must_be_in_dict=False,levenstein_tolerance=0):
     """
     Remplacement de certains termes
     :param wrd:
@@ -484,7 +486,7 @@ def translate(wrd:str,sections=["jobs","categories","abreviations","department_c
     if wrd is None:
         return None
 
-    key=wrd.lower().replace(",","").replace("(","").replace(")","").replace(":","").strip()
+    key=wrd.lower().replace(",","").replace("(","").replace(")","").replace(":","").replace(" by","").replace("/"," ").strip()
     key=key.replace("\n"," ").replace("  "," ")
     for i in range(10):
         key=key.replace("   "," ").replace("  "," ")
@@ -492,14 +494,22 @@ def translate(wrd:str,sections=["jobs","categories","abreviations","department_c
     rc = key
     find=False
     for section in sections:
+        if wrd.lower() in MYDICT[section].values():
+            return wrd
+
         if key in MYDICT[section].keys():
             rc = MYDICT[section][key]
             find=True
             break
 
-    if must_be_in_dict and not find:
-        if not key in MYDICT[section].values():
-            return None
+        if must_be_in_dict and not find:
+            if levenstein_tolerance>0:
+                for dict_word in MYDICT[section].keys():
+                    if Levenshtein.distance(key,dict_word)<=levenstein_tolerance:
+                        key=dict_word
+
+            if not key in MYDICT[section].values():
+                return None
 
     if not rc is None and len(rc)>1:
         return (rc[0].upper()+rc[1:].lower()).strip()
@@ -595,7 +605,7 @@ def remove_string_between_delimiters(s:str,start_delimiter,end_delimiter):
 
 
 
-def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
+def clean_page(code:str,balises=["script","style","path","noscript"]) -> str:
     if code is None: return None
     if type(code)!=str:code=str(code)
     if len(code)==0: return ""
@@ -614,7 +624,10 @@ def clean_page(code:str,balises=["script","style","path","noscript","iframe"]):
 
 
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
-              agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',offline=False):
+              agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+              offline=False,
+              cleaning=True,
+              selenium_driver:WebDriver=None,format="text"):
     """
     tags #open_page open page
     :param url:
@@ -645,18 +658,23 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
     if  isWindows() and exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
         #log("Utilisation du fichier cache "+filename+" pour "+url)
         try:
-            with open(PAGEFILE_PATH + filename, 'r', encoding='utf8') as f:
-                html=f.read()
-                f.close()
+            if format=="text":
+                with open(PAGEFILE_PATH + filename, 'r', encoding='utf8') as f:
+                    html=f.read()
+                    f.close()
+            else:
+                with open(PAGEFILE_PATH + filename, 'rb') as f:
+                    html=f.read()
+                    f.close()
+
         except:
             os.remove(PAGEFILE_PATH + filename)
             return load_page(url)
 
-        if "Something went wrong. Please reload the page and try again" in html:
-            page=None
+        if type(html)==str:
+            page=wikipedia.BeautifulSoup(html,"html5lib")
         else:
-            html=clean_page(html)
-            page=wikipedia.BeautifulSoup(html,"html.parser")
+            page=wikipedia.BeautifulSoup(html)
 
         if page is None or len(page.contents)==0:
             log("Le fichier ./Temp/"+filename+" est corrompu")
@@ -670,11 +688,18 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
             log("Chargement de la page "+url)
             for itry in range(5):
                 try:
-                    sleep(random.randint(1000, 2000) / 1000)
                     if bot:
                         rc = wikipedia.BeautifulSoup(bot.download_page(url), "html5lib")
+                        sleep(random.randint(1000, 2000) / 1000)
                     else:
-                        rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': agent}).text, "html5lib")
+                        if selenium_driver:
+                            selenium_driver.maximize_window()
+                            selenium_driver.get(url)
+                            sleep(random.randint(1000, 2000) / 1000)
+                            rc=wikipedia.BeautifulSoup(selenium_driver.page_source,"html5lib")
+                        else:
+                            rc= wikipedia.BeautifulSoup(wikipedia.requests.get(url, headers={'User-Agent': agent}).text, "html5lib")
+                            sleep(random.randint(1000, 2000) / 1000)
                     break
                 except:
                     pass
@@ -682,9 +707,14 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
         if not rc is None and save and isWindows():
             path=PAGEFILE_PATH + filename
             #log("Enregistrement sur  " + path)
-            with open(path, 'w', encoding='utf8') as f:
-                f.write(clean_page(rc))
-                f.close()
+            if format=="text":
+                with open(path, 'w', encoding='utf8') as f:
+                    f.write(clean_page(str(rc)) if cleaning else str(rc))
+                    f.close()
+            else:
+                with open(path, 'wb') as f:
+                    f.write(rc.encode())
+                    f.close()
 
             if exists(PAGEFILE_PATH + "html.7z"):
                 with py7zr.SevenZipFile(PAGEFILE_PATH + "html.7z", 'a') as archive:

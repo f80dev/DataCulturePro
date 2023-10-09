@@ -26,7 +26,6 @@
 
 
 
-
   <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
        *ngIf="profils.length>0 && !config.isMobile()" >
     <table style="display: inline-block;width:fit-content;max-width: 1000px;">
@@ -48,7 +47,8 @@
             id="cmdHelp"
             (click)="help()">help</mat-icon>
 
-  <mat-form-field appearance="outline" *ngIf="advanced_search?.length==0" class="search_zone" >
+<!--  Barre de recherche standard -->
+  <mat-form-field appearance="outline" *ngIf="advanced_search?.length==0" class="search_zone mat-headline-6" >
     <input matInput matNativeControl id="txtSearch" style="margin: 0;" autofocus
            title="Un ou plusieurs mots pour effectuer des recherches dans les métiers, les noms, les réalisations ..."
            (keyup)="onQuery($event)"

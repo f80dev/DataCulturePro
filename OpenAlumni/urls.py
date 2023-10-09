@@ -48,6 +48,7 @@ urlpatterns = [
     path('api/add_issue/', views.add_issue),
     path('api/init_nft/', views.init_nft),
     path('api/update_dictionnary/', views.update_dictionnary),
+    path('api/imdb_importer/', views.api_imdb_importer),
     path('api/jobsites/', views.refresh_jobsites),
     path('api/send_to/', views.send_to),
     path('api/test/', views.test),

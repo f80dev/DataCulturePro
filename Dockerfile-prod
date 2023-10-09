@@ -2,6 +2,9 @@
 #effacer toutes les images : docker rmi $(docker images -a -q)
 #effacer tous les containers : docker rm  $(docker ps -a -f status=exited -q) / podman rm  $(podman ps -a -f status=exited -q)
 
+#Renouvellement des certificats
+#Pour le server F80: certbot certonly --standalone --email hhoareau@gmail.com -d api.f80.fr && cp /etc/letsencrypt/live/api.f80.fr/* /root/certs_dataculture
+
 
 FROM python
 
@@ -64,6 +67,7 @@ RUN pip3 install openpyxl
 RUN pip3 install django-archive
 RUN pip3 install scipy
 RUN pip3 install pymongo
+RUN pip3 install Levenshtein
 
 ENV APP_HOME=/home/app
 RUN mkdir $APP_HOME
@@ -71,6 +75,7 @@ RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 RUN mkdir $APP_HOME/Temp
 RUN mkdir $APP_HOME/dbbackup
+RUN mkdir $APP_HOME/Temp/imdb_files
 
 WORKDIR $APP_HOME
 COPY ./static $APP_HOME/static
