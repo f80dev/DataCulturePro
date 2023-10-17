@@ -26,6 +26,7 @@ Installation pour fedora
 dnf install certbot
 désactiver le firewall
 certbot certonly --standalone --email hhoareau@gmail.com -d api.f80.fr
+certbot certonly --standalone --email hhoareau@gmail.com -d femis.f80.fr
 mkdir /root/certs_dataculture
 cp /etc/letsencrypt/live/api.f80.fr/* /root/certs_dataculture
 </pre>
@@ -71,6 +72,11 @@ python manage.py createsuperuser --settings OpenAlumni.settings
 
 Pour l'environnement de développement on utilisera
 python manage.py createsuperuser --settings OpenAlumni.settings_dev
+
+Si besoin il est possible de faire cela sur le serveur
+docker run -it openalumni /bin/bash
+
+
  
 
 

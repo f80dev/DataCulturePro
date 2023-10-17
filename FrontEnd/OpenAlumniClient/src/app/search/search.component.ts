@@ -22,7 +22,7 @@ export class SearchComponent implements OnInit {
   message: string="";
   limit=250;
   perm: string="";
-  dtLastSearch: number=0;
+  show_first_screen=true;
   filter_with_pro:boolean=true;
 
   constructor(public api:ApiService,
@@ -72,8 +72,6 @@ export class SearchComponent implements OnInit {
 
       if(this.searchInTitle)prefixe="works__title:"
 
-      this.message="Recherche des profils";
-
       //Voir https://django-elasticsearch-dsl-drf.readthedocs.io/en/0.16.3/search_backends.html?highlight=simple_query_string_options#generated-query-3
       let search_engine="search_simple_query_string";
       //if(this.query.value && this.query.value.length==4 && Number(this.query.value).toString()==this.query.value)search_engine="promo";
@@ -99,7 +97,7 @@ export class SearchComponent implements OnInit {
       // }
       param=param+"&limit="+limit+"&profil__school=FEMIS";
       $$("Appel de la recherche avec param="+param);
-
+      this.show_first_screen=false
       this.api._get("profilsdoc",param).subscribe((r:any) =>{
         this.message="";
         this.profils=[];
@@ -138,8 +136,11 @@ export class SearchComponent implements OnInit {
           }
 
           if(search_engine=="search_simple_query_string" && !this.query.value.endsWith("*")){
-            this.refresh(this.query.value+"*");
-            showMessage(this,"L'usage de l'astérisque permet de faire la recherche sur le début d'un mot")
+            clearTimeout(this.handle)
+            this.handle=setTimeout(()=>{
+              this.refresh(this.query.value+"*");
+              showMessage(this,"L'usage de l'astérisque permet de faire la recherche sur le début d'un mot")
+            },2000)
           }
 
           if(this.query.value.indexOf("*")>-1 && this.profils.length==0){
@@ -185,10 +186,10 @@ export class SearchComponent implements OnInit {
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
-    this.handle=setTimeout(()=>{
+    if(this.query.value.length>2 || $event.keyCode==13){
       this._location.replaceState("search?query="+this.query.value);
       this.refresh();
-    },2000);
+    }
   }
 
   clearQuery() {

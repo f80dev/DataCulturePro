@@ -72,9 +72,7 @@
 
 
     <div style="margin: 5px;width:95%;line-height:120%;text-align: left;" *ngIf="message?.length==0 && profil.works.length+profil.awards.length>0">
-
-
-      <div *ngIf="config.config.public_version=='light'" style="text-align: center;">
+      <div *ngIf="!config.config.show_works" style="text-align: center;">
         <div class="label" style="margin: 20px;">Voir le profil sur</div>
         <div style="width:100%" class="expansion-content">
           <div *ngFor="let p of platforms"
@@ -89,7 +87,7 @@
 
       </div>
 
-      <mat-tab-group *ngIf="config.config.public_version!='light'">
+      <mat-tab-group *ngIf="config.config.show_works">
         <mat-tab label="FILMOGRAPHIE" *ngIf="profil?.works?.length>0">
           <div class="label" style="margin-top: 20px" *ngIf="profil.works?.length>5">({{profil.works.length}} résultats)</div><br>
           <app-timeline
@@ -127,7 +125,7 @@
     </div>
 
     <br>
-    <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);" *ngIf="config.config.public_version!='light'">
+    <div style="margin-top:50px;width:100%;text-align: center;filter: grayscale(0.3);" *ngIf="!config.config.show_works">
       <button mat-icon-button
               title="Partager ce profil"
               *ngIf="!config.isDesktop()"

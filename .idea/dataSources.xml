@@ -31,13 +31,6 @@
       <jdbc-url>mongodb://root:hh4271@109.205.183.200:27017</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="RPI" uuid="09e2e2c4-45b6-429a-bd62-119c6d9fe1f9">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://192.168.1.46:5432/alumni_db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="Django default" uuid="0bb3f680-9531-40b5-b706-0bdac6551a5e">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
@@ -45,6 +38,13 @@
       <remarks>$PROJECT_DIR$/OpenAlumni/settings_dev.py</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://192.168.1.62:5432/alumni_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="RPI" uuid="e4f7aac6-5692-4cd0-8f20-4bfafe63fa3d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://192.168.1.46:5432/alumni_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

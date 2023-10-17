@@ -25,7 +25,7 @@ export class ApiService {
       })
     };
     if(!this.token)this.token=localStorage.getItem("token");
-    if(this.token)httpOptions.headers["Authorization"]='Token ' + this.token;
+    if(this.token && this.token.length>0)httpOptions.headers["Authorization"]='Token ' + this.token;
     return httpOptions;
   }
 
@@ -62,7 +62,6 @@ export class ApiService {
   }
 
   refreshToken() {
-    debugger
     this.http.post('/api-token-refresh/', JSON.stringify({token: this.token}), this.getHttpOptions()).subscribe(
       data => {
         this.token=data['token'];
@@ -99,10 +98,8 @@ export class ApiService {
 
 
   login(user) {
-    debugger
     this.http.post('/api-token-auth/', JSON.stringify(user), this.getHttpOptions()).subscribe(
       data => {
-
         this.updateData(data['token']);
       },
       err => {showError(this,err);}

@@ -37,7 +37,7 @@ SETTINGS_FILENAME="settings.py"
 SECRET_KEY=_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = [
     "*",
     "*.github.com",
@@ -90,7 +90,7 @@ DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {'location': './static/'}
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ['http://localhost:4200']
+#CORS_ORIGIN_WHITELIST = ['http://localhost:4200']
 
 ROOT_URLCONF = 'OpenAlumni.urls'
 
@@ -162,7 +162,7 @@ DATABASES = {
         "NAME": "alumni_db",
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
-        'HOST': '109.205.183.200',              #Dolibarr server:109.205.183.200
+        'HOST': '127.0.0.1',              #Dolibarr server:109.205.183.200
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -173,20 +173,22 @@ DATABASES = {
 #Pour l'installation d'delastic search voir le README
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '109.205.183.200:9200'             #Dolibarr server
+        'hosts': '127.0.0.1:9200'             #Dolibarr server:109.205.183.200
     }
 }
 
+#Voir la configuration https://www.django-rest-framework.org/api-guide/permissions/#permissions
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 50,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'ORDERING_PARAM':'ordering',
+    #voir https://www.django-rest-framework.org/api-guide/authentication/
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     )
 }
 

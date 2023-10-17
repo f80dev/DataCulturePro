@@ -63,17 +63,14 @@ export class PowsComponent implements OnInit {
   handle:any;
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
-    this.handle=setTimeout(()=>{
-      this.refresh(this.limit);
-    },1000);
+    this.refresh(this.limit);
   }
 
 
   refresh(limit=100) {
-    if(this.query.value && this.query.value.length>3)this._location.replaceState("pows/?query="+this.query.value);
+    if(this.query.value && this.query.value.length>3)this._location.replaceState("pows/?search_simple_query_string="+this.query.value);
     let param=translateQuery(this.query.value,false);
     param=param+"&limit="+limit;
-    this.message="Recherche des films";
     this.api._get("powsdoc",param).subscribe((r:any)=>{
       this.message="";
       this.pows=[];
@@ -94,6 +91,12 @@ export class PowsComponent implements OnInit {
         setTimeout(()=>{
           if(this.pows.length>0)this.pows[0].expanded=true;
         },1000);
+      }
+      if(r.results.length==0 && !this.query.value.endsWith("*")){
+        this.handle=setTimeout(()=>{
+          this.query.value=this.query.value+"*"
+          this.refresh()
+        },3000)
       }
     },(err)=>{
       showError(this,err);

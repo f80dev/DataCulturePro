@@ -15,6 +15,7 @@ mat-form-field:not(.mat-focused) .mat-hint {
 }
 
 
+
 .input-elements {
   display: flex;
   flex-direction: row;
@@ -23,8 +24,9 @@ mat-form-field:not(.mat-focused) .mat-hint {
 }
 
 .help-input {
-  opacity: 0.6;
-  font-size: xx-small;
+  opacity: 0.8;
+  font-size: x-small;
+  line-height: 85%;
   margin-top: -5px;
 }
 

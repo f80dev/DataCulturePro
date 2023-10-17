@@ -307,12 +307,15 @@ def run_backup(request):
         "file",
         prefix+datetime.now().strftime("%d-%m-%Y_%H%M")+".json"
     )
-
+    os.environ["PGPASSWORD"]=DB_PASSWORD
     backup_file=request.GET.get("file",filename)
     if not backup_file.endswith(".json"):backup_file=backup_file+".json"
 
     url=request.build_absolute_uri('/')
     exclude_table=["auth.permission","contenttypes","alumni.extrauser"]
+
+    if engine=="pg_dump": backup_file=backup_file.replace(".json",".out")
+
     if command=="save":
         log("Enregistrement de la base dans "+backup_file)
         if engine=="dumpdata":
@@ -321,28 +324,28 @@ def run_backup(request):
                                         stdout=f,exclude=exclude_table,
                                         indent=2)
         if engine=="pg_dump":
-            args=["./dbbackup/pg_dump.exe", "--host=192.168.1.62","--port=5432","--username=hhoareau", "alumni_db"]
-            os.environ["PGPASSWORD"]="hh4271"
-            backup_file=backup_file.replace(".json",".out")
+            #voir https://www.postgresql.org/docs/current/app-pgdump.html
+            args=["./dbbackup/pg_dump.exe" if os.name=="nt" else "pg_dump", "--format=t","--blobs","--host="+DATABASES["default"]["HOST"],"--port="+DATABASES["default"]["PORT"],"--username="+DB_USER,DATABASES["default"]["NAME"]]
+
             with open(work_dir+"/"+backup_file,'wb') as f:
                 subprocess_result = subprocess.run(args, stdout=f)
             log("Enregistrement terminé, consulter "+work_dir)
 
-
         return JsonResponse({"message":"Backup effectué, rechargement par "+url+"api/backup?command=load"})
+
 
     if command=="load":
         if Profil.objects.count()>0 or PieceOfWork.objects.count()>0 or Work.objects.count()>0:
             return JsonResponse({"message":"La base doit avoir été préalablement vidé"},status=500)
 
-
         if exists(work_dir+"/"+backup_file):
-
             if engine=="django":
                 management.call_command("loaddata",work_dir+"/"+backup_file,verbosity=3,app_label="alumni")
             else:
-                args=["./dbbackup/pg_restore.exe", "--host=192.168.1.62","--port=5432","--username=hhoareau", "alumni_db"]
-                subprocess_result = subprocess.run(args, stdout=f)
+                #voir https://www.postgresql.org/docs/current/app-pgrestore.html
+                args=["./dbbackup/pg_restore.exe" if os.name=="nt" else "pg_restore", "--clean","--create","--host="+DATABASES["default"]["HOST"],"--port="+DATABASES["default"]["PORT"],"--username="+DB_USER,"--dbname="+DATABASES["default"]["NAME"]]
+                with open(work_dir+"/"+backup_file,"r") as f:
+                    subprocess_result = subprocess.run(args, stdin=f)
 
 
             return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
@@ -352,7 +355,7 @@ def run_backup(request):
 
 
 
-
+#https://api.f80.fr:8200/api/infos_server
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def infos_server(request):
@@ -1635,6 +1638,9 @@ class FestivalDocumentView(DocumentViewSet):
 
 
 #http://localhost:8000/api/profilsdoc
+#http://localhost:8000/api/profilsdoc/?search_simple_query_string=julia
+#http://localhost:8000/api/profilsdoc/?search_simple_query_string=titane
+
 @permission_classes([AllowAny])
 class ProfilDocumentView(DocumentViewSet):
     document=ProfilDocument
@@ -1659,11 +1665,10 @@ class ProfilDocumentView(DocumentViewSet):
         'degree_year': {'boost': 4},
         'firstname': {'boost': 1},
         'department': {'boost': 3},
-        'town':{'boost':1},
         'works__job': {'boost': 2},
         'works__pow__title': {'boost': 2},
         'awards__title': {'boost': 2},
-        # 'awards__year': {'boost': 1}
+        'town':{'boost':1}
     }
 
     simple_query_string_options = {

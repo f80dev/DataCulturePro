@@ -16,7 +16,7 @@
   </app-tuto>
 
 
-  <div *ngIf="profils.length==0" class="main-message"
+  <div *ngIf="show_first_screen && query.value==''" class="main-message"
        style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:150px;">
     Rechercher des anciens de la FEMIS par nom, métier, promotion, titre de film ou récompense
     <br>
@@ -27,7 +27,7 @@
 
 
   <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
-       *ngIf="profils.length>0 && !config.isMobile()" >
+       *ngIf="!config.isMobile()" >
     <table style="display: inline-block;width:fit-content;max-width: 1000px;">
       <tr>
         <td class="material-icon"><mat-icon class="fi-color">circle</mat-icon></td>
@@ -153,7 +153,7 @@
 
 
   <!-- Affichage des profils-->
-  <div class="wrap-list">
+  <div class="wrap-list" *ngIf="query.value!=''">
     <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
     <app-profil *ngFor="let profil of profils"
             name="profils" class="app-card"

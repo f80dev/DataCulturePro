@@ -2,7 +2,7 @@ version: 1
 appname: "Data Culture Pro (beta)"
 anonymousOffer: 0
 logo: /assets/icons/icon-144x144.png
-public_version: light
+show_works: True
 
 profil_code: hh4271
 

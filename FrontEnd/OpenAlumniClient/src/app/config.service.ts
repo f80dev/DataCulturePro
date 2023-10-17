@@ -29,6 +29,7 @@ export class ConfigService {
   user_update=new Subject<tUser>();
   infos_server: any;
   show_student: boolean = false;
+  show_works: boolean = false;
 
   constructor(private location: Location,
               private http: HttpClient,

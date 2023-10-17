@@ -6,7 +6,7 @@
 #Pour le server F80: certbot certonly --standalone --email hhoareau@gmail.com -d api.f80.fr && cp /etc/letsencrypt/live/api.f80.fr/* /root/certs_dataculture
 
 
-FROM python
+FROM python:3.11
 
 #prod
 #fabrication: docker build -t f80hub/openalumni . & docker push f80hub/openalumni:latest
@@ -22,7 +22,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get install libpq-dev
 
-RUN pip3 install Django==4.0.6
+RUN pip3 install Django==4.2.6
 RUN pip3 install markdown
 RUN pip3 install django-oauth-toolkit
 RUN pip3 install oauthlib

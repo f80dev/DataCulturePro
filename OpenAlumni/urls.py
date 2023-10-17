@@ -85,8 +85,9 @@ urlpatterns = [
     path('api/show_movies/', views.show_movies),
     path('api/image_search/', views.image_search),
     path('api/analyse_pow/', views.get_analyse_pow),
-    re_path(r'^api/movie_importer/$',views.movie_importer),
-    re_path('^api/api-token-auth/', obtain_auth_token),
+    path('api/movie_importer/',views.movie_importer),
+    path('api/api-token-auth/', obtain_auth_token),
+    path('api/token/', obtain_auth_token),
     path("api/",include(router.urls)),
  #   re_path(r'^graphql$', GraphQLView.as_view(graphiql=True,schema=schema))
 ]

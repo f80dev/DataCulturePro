@@ -242,8 +242,10 @@ export class AdminComponent implements OnInit,AfterViewInit {
 
   upload_backup(file:any){
     this.message="Chargement d'un backup";
-    this.api._post("backup_files/","",file).subscribe(()=>{
-      this.refresh_backup();
+    this.api._get("backup","command=save&filename=emergency_backup",3600).subscribe((r:any)=>{
+      // this.api._post("backup_files/","",file).subscribe(()=>{
+      //   this.refresh_backup();
+      // })
     })
   }
 
@@ -306,5 +308,17 @@ export class AdminComponent implements OnInit,AfterViewInit {
     } else {
       this.message=""
     }
+  }
+
+  save_config() {
+    this.config.refresh_server()
+  }
+
+  async obtain_token() {
+    this.api.checkCode("hhoareau","hh").subscribe({
+      next:(r:any)=>{
+        this.api.token=r.token
+      }
+    })
   }
 }

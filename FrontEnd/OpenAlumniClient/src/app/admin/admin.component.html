@@ -73,6 +73,7 @@
 
             <button mat-raised-button class="app-button" (click)="config.refresh_server()">Refresh</button>
             <button mat-raised-button class="app-button" (click)="openDjangoAdmin()">Admin Serveur</button>
+          <button mat-raised-button class="app-button" (click)="obtain_token()">Token des API</button>
 
             <button mat-raised-button class="app-button" (click)="openServer(config.infos_server.domain.server)">
                 Connexion serveur Django
@@ -100,7 +101,7 @@
 
             <br>
             <mat-slide-toggle [(ngModel)]="config.show_student">Inclure les étudiants</mat-slide-toggle><br><br>
-
+            <mat-slide-toggle [(ngModel)]="config.config.show_works">Inclure la carrière dans les profils partagés</mat-slide-toggle><br><br>
 
             <button mat-raised-button class="app-button" (click)="export_profils('S')">Export FI</button>
             <button mat-raised-button class="app-button" (click)="export_profils('P')">Export FPro</button>
