@@ -1,33 +1,28 @@
 <div class="mainform">
 
-  <app-tuto icon_button="login"
-            [if]="!config.user?.user.email"
-            (click)="router.navigate(['login'])"
-            label="Connectez vous pour avoir accès à plus d'information sur les profils">
-  </app-tuto>
 
   <app-tuto [if]="query.value.indexOf('*')>-1"
             label="Le symbole * permet de faire une recherche sur le début d'un nom, par exemple DUP* retourne tous les noms commençant par DUP">
   </app-tuto>
 
-  <app-tuto [delay]="10"
-            id="tutoSideMenu"
-            label="Vous pouvez également consulter la liste des réalisations de la FEMIS, via le menu latéral">
-  </app-tuto>
-
+  <div [@moveUp]="toCenter ? 'middle' : 'up'"></div>
 
   <div *ngIf="show_first_screen && query.value==''" class="main-message"
-       style="text-align: center;display:inline-block;min-width:300px;width:70%;margin-top: 10%;margin-bottom:150px;">
+       style="text-align: center;display:inline-block;min-width:300px;width:60%;">
     Rechercher des anciens de la FEMIS par nom, métier, promotion, titre de film ou récompense
-    <br>
-    <span *ngIf="config?.infos_server?.content" style="margin-top:15px;font-size:medium;opacity: 0.6;">parmi les {{config.infos_server.content.profils}} profils disponibles</span>
-    <mat-icon style="display: inline-block;margin-bottom: -5px;cursor: pointer;" (click)="open_chart()">bar_chart</mat-icon>
+    <span *ngIf="config?.infos_server?.content">parmi les
+      <span class="primary-color">{{config.infos_server.content.profils}}</span>
+      profils disponibles</span>
+
+    <mat-icon style="display: inline-block;margin-bottom: -5px;cursor: pointer;"
+              *ngIf="config.user?.level>0"
+              (click)="open_chart()">bar_chart</mat-icon>
   </div>
 
-
+  <div [@moveUp]="toCenter ? 'middle' : 'up'"></div>
 
   <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
-       *ngIf="!config.isMobile()" >
+       *ngIf="!config.isMobile() && filter_with_pro" >
     <table style="display: inline-block;width:fit-content;max-width: 1000px;">
       <tr>
         <td class="material-icon"><mat-icon class="fi-color">circle</mat-icon></td>
@@ -40,12 +35,8 @@
       </tr>
     </table>
   </div>
-  <br>
 
-  <mat-icon *ngIf="query.value?.length==0" style="margin-bottom: -7px;margin-right: 15px;"
-            title="Comment construire vos requêtes"
-            id="cmdHelp"
-            (click)="help()">help</mat-icon>
+
 
 <!--  Barre de recherche standard -->
   <mat-form-field appearance="outline" *ngIf="advanced_search?.length==0" class="search_zone mat-headline-6" >
@@ -55,14 +46,21 @@
            [placeholder]="placeholder"
            [(ngModel)]="query.value">
     <div matSuffix style="font-size: medium;display: inline-block;">
-      <mat-icon *ngIf="query.value?.length>0" style="margin-right: 15px;"
+      <mat-icon *ngIf="query.value?.length==0" style="margin-right: 15px;opacity:0.6;"
+                title="Comment construire vos requêtes"
+                id="cmdHelp"
+                (click)="help()">help</mat-icon>
+
+      <mat-icon *ngIf="query.value?.length>0"
+                style="margin-right: 15px;opacity: 0.6;"
                 matSuffix
                 id="cmdCancel"
                 (click)="clearQuery()">cancel</mat-icon>
+
     </div>
   </mat-form-field>
 
-  <mat-icon *ngIf="advanced_search?.length==0" style="margin-left:-10px;margin-bottom: -7px;"
+  <mat-icon *ngIf="advanced_search?.length==0 && config.user?.level>0" style="margin-left:-10px;margin-bottom: -7px;"
             id="cmdExpertMode"
             title="Recherche multi-critère"
             (click)="switch_motor()">add_circle</mat-icon>
@@ -98,25 +96,19 @@
 
 
   <!--  gestion du tri-->
-  <div *ngIf="profils?.length>6" style="display: inline-block;text-align: right;margin:5px;" >
+  <div *ngIf="profils?.length>6" style="display: inline-block;text-align: right;margin-top: -10px;" >
     <mat-form-field appearance="outline"
-                    *ngIf="config.width_screen>400"
-                    style="max-width:175px;font-size: small;margin-left:15px">
+                    style="max-width:175px;font-size: small;margin-left:15px;">
       <mat-label>Trier par</mat-label>
       <mat-select id="selOrder" [(ngModel)]="order" (selectionChange)="refresh()">
         <mat-option *ngFor="let f of fields" [value]="f.value">{{f.field}}</mat-option>
       </mat-select>
     </mat-form-field>
-
-    <mat-icon style="font-size: large;cursor: pointer;"
-              (click)="change_order()" *ngIf="config.width_screen<=400">
-      sort
-    </mat-icon>
   </div>
 
 
   <div *ngIf="query.value.length<3 || advanced_search.length>0"
-       style="width: 100%;text-align: center;margin: 20px;" >
+       style="width: 100%;text-align: center;" >
     <mat-slide-toggle [(ngModel)]="filter_with_pro" (ngModelChange)="update_pro_filter()">
       Inclure la formation professionnelle
     </mat-slide-toggle>
@@ -161,7 +153,7 @@
             [writeAccess]="config.user && config.user.profil==profil?.id || config.hasPerm('edit_profil')"
             (askfriend)="askfriend(profil)"
             (onclick)="openQuery($event)"
-            style="margin: 20px;max-width: 500px;"
+            style="margin: 12px;max-width: 500px;"
             [profil]="profil">
     </app-profil>
 

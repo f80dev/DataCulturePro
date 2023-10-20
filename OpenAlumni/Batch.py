@@ -18,6 +18,7 @@ from django.template.defaultfilters import urlencode
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import make_aware
 from django_elasticsearch_dsl import Index, Document
+from elasticsearch import Elasticsearch
 from pandas import read_excel
 from selenium.webdriver.chrome.webdriver import WebDriver
 from wikipedia import wikipedia, re
@@ -35,7 +36,7 @@ else:
     from OpenAlumni.settings import STATIC_ROOT,IMDB_DATABASE_SERVER
 
 
-from alumni.documents import FestivalDocument
+from alumni.documents import FestivalDocument, ProfilDocument, PowDocument
 from alumni.models import Profil, Work, PieceOfWork, Award, Festival, Article, ExtraUser
 
 def extract_movie_from_cnca(title:str):
@@ -51,12 +52,33 @@ def reindex(index_name=""):
     #test http://localhost:8000/api/reindex/?index_name=festivals
     log("Ré-indexage de la base")
     if len(index_name)==0:
-        return management.call_command("search_index","--rebuild","-f","--parallel")
+        # es=Elasticsearch(os.environ.get('SEARCH_ENGINE_HOST'))
+        #
+
+        # ProfilDocument._index.delete(ignore=404)
+        # ProfilDocument.init()
+        # for p in Profil.objects.all():
+        #     p.save(force_update=True)
+
+        #
+        # PowDocument.init()
+        # for p in list(PieceOfWork.objects.all())[:10]:
+        #     pd=PowDocument().update(p)
+        #     pd.save()
+
+        with open("./logs/reindex.log", "w") as f:
+            management.call_command("search_index","--rebuild","-f","--parallel","-v3",stdout=f)
+
+        # log("Réindex de l'ensemble des index")
+        # try:
+        #     return management.call_command("search_index","--rebuild","-f","--parallel","-v")
+        # except Exception as inst:
+        #     log("impossible d'executer la commande "+str(inst.args))
     else:
         index:Index=Index(index_name)
         if index.exists(): index.delete()
         FestivalDocument.init(index=index,using="default")
-        return management.call_command("search_index","--rebuild")
+        return management.call_command("search_index","--rebuild","--verbosity=3")
 
 
 def extract_movie_from_bdfci(pow:PieceOfWork,refresh_delay=31):

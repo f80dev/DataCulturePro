@@ -159,10 +159,10 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "alumni_db",
-        "USER": DB_USER,
-        "PASSWORD": DB_PASSWORD,
-        'HOST': '127.0.0.1',              #Dolibarr server:109.205.183.200
+        "NAME": os.environ.get('DB_NAME'),
+        "USER": os.environ.get('DB_USER'),
+        "PASSWORD": os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),              #Dolibarr server:109.205.183.200
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -173,7 +173,7 @@ DATABASES = {
 #Pour l'installation d'delastic search voir le README
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '127.0.0.1:9200'             #Dolibarr server:109.205.183.200
+        'hosts': os.environ.get('SEARCH_ENGINE_HOST')             #Dolibarr server:109.205.183.200
     }
 }
 

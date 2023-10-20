@@ -47,7 +47,7 @@
           <button mat-raised-button class="app-button" *ngIf="sel_backup_file"
                     (click)="load_backup()" >Charger</button>
             <button mat-raised-button class="app-button"
-                    (click)="save_backup()" >Enregistrer</button>
+                    (click)="save_backup()" >Faire un backup</button>
 
           <div style="margin-top: 15px" *ngIf="config.infos_server">
             Connexion à la base IMDB: {{config.infos_server.imdb_database_server}}<br>
@@ -101,7 +101,7 @@
 
             <br>
             <mat-slide-toggle [(ngModel)]="config.show_student">Inclure les étudiants</mat-slide-toggle><br><br>
-            <mat-slide-toggle [(ngModel)]="config.config.show_works">Inclure la carrière dans les profils partagés</mat-slide-toggle><br><br>
+            <mat-slide-toggle [(ngModel)]="config.config!.show_works">Inclure la carrière dans les profils partagés</mat-slide-toggle><br><br>
 
             <button mat-raised-button class="app-button" (click)="export_profils('S')">Export FI</button>
             <button mat-raised-button class="app-button" (click)="export_profils('P')">Export FPro</button>
@@ -112,8 +112,8 @@
             <br>
             <button mat-raised-button class="app-button"
                     title="Traitement qualité sur les profils, les expériences et les Awards"
-                    (click)="analyzer('profils,awards,works')">
-                Traitement Qualite
+                    (click)="analyzer('profils,works')">
+                Traitement Qualite des profls
             </button>
 
             <p>Gestion des contributions</p>
@@ -172,16 +172,9 @@
 
 
         <mat-expansion-panel [expanded]="true">
-            <mat-expansion-panel-header>
-
-                Gestion du catalogue de film
-
-            </mat-expansion-panel-header>
-
+            <mat-expansion-panel-header>Gestion des oeuvres=</mat-expansion-panel-header>
 
             <div class="wrap-align" *ngIf="config.values && config.values.catalog">
-
-
                 <mat-checkbox [(ngModel)]="config?.values?.catalog.imdb" >
                     IMDB
                 </mat-checkbox>
@@ -252,7 +245,8 @@
 
                 <button mat-raised-button mat-button
                         title="Traitement qualité des films"
-                        class="app-button" (click)="analyzer('films')">Traitement Qualite
+                        class="app-button" (click)="analyzer('awards,films')">
+                  Traitement Qualite<br>des oeuvres
                 </button>
 
                 <button mat-raised-button class="app-button" (click)="raz('pows')">Effacer les Films</button>

@@ -12,7 +12,8 @@ import {Subject} from "rxjs";
   providedIn: 'root'
 })
 export class ConfigService {
-  visibleTuto: Boolean | boolean=false;
+  expert_mode:boolean=false
+  visibleTuto: Boolean | boolean=false
   user: tUser;
   values: any;
   config:any;

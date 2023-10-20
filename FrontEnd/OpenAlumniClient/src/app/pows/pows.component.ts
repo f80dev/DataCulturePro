@@ -23,8 +23,6 @@ export class PowsComponent implements OnInit {
   limit=100;
   @ViewChild('powAccordion') powAccordion: MatAccordion;
   filter_id: number=0;
-  filter$: Observable<string>;
-  advanced=false;
 
   constructor(public api:ApiService,
               public ngNavigatorShareService:NgNavigatorShareService,
@@ -58,7 +56,7 @@ export class PowsComponent implements OnInit {
 
 
   message: string ="";
-  all: any=true;
+
 
   handle:any;
   onQuery($event: KeyboardEvent) {
@@ -94,8 +92,10 @@ export class PowsComponent implements OnInit {
       }
       if(r.results.length==0 && !this.query.value.endsWith("*")){
         this.handle=setTimeout(()=>{
-          this.query.value=this.query.value+"*"
-          this.refresh()
+          if(this.pows.length==0){
+            this.query.value=this.query.value+"*"
+            this.refresh()
+          }
         },3000)
       }
     },(err)=>{

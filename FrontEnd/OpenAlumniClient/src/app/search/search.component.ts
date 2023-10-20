@@ -9,11 +9,22 @@ import {_prompt, PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {tProfil} from "../types";
+import {animate,  state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.sass']
+  styleUrls: ['./search.component.sass'],
+  animations:[
+    trigger(
+      "moveUp", [
+        state("middle",style({height:"150px"})),
+        state("up",style({height:"10px"})),
+        transition("up <=> middle",animate("400ms ease-in"))
+      ]
+      ),
+
+  ]
 })
 export class SearchComponent implements OnInit {
   profils:tProfil[]=[];
@@ -135,11 +146,12 @@ export class SearchComponent implements OnInit {
             this.router.navigate(["import"]);
           }
 
-          if(search_engine=="search_simple_query_string" && !this.query.value.endsWith("*")){
+          if(search_engine=="search_simple_query_string" && !this.query.value.endsWith("*") && this.profils.length==0){
             clearTimeout(this.handle)
             this.handle=setTimeout(()=>{
-              this.refresh(this.query.value+"*");
-              showMessage(this,"L'usage de l'astérisque permet de faire la recherche sur le début d'un mot")
+              if(this.profils.length==0){
+                this.refresh(this.query.value+"*");
+              }
             },2000)
           }
 
@@ -147,12 +159,13 @@ export class SearchComponent implements OnInit {
             showMessage(this,"Aucun profil ne correspond à cette recherche")
           }
 
-          if(!this.filter_with_pro){
-            this.filter_with_pro=true;
-            this.refresh();
-          }
+          // if(!this.filter_with_pro){
+          //   this.filter_with_pro=true;
+          //   this.refresh();
+          // }
 
         } else {
+          this.toCenter=false;
           if(this.order=="lastname")this.profils.sort((x:any,y:any)=>{if(x.lastname[0]>y.lastname[0])return 1; else return -1;})
           if(this.order=="order_score")this.profils.sort((x:any,y:any)=>{if(x.order_score<y.order_score)return 1; else return -1;})
           if(this.order=="-degree_year")this.profils.sort((x:any,y:any)=>{if(Number(x.degree_year)<Number(y.degree_year))return 1; else return -1;})
@@ -183,6 +196,7 @@ export class SearchComponent implements OnInit {
 
   advanced_search=[];
     placeholder="";
+  toCenter: boolean=true;
 
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);

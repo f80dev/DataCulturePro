@@ -26,9 +26,13 @@ Installation pour fedora
 dnf install certbot
 désactiver le firewall
 certbot certonly --standalone --email hhoareau@gmail.com -d api.f80.fr
+certbot certonly --standalone --email hhoareau@gmail.com -d api.nfluent.io
 certbot certonly --standalone --email hhoareau@gmail.com -d femis.f80.fr
+certbot certonly --standalone --email hhoareau@gmail.com -d homeserver.f80.fr
 mkdir /root/certs_dataculture
 cp /etc/letsencrypt/live/api.f80.fr/* /root/certs_dataculture
+cp /etc/letsencrypt/live/api.nfluent.io/* /root/certs_dataculture
+cp /etc/letsencrypt/live/homeserver.nfluent.io/* /root/certs_dataculture
 </pre>
 test du serveur : https://api.f80.fr/api
 
@@ -38,7 +42,7 @@ test du serveur : https://api.f80.fr/api
 Il peut être nécessaire de netoyer la base prélablement:
 <pre>
 python manage.py flush --settings OpenAlumni.settings 
-python manage.py search_index --rebuild
+python ../manage.py search_index --rebuild --settings OpenAlumni.settings 
 </pre>
 
 ##Installation d'une version locale de mongodb
@@ -77,6 +81,11 @@ Si besoin il est possible de faire cela sur le serveur
 docker run -it openalumni /bin/bash
 
 
+
+#Version d'installation propre :
+voir https://github.com/testdrivenio/django-on-docker
+
+
  
 
 
@@ -112,14 +121,14 @@ docker run --name nifi --memory 1024Mb -p 8443:8443 -v c:/temp/nifi_files:/mnt -
 Executer la commande 
 <pre>
 firewall-cmd --zone=public --add-port=5432/tcp ou ufw allow 5432
-docker rm -f postgres & docker run --name postgres -p 5432:5432  -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
+docker rm -f postgres & docker run --name postgres -p 5432:5432  -v /root/postgre:/var/lib/postgresql/data --restart=always --network=dcpnetwork -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
 </pre>
 ou avec podman
 <pre>
 setenforce 0 
 mkdir /root/postgre
 docker rm -f postgre
-docker run --name postgre -p 5432:5432 --cpus 2 -v /root/postgre:/var/lib/postgresql/data --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
+docker run --name postgre -p 5432:5432 --cpus 2 -v /root/postgre:/var/lib/postgresql/data --network=dcpnetwork --restart=always  -e POSTGRES_PASSWORD=hh4271 -e POSTGRES_DB=alumni_db -e POSTGRES_USER=hhoareau -d postgres:13-alpine
 </pre>
 
 Depuis windows
@@ -152,8 +161,8 @@ démarrer le noeud elasticsearch pour la production
 firewall-cmd --zone=public --add-port=9200/tcp ou ufw allow 9200
 firewall-cmd --zone=public --add-port=9300/tcp ou ufw allow 9300
 docker rm -f elastic_search_server
-Non SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.8.2
-SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+Non SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+SSL: docker run -m 4GB -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" --name elastic_search_server -d docker.elastic.co/elasticsearch/elasticsearch:8.10.2
 </pre>
 
 

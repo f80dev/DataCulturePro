@@ -2,6 +2,20 @@
 <project version="4">
   <component name="PublishConfigData" serverName="home" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="NFluentServer">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="dolibarr">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="home">
         <serverdata>
           <mappings>

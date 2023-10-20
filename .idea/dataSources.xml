@@ -8,13 +8,6 @@
       <jdbc-url>jdbc:postgresql://192.168.1.62:5432/alumni_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgres sur dolibarr" uuid="786321d0-0e56-4e91-b319-3bc996901474">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://109.205.183.200:5432/alumni_db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="@192.168.1.62" uuid="3079bb19-4694-4c3a-b4e6-585441083b7b">
       <driver-ref>mongo</driver-ref>
       <synchronize>true</synchronize>
@@ -45,6 +38,13 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://192.168.1.46:5432/alumni_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="postgres@NFluentServer" uuid="dbc5522c-f40d-4502-ad54-35cd54412294">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://38.242.210.208:5432/alumni_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

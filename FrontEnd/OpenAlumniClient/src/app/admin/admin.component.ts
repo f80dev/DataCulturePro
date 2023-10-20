@@ -170,7 +170,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
     })
   }
 
-  analyzer(ope="profils,films") {
+  analyzer(ope="awards,profils,films") {
     this.message="Traitement qualite sur les "+ope;
     this.api._get("quality_analyzer","ope="+ope).subscribe((r)=>{
       this.message="";
@@ -314,7 +314,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
     this.config.refresh_server()
   }
 
-  async obtain_token() {
+  obtain_token() {
     this.api.checkCode("hhoareau","hh").subscribe({
       next:(r:any)=>{
         this.api.token=r.token

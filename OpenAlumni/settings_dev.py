@@ -212,10 +212,10 @@ WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "alumni_db",
-        "USER": DB_USER,
-        "PASSWORD": DB_PASSWORD,
-        'HOST': '192.168.1.62',
+        "NAME": os.environ.get('DB_NAME'),
+        "USER": os.environ.get('DB_USER'),
+        "PASSWORD": os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -227,7 +227,7 @@ DATABASES = {
 #Utilisation du serveur elasticsearch sur 161.97.75.165:9210
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '192.168.1.62:9200'                  #Serveur prestashop: 173.249.41.158:9210
+        'hosts': os.environ.get('SEARCH_ENGINE_HOST')                   #Serveur prestashop: 173.249.41.158:9210
     },
 }
 

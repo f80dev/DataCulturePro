@@ -9,6 +9,20 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="18f3f0c2-5a1c-419c-82ea-0abf993ae70c" name="dolibarr">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="109.205.183.200" port="22" sshConfigId="db8632c5-1279-46c5-928c-85d8318cbe20" sshConfig="root@109.205.183.200:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="f35a0360-bccc-4388-bab5-dbd1479ef1b2" name="NFluentServer">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="38.242.210.208" port="22" sshConfigId="3d67a1eb-02c3-4d46-8325-a73176d70857" sshConfig="root@38.242.210.208:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

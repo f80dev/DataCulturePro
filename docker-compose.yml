@@ -1,23 +1,65 @@
-version: '3.7'
+#voir https://stackoverflow.com/questions/42811727/django-connection-to-postgres-by-docker-compose
 
+#docker cp elastic_search_server:/usr/share/elasticsearch/data /root/es
+
+#netoyage: docker rm -f openalumni && docker rm -f postgre && docker rm -f elastic_search_server
+#récupération des image
+#docker pull f80hub/openalumni:latest
+
+
+version: '3.7'
 services:
   web:
-    build: .
-    command: bash -c "gunicorn --certfile=/root/certs/localhost.crt --keyfile=/root/certs/localhost.key openalumni.wsgi:application --bind 0.0.0.0:443"
+    restart: always
+    image: f80hub/openalumni:latest
     container_name: openalumni
-    env_file:
-      - ./config/web/web-variables.env
+    networks:
+      - djangonetwork
     volumes:
-      - ./code:/src
-      - ./config/nginx/certs/:/etc/certs
-    expose:
-      - "443"
-
-  nginx:
-    image: f80hub/nginx-openalumni
+      - /root/certs_dataculture:/certs
     ports:
-      - 1337:80
+      - 8000:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=OpenAlumni.settings
+      - DB_HOST=db
+      - DB_NAME=alumni_db
+      - DB_USER=hhoareau
+      - DB_PASSWORD=hh4271
+      - SEARCH_ENGINE_HOST=http://provider.moonbys.cloud:30374
     depends_on:
-        - web
+      - db
+#      - elasticsearch
 
+  db:
+    restart: always
+    image: postgres:13-alpine
+    networks:
+      - djangonetwork
+    container_name: postgre
+    ports:
+      - 5432:5432
+    volumes:
+      - /root/postgre:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=alumni_db
+      - POSTGRES_USER=hhoareau
+      - POSTGRES_PASSWORD=hh4271
 
+#  elasticsearch:
+#    restart: always
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+#    container_name: elasticsearch
+#    networks:
+#      - djangonetwork
+#    ports:
+#      - 9200:9200
+#    environment:
+#      - xpack.security.enabled=false
+#      - discovery.type=single-node
+#    volumes:
+#      - /root/es:/usr/share/elasticsearch/data
+
+networks:
+  djangonetwork:
+    driver:
+      bridge

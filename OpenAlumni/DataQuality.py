@@ -220,12 +220,19 @@ class AwardAnalyzer():
         log("Recherche de doublon sur les récompenses")
         to_delete:[Award]=[]
         a:Award
-        for a in self.awards:
+        for i,a in enumerate(self.awards):
+            if i % 1000==0:log("Traitement de "+str(i)+" enregistrements")
             doublons=Award.objects.filter(pow__id=a.pow_id,festival__id=a.festival_id,year=a.year,description=a.description).all()
             if len(doublons)>1:
-                if a.profil is None:
+                if a.profil is None: #Si la récompense est directement attribué au film elle ne peut exister en double
                     log(a.description + " pour "+a.pow.title+" est en doublon, on le supprime")
                     to_delete.append(a)
+
+                if doublons[0].profil_id==doublons[1].profil_id and doublons[0].description==doublons[1].description:
+                    to_delete(doublons[1])
+
+
+
         log("Traitement terminé")
         return to_delete
 

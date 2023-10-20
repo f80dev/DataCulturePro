@@ -21,15 +21,12 @@
               matSuffix style="cursor: pointer"
               (click)="clearQuery()">cancel</mat-icon>
   </mat-form-field>
-  <mat-icon (click)="advanced=true" *ngIf="!advanced"
-            style="cursor: pointer;margin-bottom: -7px;"
-            title="Recherche en mode avancée">add_circle</mat-icon>
-  <mat-checkbox *ngIf="advanced" [(ngModel)]="all" ><div class="bloc-bouton">Tous les<br>termes</div></mat-checkbox>
+
 
   <br>
   <div style="font-size:medium;opacity: 0.6;"
-       *ngIf="(!query || !query.value || query.value=='') && config?.infos_server?.content">
-    parmi les {{config.infos_server.content!.films}} films référencés
+       *ngIf="(!query || !query.value || query.value=='') && config?.infos_server?.content && pows.length==0">
+    parmi les {{config.infos_server.content!.films}} oeuvres référencées
     <mat-icon style="display: inline-block;margin-bottom: -5px;cursor: pointer;" (click)="open_chart()">bar_chart</mat-icon>
   </div>
 

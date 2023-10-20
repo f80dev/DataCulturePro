@@ -1,0 +1,33 @@
+version: "2.0"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    expose:
+      - port: 9200
+        as: 9200
+        to:
+          - global: true
+    env:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+profiles:
+  compute:
+    elasticsearch:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 1Gi
+        storage:
+          - size: 1Gi
+  placement:
+    dcloud:
+      pricing:
+        elasticsearch:
+          denom: uakt
+          amount: 1000
+deployment:
+  elasticsearch:
+    dcloud:
+      profile: elasticsearch
+      count: 1

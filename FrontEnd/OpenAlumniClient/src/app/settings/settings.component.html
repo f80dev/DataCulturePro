@@ -11,17 +11,23 @@
   <mat-accordion style="display: inline-block;width:90%;max-width: 800px;">
     <mat-expansion-panel  style="text-align: left;" id="pnlGeneral" [expanded]="true">
       <mat-expansion-panel-header>Général</mat-expansion-panel-header>
-      <table style="border-spacing: 5px;">
+      <table style="border-spacing: 20px;">
         <tr>
-          <th>Votre email </th>
+          <th>Votre email</th>
           <td>{{config.user.user.email}}</td>
         </tr>
-        <tr></tr>
         <tr>
           <th>Profil d'utilisateur</th>
           <td>
-            {{config.profils[config.user.profil_name]?.title}}<br>
+            {{config.profils[config.user.profil_name]?.title}}
             <span style="opacity: 0.6">{{config.profils[config.user.profil_name]?.presentation}}</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Mode expert</th>
+          <td>
+            <mat-slide-toggle [ngModel]="config.user.level==1"
+                              (click)="switch_expert_mode()"></mat-slide-toggle>
           </td>
         </tr>
       </table>

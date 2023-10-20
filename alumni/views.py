@@ -355,7 +355,7 @@ def run_backup(request):
 
 
 
-#https://api.f80.fr:8200/api/infos_server
+#https://api.f80.fr:8000/api/infos_server
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def infos_server(request):
@@ -368,6 +368,7 @@ def infos_server(request):
     :return:
     """
     rc=dict()
+    log("début de lecture Infos serveur")
     rc["domain"]={"appli":DOMAIN_APPLI,"server":DOMAIN_SERVER}
     rc["search"]={"server":ELASTICSEARCH_DSL}
     rc["settings_file"]=SETTINGS_FILENAME
@@ -375,6 +376,8 @@ def infos_server(request):
     rc["database"]=DATABASES
     rc["imdb_database_server"]=IMDB_DATABASE_SERVER
     rc["debug"]=DEBUG
+    log("Fin de lecture")
+
     try:
         rc["content"]={
             "articles":Article.objects.count(),
@@ -386,6 +389,7 @@ def infos_server(request):
             "profils":Profil.objects.count()}
         rc["message"]="Tout est ok"
     except:
+        log("Problème de connexion à la base avec "+DB_USER+" / "+DB_PASSWORD)
         rc["message"]="Connexion impossible à la base de données "+rc["database"]
 
     return JsonResponse(rc)
@@ -472,21 +476,7 @@ def init_nft(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def test(request):
-    profil = Profil(
-        firstname='paul',
-        school="FEMIS",
-        lastname="dudule",
-        gender="M",
-        mobile="0619750804",
-        birthdate=datetime(1971,2,4,13,0,0,0),
-        department="",
-        degree_year="2022",
-        address="12 rue martel",
-        town="paris",
-        cp="75010",
-        email="paul.dudule@gmail.com"
-    )
-    return JsonResponse({"result":profil})
+    return JsonResponse({"message":"ok"})
 
 
 
@@ -765,6 +755,12 @@ def quality_filter(request):
     if filter!="*":
         profils=Profil.objects.filter(id=filter,school="FEMIS")
 
+    if "awards" in ope:
+        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
+        to_delete=award_analyzer.find_double()
+        for a in to_delete:
+            a.delete()
+
     if "works" in ope:
         work_analyzer=WorkAnalyzer()
         work_analyzer.remove_bad_work(["?","Elle/lui même","Repérages","Droits","Collaboration"])
@@ -784,12 +780,6 @@ def quality_filter(request):
         if len(report_email)>0:
             sendmail("DataCulture: Traitement qualité sur les profils",report_email,"quality_report.html",{"log":log})
 
-
-    if "awards" in ope:
-        award_analyzer:AwardAnalyzer=AwardAnalyzer(Award.objects.all())
-        to_delete=award_analyzer.find_double()
-        for a in to_delete:
-            a.delete()
 
     if "films" in ope:
         pow_analyzer=PowAnalyzer(PieceOfWork.objects.all())

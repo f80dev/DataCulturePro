@@ -60,4 +60,8 @@ export class SettingsComponent implements OnInit {
     open_movies() {
         this.router.navigate(["pows"])
     }
+
+  switch_expert_mode() {
+    this.config.user.level=this.config.user.level==0 ? 1 : 0
+  }
 }
