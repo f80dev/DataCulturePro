@@ -17,15 +17,20 @@
 
 
     <br>
-    <mat-form-field appearance="fill"
-                    *ngIf="config.hasPerm('write_email')"
-                    style="width:100%;">
-      <mat-label>Votre message pour {{profil?.firstname}}</mat-label>
-      <textarea matInput
-                [rows]="10"
-                [(ngModel)]="text">
-    </textarea>
-    </mat-form-field>
+  <div style="max-width: 800px;width:90%;display: inline-block;">
+    <app-input *ngIf="config.hasPerm('write_email')"
+               value_type="memo" [rows]="10"
+               [showClear]="true"
+               (valueChange)="text=$event"
+               [label]="'Votre message pour '+profil?.firstname+' '+profil.lastname"
+               help="Le message est reçu par email">
+    </app-input>
+  </div>
+  <br>
+
+
+
+
 
     <div *ngIf="social_networks?.length>0" style="display: inline-block;">
        <mat-form-field class="app-field" style="min-width: 200px;">
@@ -37,7 +42,7 @@
       </mat-form-field>
     </div>
     &nbsp; &nbsp; &nbsp;
-    <mat-checkbox [(ngModel)]="send_copy">Recevoir une copie</mat-checkbox>
+    <mat-checkbox [(ngModel)]="send_copy">Recevoir une copie sur mon mail</mat-checkbox>
 
     <div>
       <button mat-raised-button

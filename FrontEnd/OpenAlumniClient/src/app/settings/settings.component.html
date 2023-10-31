@@ -8,18 +8,18 @@
 
   <app-tuto label="Cet écran vous présente les informations liées à votre compte d'utilisateur de Data Culture"></app-tuto>
 
-  <mat-accordion style="display: inline-block;width:90%;max-width: 800px;">
+  <mat-accordion style="display: inline-block;width:90%;max-width: 800px;" *ngIf="config && config.user">
     <mat-expansion-panel  style="text-align: left;" id="pnlGeneral" [expanded]="true">
       <mat-expansion-panel-header>Général</mat-expansion-panel-header>
       <table style="border-spacing: 20px;">
         <tr>
           <th>Votre email</th>
-          <td>{{config.user.user.email}}</td>
+          <td >{{config.user.user.email}}</td>
         </tr>
         <tr>
           <th>Profil d'utilisateur</th>
           <td>
-            {{config.profils[config.user.profil_name]?.title}}
+            {{config.profils[config.user.profil_name]?.title}}<br>
             <span style="opacity: 0.6">{{config.profils[config.user.profil_name]?.presentation}}</span>
           </td>
         </tr>
@@ -34,7 +34,7 @@
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel  style="text-align: left;" id="pnlPerm">
+    <mat-expansion-panel  style="text-align: left;" id="pnlPerm" *ngIf="config.user.level==1">
       <mat-expansion-panel-header>Permissions associées à votre profil</mat-expansion-panel-header>
       <div style="width: 96%;margin:2%;">
         <app-tuto label="Les permissions permettent de voir tout ce que votre profil vous permet de faire sur DataCulture"></app-tuto>

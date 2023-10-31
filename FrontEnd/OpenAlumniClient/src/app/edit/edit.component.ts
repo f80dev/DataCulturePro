@@ -10,6 +10,7 @@ import {PromptComponent} from "../prompt/prompt.component";
 import {ImageSelectorComponent} from "../image-selector/image-selector.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {EditAwardComponent} from "../edit-award/edit-award.component";
+import {wait_message} from "../hourglass/hourglass.component";
 
 
 export interface Movie {
@@ -75,40 +76,34 @@ export class EditComponent implements OnInit,OnDestroy  {
     this.refresh();
   }
 
-  refresh(){
+  async refresh(){
     $$("Rafraichir les expériences");
-    checkLogin(this,()=>{
+    let isConnected=await checkLogin(this)
+    if(isConnected){
       this.message = "Chargement de votre profil";
-      this.loadProfil(() => {
-        this.loadMovies((data:any[])=>{
-          this.dataSource = new MatTableDataSource<Movie>(data);
-          this.autoAddMovie();
-        });
-
-        this.showAddWork = 0;
-        this.message = "";
-        this.autoAddMovie();
-        this.refresh_job();
-        this.refresh_students();
-        this.refresh_works();
-        this.refresh_awards();
+      await this.loadProfil()
+      let data=await this.loadMovies()
+      this.dataSource = new MatTableDataSource<Movie>(data);
+      this.autoAddMovie();
+      this.showAddWork = 0;
+      this.message = "";
+      this.refresh_job();
+      this.refresh_students();
+      this.refresh_works();
+      this.refresh_awards();
         //this.refresh_relations(); //TODO: a corriger avant de réactiver
-      });
-    },()=>{
+    }else{
       showMessage(this,"Vous devez être connecté pour éditer un profil");
       this.quit();
-    })
-
-
+    }
   }
 
 
 
-  autoAddMovie(){
-    let add=this.routes.snapshot.queryParamMap.get("add");
-    let title=this.routes.snapshot.queryParamMap.get("title");
-    if(add){
-      this.select({title:title,id:add});
+  async autoAddMovie(){
+    let params:any=await getParams(this.routes)
+    if(params.add){
+      this.select({title:params.title,id:params.add});
     }
   }
 
@@ -119,10 +114,9 @@ export class EditComponent implements OnInit,OnDestroy  {
 
 
   refresh_works(){
-    let id=this.routes.snapshot.queryParamMap.get("id")
     this.add_works=[];
     this.works=[];
-    this.api._get("extraworks","profil__id="+id,600).subscribe((r:any)=>{
+    this.api._get("extraworks","profil__id="+this.profil.id,600).subscribe((r:any)=>{
       $$("Travaux chargés");
       //TODO: ouvrir la fenetre works si non vide
       this.raw_works=r.results;
@@ -155,8 +149,9 @@ export class EditComponent implements OnInit,OnDestroy  {
   }
 
 
-  loadProfil(func=null){
-    getParams(this.routes).then((params:any)=>{
+  loadProfil(){
+    return new Promise<any>(async (resolve)=> {
+      let params:any=await getParams(this.routes)
       if(!params.hasOwnProperty("id"))this.quit();
       $$("Chargement du profil & des travaux");
       this.api._get("extraprofils/"+params["id"]+"/","").subscribe((p:any)=>{
@@ -189,24 +184,23 @@ export class EditComponent implements OnInit,OnDestroy  {
           }
         }
 
-        if(func)func();
+        resolve(true)
       });
     })
   }
 
 
 
-  loadMovies(func) {
-    let rc=[];
-    this.api.getPOW().subscribe((r:any)=>{
-      for(let i of r.results){
-        if(i.owner=="public" || this.config.user==null || this.config.user.user==null || i.owner==this.config.user.user.id){
-          i["sel"]="";
-          rc.push(i);
+  async loadMovies() {
+    return new Promise<any[]>((resolve)=>{
+      let rc=[];
+      this.api._get("extraprofils/"+this.profil.id+"/").subscribe((r:any)=>{
+        for(let w of r.works){
+          rc.push(w);
         }
-      }
-      func(rc);
-    });
+        resolve(rc)
+      });
+    })
   }
 
 
@@ -576,6 +570,14 @@ export class EditComponent implements OnInit,OnDestroy  {
   cancel() {
     this.showAddWork=0;
     this.refresh_works();
+  }
+
+  apply_quality() {
+    wait_message(this,"Traitement qualité en cours")
+    this.api._get("quality_analyzer","filter="+this.profil.id+"&ope=profils").subscribe(()=>{
+      wait_message(this)
+      this.loadProfil()
+    })
   }
 }
 

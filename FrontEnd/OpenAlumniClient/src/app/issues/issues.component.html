@@ -1,40 +1,71 @@
 <div class="mainform">
 
   <h2>Remonter un problème / une proposition d'évolution</h2>
- <div style="width:80%;max-width: 350px;display: inline-block;text-align: center;">
-   <app-input label="Titre" [value]="title" (valueChange)="title=$event"
-              value_type="text" width="100%"
-              help="Résumez en 3 ou 4 mots le problème"></app-input>
+ <div style="width:80%;max-width: 650px;display: inline-block;text-align: center;">
+
+   <br>
+   <div *ngIf="title.length>0 && description.length>0">
+     <button mat-raised-button class="app-button"
+             color="primary"
+             (click)="send()">
+       Envoyer
+     </button>
+     <button mat-raised-button
+             class="app-button"
+             (click)="quit()">
+       Annuler
+     </button>
+   </div>
    <br>
 
-   <app-input label="Localisation" [value]="localisation" (valueChange)="localisation=$event"
-              value_type="text"width="100%"
-              help="Indiquer le nom de l'écran concerné ou l'adresse (url) de la page"></app-input>
+
+   <mat-tab-group class="mat-body-2">
+     <mat-tab label="Dysfonctionnement">
+       <br>
+       <app-input label="Sujet" [value]="title" (valueChange)="title=$event"
+                  value_type="text" width="100%"
+                  help="Résumez en 3 ou 4 mots le problème"></app-input>
+
+       <app-input label="Localisation" [value]="localisation" (valueChange)="localisation=$event"
+                  value_type="text"width="100%"
+                  help="Indiquer le nom de l'écran concerné ou l'adresse (url) de la page"></app-input>
+
+       <br>
+       <app-input label="Description du problème" [value]="description" (valueChange)="description=$event"
+                  value_type="memo" [cols]="20" [rows]="3" width="100%"
+                  ></app-input>
+       <br>
+       <app-upload-file extensions=".jpg,.png,.gif" [zone]="true"
+                        [maxsize]="1000000000"
+                        width="95%" height="500px" (uploaded)="upload_screen($event)">
+         Déposer une impression d'écran
+       </app-upload-file>
+
+     </mat-tab>
+     <mat-tab label="Proposition d'évolution">
+       <br>
+       <app-input label="Sujet" [value]="title" (valueChange)="title=$event"
+                  value_type="text" width="100%"
+                  help="Résumez en 3 ou 4 mots le problème"></app-input>
+       <br>
+       <app-input label="Description de l'évolution" [value]="description" (valueChange)="description=$event"
+                  value_type="memo" [cols]="20" [rows]="3" width="100%"
+                  ></app-input>
+     </mat-tab>
+   </mat-tab-group>
+
+
    <br>
 
-   <app-input label="Description" [value]="description" (valueChange)="description=$event"
-              value_type="memo" [cols]="20" [rows]="3" width="100%"
-              help="Résumez en 3 ou 4 mots le problème"></app-input>
+
    <br>
 
-   <app-upload-file extensions=".jpg,.png,.gif" [zone]="true"
-                    [maxsize]="1000000000"
-                    width="100%" height="500px" (uploaded)="upload_screen($event)">
-     Déposer une impression d'écran
-   </app-upload-file>
+
+
+
 
  </div>
 
-  <br><br><br><br>
-  <button mat-raised-button
-          mat-button class="app-button"
-          (click)="send()">
-    Envoyer
-  </button>
-  <button mat-raised-button
-          mat-button class="app-button"
-          (click)="quit()">
-    Annuler
-  </button>
+
 
 </div>

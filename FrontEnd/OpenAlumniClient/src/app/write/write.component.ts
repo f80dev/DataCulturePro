@@ -29,8 +29,8 @@ export class WriteComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
-    checkLogin(this,()=>{
+  async ngOnInit() {
+    if(await checkLogin(this,"login")){
       if(this.config.user.profil){
         this.api._get("profils/"+this.config.user.profil+"/").subscribe((p:any)=>{
           for(let sn of ["facebook","youtube","tiktok","vimeo","instagram","telegram","twitter","linkedin"]){
@@ -59,7 +59,7 @@ export class WriteComponent implements OnInit {
           }
         });
       })
-    });
+    }
   }
 
 

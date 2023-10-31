@@ -55,7 +55,6 @@ import { SplashComponent } from './splash/splash.component';
 import { WriteComponent } from './write/write.component';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import { StatsComponent } from './stats/stats.component';
-import {ImageCropperModule} from 'ngx-image-cropper';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -63,7 +62,6 @@ import {MatListModule} from '@angular/material/list';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { PowsComponent } from './pows/pows.component';
-//import {NgChatModule} from 'ng-chat';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {MatRadioModule} from '@angular/material/radio';
 import { DevComponent } from './dev/dev.component';
@@ -97,6 +95,7 @@ import { InputComponent } from './input/input.component';
 import { FestivalsComponent } from './festivals/festivals.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
 import { FileDragNDropDirective } from './file-drag-ndrop.directive';
+import {QuillEditorComponent, QuillModule} from "ngx-quill";
 
 @NgModule({
   declarations: [
@@ -155,15 +154,15 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         HttpClientModule,
         //MglTimelineModule,
         ScrollingModule,
-        // QuillModule.forRoot({
-        //     modules: {
-        //         syntax: false,
-        //     },
-        //     theme: 'snow',
-        //     format: 'html',
-        //     readOnly: false,
-        //     placeholder: 'votre article ici'
-        // }),
+        QuillModule.forRoot({
+            modules: {
+                syntax: false,
+            },
+            theme: 'snow',
+            format: 'html',
+            readOnly: false,
+            placeholder: 'votre article ici'
+        }),
         BrowserAnimationsModule,
         ReactiveFormsModule,
         MatNativeDateModule,
@@ -202,7 +201,8 @@ import { FileDragNDropDirective } from './file-drag-ndrop.directive';
         ShareIconsModule,
         NgxJsonViewerModule,
         MatSlideToggleModule,
-        GoogleSigninButtonModule
+        GoogleSigninButtonModule,
+        QuillEditorComponent
     ],
   providers: [
     ApiService,

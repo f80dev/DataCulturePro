@@ -43,13 +43,13 @@ export class StatsComponent implements OnInit {
     this.domain_server=environment.domain_server;
   }
 
-  ngOnInit(): void {
-    checkLogin(this,()=>{
+  async ngOnInit() {
+    if(await checkLogin(this,"search")){
       this.api._get("api_doc").subscribe((r:any)=>{
         this.rows=r.content;
         this.refresh()
       })
-    });
+    }
   }
 
   refresh(){

@@ -23,18 +23,17 @@ export class ProfilesComponent implements OnInit {
               public dialog:MatDialog,
               public _location:Location,
               public config:ConfigService,
-              public router:Router) { }
+              public router:Router) {}
 
-  ngOnInit(): void {
-    checkLogin(this,()=>{
+  async ngOnInit() {
+    if(await checkLogin(this,"search")){
       this.profils=Object.values(this.config.profils);
-    });
+    }
   }
 
 
   sel_profil(p) {
     if(p.subscription=="online") {
-
       this.config.user.perm = p.perm;
       this.config.user.profil_name = p.id;
       this.api.setuser(this.config.user.user).subscribe(() => {
@@ -43,8 +42,6 @@ export class ProfilesComponent implements OnInit {
       }, (err) => {
         showError(this, err);
       });
-
-
     }else{
       this.api.ask_perm(this.config.user,p.id).subscribe(()=>{
         showMessage(this,"Votre demande d'accès au profil a été transmise.");
@@ -52,7 +49,6 @@ export class ProfilesComponent implements OnInit {
       })
     }
   }
-
 
 
   show_perm(profilid) {

@@ -23,7 +23,7 @@ export class LoginbarComponent implements OnInit {
     search: {label:"Annuaire",title:"Consultation de l'annuaire",icon:"people_alt",queryParam:{},actif:true},
     pows: {label:"Films",title:"Voir les oeuvres des anciens",icon:"movie",queryParam:{},actif:true},
     festivals: {label:"Récompenses",title:"Voir les festivals qui récompense les anciens de la FEMIS",icon:"emoji_events",queryParam:{},actif:false},
-    blog: {label:"Actualités",title:"Voir le blog",icon:"rss_feed",queryParam:{},actif:false},
+    blog: {label:"Actualités",title:"Voir le blog",icon:"rss_feed",queryParam:{},actif:true},
     edit: {label:"Mon profil",title:"Editer votre profil",icon:"build",queryParam:{id:this.config.user?.profil},actif:false},
     htmledit: {label:"Publier",title:"Rédiger un article",icon:"history_edu",queryParam:{},actif:false},
     addpow: {label:"Catalogue",title:"Ajouter des films dans le catalogue",icon:"videocam",queryParam:{owner:'public'},actif:false},

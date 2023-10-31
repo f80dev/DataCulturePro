@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {$$, showError, showMessage} from "../tools";
+import {$$, setParams, showError, showMessage} from "../tools";
 import {NgNavigatorShareService} from "ng-navigator-share";
 import {ClipboardService} from "ngx-clipboard";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -56,7 +56,7 @@ export class ProfilComponent implements OnChanges {
   }
 
   editProfil(profil:any) {
-    this.router.navigate(['edit'],{queryParams:{id:profil.id}})
+    this.router.navigate(['edit'],{queryParams:{p:setParams({id:profil.id},"","")}})
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -64,7 +64,7 @@ export class ProfilComponent implements OnChanges {
   }
 
   write(profil:any) {
-    this.router.navigate(["write"],{queryParams:{id:profil.id}})
+    this.router.navigate(["write"],{queryParams:{p:setParams({id:profil.id},"","")}})
   }
 
   deleteProfil(profil: any) {

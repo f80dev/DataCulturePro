@@ -109,9 +109,15 @@ class ProfilAnalyzer:
                 profil.lastname=profil.lastname.upper()
 
             if profil.links:
-                if len(profil.links)>len(list({v['url']:v for v in profil.links}.values())):
+                urls_to_keep=set([v['text'].lower() for v in profil.links])
+                if len(profil.links)>len(urls_to_keep):
                     log("Suppression des doublons dans links")
-                    profil.links=list({v['url']:v for v in profil.links}.values())
+                    rc=[]
+                    for l in profil.links:
+                        if l["text"].lower() in urls_to_keep:
+                            urls_to_keep.remove(l["text"].lower())
+                            rc.append(l)
+                    profil.links=rc
                     bSave=True
             else:
                 profil.links=[]

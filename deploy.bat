@@ -14,7 +14,7 @@ echo "Déploiement du serveur sur le Prestashop Server"
 cd C:\Users\hhoar\IdeaProjects\DataCulturePro
 copy Dockerfile-prod Dockerfile
 docker build -t f80hub/openalumni . & docker push f80hub/openalumni:latest
-putty -pw %1 -ssh root@109.205.183.200 -m "install_server"
+putty -pw %1 -ssh root@38.242.210.208 -m "install_server"
 
 echo "Backup de la base de données"
 python -Xutf8 manage.py dumpdata --settings OpenAlumni.settings > db_backup_prod.json

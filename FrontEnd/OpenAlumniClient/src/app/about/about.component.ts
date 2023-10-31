@@ -12,13 +12,14 @@ export class AboutComponent implements OnInit {
   appVersion: any;
 
 
+  constructor(public config:ConfigService,
+              public router:Router) {
 
-  constructor(public config:ConfigService,public router:Router) {
-    this.config.init();
-    this.appVersion=environment.appVersion;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.config.init();
+    this.appVersion=environment.appVersion;
   }
 
   openFrame(forum: any) {

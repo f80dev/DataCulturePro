@@ -23,10 +23,10 @@ export class SettingsComponent implements OnInit {
     public config:ConfigService
   ) { }
 
-  ngOnInit(): void {
-    checkLogin(this,()=>{
+  async ngOnInit() {
+    if(await checkLogin(this)){
       this.show_perm=detailPerm(this.config.user.perm,this.config.perms,"html");
-    });
+    }
   }
 
   open_perms(){
@@ -62,6 +62,8 @@ export class SettingsComponent implements OnInit {
     }
 
   switch_expert_mode() {
-    this.config.user.level=this.config.user.level==0 ? 1 : 0
+    if(this.config && this.config.user){
+      this.config.user.level=!this.config.user.level ||this.config.user.level==0 ? 1 : 0
+    }
   }
 }

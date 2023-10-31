@@ -113,6 +113,9 @@ perms:
   - tag: stats
     description: à la consultation des statistiques de l'école
 
+  - tag: quality
+    description: à l'usage des traitements qualités applicable aux données
+
   - tag: r_department
     description: à la formation du profil
 

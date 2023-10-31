@@ -312,7 +312,7 @@
               </mat-icon>
 
               <mat-icon *ngIf="!work.public"
-                        style="cursor: pointer;font-size: medium;width: 20px;"
+                        style="cursor: pointer;font-size: medium;width: 20px;opacity:0.7;"
                         name="cmdVisibilityOff"
                         title="Cette expérience est privée (seule vous pouvez la connaitre)"
                         (click)="_private(work)">
@@ -420,12 +420,21 @@
       <br>
     </div>
 
+    <button mat-icon-button
+            class="icon-button"
+            id="cmdQuality"
+            title="Traitement qualité appliqué à la fiche"
+            *ngIf="works?.length>0 && config.hasPerm('quality')"
+            (click)="apply_quality()">
+      <mat-icon style="font-size: x-large;">shower</mat-icon>
+    </button>
+
 
     <button mat-icon-button
             class="icon-button"
             id="cmdDeletePows"
             title="Efface les films"
-            *ngIf="works?.length>0 && config.hasPerm('add_movies')"
+            *ngIf="works?.length>0 && config.hasPerm('del_movies')"
             (click)="delete_pows()">
       <mat-icon style="font-size: x-large;">delete</mat-icon>
     </button>

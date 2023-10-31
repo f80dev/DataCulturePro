@@ -14,6 +14,8 @@ export interface tUser {
     dtCreate: string
 }
 
+
+
 export interface tProfil {
     id: string
 
@@ -81,16 +83,17 @@ export interface tProfil {
 }
 
 export interface tArticle {
-    id: string,
+    id: string | undefined,
     owner: string
     validate: boolean
-    html: string
     title: string
-    sumary: string
-    dtPublish: string
-    dtCreate : string
+    dtPublish: string | undefined
+    dtCreate : string | undefined
     tags: string
     to_publish: boolean
+  content: string
+  visual: string
+  summary: string
 }
 
 

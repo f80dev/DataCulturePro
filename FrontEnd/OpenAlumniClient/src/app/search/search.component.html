@@ -21,21 +21,6 @@
 
   <div [@moveUp]="toCenter ? 'middle' : 'up'"></div>
 
-  <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
-       *ngIf="!config.isMobile() && filter_with_pro" >
-    <table style="display: inline-block;width:fit-content;max-width: 1000px;">
-      <tr>
-        <td class="material-icon"><mat-icon class="fi-color">circle</mat-icon></td>
-        <td>Formation intiale</td>
-        <td class="material-icon"><mat-icon class="fc-color">circle</mat-icon></td>
-        <td>Formation professionnelle</td>
-
-        <td *ngIf="config.show_student" class="material-icon"><mat-icon class="fa-color">circle</mat-icon></td>
-        <td *ngIf="config.show_student" >Etudiants</td>
-      </tr>
-    </table>
-  </div>
-
 
 
 <!--  Barre de recherche standard -->
@@ -64,6 +49,8 @@
             id="cmdExpertMode"
             title="Recherche multi-critère"
             (click)="switch_motor()">add_circle</mat-icon>
+
+
 
   <!--  Critère de la recherche avancée -->
   <div *ngIf="advanced_search?.length>0" style="display: flex;margin-left:10%;width:80%;justify-content: center;align-items: center;">
@@ -107,6 +94,21 @@
   </div>
 
 
+  <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
+       *ngIf="!config.isMobile() && filter_with_pro && profils.length>0" >
+    <table style="display: inline-block;width:fit-content;max-width: 1000px;">
+      <tr>
+        <td class="material-icon"><mat-icon class="fi-color">circle</mat-icon></td>
+        <td>Formation intiale</td>
+        <td class="material-icon"><mat-icon class="fc-color">circle</mat-icon></td>
+        <td>Formation professionnelle</td>
+
+        <td *ngIf="config.show_student" class="material-icon"><mat-icon class="fa-color">circle</mat-icon></td>
+        <td *ngIf="config.show_student" >Etudiants</td>
+      </tr>
+    </table>
+  </div>
+
   <div *ngIf="query.value.length<3 || advanced_search.length>0"
        style="width: 100%;text-align: center;" >
     <mat-slide-toggle [(ngModel)]="filter_with_pro" (ngModelChange)="update_pro_filter()">
@@ -145,7 +147,7 @@
 
 
   <!-- Affichage des profils-->
-  <div class="wrap-list" *ngIf="query.value!=''">
+  <div class="wrap-list" >
     <!--  <cdk-virtual-scroll-viewport [itemSize]="50">-->
     <app-profil *ngFor="let profil of profils"
             name="profils" class="app-card"

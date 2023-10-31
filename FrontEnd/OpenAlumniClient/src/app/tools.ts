@@ -152,16 +152,28 @@ export function open_report(report_id:string,_api:any,section="Instant_reports")
 }
 
 
-export function setParams(_d:any,prefix="") : string {
+export function setParams(_d:any,prefix="",param_name="p",domain="") : string {
+  //Encryptage des parametres de l'url
+  //Version 1.0
   let rc=[];
+  _d=JSON.parse(JSON.stringify(_d))
   for(let k of Object.keys(_d)){
     if(typeof(_d[k])=="object")_d[k]="b64:"+btoa(JSON.stringify(_d[k]));
     rc.push(k+"="+encodeURIComponent(_d[k]));
   }
   let url=encrypt(prefix+rc.join("&"));
-  return encodeURIComponent(url);
+  if(domain!=""){
+    if(domain.indexOf("?")>-1){
+      domain=domain+"&"
+    }else{
+      domain=domain+"?"
+    }
+  }
+  if(param_name!="")
+    return domain+param_name+"="+encodeURIComponent(url);
+  else
+    return domain+encodeURIComponent(url);
 }
-
 
 function analyse_params(params:string):any {
   let _params=decrypt(decodeURIComponent(params)).split("&");
@@ -186,33 +198,39 @@ function analyse_params(params:string):any {
   return rc;
 }
 
-export function getParams(routes:ActivatedRoute,local_setting_params="") {
+export function getParams(routes:ActivatedRoute,local_setting_params="",force_treatment=false) {
+  //Decryptage des parametres de l'url
+  //Version 1.0
   return new Promise((resolve, reject) => {
-    routes.queryParams.subscribe((params:any) => {
-      if(params.hasOwnProperty("param")){
-        let rc=analyse_params(decodeURIComponent(params["param"]));
-        if(local_setting_params.length>0)localStorage.setItem(local_setting_params,params["param"]);
-        resolve(rc);
-      } else {
-        if(local_setting_params.length>0){
-          params=localStorage.getItem(local_setting_params)
-          if(params){
-            let rc=analyse_params(params);
-            resolve(rc);
+
+    routes.queryParams.subscribe({next:(ps:any) => {
+        if(ps==null && local_setting_params.length>0){
+          ps=localStorage.getItem(local_setting_params)
+        }
+
+        if(ps){
+          if(ps.hasOwnProperty("p")){
+            let temp:any=analyse_params(decodeURIComponent(ps["p"]));
+            for(let k of Object.keys(ps)){
+              if(k!="p"){
+                temp[k]=ps[k];
+              }
+            }
+            ps=temp;
+            $$("Analyse des paramètres par la fenetre principale ", ps);
           }
         }
 
-        $$("Param n'est pas présent dans les parametres, on fait une analyse standard")
-        if(params){
-          resolve(params);
+        if(!ps) {
+          if (force_treatment) {resolve({})}else{reject()}
         }else{
-          reject();
+          if(local_setting_params.length>0)localStorage.setItem(local_setting_params,ps["p"]);
+          resolve(ps);
         }
-      }
-    },(err)=>{
-      $$("!Impossible d'analyser les parametres de l'url");
-      reject(err);
-    })
+      },error:(err)=>{
+        $$("!Impossible d'analyser les parametres de l'url");
+        reject(err);
+      }})
   });
 }
 
@@ -974,20 +992,19 @@ export function checkConfig(vm:any) {
   }
 }
 
-export function checkLogin(vm, func_success=null,func_abort=null,redirect="search" ,params= {}) {
-  setTimeout(() => {
-    if (vm.config.user == null || vm.config.user.user == null || vm.config.user.user.email == "") {
-      if (func_abort){
-        func_abort();
-      }else{
-        if(vm.router)vm.router.navigate([redirect], {queryParams: params});
+export function checkLogin(vm, redirect="" ,params= {}) {
+  return new Promise<boolean>((resolve)=>{
+    setTimeout(() => {
+      if (vm.config.user == null || vm.config.user.user == null || vm.config.user.user.email == "") {
+        resolve(false)
+        if(redirect!=""){
+          if(vm.router)vm.router.navigate([redirect], {queryParams: params});
+        }
+      } else {
+        resolve(true)
       }
-      return false;
-    } else {
-      if (func_success) func_success();
-      return true;
-    }
-  }, 1000);
+    }, 1000);
+  })
 }
 
 export function openGraphForShop(idshop:string,_type="coupon",domain_server="https://api.f80.fr"){

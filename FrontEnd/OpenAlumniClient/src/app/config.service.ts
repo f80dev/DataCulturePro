@@ -62,16 +62,17 @@ export class ConfigService {
 
 
   private async getConfig(): Promise<any> {
-    if (!this.config) {
-      this.api.getyaml("",environment.config_file).subscribe({
-        next:(r:any)=>{
-          this.config=r
-          this.refresh_server()
-        }
-      });
-      $$("Chargement de la configuration "+environment.name);
-    }
-    return Promise.resolve(this.config);
+    return new Promise((resolve, reject) => {
+        this.api.getyaml("", environment.config_file).subscribe({
+          next: (r: any) => {
+            this.config = r
+            this.refresh_server()
+            resolve(r)
+          },
+          error:()=>{reject()}
+        });
+        $$("Chargement de la configuration " + environment.name);
+    })
   }
 
 

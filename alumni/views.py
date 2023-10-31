@@ -178,8 +178,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [AllowAny]
-    filter_backends = (SearchFilter,)
+    filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields = ["owner","tags"]
+    filterset_fields=("owner",)
 
 
 
@@ -221,7 +222,6 @@ class AwardViewSet(viewsets.ModelViewSet):
 class ExtraAwardViewSet(viewsets.ModelViewSet):
     """
     voir https://api.f80.fr:8100/api/extraawards/?format=json&profil=3017
-
     """
     queryset = Award.objects.all().order_by("-year")
     serializer_class = ExtraAwardSerializer
@@ -427,7 +427,6 @@ def update_extrauser(request):
         return JsonResponse({"message":"Profil FEMIS lié"})
 
     return JsonResponse({"message": "Pas de profil FEMIS identifié"})
-
 
 
 
@@ -1652,6 +1651,7 @@ class ProfilDocumentView(DocumentViewSet):
     simple_query_string_search_fields = {
         'lastname': {'boost': 4},
         'department_category': {'boost': 4},
+        'department_pro': {'boost': 3},
         'degree_year': {'boost': 4},
         'firstname': {'boost': 1},
         'department': {'boost': 3},

@@ -8,14 +8,15 @@ import {MatChipInputEvent} from "@angular/material/chips";
 import {ApiService} from "../api.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfigService} from "../config.service";
-import {checkLogin, showError, showMessage} from "../tools";
+import {$$, checkLogin, getParams, showError, showMessage} from "../tools";
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PromptComponent} from "../prompt/prompt.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ImageSelectorComponent} from "../image-selector/image-selector.component";
+import {tArticle} from "../types";
 
-
+//voir https://stackoverflow.com/questions/57631897/integrating-quill-text-editor-in-an-angular-application
 @Component({
   selector: 'app-html-editor',
   templateUrl: './html-editor.component.html',
@@ -54,18 +55,19 @@ export class HtmlEditorComponent implements OnInit {
       map((tag: string | null) => tag ? this._filter(tag) : this.allTags.slice()));
   }
 
-  ngOnInit(): void {
-    checkLogin(this,()=>{
+  async ngOnInit() {
+    if(await checkLogin(this,"login")){
+      let params:any=await getParams(this.routes)
       this.editorContent=localStorage.getItem("article_content");
       if(!this.editorContent || this.editorContent=="null")this.editorContent="";
-      if(this.routes.snapshot.queryParamMap.has("article")){
-        this.api._get("/articles/"+this.routes.snapshot.queryParamMap.get("article")).subscribe((article:any)=>{
+      if(params.article){
+        this.api._get("/articles/"+params.article).subscribe((article:any)=>{
           this.title=article.title;
           this.editorContent=article.html;
           this.resumer=article.sumary;
         })
       }
-    });
+    }
   }
 
 
@@ -125,23 +127,28 @@ export class HtmlEditorComponent implements OnInit {
     return this.allTags.filter(fruit => fruit.toLowerCase().indexOf(filterValue) === 0);
   }
 
-  create_article(to_publish=false){
-    return {
+  create_article(to_publish=false,to_insert=true) : tArticle{
+    let rc:tArticle= {
+      visual: "",
+      id: null,
+      dtCreate: null,
+      dtPublish: null,
       content: this.editorContent,
-      title:this.title,
-      sumary:this.resumer,
+      title: this.title,
+      summary: this.resumer,
       owner: this.config.user.user.id,
       validate: false,
-      tags:this.tags.join(" "),
-      to_publish:to_publish
+      tags: this.tags.join(" "),
+      to_publish: to_publish
     }
+    return rc
   }
 
 
   save(id=null,func=null) {
-    debugger
     let body= this.create_article();
     if(!id || id=="null"){
+      $$("Ajout d'un nouvel article")
       this.api._post("articles","",body).subscribe((r:any)=>{
         localStorage.setItem("article_id",r.id);
         showMessage(this,"Nouvel Article enregistré");
@@ -150,6 +157,7 @@ export class HtmlEditorComponent implements OnInit {
         showError(this,err);
       });
     } else {
+      $$("Mise a jour d\\'un article existant")
       this.api._put("articles/"+id+"/","",body).subscribe((r:any)=>{
         showMessage(this,"Article modifié");
         if(func)func(id);
