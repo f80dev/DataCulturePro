@@ -17,15 +17,18 @@ services:
       - djangonetwork
     volumes:
       - /root/certs_dataculture:/certs
+      - /root/dcp_logs:/logs
     ports:
       - 8000:8000
     environment:
       - DJANGO_SETTINGS_MODULE=OpenAlumni.settings
+      - IMDB_DATABASE_SERVER=mongodb://root:hh4271@38.242.210.208:27017/
       - DB_HOST=db
       - DB_NAME=alumni_db
       - DB_USER=hhoareau
       - DB_PASSWORD=hh4271
-      - SEARCH_ENGINE_HOST=http://provider.moonbys.cloud:30374
+      - SEARCH_ENGINE_HOST=http://provider.d3akash.cloud:30754
+      - DEBUG=False
     depends_on:
       - db
 #      - elasticsearch

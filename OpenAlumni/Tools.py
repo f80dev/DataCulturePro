@@ -345,6 +345,24 @@ def log(text:str,sep='\n'):
     return text
 
 
+def get_perms_for_profil(profil_id:str):
+    """
+    Retourne les permissions d'un profil
+    :param profil_id:
+    :return:
+    """
+    perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
+    perm=""
+    for p in perms["profils"]:
+        if p["id"] == profil_id:
+            perm = p["perm"]
+            break
+
+    log("Permission par défaut pour les connectés : " + perm)
+    return perm
+
+
+
 
 def dateToTimestamp(txt):
     """
@@ -623,6 +641,27 @@ def clean_page(code:str,balises=["script","style","path","noscript"]) -> str:
     return code
 
 
+
+def file_duration(filepath:str,unite: str="day") -> int:
+    """
+    Evalue depuis combien de jour un fichier a été modifié
+    :param filepath:
+    :unite indique
+    :return:
+    """
+    if not exists(filepath): return 1e18
+
+    scale=3600*24
+    if unite=="hrs": scale=3600
+    if unite=="min": scale=60
+
+    delay=(datetime.datetime.now().timestamp()-stat(filepath).st_mtime)/(scale)
+    return int(delay)
+
+
+
+
+
 def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
               agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
               offline=False,
@@ -650,10 +689,7 @@ def load_page(url:str,refresh_delay=31,save=True,bot=None,timeout=3600,
                 with py7zr.SevenZipFile(PAGEFILE_PATH + "/html.7z", 'r') as archive:
                     archive.extract(path=PAGEFILE_PATH,targets=filename)
 
-        if exists(PAGEFILE_PATH +  filename):
-            delay=(datetime.datetime.now().timestamp()-stat(PAGEFILE_PATH +filename).st_mtime)/(3600*24)
-        else:
-            delay = 0
+        delay=file_duration(PAGEFILE_PATH+filename,"day")
 
     if  isWindows() and exists(PAGEFILE_PATH + filename) and delay<refresh_delay:
         #log("Utilisation du fichier cache "+filename+" pour "+url)

@@ -8,7 +8,7 @@ from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework.validators import UniqueValidator
 from rest_framework_csv.renderers import CSVRenderer
 
-from OpenAlumni.Tools import reset_password, log, sendmail
+from OpenAlumni.Tools import reset_password, log, sendmail, get_perms_for_profil
 from alumni.documents import ProfilDocument, PowDocument, FestivalDocument
 from alumni.models import Profil, ExtraUser, PieceOfWork, Work, Article, Company, Award, Festival
 
@@ -48,13 +48,22 @@ class UserSerializer(HyperlinkedModelSerializer):
         if not "first_name" in data:data["first_name"]=data["email"].split(".")[0]
         if not "last_name" in data:data["last_name"]="a compléter"
 
-        user = User.objects.create_user(
+        user:User = User.objects.create_user(
             username=data["username"],
             password=password,
             email=data["email"],
             first_name=data["first_name"],
-            last_name=data["last_name"],
+            last_name=data["last_name"]
         )
+        log("On recherche le mail dans les anciens")
+        profils_associes=Profil.objects.filter(email__iexact=data["email"])
+        if len(profils_associes)==1:
+            extra_user:ExtraUser=ExtraUser.objects.filter(user_id=user.id)
+            extra_user.profil=profils_associes[0]
+            extra_user.perms=get_perms_for_profil("student")
+            extra_user.profil_name="student"
+            extra_user.save()
+
         token = Token.objects.create(user=user)
         return user
 
@@ -113,7 +122,8 @@ class WorkSerializer(serializers.ModelSerializer):
                 "duration","comment","job","title","year",
                 "public","creator","id","validate","earning",
                 "score_salary","score_school","score_skill",
-                "source","state"]
+                "source","state","error_notification"
+                ]
 
 
 
@@ -209,7 +219,8 @@ class ProfilDocumentSerializer(DocumentSerializer):
                 "blockchain",
                 "photo","public_photo",
                 "cp",
-                "department","department_pro",
+                "department",
+                "department_pro",
                 "department_category",
                 "address",
                 "town",
@@ -233,7 +244,7 @@ class ExtraWorkSerializer(serializers.ModelSerializer):
     profil=ProfilSerializer(many=False,read_only=True)
     class Meta:
         model=Work
-        fields=["id","profil","pow","duration","comment","job","source","public","score_salary","score_school","score_skill","earning","state"]
+        fields=["id","profil","pow","duration","comment","job","source","public","score_salary","score_school","score_skill","earning","state","error_notification"]
 
 
 class FestivalSerializer(serializers.ModelSerializer):

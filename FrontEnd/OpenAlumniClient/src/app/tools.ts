@@ -270,7 +270,22 @@ export function group_works(wrks) {
 
   let rc=[];
   for(let k of Object.keys(jobs)){ //k pointe les films
-    rc.push({title:pows[k].title,jobs:jobs[k],year:pows[k].year,pow:pows[k].pow,works:works[k],public:pows[k].public})
+    rc.push({
+      title:pows[k].title,
+      jobs:jobs[k],
+      year:pows[k].year,
+      pow:pows[k].pow,
+      works:works[k],
+      public:pows[k].public
+    })
+  }
+
+  for(let item of rc){
+    item.error_notification=""
+    for(let w of wrks){
+      if(item.works.indexOf(w.id)>-1)
+        item.error_notification=item.error_notification+w.error_notification
+    }
   }
 
   rc.sort((a, b) => {

@@ -14,11 +14,12 @@ from django.db import models
 # Create your models here.
 #Mise a jour du model : python manage.py makemigrations
 from django.db.models import Model, CASCADE, JSONField, SET_NULL
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_elasticsearch_dsl.registries import registry
 
-from OpenAlumni.Tools import now, log
+from OpenAlumni.Tools import now, log, get_perms_for_profil
+
 
 def eval_field(s,score=1):
     """
@@ -260,15 +261,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     """
     if created:
         log("Creation de l'extrauser associé")
-        perms = yaml.safe_load(open(STATIC_ROOT + "/profils.yaml", "r", encoding="utf-8").read())
-        perm=""
-        for p in perms["profils"]:
-            if p["id"] == DEFAULT_PERMS_PROFIL:
-                perm = p["perm"]
-                break
-
-        log("Permission par défaut pour les connectés : " + perm)
-        ExtraUser.objects.create(user=instance,perm=perm,profil_name=DEFAULT_PERMS_PROFIL)
+        ExtraUser.objects.create(user=instance,perm=get_perms_for_profil(DEFAULT_PERMS_PROFIL),profil_name=DEFAULT_PERMS_PROFIL)
     else:
         pass
 
@@ -276,6 +269,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.extrauser.save()
+
+@receiver(pre_delete, sender=User)
+def delete_user_profile(sender, instance, **kwargs):
+    instance.extrauser.delete()
 
 
 class Work(models.Model):
@@ -302,6 +299,7 @@ class Work(models.Model):
     earning=models.IntegerField(default=None,null=True,help_text="Revenu percu brut pour la durée annoncée")
     source=models.CharField(max_length=100,null=False,default="",help_text="source ayant permis d'identifier le projet : imdb, unifrance, lefilmfrancais, bellefaye, manuel")
     validate=models.BooleanField(default=False,help_text="!Indique si l'expérience est validé ou pas")
+    error_notification=models.CharField(max_length=150,null=False, blank=True,default="",help_text="Message pour signaler une erreur")
 
     score_salary=models.IntegerField(default=None,null=True,help_text="Votre revenu correspondait t'il à vos attentes (1-4)")
     score_school=models.IntegerField(default=None,null=True,help_text="La formation à la FEMIS vous a t'elle aidé pour ce travail (1-4)")

@@ -10,6 +10,9 @@ perms:
   - tag: admin
     description: à la console d'administration
 
+  - tag: edit_work
+    description: éditer les expériences
+
   - tag: firstname
     description: au prénom
 
@@ -97,6 +100,12 @@ perms:
 
   - tag: r_cp
     description: au code postal de l'adresse
+
+  - tag: r_movie_awards
+    description: aux nominations et récompenses des films
+
+  - tag: r_profil_awards
+    description: aux nominations et récompenses des profils
 
   - tag: mobile
     description: au numéro de mobile du candidat

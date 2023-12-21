@@ -50,7 +50,7 @@ ALLOWED_HOSTS = [
     "api.f80.fr",
     "localhost",
     "127.0.0.1",
-    "testdcp.f80lab.com"
+    "dcp.f80.fr"
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
@@ -70,8 +70,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
-    'sslserver',
     'django_elasticsearch_dsl',
     'django_filters',
     'django_archive',
@@ -285,7 +283,7 @@ USE_L10N = True
 USE_TZ = True
 
 IMDB_DATABASE_SERVER="mongodb://root:hh4271@192.168.1.62:27017/"
-IMDB_FILES_DIRECTORY="i:/temp/imdb_files/"
+IMDB_FILES_DIRECTORY=STATIC_ROOT+"/imdb_files/"
 
 EMAIL_HOST ="smtp-mail.outlook.com"
 EMAIL_PORT = 587

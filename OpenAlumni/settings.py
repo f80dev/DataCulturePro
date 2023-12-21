@@ -15,7 +15,6 @@ from OpenAlumni.passwords import DB_PASSWORD, _SECRET_KEY, DB_USER
 import os
 
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import datetime
 
@@ -44,7 +43,7 @@ ALLOWED_HOSTS = [
     "api.f80.fr",
     "localhost",
     "127.0.0.1",
-    "dcp.f80lab.com"
+    "dcp.f80.fr"
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -71,7 +70,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_archive',
     'django_elasticsearch_dsl_drf',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles'
 ]
 
 
@@ -110,8 +109,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
-
+#WSGI_APPLICATION = 'OpenAlumni.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -162,7 +160,7 @@ DATABASES = {
         "NAME": os.environ.get('DB_NAME'),
         "USER": os.environ.get('DB_USER'),
         "PASSWORD": os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),              #Dolibarr server:109.205.183.200
+        'HOST': os.environ.get('DB_HOST'),
         'PORT': '5432',
         'OPTIONS': {
             'options': '-c statement_timeout=50000'
@@ -173,7 +171,7 @@ DATABASES = {
 #Pour l'installation d'delastic search voir le README
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': os.environ.get('SEARCH_ENGINE_HOST')             #Dolibarr server:109.205.183.200
+        'hosts': os.environ.get('SEARCH_ENGINE_HOST')
     }
 }
 
@@ -239,11 +237,11 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER ="contact.dcp@femis.fr"
 
-APPNAME="Data Culture Pro"
+APPNAME="Femis Data Culture Pro"
 DOMAIN_APPLI="https://dcp.f80.fr"
 DOMAIN_SERVER="https://api.f80.fr:8000"
-IMDB_DATABASE_SERVER="mongodb://root:hh4271@109.205.183.200:27017/"         #Dolibarr server
-IMDB_FILES_DIRECTORY="./temp/imdb_files/"
+IMDB_DATABASE_SERVER=os.environ.get('IMDB_DATABASE_SERVER')
+IMDB_FILES_DIRECTORY=STATIC_ROOT+"/imdb_files/"
 
 
 #Sécurisation
@@ -279,7 +277,6 @@ MYDICT=None
 
 DELAY_TO_AUTOSEARCH=10   #10 jours
 
-
 #NFTS
 TOKEN_ID='FEMIS-3ae1d3'
 NFT_CREATE_COST="50000000000000000"
@@ -287,6 +284,5 @@ ADMIN_PEMFILE="./femis.pem" #voir le wallet : https://devnet-wallet.elrond.com/u
 NFT_CONTRACT="erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
 BC_PROXY="https://devnet-gateway.elrond.com"
 BC_EXPLORER="https://devnet-explorer.elrond.com"
-
 
 DEFAULT_PERMS_PROFIL="standard"

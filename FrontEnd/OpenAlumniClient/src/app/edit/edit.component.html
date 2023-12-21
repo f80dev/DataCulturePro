@@ -90,24 +90,35 @@
       <!--      Réseau sociaux -->
       <mat-expansion-panel  style="text-align: left;" id="pnlSocial">
         <mat-expansion-panel-header>
-
           Réseaux sociaux
-
         </mat-expansion-panel-header>
+
         Vos adresses sur les réseaux sociaux<br>
         <table style="width: 100%;vertical-align: text-top;">
           <tr *ngFor="let social of socials">
             <td style="width:90%">
-              <mat-form-field appearance="fill" class="app-field" style="width: 100%;">
-                <mat-label>{{social.name}}</mat-label>
-                <input matInput
-                       type="text"
-                       [placeholder]="social.input"
-                       max="50"
-                       [(ngModel)]="profil[social.name]"
-                       (focusout)="check_format(social)"
-                       (keypress)="mustSave=true">
-              </mat-form-field><br>
+              <app-input [label]="social.name" value_type="text"
+                         style="margin:5px;"
+                         [value]="profil[social.name]"
+                         help="Cette adresse peut être partager ou pas sur votre page public"
+                         [placeholder]="social.input" [maxlength]="50"
+                         (valueChange)="profil[social.name]=$event;mustSave=true"
+                         (focusout)="check_format(social)"></app-input>
+            </td>
+            <td style="font-size: x-large !important;">
+<!--              TODO a terminer pour permettre le partage des liens-->
+              <mat-icon *ngIf="false"
+                        title="Cette expérience est visible de tous (public)"
+                        style="cursor: pointer;display: inline;width:20px;margin:5px;margin-top:-10px;">
+                visibility
+              </mat-icon>
+
+              <mat-icon *ngIf="true"
+                        style="cursor: pointer;width: 20px;opacity:0.7;margin:5px;margin-top:-10px;"
+                        title="Cette expérience est privée (seule vous pouvez la connaitre)"
+                        >
+                visibility_off
+              </mat-icon>
             </td>
             <td style="font-size: small;vertical-align: text-top;text-align: center;line-height: 90%;">
               <br>
@@ -270,11 +281,8 @@
 
       <!--      Expérience -->
       <mat-expansion-panel  [expanded]="expanded_experience_pnl" id="pnlExperience">
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header>Expériences</mat-expansion-panel-header>
 
-          Expériences
-
-        </mat-expansion-panel-header>
         <table style="width: 100%;font-size: small;">
           <div *ngIf="works.length==0 && message.length==0">
             Aucune expérience identifiée.
@@ -300,6 +308,7 @@
               <mat-icon
                       name="cmdEdit"
                       title="Editer cette expérience"
+                      *ngIf="config.hasPerm('edit_work')"
                       (click)="edit_work(work)">
                 edit
               </mat-icon>
@@ -319,8 +328,17 @@
                 visibility_off
               </mat-icon>
 
+              <mat-icon style="cursor: pointer;font-size: medium;width: 20px;"
+                        [style.color]="work.notification_color"
+                        name="cmdError"
+                        [title]="work.error_notification=='' ? 'Signaler une erreur' : 'Votre message: \''+work.error_notification+'\' est en cours de traitement'"
+                        (click)="error_notify(work)">
+                report
+              </mat-icon>
+
               <mat-icon style="cursor: pointer;font-size: medium;display: inline;"
                         name="cmdDeleteExperience"
+                        *ngIf="config.hasPerm('edit_work')"
                         title="Supprimer cette expérience"
                         (click)="del_work(work)">
                 cancel
@@ -331,8 +349,9 @@
           </tr>
         </table>
 
-        <mat-action-row>
+        <mat-action-row  *ngIf="config.hasPerm('edit_work')">
           <button class="app-button" mat-raised-button
+
                   color="primary"
                   id="cmdAddExperience"
                   (click)="add_pow()">
@@ -434,7 +453,7 @@
             class="icon-button"
             id="cmdDeletePows"
             title="Efface les films"
-            *ngIf="works?.length>0 && config.hasPerm('del_movies')"
+            *ngIf="works?.length>0 && config.hasPerm('delete_pow')"
             (click)="delete_pows()">
       <mat-icon style="font-size: x-large;">delete</mat-icon>
     </button>

@@ -60,8 +60,8 @@ export class PowsComponent implements OnInit {
 
   handle:any;
   onQuery($event: KeyboardEvent) {
-    clearTimeout(this.handle);
-    this.refresh(this.limit);
+    clearTimeout(this.handle)
+    this.handle=setTimeout(()=>{this.refresh(this.limit)},400)
   }
 
 

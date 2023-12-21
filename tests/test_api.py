@@ -39,6 +39,7 @@ def test_infos_server(server):
 	assert not rc is None
 
 
+
 def test_getyaml(server):
 	rc=call_api(server,"get_yaml","name=config")
 	assert not rc is None

@@ -1,14 +1,15 @@
 import csv
 import os
+import platform
 import shutil
+import subprocess
 from os.path import exists
 
 import pandas as pd
 import requests
 import gzip
-from io import BytesIO
 
-from OpenAlumni.Tools import now
+from OpenAlumni.Tools import now, log, file_duration
 
 
 class DataImporter:
@@ -16,6 +17,30 @@ class DataImporter:
 
     def __init__(self,domain="https://datasets.imdbws.com/"):
         self.domain=domain
+
+    def count_rows(self,filepath:str) -> dict:
+        log("Calcul du nombre de ligne de "+filepath)
+        rc=dict()
+        if file_duration(filepath+"/result.txt")>10: os.remove(filepath+"/result.txt")
+        if platform.system()=="Windows":
+            if not exists(filepath+"/result.txt"):
+                result = subprocess.run([filepath+'/line_counter.bat',filepath], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,timeout=2000000)
+
+            if exists(filepath+"/result.txt"):
+                with open(filepath+"/result.txt","r") as f:
+                    for l in f.readlines():
+                        if "--------" in l:
+                            filename=l.split(":")[0].split("---- ")[1].lower()
+                            rc[filename]=int(l.split(":")[1])
+            return rc
+        else:
+            result = subprocess.run(['wc', '-l', filepath], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result.returncode == 0:return rc
+
+        log("Impossible de compter les lignes de "+filepath)
+        return rc
+
+
 
     def split_file(self,filename="name.basics.csv",chunk_size=3000000):
         csv_file_path="C:/Users/hhoar/Downloads/"

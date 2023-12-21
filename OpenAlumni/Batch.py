@@ -24,6 +24,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from wikipedia import wikipedia, re
 
 from OpenAlumni.Bot import Bot
+from OpenAlumni.DataQuality import ProfilAnalyzer
 from OpenAlumni.Tools import log, translate, load_page, load_json, remove_html, fusion, remove_ponctuation, \
     equal_str, remove_accents, index_string, extract_years, stringToUrl, dateToTimestamp, \
     apply_dictionnary_on_each_words, init_dict, levenshtein
@@ -48,9 +49,12 @@ def extract_movie_from_cnca(title:str):
     return title
 
 
-def reindex(index_name=""):
+def reindex(index_name="") -> str:
     #test http://localhost:8000/api/reindex/?index_name=festivals
     log("Ré-indexage de la base")
+    rc=""
+    log_file="./logs/reindex.log"
+
     if len(index_name)==0:
         # es=Elasticsearch(os.environ.get('SEARCH_ENGINE_HOST'))
         #
@@ -66,19 +70,26 @@ def reindex(index_name=""):
         #     pd=PowDocument().update(p)
         #     pd.save()
 
-        with open("./logs/reindex.log", "w") as f:
-            management.call_command("search_index","--rebuild","-f","--parallel","-v3",stdout=f)
+        log("ouverture du fichier de log "+log_file)
+        with open(log_file, "w") as f:
+            log("Lancement du réindexage")
+            management.call_command("search_index","--rebuild","--traceback","-f","--parallel","-v3",stdout=f)
 
-        # log("Réindex de l'ensemble des index")
-        # try:
-        #     return management.call_command("search_index","--rebuild","-f","--parallel","-v")
-        # except Exception as inst:
-        #     log("impossible d'executer la commande "+str(inst.args))
     else:
         index:Index=Index(index_name)
-        if index.exists(): index.delete()
-        FestivalDocument.init(index=index,using="default")
-        return management.call_command("search_index","--rebuild","--verbosity=3")
+        if index.exists():
+            log("Destruction de l'index existant "+index_name)
+            index.delete()
+        #FestivalDocument.init(index=index,using="default")
+        with open(log_file, "w") as f:
+            management.call_command("search_index","--populate","-v3","-f","--parallel",stdout=f)
+
+    with open(log_file,"r") as f:
+        rc=f.readlines()
+
+    log("Ré-indexage terminé")
+    log("Résultat du journal "+rc)
+    return rc
 
 
 def extract_movie_from_bdfci(pow:PieceOfWork,refresh_delay=31):
@@ -311,8 +322,12 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
     #                 log("Enregistrement de l'affiche "+src)
 
     for i,info in enumerate(main_section.findAll("div",attrs={"class":"info"})):
+        text:str=info.text
         if len(info.findAll("a"))>0 and i==0:rc["real"]=info.findAll("a")[0].text
-        if "Année de production" in info.text: rc["year"]=extract_years(info.text.replace("Année de production",""))
+        if "Année de production" in text: rc["year"]=extract_years(text.replace("Année de production",""))
+        if "Produit par" in text:rc["production"]=text.replace("Produit par","")
+        if text.startswith("Durée"):rc["duration"]=text.replace("Durée","min")
+        if text.startswith("Format de programme"):rc["nature"]=translate(text.replace("Format de programme",""),["categories"],True)
 
     # if not _real is None and not _real.find("a",attrs={"itemprop":"name"}) is None:
     #     rc["real"]=_real.find("a",attrs={"itemprop":"name"}).get("href")
@@ -330,8 +345,10 @@ def extract_film_from_unifrance(url:str,title="",refresh_delay=30):
                 if "Numéro de visa" in div.text: rc["visa"]=div.text.split(" : ")[1].replace(".","")[:10]
                 if "Langues de tournage" in div.text: rc["langue"]=div.text.split(" : ")[1]
                 if not "year" in rc and "Année de production : " in div.text: rc["year"]=extract_years(div.text.replace("Année de production : ",""))[0]
-                if "Genre(s) : " in div.text: rc["category"]=translate(div.text.replace("Genre(s) : ",""),["categories"],True)
-                if "Type :" in div.text:
+                if "Genre(s) : " in div.text:
+                    rc["category"]=translate(div.text.replace("Genre(s) : ",""),["categories"],True)
+
+                if "Type :" in div.text and (not "nature" in rc or rc["nature"]==""):
                     rc["nature"]=translate(div.text.split(":")[1].strip())
 
         if "Palmarès" in section_title or "Sélections" in section_title:
@@ -713,7 +730,8 @@ def extract_profil_from_imdb(lastname:str, firstname:str,refresh_delay=31,url_pr
 
         if not profil is None:
             for m in imdbBase.filter_movies(imdbBase.find_movies(profils[0]["nconst"])):
-                infos["links"].append({"url":"https://www.imdb.com/title/"+m["tconst"]})
+                _film=imdbBase.get_movie(m["tconst"])
+                infos["links"].append({"title":_film["primaryTitle"],"url":"https://www.imdb.com/title/"+m["tconst"]})
             infos["url"]="https://www.imdb.com/name/"+profils[0]["nconst"]+"/"
             infos["fullname"]=firstname+" "+lastname
             return infos
@@ -791,12 +809,26 @@ def clean_line(text:str) -> str:
 
 
 
-def extract_casting_from_imdb(url:str,casting_filter="",refresh_delay=31):
+def extract_casting_from_imdb(url:str,casting_filter="",refresh_delay=31,imdbBase:MongoBase=None):
     rc=dict()
     url=url.split("?")[0]
+
+    if imdbBase:
+        if url.endswith("/"):url=url[:len(url)-1]
+        movie_id=url[url.rindex("/")+1:]
+        assert len(movie_id)>0
+        casting=imdbBase.get_casting(movie_id,True)
+        rc=dict()
+        for c in casting:
+            job=translate(c["job"],["jobs"],must_be_in_dict=True)
+            if len(job)>0:
+                if not job in rc:rc[job]=[]
+                rc[job].append({"index":index_string(c["profil"]["primaryName"]),"name":c["profil"]["primaryName"],"source":"imdb"})
+
+        return rc
+
     if not url.endswith("/"): url=url+"/"
     url=url+"fullcredits/"
-
     page=load_page(url,refresh_delay)
     if not page is None:
         section_fullcredits=page.find("div",attrs={"id":"fullcredits_content"})
@@ -916,14 +948,15 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
     """
     url=url.split("/?ref_=ttep_ep")[0]
     if not imdbBase is None and "title/tt" in url:
-        movie=imdbBase.get_movie("tt"+url.split("title/tt")[1])
+        movie=imdbBase.get_movie(url)
         if movie:
             movie=imdbBase.complete_movies([movie])[0]
             casting=dict()
             for c in movie["casting"]:
                 job=translate(c["job"],["jobs"],True) if c["job"]!="\\N" else translate(c["category"],["jobs"],True)
                 if not job in casting.keys(): casting[job]=list()
-                casting[job].append({"index":index_string(c["profil"]["primaryName"]),"fullname":c["profil"]["primaryName"],"id":c["profil"]["nconst"]})
+                if not c["profil"] is None:
+                    casting[job].append({"index":index_string(c["profil"]["primaryName"]),"fullname":c["profil"]["primaryName"],"id":c["profil"]["nconst"],"source":"imdb"})
 
             rc= {
                 "source":"auto:IMDB",
@@ -939,6 +972,8 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
                 "year":movie["startYear"]
             }
             return rc
+        else:
+            log("Impossible de trouver "+url+" dans la base imdb")
 
 
     years=[]
@@ -1063,7 +1098,7 @@ def extract_film_from_imdb(url:str,title:str="",job="",casting_filter="",refresh
     #log("Recherche du role sur le film")
     if not "job" in rc: rc["job"]=job
 
-    rc["casting"]=extract_casting_from_imdb(url,casting_filter=casting_filter,refresh_delay=refresh_delay)
+    rc["casting"]=extract_casting_from_imdb(url,casting_filter=casting_filter,refresh_delay=refresh_delay,imdbBase=imdbBase)
 
     return rc
 
@@ -1494,7 +1529,9 @@ def add_pows_to_profil(profil,links,job_for,refresh_delay_page,bot=None,content=
         pow = None
 
         if "unifrance" in l["url"]:
-            films.append(extract_film_from_unifrance(l["url"],refresh_delay=refresh_delay_page))
+            film=extract_film_from_unifrance(l["url"],refresh_delay=refresh_delay_page)
+            if not "nature" in film or film["nature"]!="Série":
+                films.append(film)
 
         if "filmdoc" in l["url"]:
             films.append(extract_film_from_filmdoc(l["url"],refresh_delay=refresh_delay_page))
@@ -1745,7 +1782,7 @@ def exec_batch(profils,refresh_delay_profil=31,
             except:
                 log("Probleme d'extration du profil pour " + profil.lastname + " sur leFilmFrancais")
 
-            if content["filmdoc"]:
+            if "filmdoc" in content and content["filmdoc"]:
                 infos = extract_profil_from_filmdoc(remove_accents(profil.firstname + " " + profil.lastname), refresh_delay=refresh_delay_pages)
 
             if content["unifrance"]:
@@ -1871,3 +1908,10 @@ def analyse_pows(pows,search_with="link",bot=None,cat="unifrance,imdb,lefilmfran
     if not bot is None: bot.quit()
 
     return infos
+
+
+def bootloader():
+    log("Bootloader starting")
+    p=ProfilAnalyzer()
+    p.analyse(Profil.objects.all())
+    log("Bootloader ending")

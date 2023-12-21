@@ -66,7 +66,7 @@ export class SearchComponent implements OnInit {
   }
 
 
-  refresh(q=null,limit=100) {
+  refresh(q=null,limit=600) {
     if(q)this.query.value=q;
 
     if(this.config.isLogin() && this.fields.length==0){
@@ -125,8 +125,12 @@ export class SearchComponent implements OnInit {
             }
           }
 
-          if(item.cursus=="S")item.backgroundColor="#81C784";
-          if(item.cursus=="P")item.backgroundColor="#5471D2";
+          if(item.department_pro!=""){
+            item.backgroundColor="#5471D2"
+          }else{
+            item.backgroundColor="#81C784";
+          }
+
           if(item.degree_year>=new Date().getFullYear())item.backgroundColor="#f1e627";
 
           if(item.school=="FEMIS" && (this.filter_with_pro || item.department) && (this.config.show_student || item.backgroundColor!="#f1e627")){
@@ -141,10 +145,10 @@ export class SearchComponent implements OnInit {
           }
         }
         if(this.profils.length==0){
-          if(this.query.value.length==0 && this.advanced_search.length==0){
-            $$("La base des profils est vide, on propose l'importation")
-            this.router.navigate(["import"]);
-          }
+          // if(this.query.value.length==0 && this.advanced_search.length==0){
+          //   $$("La base des profils est vide, on propose l'importation")
+          //   this.router.navigate(["import"]);
+          // }
 
           if(search_engine=="search_simple_query_string" && !this.query.value.endsWith("*") && this.profils.length==0){
             clearTimeout(this.handle)
@@ -186,7 +190,7 @@ export class SearchComponent implements OnInit {
   handle=null;
   searchInTitle: boolean = false;
   fields=[
-    {field:"Pertinance",value:"order_score"},
+    {field:"Pertinence",value:"order_score"},
     {field:"Nouvelles Promos",value:"-degree_year"},
     {field:"Alphabétique",value:"-lastname"},
     {field:"Anciennes promos",value:"degree_year"}
@@ -201,9 +205,12 @@ export class SearchComponent implements OnInit {
   onQuery($event: KeyboardEvent) {
     clearTimeout(this.handle);
     if(this.query.value.length>2 || $event.keyCode==13){
-      this._location.replaceState("search?query="+this.query.value);
-      this.refresh();
+      this.handle=setTimeout(()=>{
+        this._location.replaceState("search?query="+this.query.value);
+        this.refresh();
+      },500)
     }
+    if(this.query.value=="")this.clearQuery()
   }
 
   clearQuery() {

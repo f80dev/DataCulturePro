@@ -2,6 +2,8 @@ import base64
 import subprocess
 from os.path import exists
 
+from pymongo import TEXT
+
 from OpenAlumni.data_importer import DataImporter
 from OpenAlumni.mongo_tools import MongoBase
 from OpenAlumni.passwords import RESET_PASSWORD
@@ -200,15 +202,16 @@ class ExtraWorkViewSet(viewsets.ModelViewSet):
     serializer_class = ExtraWorkSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ['pow__id','profil__id',]
+    filterset_fields = ['pow__id','profil__id']
 
 
+#http://localhost:8000/api/works?error_notification=error
 class WorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = WorkSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields=("profil","pow","job")
+    filterset_fields=("profil","pow","job","error_notification",)
 
 #http://localhost:8000/api/awards/?format=json&profil=12313
 class AwardViewSet(viewsets.ModelViewSet):
@@ -291,6 +294,14 @@ def list_backup_file(request):
         return JsonResponse({"path":path})
 
 
+#http://localhost:8000/api/get_works_with_error
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_works_with_error(request):
+    works=list(Work.objects.exclude(error_notification__exact='').all().values(
+        "profil__lastname","profil__firstname","pow__title","job","id","error_notification","profil__id","pow__links"
+    ))
+    return JsonResponse({"works":works})
 
 
 
@@ -346,7 +357,6 @@ def run_backup(request):
                 args=["./dbbackup/pg_restore.exe" if os.name=="nt" else "pg_restore", "--clean","--create","--host="+DATABASES["default"]["HOST"],"--port="+DATABASES["default"]["PORT"],"--username="+DB_USER,"--dbname="+DATABASES["default"]["NAME"]]
                 with open(work_dir+"/"+backup_file,"r") as f:
                     subprocess_result = subprocess.run(args, stdin=f)
-
 
             return JsonResponse({"message":"Chargement terminé, réindexation par "+url+"api/reindex/"})
         else:
@@ -551,6 +561,7 @@ def refresh_jobsites(request):
 
 
 
+##http://localhost:8000/api/imdb_importer/?files=title.principals&force_index=true
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def api_imdb_importer(request):
@@ -559,21 +570,58 @@ def api_imdb_importer(request):
     :param request:
     :return:
     """
-    files_to_import=request.GET.get("files","title.crew,title.episode,title.principals,title.ratings,name.basics,title.akas,title.basics")
+    files_to_import=request.GET.get("files","title.episode,title.principals,title.ratings,name.basics,title.akas,title.basics,title.crew")
+    force_index=(request.GET.get("force_index","false")=="true")
+    indexes={
+        "title.principals":[("tconst",False),("nconst",False)],
+        "name.basics":[("nconst",False),("primaryName",False)],
+        "title.basics":[("tconst",False)],
+        "title.ratings":[("tconst",False)],
+        "title.episode":[("tconst",False)],
+        "title.akash":[([("titleId",1),("isOriginalTitle",1)],False)]
+    }
+
     update_delay=int(request.GET.get("update_delay","10"))
     di=DataImporter()
     log("Récupération des fichiers imdb")
     imdbBase=MongoBase(IMDB_DATABASE_SERVER)
     rc=""
     for filename in files_to_import.split(","):
+        log("Traitement de "+filename)
+
         if di.download_file(filename, IMDB_FILES_DIRECTORY,update_delay=update_delay):
             log("Intégration de "+filename)
-            rc=rc+imdbBase.import_csv(IMDB_FILES_DIRECTORY+filename,2e9,replace=True)
+
+    rows_in_file=di.count_rows(IMDB_FILES_DIRECTORY)
+    for filename in files_to_import.split(","):
+
+        if not filename.endswith(".csv"):filename=filename+".csv"
+
+        rows_in_db=imdbBase.database[filename].estimated_document_count() if filename in imdbBase.database.list_collection_names() else 0
+
+        if rows_in_file[filename]-100>rows_in_db:
+            option_index=indexes[filename] if filename in indexes else None
+            rc=rc+imdbBase.import_csv(
+                IMDB_FILES_DIRECTORY+filename,
+                records=rows_in_file[filename],
+                replace=False,
+                create_index=option_index,
+                offset=rows_in_db
+            )
+            force_index=False #pour ne pas recréer un index
+
+            if filename=="name.basics.csv":
+                #Création d'un index supplémentaire pour la recherche sur le nom de famille
+                collection=imdbBase.database["name.basics.csv"]
+                if "name_idx" in list(collection.index_information().keys()): collection.drop_index("name_idx")
+                collection.create_index([("primaryName", TEXT)],name="name_idx",default_language="french",language_override="none",textIndexVersion=1)
+
+        if force_index:
+            option_index=indexes[filename.replace(".csv","")] if filename.replace(".csv","") in indexes else None
+            imdbBase.create_indexes(filename,option_index)
+
 
     return Response({"log":rc})
-
-
-
 
 
 
@@ -632,9 +680,20 @@ def search(request):
     s=Search().using(Elasticsearch()).query("match",title=q)
     return s.execute()
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def api_migrate_db(request):
+    log_file="./logs/migrate_db.log"
+    with open(log_file, "w") as f:
+        management.call_command("migrate",stdout=f)
+    return JsonResponse({"message":"Ok"})
+
 
 
 #http://localhost:8000/api/reindex
+#http://localhost:8000/api/reindex?index_name=profils
+#https://api.f80.fr:80
+# 00/api/reindex
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def rebuild_index(request):
@@ -646,8 +705,8 @@ def rebuild_index(request):
     :return:
     """
     index_name=request.GET.get("index_name","")
-    reindex(index_name)
-    return JsonResponse({"message":"Re-indexage terminé"})
+    log=reindex(index_name)
+    return JsonResponse({"message":"Re-indexage terminé","logs":log})
 
 
 
@@ -740,8 +799,9 @@ def api_doc(request):
 
 
 
-#http://localhost:8000/api/quality_filter
-#https://api.f80.fr:8000/api/quality_filter
+#http://localhost:8000/api/quality_analyzer
+#https://api.f80.fr:8000/api/quality_analyzer
+#https://api.f80.fr:8000/api/quality_analyzer?filter=profils
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def quality_filter(request):
@@ -1649,17 +1709,16 @@ class ProfilDocumentView(DocumentViewSet):
 
     #On utilisera dans la requete : search_simple_query_string
     simple_query_string_search_fields = {
-        'lastname': {'boost': 4},
+        'lastname': {'boost': 6},
         'department_category': {'boost': 4},
-        'department_pro': {'boost': 3},
+        'department_pro': {'boost': 2},
+        'department': {'boost': 2},
         'degree_year': {'boost': 4},
         'firstname': {'boost': 1},
-        'department': {'boost': 3},
-        'works__job': {'boost': 2},
-        'works__pow__title': {'boost': 2},
-        'awards__title': {'boost': 2},
         'town':{'boost':1}
     }
+    #     'works': {'boost': 2},
+    #       'awards': {'boost': 2},
 
     simple_query_string_options = {
         "default_operator": "and",

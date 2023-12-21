@@ -18,7 +18,7 @@ profils:
     description: Profil destiné aux utilisateurs souhaitant accéder à plus d'informations que le mode anonyme
     perm:
       r_photo r_lastname r_firstname r_linkedin r_works r_promo r_department advanced_search
-      r_unifrance r_imdb
+      r_unifrance r_imdb r_profil_awards
     price: 0
     subscription: online
 
@@ -27,7 +27,7 @@ profils:
     level: 1
     presentation: Vous chercher des profils pour un projet
     description: Profil destiné aux employeurs à la recherche de profil pour un projet
-    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works r_promo advanced_search publish
+    perm: r_photo r_address r_lastname r_firstname r_linkedin r_works r_promo advanced_search publish r_profil_awards
     price: 0
     subscription: online
 
@@ -37,8 +37,8 @@ profils:
     presentation: Vous avez la charge d'entretenir le catalogue des films
     description: Profil destiné aux personnes en charge du catalogue des films
     perm:
-      r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search delete_pow
-      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
+      r_photo r_address r_lastname r_firstname r_promo add_movies advanced_search 
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_profil_awards r_movie_awards
     price: 0
     subscription: secure
 
@@ -49,6 +49,7 @@ profils:
     perm:
         r_photo r_cp r_firstname r_works r_linkedin w_firstname advanced_search r_promo export_stats
         r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
+        r_profil_awards r_movie_awards edit_work
         w_linkedin write_email r_address r_lastname admin_sort job_search r_crm quality blog 
         publish validate nft_write r_department stats delete_profil delete_pow ask_friend edit_profil add_movies share ask_tutor
     price: 0
@@ -71,7 +72,8 @@ profils:
     perm:
       stats r_cp r_firstname r_promo r_lastname r_works ask_friend validate
       r_photo r_linkedin w_firstname w_linkedin edit_profil r_crm quality
-      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links
+      edit_work
+      r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture r_movie_links r_profil_awards r_movie_awards
       write_email r_mobile r_address r_department share advanced_search delete_profil nft_write
     price: 0
     subscription: secure
@@ -98,6 +100,7 @@ profils:
       r_promo r_photo r_cp r_address r_lastname r_firstname r_linkedin
       prof r_works write_email r_department advanced_search dev
       r_imdb r_unifrance r_senscritique r_movie_synopsis r_movie_picture
+      r_profil_awards r_movie_awards
     price: 0
     subscription: secure
 

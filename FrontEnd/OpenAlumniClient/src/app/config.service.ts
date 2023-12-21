@@ -133,7 +133,6 @@ export class ConfigService {
         }
       },(err)=>{reject(err)});
     });
-
   }
 
 
@@ -141,7 +140,7 @@ export class ConfigService {
     return new Promise((resolve, reject) => {
       if(!email || email==""){
         $$("L'email est vide")
-        this.raz_user();
+        this.raz_user(false);
         resolve(this.user);
       }
       $$("Initialisation de l'utilisateur "+email);
@@ -162,7 +161,7 @@ export class ConfigService {
           if(email){
             this.api.logout();
           }
-          this.raz_user();
+          this.raz_user(false);
           resolve(this.user)
         }
       });
@@ -171,7 +170,7 @@ export class ConfigService {
   }
 
 
-  public raz_user() {
+  public raz_user(fire_update=true) {
     $$("Réinitialisation de l'utilisateur courant. Effacement de l'email et des permissions");
     this.user={
       black_list: "", dtCreate: "", dtLogin: "", level: 0, nbLogin: 0, profil_name: "",
@@ -179,7 +178,7 @@ export class ConfigService {
       perm:this.profils["anonyme"].perm,
       profil:"anonyme"
     };
-    this.user_update.next(this.user);
+    if(fire_update)this.user_update.next(this.user);
   }
 
   isLogin() {

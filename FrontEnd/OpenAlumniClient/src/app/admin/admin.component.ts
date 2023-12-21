@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {$$, api, showError, showMessage} from "../tools";
+import {$$, api, setParams, showError, showMessage} from "../tools";
 import {Router} from "@angular/router";
 import {ConfigService} from "../config.service";
 import {environment} from "../../environments/environment";
@@ -24,6 +24,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
   sel_backup_file:string="";
   show_server: boolean=true;
   mongdb_connexion_string: any=""
+  works_error: any[]=[]
 
   constructor(private api:ApiService,
               public config:ConfigService,
@@ -40,6 +41,11 @@ export class AdminComponent implements OnInit,AfterViewInit {
     }
 
   refresh(){
+    this.api._get("get_works_with_error").subscribe({
+      next:(r:any)=>{
+        this.works_error=r.works
+      }
+    })
     this.api._get("extrausers").subscribe((r:any)=>{
       this.users=r.results;
       setTimeout(()=>{
@@ -274,6 +280,7 @@ export class AdminComponent implements OnInit,AfterViewInit {
     }
   }
 
+
   async add_user() {
     let rep=await _prompt(this,"Email de l'utilisateur","","Un email d'inscription lui sera envoyé","text","Envoyé","Annuler",false)
     if(rep){
@@ -298,16 +305,12 @@ export class AdminComponent implements OnInit,AfterViewInit {
     }
   }
 
-  update_imdb(i=0) {
-    let files="title.crew,title.episode,title.principals,title.ratings,name.basics,title.akas,title.basics".split(",")
-    if(files.length>i){
-      this.message="Importation de la collection "+files[i]
-      this.api._get("imdb_importer","files="+files[i]).subscribe({
-        next:()=>{this.update_imdb(i+1)}
-      })
-    } else {
-      this.message=""
-    }
+  update_imdb() {
+    let files="title.ratings,name.basics,title.crew,title.episode,title.principals,title.akas,title.basics"
+    wait_message(this,"Importation de la collection "+files)
+    this.api._get("imdb_importer","files="+files).subscribe({
+      next:()=>{wait_message(this)}
+    })
   }
 
   save_config() {
@@ -320,5 +323,31 @@ export class AdminComponent implements OnInit,AfterViewInit {
         this.api.token=r.token
       }
     })
+  }
+
+  migrate_db() {
+    wait_message(this,"Migration en cours")
+    this.api._post("migrate_db","",{}).subscribe(
+      {next:()=>{showMessage(this,"Migration effectuée");wait_message(this)}}
+    )
+  }
+
+  open_work(w: any) {
+    this.router.navigate(["edit"],{queryParams:{p:setParams({id:w.profil__id},"","")}})
+    open(w.pow_links[0].url,"Film")
+  }
+
+  open_film(w:any){
+    this.router.navigate(["pows"],{queryParams:{query:w.pow__title}})
+  }
+
+  open_profil(w: any) {
+    this.router.navigate(["edit"],{queryParams:{p:setParams({id:w.profil__id},"","")}})
+  }
+
+  clear_error_notification(w: any) {
+    this.api._patch("works/" + w.id + "/", "", {"error_notification":""}).subscribe(() => {
+      this.refresh()
+    });
   }
 }

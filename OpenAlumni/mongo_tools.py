@@ -1,9 +1,12 @@
 import csv
+import fileinput
 import logging
 
 from pymongo import MongoClient, ASCENDING
 from pymongo.collation import Collation, CollationStrength, CollationAlternate, CollationMaxVariable
 from pymongo.database import Database
+
+from OpenAlumni.Tools import log
 
 
 class MongoBase:
@@ -22,42 +25,55 @@ class MongoBase:
         client = MongoClient(server, 27017)
         self.database=client["imdb"]
 
-    def import_csv(self,filename:str,records=2000,step=300000,replace=False):
+
+    def import_csv(self,filename:str,records=2000,step=300000,replace=False,create_index=None,offset=0):
         if not filename.endswith(".csv"): filename=filename+".csv"
-        log=""
+        _lg=""
         collection_name=filename[filename.rindex("/")+1:]
 
         if replace and collection_name in self.database.list_collection_names():
-            log=log+"Destruction de "+collection_name+"\n"
+            _lg=_lg+"Destruction de "+collection_name+"\n"
             self.database[collection_name].drop()
 
-        if collection_name not in self.database.list_collection_names():
-            log=log+"Création de l'index de "+collection_name+"\n"
+        if create_index and collection_name not in self.database.list_collection_names():
+            _lg=_lg+"Création de l'index de "+collection_name+"\n"
             self.create_indexes(collection_name)
 
+        log("Importation de "+filename)
         with open(filename, encoding="utf-8") as csvfile:
             csvreader = csv.DictReader(csvfile,delimiter="\t")
             rows=[]
-            for row in csvreader:
-                rows.append(row)
-                if len(rows)==step:
-                    try:
-                        result=self.database[collection_name].insert_many(rows,ordered=False,bypass_document_validation=False)
-                        log=log+str(len(rows))+" intégrées\n"
-                    except Exception as e:
-                        log=log+"Error: "+e.args[0]+"\n"
+            records_imported=0
+            while True:
+                try:
+                    row=csvreader.__next__()
+                except:
+                    row=None
+                records_imported=records_imported+1
+                if row:
+                    if records_imported>offset:
+                        rows.append(row)
+                        if len(rows)==step:
+                            try:
+                                result=self.database[collection_name].insert_many(rows,ordered=False,bypass_document_validation=False)
 
-                    records=records-len(rows)
-                    rows=[]
-                    if records<0: break
+                                line=str(records_imported)+" intégrées soit "+str(int(100*records_imported/records))+"%"
+                                log(line)
+                                _lg=_lg+line+"\n"
+                            except Exception as e:
+                                _lg=_lg+"Error: "+e.args[0]+"\n"
 
+                            rows=[]
+                if records_imported>=records: break
+
+            #Importation du reliquat
             try:
                 result=self.database[collection_name].insert_many(rows,ordered=False,bypass_document_validation=False)
-                log=log+str(len(rows))+" intégrées\n"
+                _lg=_lg+str(len(rows))+" intégrées\n"
             except Exception as e:
-                log=log+"Error: "+e.args[0]+"\n"
+                _lg=_lg+"Error: "+e.args[0]+"\n"
 
-        return log
+        return _lg
 
 
 
@@ -103,7 +119,7 @@ class MongoBase:
 
     def create_indexes(self,table:str,indexes=[("tconst",True)]):
         logging.info("Création de l'index de "+table)
-        index_name=""
+        if "/" in table:table=table[table.rindex("/")+1:]
 
         if len(indexes)>0:
             if type(indexes)==str:indexes=[indexes]
@@ -166,6 +182,8 @@ class MongoBase:
         return rc
 
     def get_movie(self, tconst:str,collection_name="title.basics.csv"):
+        if tconst.endswith("/"):tconst=tconst[:len(tconst)-1]
+        if "/" in tconst:tconst=tconst[tconst.rindex("/")+1:]
         rc=self.database[collection_name].find_one({"tconst":tconst})
         if not rc is None: del rc["_id"]
         return rc
@@ -201,21 +219,27 @@ class MongoBase:
                         rc.append(e)
         return rc
 
-    def get_casting(self, movie:str,collection_name="title.principals.csv",with_detail=True,filter="") -> [dict]:
+    def get_casting(self, movie:str,with_detail=True,filter="") -> [dict]:
         rc=list()
         if filter=="":
-            cast=list(self.database[collection_name].find({"tconst":movie}))
+            cast=list(self.database["title.principals.csv"].find({"tconst":movie}))
         else:
-            cast=list(self.database[collection_name].find({"tconst":movie,"nconst":filter}))
+            cast=list(self.database["title.principals.csv"].find({"tconst":movie,"nconst":filter}))
 
-        director=self.database["title.crew.csv"].find_one({"tconst":movie})
-        if not director is None:
-            cast.append(director)
+        crew=self.database["title.crew.csv"].find_one({"tconst":movie})
+        if not crew is None:
+            for p in crew["directors"].split(","):
+                cast.append({"nconst":p,"job":"director","tconst":crew["tconst"]})
+
+            for p in crew["writers"].split(","):
+                cast.append({"nconst":p,"job":"writer","tconst":crew["tconst"]})
+
 
         if with_detail:
             for c in cast:
+                if c["job"]=="\\N":c["job"]=c["category"]
                 c["profil"]=self.database["name.basics.csv"].find_one({"nconst":c["nconst"]})
-                if "Self" in c["characters"] and c["job"]=="\\N": c["job"]="Actor"
+                if ("characters" in c and "Self" in c["characters"]) and c["job"]=="\\N": c["job"]="Actor"
                 rc.append(c)
         else:
             rc=cast

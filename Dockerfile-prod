@@ -74,6 +74,7 @@ RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 RUN mkdir $APP_HOME/Temp
+RUN mkdir $APP_HOME/logs
 RUN mkdir $APP_HOME/dbbackup
 RUN mkdir $APP_HOME/Temp/imdb_files
 
@@ -93,8 +94,6 @@ COPY ./manage.py $APP_HOME
 EXPOSE 8000
 
 ENV DJANGO_SETTINGS_MODULE=OpenAlumni.settings
-ENV DEBUG=False
-
 
 CMD ["python3", "manage.py", "runsslserver","--certificate","/certs/cert.pem","--key","/certs/privkey.pem","0.0.0.0:8000"]
 

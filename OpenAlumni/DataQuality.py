@@ -26,6 +26,7 @@ class ProfilAnalyzer:
     codes_postaux=None
 
     def __init__(self):
+        log("Lancement du gestionnaire d'analyse des profils")
         self.codes_postaux = csv.DictReader(open("./static/codes_postaux.csv",))
 
 
@@ -103,6 +104,9 @@ class ProfilAnalyzer:
             if str(profil.lastname+profil.firstname).strip()=="":
                 log("Profil "+profil.id+" sans nom ni prénom donc suppression")
                 profils_to_delete.append(profil.id)
+
+            if "'" in profil.lastname:profil.lastname=profil.lastname.replace("'","\'")
+            if "'" in profil.firstname:profil.firstname=profil.firstname.replace("'","\'")
 
             if profil.lastname!=str(profil.lastname).upper():
                 bSave=True

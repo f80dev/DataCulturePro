@@ -83,7 +83,7 @@
 
 
   <!--  gestion du tri-->
-  <div *ngIf="profils?.length>6" style="display: inline-block;text-align: right;margin-top: -10px;" >
+  <div *ngIf="profils?.length>10" style="display: inline-block;text-align: right;margin-top: -10px;" >
     <mat-form-field appearance="outline"
                     style="max-width:175px;font-size: small;margin-left:15px;">
       <mat-label>Trier par</mat-label>
@@ -94,7 +94,30 @@
   </div>
 
 
-  <div id="legende" style="width:90%;margin-left:5%;text-align: center;margin-top: 20px;"
+
+  <!--Toolbar de recherche avancée -->
+  <div style="font-size: small" *ngIf="profils?.length>3" >
+    <div *ngIf="profils.length>20" style="display: inline-block;margin:5px;" title="Recherche avancée: notamment des recherches sur une partie du nom, du prenom en utilisant des *">
+      <span *ngIf="profils.length==this.limit">+ de </span>
+      {{profils.length}} profils
+      <mat-icon style="cursor: pointer;font-size: medium;margin-bottom: -12px;"
+                *ngIf="profils.length==this.limit"
+                title="Afficher plus de profils"
+                (click)="inc_limit()">
+        add_circle
+      </mat-icon>
+    </div>
+  </div>
+
+
+  <div *ngIf="query.value.length<3 || advanced_search.length>0"
+       style="width: 100%;text-align: center;" >
+    <mat-slide-toggle [(ngModel)]="filter_with_pro" (ngModelChange)="update_pro_filter()">
+      Inclure la formation professionnelle
+    </mat-slide-toggle>
+  </div>
+
+  <div id="legende" style="width:90%;text-align: center;margin: 30px;margin-left:5%;"
        *ngIf="!config.isMobile() && filter_with_pro && profils.length>0" >
     <table style="display: inline-block;width:fit-content;max-width: 1000px;">
       <tr>
@@ -109,27 +132,7 @@
     </table>
   </div>
 
-  <div *ngIf="query.value.length<3 || advanced_search.length>0"
-       style="width: 100%;text-align: center;" >
-    <mat-slide-toggle [(ngModel)]="filter_with_pro" (ngModelChange)="update_pro_filter()">
-      Inclure la formation professionnelle
-    </mat-slide-toggle>
-  </div>
 
-
-
-  <!--Toolbar de recherche avancée -->
-  <div style="font-size: small" *ngIf="profils?.length>3 && advanced_search?.length>0" >
-    <div *ngIf="profils.length>8" style="display: inline-block;margin:5px;" title="Recherche avancée: notamment des recherches sur une partie du nom, du prenom en utilisant des *">
-      <span *ngIf="profils.length==this.limit">+ de </span>
-      {{profils.length}} profils
-      <mat-icon style="cursor: pointer;font-size: medium;margin-bottom: -12px;"
-                title="Afficher plus de profils"
-                (click)="inc_limit()">
-        add_circle
-      </mat-icon>
-    </div>
-  </div>
 
 
   <div class="div-center" style="margin-top: 20px;">

@@ -56,7 +56,7 @@
         <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*" style="padding: 10px;">
           <table style="width: 100%;">
             <tr style="vertical-align: top;text-align: left;">
-              <td *ngIf="pow.visual?.length>0 && pow.expanded" style="width: 110px;">
+              <td *ngIf="pow.visual?.length>0 && pow.expanded && config.hasPerm('r_movie_picture')" style="width: 110px;">
                 <img [src]="pow.visual"
                      class="image-photo"
                      style="width: 100px;">
@@ -112,10 +112,6 @@
           </table>
         </mat-expansion-panel-header>
 
-<!--        Affichage du visuel et du resumé-->
-        <div style="text-align: center;" *ngIf="config.hasPerm('r_movie_picture')">
-
-        </div>
 
 
         <div *ngIf="pow.works?.length>0" style="line-height: 95%;width:100%;text-align: left;">
@@ -137,7 +133,7 @@
         <br>
         <hr class="dark_separator">
 
-        <div *ngIf="pow.award?.length>0" style="text-align: left;" class="mat-body-2">
+        <div *ngIf="pow.award?.length>0 && config.hasPerm('r_movie_awards')" style="text-align: left;" class="mat-body-2">
           <br><div class="label">Récompenses</div><br>
           <table style="width: 100%;text-align: left;vertical-align:text-top;">
             <tr *ngFor="let a of award_filter(pow.award,true)" style="width:100%;">
