@@ -1,3 +1,18 @@
+##Architecture générale
+
+DataCulture repose sur 4 composants:
+    - une base de données SQL : PostgreSQL
+    - un serveur d'API développé sur le framework Flask
+    - un front-end web compatible avec tout type de terminaux (ordinateur, téléphone)
+    - un moteur de recherche orienté BigData
+
+l'hébergement du front-end est assuré par le service github page. Les trois autres composants peuvent être déployer sur un seul ou plusieurs serveurs.
+Le déploiement est assuré par des images Docker.
+
+
+##Sécurité
+Les mots de passes d'accès aux bases de données sont renseignés uniquement au moment de l'installation. 
+Les informations sensible sur les anciens élèves sont cryptés dans la base de données. Seul le serveur peut les décrypter.
 
 #PyCharm
 ##dev
